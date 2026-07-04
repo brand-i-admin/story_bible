@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../state/color_palette_providers.dart';
 import '../state/font_scale_providers.dart';
+import '../theme/app_color_palette.dart';
+import '../theme/tokens.dart';
 import 'web_pointer_interceptor.dart';
 
-/// 글자 크기 선택 바텀시트를 띄운다.
+/// 색 조합과 글자 크기 선택 바텀시트를 띄운다.
 ///
-/// 탭 시 즉시 전역 `fontScaleProvider`가 갱신되어 앱 전체 텍스트가 재스케일된다.
+/// 탭 시 즉시 전역 provider가 갱신되어 앱 전체 테마/텍스트가 다시 그려진다.
 Future<void> showFontScaleSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: const Color(0xFFF8F1E4),
+    backgroundColor: AppColors.parchmentLight,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -28,6 +31,7 @@ class FontScaleBottomSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final current = ref.watch(fontScaleProvider);
+    final currentPalette = ref.watch(colorPaletteProvider);
 
     return SafeArea(
       top: false,
@@ -37,32 +41,67 @@ class FontScaleBottomSheet extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              '글자 크기',
+            Text(
+              '색/글자 설정',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF4A331D),
+                color: currentPalette.text,
               ),
             ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF6E2),
-                border: Border.all(color: const Color(0xFFD8BF99)),
+                color: AppColors.parchmentCard,
+                border: Border.all(color: currentPalette.selectedBorder),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
+              child: Text(
                 _previewText,
                 style: TextStyle(
                   fontSize: 16,
-                  color: Color(0xFF3A2816),
+                  color: currentPalette.text,
                   height: 1.4,
                 ),
               ),
             ),
             const SizedBox(height: 16),
+            Text(
+              '색 조합',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                color: currentPalette.text,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Column(
+              children: AppColorPalette.values
+                  .map(
+                    (palette) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: _PaletteChoiceButton(
+                        palette: palette,
+                        selected: palette == currentPalette,
+                        onTap: () => ref
+                            .read(colorPaletteProvider.notifier)
+                            .set(palette),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '글자 크기',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                color: currentPalette.text,
+              ),
+            ),
+            const SizedBox(height: 8),
             Row(
               children: FontScale.values
                   .map(
@@ -71,6 +110,7 @@ class FontScaleBottomSheet extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: _FontScaleChoiceButton(
                           scale: scale,
+                          palette: currentPalette,
                           selected: scale == current,
                           onTap: () =>
                               ref.read(fontScaleProvider.notifier).set(scale),
@@ -95,14 +135,181 @@ class FontScaleBottomSheet extends ConsumerWidget {
   }
 }
 
+class _PaletteChoiceButton extends StatelessWidget {
+  const _PaletteChoiceButton({
+    required this.palette,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final AppColorPalette palette;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: ValueKey('color-palette-button-${palette.storageKey}'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 62),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: selected
+                ? palette.selectedSurface
+                : AppColors.parchmentCard.withValues(alpha: 0.92),
+            border: Border.all(
+              color: selected ? palette.selectedBorder : AppColors.borderCard,
+              width: selected ? 1.6 : 1,
+            ),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              _PaletteWheel(palette: palette),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      palette.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w900,
+                        color: palette.text,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      palette.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.visible,
+                      softWrap: true,
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: palette.mutedText,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Icon(
+                selected
+                    ? Icons.check_circle_rounded
+                    : Icons.radio_button_unchecked_rounded,
+                color: selected ? palette.primary : palette.mutedText,
+                size: 22,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PaletteWheel extends StatelessWidget {
+  const _PaletteWheel({required this.palette});
+
+  final AppColorPalette palette;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: ValueKey('color-palette-wheel-${palette.storageKey}'),
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: AppColors.parchmentLight.withValues(alpha: 0.88),
+          width: 2,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1F000000),
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipOval(
+        child: CustomPaint(
+          painter: _PaletteWheelPainter(
+            colors: [
+              palette.primary,
+              palette.currentAccent,
+              palette.stepStory,
+              palette.successBottom,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PaletteWheelPainter extends CustomPainter {
+  const _PaletteWheelPainter({required this.colors});
+
+  final List<Color> colors;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final sweep = 2 * 3.141592653589793 / colors.length;
+    final paint = Paint()..style = PaintingStyle.fill;
+    for (var i = 0; i < colors.length; i += 1) {
+      paint.color = colors[i];
+      canvas.drawArc(
+        rect,
+        -3.141592653589793 / 2 + sweep * i,
+        sweep,
+        true,
+        paint,
+      );
+    }
+    paint
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = Colors.white.withValues(alpha: 0.62);
+    canvas.drawLine(
+      Offset(size.width / 2, 0),
+      Offset(size.width / 2, size.height),
+      paint,
+    );
+    canvas.drawLine(
+      Offset(0, size.height / 2),
+      Offset(size.width, size.height / 2),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _PaletteWheelPainter oldDelegate) {
+    return oldDelegate.colors != colors;
+  }
+}
+
 class _FontScaleChoiceButton extends StatelessWidget {
   const _FontScaleChoiceButton({
     required this.scale,
+    required this.palette,
     required this.selected,
     required this.onTap,
   });
 
   final FontScale scale;
+  final AppColorPalette palette;
   final bool selected;
   final VoidCallback onTap;
 
@@ -119,11 +326,11 @@ class _FontScaleChoiceButton extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 56),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
           decoration: BoxDecoration(
-            color: selected ? const Color(0xFFE9D18E) : const Color(0xFFFDF5E2),
+            color: selected
+                ? palette.selectedSurface
+                : AppColors.parchmentCard.withValues(alpha: 0.82),
             border: Border.all(
-              color: selected
-                  ? const Color(0xFFB27A2B)
-                  : const Color(0xFFD8BF99),
+              color: selected ? palette.selectedBorder : AppColors.borderCard,
               width: selected ? 1.6 : 1,
             ),
             borderRadius: BorderRadius.circular(12),
@@ -134,11 +341,7 @@ class _FontScaleChoiceButton extends StatelessWidget {
               SizedBox(
                 height: 18,
                 child: selected
-                    ? const Icon(
-                        Icons.check,
-                        size: 18,
-                        color: Color(0xFF6A401E),
-                      )
+                    ? const Icon(Icons.check, size: 18, color: AppColors.ink700)
                     : null,
               ),
               Text(
@@ -152,12 +355,12 @@ class _FontScaleChoiceButton extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF3A2816),
+                  color: AppColors.ink900,
                 ),
               ),
               Text(
                 '${scale.ratio.toStringAsFixed(1)}x',
-                style: const TextStyle(fontSize: 12, color: Color(0xFF6A401E)),
+                style: TextStyle(fontSize: 12, color: palette.mutedText),
               ),
             ],
           ),

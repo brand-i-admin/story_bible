@@ -364,7 +364,7 @@ class _ProfileMiniMapState extends ConsumerState<ProfileMiniMap> {
               decoration: BoxDecoration(
                 color: AppColors.parchmentCream,
                 borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: AppColors.brownEdge, width: 1.2),
+                border: Border.all(color: AppColors.borderFloating, width: 1.2),
                 boxShadow: AppShadows.xl,
               ),
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
@@ -555,7 +555,7 @@ class _ProfileMiniMapState extends ConsumerState<ProfileMiniMap> {
 
   Widget _emptyEra() {
     return Container(
-      color: const Color(0x55F1E1C0),
+      color: AppColors.greenTint1.withValues(alpha: 0.42),
       alignment: Alignment.center,
       child: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -563,7 +563,7 @@ class _ProfileMiniMapState extends ConsumerState<ProfileMiniMap> {
           '이 시대는 사건 데이터가 있는 지역이 없습니다.',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Color(0xFF6A4C2E),
+            color: AppColors.ink700,
             fontWeight: FontWeight.w800,
             fontSize: 13,
             height: 1.4,
@@ -625,9 +625,7 @@ class _RegionLabel extends StatelessWidget {
                 : const Color(0xE8FFF6E2),
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: completed
-                  ? const Color(0xFFB07220)
-                  : const Color(0xAA8E6F48),
+              color: completed ? AppColors.goldDeep : AppColors.borderFloating,
               width: completed ? 1.2 : 0.8,
             ),
             boxShadow: const [
@@ -650,9 +648,7 @@ class _RegionLabel extends StatelessWidget {
                       : TextOverflow.ellipsis,
                   softWrap: true,
                   style: TextStyle(
-                    color: completed
-                        ? const Color(0xFFB07220)
-                        : const Color(0xFF6A4C2E),
+                    color: completed ? AppColors.goldDeep : AppColors.ink700,
                     fontWeight: FontWeight.w900,
                     fontSize: 10.5,
                     height: 1.0,
@@ -663,9 +659,7 @@ class _RegionLabel extends StatelessWidget {
               Text(
                 '$done/$total · $quizCorrect/$quizAnswered',
                 style: TextStyle(
-                  color: completed
-                      ? const Color(0xFFB07220)
-                      : const Color(0xFF8C6743),
+                  color: completed ? AppColors.goldDeep : AppColors.ink500,
                   fontWeight: FontWeight.w800,
                   fontSize: 10,
                   height: 1.0,

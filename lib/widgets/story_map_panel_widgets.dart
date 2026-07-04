@@ -14,7 +14,7 @@ class _NonGeographicRegionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xF2FFFBEF),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFB89A66), width: 1.0),
+        border: Border.all(color: AppColors.borderFloating, width: 1.0),
         boxShadow: const [
           BoxShadow(
             color: Color(0x33000000),
@@ -32,8 +32,8 @@ class _NonGeographicRegionCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 10.5,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF8C6743),
-              letterSpacing: 0.3,
+              color: AppColors.ink700,
+              letterSpacing: 0,
             ),
           ),
           const SizedBox(height: 4),
@@ -51,7 +51,7 @@ class _NonGeographicRegionCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF3D2A14),
+                        color: AppColors.ink900,
                       ),
                     ),
                   ),
@@ -83,7 +83,7 @@ class _CharacterColorLegend extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xF2FFFBEF),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFB89A66), width: 0.9),
+        border: Border.all(color: AppColors.borderFloating, width: 0.9),
         boxShadow: const [
           BoxShadow(
             color: Color(0x44000000),

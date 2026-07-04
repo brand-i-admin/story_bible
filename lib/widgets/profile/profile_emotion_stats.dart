@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/event_emotion_mark.dart';
-import '../../theme/tokens.dart';
+import '../../theme/app_color_palette.dart';
 import '../emotion_badge_icon.dart';
 
 class ProfileEmotionStats {
@@ -125,6 +125,7 @@ class _ProfileEmotionStatChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -134,12 +135,12 @@ class _ProfileEmotionStatChip extends StatelessWidget {
           height: 24,
           padding: const EdgeInsets.symmetric(horizontal: 4),
           decoration: BoxDecoration(
-            color: count > 0
-                ? AppColors.parchmentCream
-                : AppColors.parchmentCard,
+            color: count > 0 ? palette.currentFill : palette.cardSurface,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: count > 0 ? AppColors.goldDeep : const Color(0x66A8834D),
+              color: count > 0
+                  ? palette.currentAccentDeep
+                  : palette.subtleBorder,
               width: 0.8,
             ),
           ),
@@ -161,7 +162,7 @@ class _ProfileEmotionStatChip extends StatelessWidget {
                     '${option.label} $count',
                     maxLines: 1,
                     style: TextStyle(
-                      color: count > 0 ? AppColors.ink700 : AppColors.ink200,
+                      color: count > 0 ? palette.text : palette.mutedText,
                       fontSize: 9.8,
                       fontWeight: FontWeight.w900,
                       height: 1,

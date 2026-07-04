@@ -22,6 +22,7 @@ import '../screens/saved_verses_screen.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/scene_asset_loader.dart';

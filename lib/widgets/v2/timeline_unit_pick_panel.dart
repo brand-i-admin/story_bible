@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/story_event.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 
 double timelineUnitPickPanelSheetHeightFor(BuildContext context) {
@@ -312,9 +313,10 @@ class _TimelineUnitCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = AppPaletteTheme.of(context);
     final cardHeight = _cardHeightFor(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
-    const selectedColor = AppColors.greenBot;
+    final selectedColor = palette.stepSelect;
     final bodyColor = selected ? AppColors.ink600 : AppColors.ink350;
     final titleText = Text(
       unit.numberedTitle,
@@ -370,13 +372,23 @@ class _TimelineUnitCard extends StatelessWidget {
           child: Ink(
             padding: const EdgeInsets.all(AppSpacing.x4),
             decoration: BoxDecoration(
-              color: selected ? AppColors.greenTint2 : AppColors.parchmentCard,
+              color: selected
+                  ? Color.lerp(AppColors.parchmentCard, selectedColor, 0.18)
+                  : AppColors.parchmentCard,
               borderRadius: BorderRadius.circular(AppRadii.lg),
               border: Border.all(
                 color: selected ? selectedColor : AppColors.borderCard,
                 width: selected ? 1.8 : 1,
               ),
-              boxShadow: selected ? AppShadows.green : AppShadows.sm,
+              boxShadow: selected
+                  ? [
+                      BoxShadow(
+                        color: selectedColor.withValues(alpha: 0.22),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ]
+                  : AppShadows.sm,
             ),
             child: largeText ? SingleChildScrollView(child: content) : content,
           ),

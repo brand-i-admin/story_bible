@@ -11,14 +11,15 @@ class _EmptyStepMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: Text(
           text,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Color(0xFF6A4C33),
+          style: TextStyle(
+            color: palette.mutedText,
             fontSize: 14.2,
             fontWeight: FontWeight.w600,
           ),

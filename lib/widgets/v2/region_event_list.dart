@@ -7,6 +7,7 @@ import '../../models/event_emotion_mark.dart';
 import '../../models/landmark.dart';
 import '../../models/quiz_attempt_summary.dart';
 import '../../models/story_event.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/scene_asset_loader.dart';
 import '../character_avatar.dart';
@@ -239,19 +240,20 @@ class StoryEventThumbCard extends StatelessWidget {
   }
 
   Widget _buildCardSurface(BuildContext context, ThemeData theme) {
+    final palette = AppPaletteTheme.of(context);
     final quizTone = _QuizCardTone.fromAttempt(attemptSummary);
     final surfaceColor =
         quizTone?.background ??
         (completed
-            ? AppColors.greenTint1
+            ? palette.completedSurface
             : (selected
-                  ? theme.colorScheme.primary.withValues(alpha: 0.10)
+                  ? palette.selectedSurface
                   : Colors.white.withValues(alpha: 0.85)));
     final borderColor =
         quizTone?.border ??
         (completed
-            ? AppColors.greenBorder
-            : (selected ? theme.colorScheme.primary : const Color(0xFFD9C9A2)));
+            ? palette.completedBorder
+            : (selected ? palette.selectedBorder : const Color(0xFFD9C9A2)));
     return Material(
       color: surfaceColor,
       borderRadius: BorderRadius.circular(14),
@@ -446,7 +448,7 @@ class _ThumbMetaRow extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (hasPlace) ...[
-              const Icon(Icons.location_on, size: 10, color: Color(0xFF8C6743)),
+              const Icon(Icons.location_on, size: 10, color: AppColors.ink500),
               const SizedBox(width: 1),
               Text(
                 placeName!,
@@ -456,7 +458,7 @@ class _ThumbMetaRow extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF8C6743),
+                  color: AppColors.ink500,
                   height: 1.1,
                 ),
               ),
@@ -466,7 +468,7 @@ class _ThumbMetaRow extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 3),
                 child: Text(
                   '·',
-                  style: TextStyle(fontSize: 10, color: Color(0xFF8C6743)),
+                  style: TextStyle(fontSize: 10, color: AppColors.ink400),
                 ),
               ),
             if (yearLabel != null)
@@ -475,7 +477,7 @@ class _ThumbMetaRow extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF8C6743),
+                  color: AppColors.ink500,
                   height: 1.1,
                 ),
               ),
@@ -503,7 +505,7 @@ class _ThumbSummary extends StatelessWidget {
       style: const TextStyle(
         fontSize: 10,
         height: 1.3,
-        color: Color(0xFF6B5430),
+        color: AppColors.ink600,
       ),
     );
   }
@@ -517,6 +519,7 @@ class _OrderBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final hasEmotion = emotionKey != null && emotionKey!.isNotEmpty;
     return Positioned(
       left: -4,
@@ -540,7 +543,7 @@ class _OrderBadge extends StatelessWidget {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6B4A2A),
+                  color: palette.primaryDeep,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 1.5),
                   boxShadow: const [
@@ -649,6 +652,7 @@ class _CurrentStoryBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Positioned(
       top: -10,
       left: 28,
@@ -657,9 +661,9 @@ class _CurrentStoryBadge extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-            color: const Color(0xFFE8A33D),
+            color: palette.currentAccent,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFF8C5A2E), width: 1),
+            border: Border.all(color: palette.currentAccentDeep, width: 1),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x33000000),
@@ -675,7 +679,7 @@ class _CurrentStoryBadge extends StatelessWidget {
               style: TextStyle(
                 fontSize: 9.5,
                 fontWeight: FontWeight.w900,
-                color: Color(0xFF3D2A14),
+                color: AppColors.ink900,
                 height: 1.0,
               ),
             ),
@@ -697,11 +701,12 @@ class _CardThumbnail extends StatelessWidget {
   final String Function(String storagePath)? publicUrlForStoragePath;
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return FutureBuilder<List<String>>(
       future: loader.loadForEvent(event, publicUrlFor: publicUrlForStoragePath),
       builder: (_, snap) {
-        const placeholder = Center(
-          child: Icon(Icons.menu_book, color: Color(0xFF8C6743), size: 28),
+        final placeholder = Center(
+          child: Icon(Icons.menu_book, color: palette.primary, size: 28),
         );
         if (!snap.hasData || snap.data!.isEmpty) return placeholder;
         final path = snap.data!.first;
@@ -740,8 +745,9 @@ class _CharPillAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const defaultColor = Color(0xFF3F8FB6);
-    const defaultText = Color(0xFF2A6F92);
+    final palette = AppPaletteTheme.of(context);
+    final defaultColor = palette.primary;
+    final defaultText = palette.primaryDeep;
     final color = accentColor ?? defaultColor;
     final textColor = accentColor != null
         ? Color.alphaBlend(color.withValues(alpha: 0.85), Colors.black)

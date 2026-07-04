@@ -254,7 +254,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
         child: DefaultTextStyle(
-          style: const TextStyle(color: Color(0xFF3B2A16), height: 1.55),
+          style: const TextStyle(color: AppColors.ink800, height: 1.55),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -622,7 +622,7 @@ class _StoryHeader extends StatelessWidget {
                     fontSize: 20,
                     height: 1.22,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF3A2B15),
+                    color: AppColors.ink900,
                   ),
                 )
               else
@@ -637,7 +637,7 @@ class _StoryHeader extends StatelessWidget {
                       fontSize: 20,
                       height: 1.22,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF3A2B15),
+                      color: AppColors.ink900,
                     ),
                   ),
                 ),
@@ -673,7 +673,7 @@ class _StoryHeader extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 child: Icon(
                   isSaved ? Icons.star_rounded : Icons.star_border_rounded,
-                  color: isSaved ? AppColors.goldDeep : const Color(0xFF9A7A4A),
+                  color: isSaved ? AppColors.goldDeep : AppColors.ink300,
                   size: 28,
                 ),
               ),
@@ -766,7 +766,7 @@ class _EventCharacterNamePill extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: maxWidth),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: const Color(0xDD201309),
+          color: AppColors.ink900.withValues(alpha: 0.86),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.42),
@@ -815,8 +815,8 @@ class _HiddenCharacterCountBadge extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: const Color(0xFF8C6337),
-        border: Border.all(color: const Color(0xFFF3E7CC), width: 1.2),
+        color: AppColors.oceanBot,
+        border: Border.all(color: AppColors.oceanRim, width: 1.2),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 2),
         ],
@@ -825,7 +825,7 @@ class _HiddenCharacterCountBadge extends StatelessWidget {
       child: Text(
         '+$count',
         style: const TextStyle(
-          color: Color(0xFFFDF4DE),
+          color: AppColors.fgOnDark,
           fontSize: 10,
           height: 1,
           fontWeight: FontWeight.w900,
@@ -908,7 +908,7 @@ class _NavRow extends StatelessWidget {
             builder: (_, snap) {
               const placeholder = Icon(
                 Icons.menu_book,
-                color: Color(0xFF8C6743),
+                color: AppColors.ink300,
                 size: 22,
               );
               if (!snap.hasData || snap.data!.isEmpty) {
@@ -945,7 +945,7 @@ class _NavRow extends StatelessWidget {
           style: const TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF8C6743),
+            color: AppColors.oceanBot,
           ),
         ),
         const SizedBox(height: 2),
@@ -958,7 +958,7 @@ class _NavRow extends StatelessWidget {
           style: const TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w800,
-            color: Color(0xFF3A2B15),
+            color: AppColors.ink900,
           ),
         ),
       ],
@@ -972,9 +972,9 @@ class _NavRow extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0x80FFFBEF), // 50% opacity — 시야가 비치는 투명
+            color: AppColors.parchmentCream.withValues(alpha: 0.78),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0x66B89A66), width: 0.8),
+            border: Border.all(color: AppColors.borderCard, width: 0.8),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x10000000),
@@ -989,7 +989,7 @@ class _NavRow extends StatelessWidget {
                     const Icon(
                       Icons.chevron_left,
                       size: 22,
-                      color: Color(0xFF8C6743),
+                      color: AppColors.oceanBot,
                     ),
                     const SizedBox(width: 4),
                     thumbnail,
@@ -1004,7 +1004,7 @@ class _NavRow extends StatelessWidget {
                     const Icon(
                       Icons.chevron_right,
                       size: 22,
-                      color: Color(0xFF8C6743),
+                      color: AppColors.oceanBot,
                     ),
                   ],
           ),
@@ -1064,9 +1064,9 @@ class _ReadAndQuizSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFBF1DC),
+        color: AppColors.parchmentCream,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFD9B785), width: 1),
+        border: Border.all(color: AppColors.borderCard, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1076,7 +1076,7 @@ class _ReadAndQuizSection extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF3A2B15),
+              color: AppColors.ink900,
             ),
           ),
           const SizedBox(height: 10),
@@ -1201,7 +1201,7 @@ class _CompletableActionRow extends StatelessWidget {
             style: TextButton.styleFrom(
               minimumSize: const Size(0, 32),
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              foregroundColor: const Color(0xFF8C4A3A),
+              foregroundColor: AppColors.dangerBot,
             ),
             child: const Text(
               '완료 취소',
@@ -1251,9 +1251,9 @@ class _ActionButtonTone {
       );
     }
     return const _ActionButtonTone(
-      gradientColors: [Color(0xFFF39A32), Color(0xFFD96518)],
-      borderColor: Color(0xFFFFD29A),
-      shadowColor: Color(0x33D96518),
+      gradientColors: [AppColors.goldLight, AppColors.goldDeep],
+      borderColor: AppColors.goldHi,
+      shadowColor: Color(0x33C97522),
     );
   }
 }
@@ -1338,7 +1338,7 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
         const Text(
           '이 이야기에서 마음에 남은 감정을 하나 골라 주세요.',
           style: TextStyle(
-            color: Color(0xFF6A4C2E),
+            color: AppColors.ink600,
             fontSize: 13,
             fontWeight: FontWeight.w800,
             height: 1.35,
@@ -1374,7 +1374,7 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
         RichText(
           text: TextSpan(
             style: const TextStyle(
-              color: Color(0xFF3A2B15),
+              color: AppColors.ink900,
               fontSize: 14,
               fontWeight: FontWeight.w800,
               height: 1.45,
@@ -1394,7 +1394,7 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
               ),
               TextSpan(
                 text: option.label,
-                style: const TextStyle(color: Color(0xFFB07220)),
+                style: const TextStyle(color: AppColors.oceanBot),
               ),
               const TextSpan(text: '이 남았다.'),
             ],
@@ -1459,12 +1459,10 @@ class _EmotionChoiceChip extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 7),
           decoration: BoxDecoration(
-            color: selected ? const Color(0xFFFFE7B8) : const Color(0xFFF8F0E2),
+            color: selected ? AppColors.greenTint1 : AppColors.parchmentCard,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: selected
-                  ? const Color(0xFFB07220)
-                  : const Color(0xAA8E6F48),
+              color: selected ? AppColors.oceanBot : AppColors.borderCard,
               width: selected ? 1.4 : 1.0,
             ),
           ),
@@ -1486,9 +1484,7 @@ class _EmotionChoiceChip extends StatelessWidget {
                       : TextOverflow.ellipsis,
                   softWrap: true,
                   style: TextStyle(
-                    color: selected
-                        ? const Color(0xFF7C4716)
-                        : const Color(0xFF5E4427),
+                    color: selected ? AppColors.oceanBot : AppColors.ink600,
                     fontSize: 11.2,
                     fontWeight: FontWeight.w900,
                     height: 1.0,

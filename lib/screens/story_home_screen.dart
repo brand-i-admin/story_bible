@@ -21,6 +21,7 @@ import '../state/notification_providers.dart';
 import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/daily_exploration_prompt.dart';

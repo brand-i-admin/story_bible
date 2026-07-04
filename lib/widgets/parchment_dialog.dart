@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 
 enum ParchmentDialogActionStyle { primary, secondary, danger }
@@ -47,7 +48,7 @@ class ParchmentDialog extends StatelessWidget {
                   width: 52,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.brownEdge.withValues(alpha: 0.26),
+                    color: AppColors.oceanBot.withValues(alpha: 0.26),
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
@@ -126,16 +127,17 @@ class ParchmentDialogActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final isPrimary = style == ParchmentDialogActionStyle.primary;
     final isDanger = style == ParchmentDialogActionStyle.danger;
     final isEnabled = onTap != null;
     final background = isPrimary
-        ? const [AppColors.goldLight, AppColors.goldDeep]
+        ? [palette.actionTop, palette.actionBottom]
         : isDanger
         ? const [AppColors.dangerTop, AppColors.dangerBot]
         : const [AppColors.parchmentLight, AppColors.parchmentMid];
     final borderColor = isPrimary
-        ? AppColors.goldHi
+        ? palette.actionBorder
         : isDanger
         ? AppColors.dangerRim
         : AppColors.borderFloating;
@@ -276,7 +278,7 @@ class ParchmentDialogTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.brownWarm2, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.oceanDeep, width: 1.5),
         ),
       ),
       onChanged: onChanged,

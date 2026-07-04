@@ -13,6 +13,7 @@ import 'package:story_bible/models/paged_result.dart';
 import 'package:story_bible/models/saved_bible_verse.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
+import 'package:story_bible/theme/app_color_palette.dart';
 import 'package:story_bible/utils/bible_book_meta.dart';
 import 'package:story_bible/widgets/bible_reader_page.dart';
 import 'package:story_bible/widgets/parchment_page_scaffold.dart';
@@ -729,20 +730,32 @@ void main() {
           ],
           child: MaterialApp(
             home: BibleReaderPage(
-              readingTargets: [parseBibleNavigationTarget('창 2:3-4')!],
+              readingTargets: [parseBibleNavigationTarget('창 2:3-5')!],
             ),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('창세기 2:3-4'), findsOneWidget);
+      expect(find.text('창세기 2:3-5'), findsOneWidget);
       expect(find.textContaining('테스트 본문 3 긴 본문'), findsOneWidget);
       expect(find.textContaining('테스트 본문 4 긴 본문'), findsOneWidget);
+      expect(find.textContaining('테스트 본문 5 긴 본문'), findsOneWidget);
       expect(find.textContaining('테스트 본문 2 긴 본문'), findsNothing);
-      expect(find.textContaining('테스트 본문 5 긴 본문'), findsNothing);
+      expect(find.textContaining('테스트 본문 6 긴 본문'), findsNothing);
       expect(find.text('읽기 완료'), findsOneWidget);
       expect(find.text('다음 장'), findsNothing);
+
+      Color badgeColor(int verseNo) {
+        final badge = tester.widget<Container>(
+          find.byKey(ValueKey('bible-reader-verse-badge-$verseNo')),
+        );
+        return (badge.decoration! as BoxDecoration).color!;
+      }
+
+      expect(badgeColor(3), AppColorPalette.classic.verseBadge);
+      expect(badgeColor(4), AppColorPalette.classic.verseBadge);
+      expect(badgeColor(5), AppColorPalette.classic.verseBadge);
     });
 
     testWidgets('여러 사건 본문은 다음으로 넘긴 뒤 마지막에서 읽기 완료를 보여준다', (tester) async {

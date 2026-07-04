@@ -151,8 +151,8 @@ class _EraChip extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadii.lg),
-        splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
-        highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
+        splashColor: AppColors.oceanBot.withValues(alpha: 0.18),
+        highlightColor: AppColors.oceanBot.withValues(alpha: 0.10),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,

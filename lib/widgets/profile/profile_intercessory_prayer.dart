@@ -132,7 +132,7 @@ extension ProfileIntercessoryPrayerCardsExt on ProfileTabPageState {
       decoration: BoxDecoration(
         color: const Color(0xC9F1E3CB),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xAA8E6F48), width: 1.0),
+        border: Border.all(color: AppColors.borderCard, width: 1.0),
       ),
       padding: const EdgeInsets.fromLTRB(10, 10, 8, 10),
       child: Row(

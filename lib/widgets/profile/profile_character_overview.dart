@@ -75,7 +75,7 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                                   : TextOverflow.ellipsis,
                                               softWrap: true,
                                               style: const TextStyle(
-                                                color: Color(0xFF3A2B15),
+                                                color: AppColors.ink900,
                                                 fontSize: 21,
                                                 fontWeight: FontWeight.w900,
                                               ),
@@ -96,7 +96,7 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                                   child: Text(
                                                     '$completedCount / $totalCount',
                                                     style: const TextStyle(
-                                                      color: Color(0xFF6A4C2E),
+                                                      color: AppColors.ink600,
                                                       fontSize: 11.5,
                                                       fontWeight:
                                                           FontWeight.w900,
@@ -197,7 +197,7 @@ extension ProfileCharacterOverviewExt on ProfileTabPageState {
                                       child: Text(
                                         '등록된 사건이 없습니다.',
                                         style: TextStyle(
-                                          color: Color(0xFF6D5231),
+                                          color: AppColors.ink500,
                                           fontWeight: FontWeight.w700,
                                         ),
                                       ),

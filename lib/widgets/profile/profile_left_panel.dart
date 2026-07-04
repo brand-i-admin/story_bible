@@ -14,6 +14,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        final palette = AppPaletteTheme.of(context);
         final desiredCardHeight = _profileLeftCardHeight(
           isAuthenticated: isAuthenticated,
         );
@@ -34,7 +35,9 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
               height: cardHeight,
               child: Container(
                 clipBehavior: Clip.hardEdge,
-                decoration: floatingPanelDecoration(),
+                decoration: floatingPanelDecoration(
+                  color: palette.panelSurface,
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -119,6 +122,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }
 
   Widget _buildProfileHeader({required AppUserProfile profile}) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = _profileUsesLargeTextLayout(context);
     return Padding(
       padding: const EdgeInsets.only(left: 56, right: 10),
@@ -150,8 +154,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                                 ? TextOverflow.visible
                                 : TextOverflow.ellipsis,
                             softWrap: true,
-                            style: const TextStyle(
-                              color: AppColors.ink500,
+                            style: TextStyle(
+                              color: palette.text,
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
                             ),
@@ -181,13 +185,14 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }
 
   Widget _buildProfileContentTabs() {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       height: 42,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1E1C0),
+        color: palette.selectionFill,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xAA8E6F48), width: 0.8),
+        border: Border.all(color: palette.subtleBorder, width: 0.8),
       ),
       child: Row(
         children: [
@@ -228,6 +233,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required _ProfileContentTab tab,
   }) {
     final selected = _profileContentTab == tab;
+    final palette = AppPaletteTheme.of(context);
+    final accent = _profileContentTabAccent(tab, palette);
     final largeText = _profileUsesLargeTextLayout(context);
     return Material(
       color: Colors.transparent,
@@ -239,7 +246,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? AppColors.brownWarm : Colors.transparent,
+            color: selected ? accent : Colors.transparent,
             borderRadius: BorderRadius.circular(9),
             boxShadow: selected ? AppShadows.sm : null,
           ),
@@ -250,7 +257,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
             softWrap: true,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: selected ? Colors.white : AppColors.ink350,
+              color: selected ? AppColors.fgOnDark : palette.text,
               fontSize: 12.5,
               fontWeight: FontWeight.w900,
               height: 1,
@@ -259,6 +266,18 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         ),
       ),
     );
+  }
+
+  Color _profileContentTabAccent(
+    _ProfileContentTab tab,
+    AppColorPalette palette,
+  ) {
+    return switch (tab) {
+      _ProfileContentTab.records => palette.primary,
+      _ProfileContentTab.prayer => palette.regionAccent,
+      _ProfileContentTab.saved => palette.currentAccentDeep,
+      _ProfileContentTab.verses => palette.primaryDeep,
+    };
   }
 
   Widget _buildProfileContentPanel({
@@ -412,13 +431,14 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required AppUserProfile profile,
     required bool isAuthenticated,
   }) {
+    final palette = AppPaletteTheme.of(context);
     final prayerText = (profile.prayerRequest ?? '').trim().isNotEmpty
         ? profile.prayerRequest!.trim()
         : '오늘의 기도제목을 적어 보세요.';
     final hasItems = _intercessoryPrayerItems.isNotEmpty;
     final largeText = _profileUsesLargeTextLayout(context);
-    const sectionTitleStyle = TextStyle(
-      color: Color(0xFF452F1A),
+    final sectionTitleStyle = TextStyle(
+      color: palette.text,
       fontWeight: FontWeight.w900,
       fontSize: 14.7,
     );
@@ -428,7 +448,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
                 '내 기도',
                 maxLines: 2,
@@ -441,12 +461,12 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
               child: InkWell(
                 onTap: () => _openProfilePrayerPreview(prayerText),
                 borderRadius: BorderRadius.circular(10),
-                child: const Padding(
-                  padding: EdgeInsets.all(2),
+                child: Padding(
+                  padding: const EdgeInsets.all(2),
                   child: Icon(
                     Icons.open_in_full_rounded,
                     size: 16,
-                    color: AppColors.ink200,
+                    color: palette.mutedText,
                   ),
                 ),
               ),
@@ -454,7 +474,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
           ],
         ),
         const SizedBox(height: 6),
-        Container(height: 1, color: const Color(0x448E6F48)),
+        Container(height: 1, color: palette.subtleBorder),
         const SizedBox(height: 7),
         Material(
           color: Colors.transparent,
@@ -470,8 +490,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                     ? TextOverflow.visible
                     : TextOverflow.ellipsis,
                 softWrap: true,
-                style: const TextStyle(
-                  color: Color(0xFF5A4326),
+                style: TextStyle(
+                  color: palette.mutedText,
                   fontWeight: FontWeight.w400,
                   fontSize: 13.4,
                   height: 1.34,
@@ -483,7 +503,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         const SizedBox(height: 7),
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
                 '중보 기도',
                 maxLines: 2,
@@ -500,7 +520,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
           ],
         ),
         const SizedBox(height: 6),
-        Container(height: 1, color: const Color(0x448E6F48)),
+        Container(height: 1, color: palette.subtleBorder),
         const SizedBox(height: 7),
         // 중보 기도 리스트 — 탭 카드의 남은 높이를 채움. 항목이 많으면
         // 내부에서만 스크롤해 다른 프로필 섹션 높이를 밀어내지 않는다.
@@ -552,6 +572,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required String actionLabel,
     required VoidCallback onAction,
   }) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = _profileUsesLargeTextLayout(context);
     return Row(
       children: [
@@ -561,8 +582,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
             maxLines: largeText ? 2 : 1,
             overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
             softWrap: true,
-            style: const TextStyle(
-              color: Color(0xFF452F1A),
+            style: TextStyle(
+              color: palette.text,
               fontWeight: FontWeight.w900,
               fontSize: 15.2,
             ),
@@ -577,6 +598,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required String label,
     required VoidCallback onTap,
   }) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -585,14 +607,14 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
           decoration: BoxDecoration(
-            color: const Color(0xDDF7E9D2),
+            color: palette.cardSurface.withValues(alpha: 0.88),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xAA8E6F48), width: 1),
+            border: Border.all(color: palette.subtleBorder, width: 1),
           ),
           child: Text(
             label,
-            style: const TextStyle(
-              color: Color(0xFF6C4C28),
+            style: TextStyle(
+              color: palette.primaryDeep,
               fontSize: 11.2,
               fontWeight: FontWeight.w900,
             ),
@@ -604,16 +626,17 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
   Widget _buildProfileTabMessage(
     String text, {
-    Color textColor = const Color(0xFF6D5231),
+    Color? textColor,
     double fontSize = 12.4,
     bool scaleDownSingleLine = false,
   }) {
+    final palette = AppPaletteTheme.of(context);
     final textWidget = Text(
       text,
       textAlign: TextAlign.center,
       maxLines: scaleDownSingleLine ? 1 : null,
       style: TextStyle(
-        color: textColor,
+        color: textColor ?? palette.mutedText,
         fontWeight: FontWeight.w700,
         fontSize: fontSize,
         height: scaleDownSingleLine ? 1.05 : 1.45,
@@ -654,11 +677,11 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                 ],
                 if (hasMore) ...[
                   const SizedBox(height: 6),
-                  const Text(
+                  Text(
                     '...',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: AppColors.ink200,
+                      color: AppPaletteTheme.of(context).mutedText,
                       fontSize: 15,
                       fontWeight: FontWeight.w900,
                     ),
@@ -769,6 +792,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       pageBuilder: (dialogContext, _, __) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
+            final palette = AppPaletteTheme.of(context);
             final selectedEra = eras
                 .where((era) => era.id == selectedEraId)
                 .firstOrNull;
@@ -809,10 +833,10 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                const Text(
+                                Text(
                                   '이야기 진행률',
                                   style: TextStyle(
-                                    color: Color(0xFF3A2B15),
+                                    color: palette.text,
                                     fontSize: 21,
                                     fontWeight: FontWeight.w900,
                                   ),
@@ -890,6 +914,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       pageBuilder: (dialogContext, _, __) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
+            final palette = AppPaletteTheme.of(context);
             final bookNumbers = _profileBookNumbersForTestament(
               selectedTestament,
             );
@@ -936,10 +961,10 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                const Text(
+                                Text(
                                   '통독 진행률',
                                   style: TextStyle(
-                                    color: Color(0xFF3A2B15),
+                                    color: palette.text,
                                     fontSize: 21,
                                     fontWeight: FontWeight.w900,
                                   ),
@@ -1055,7 +1080,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                             Text(
                               title,
                               style: const TextStyle(
-                                color: Color(0xFF3A2B15),
+                                color: AppColors.ink900,
                                 fontSize: 21,
                                 fontWeight: FontWeight.w900,
                               ),
@@ -1257,7 +1282,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                             const Text(
                               '저장한 이야기',
                               style: TextStyle(
-                                color: Color(0xFF3A2B15),
+                                color: AppColors.ink900,
                                 fontSize: 21,
                                 fontWeight: FontWeight.w900,
                               ),
@@ -1313,9 +1338,9 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFEFD79B), Color(0xFFC88A3D)],
+          colors: [AppColors.goldHi, AppColors.gold],
         ),
-        border: Border.all(color: const Color(0xFF8C6743), width: 1.4),
+        border: Border.all(color: AppColors.goldDeep, width: 1.4),
       ),
       child: ClipOval(
         child: imageProvider == null
@@ -1365,12 +1390,13 @@ class _ProfileRecordsStatsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 11, 12, 11),
       decoration: BoxDecoration(
-        color: const Color(0xEFFFF8E9),
+        color: palette.cardSurface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0x55A8834D), width: 1),
+        border: Border.all(color: palette.subtleBorder, width: 1),
         boxShadow: const [
           BoxShadow(
             color: Color(0x14000000),
@@ -1409,6 +1435,7 @@ class _ProfileOverallProgressRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Row(
       children: [
         Expanded(
@@ -1418,7 +1445,7 @@ class _ProfileOverallProgressRow extends StatelessWidget {
             completed: storyProgress.completed,
             total: storyProgress.total,
             fraction: storyProgress.fraction,
-            color: AppColors.greenTop,
+            color: palette.characterAccent,
             onTap: onTapStory,
           ),
         ),
@@ -1430,7 +1457,7 @@ class _ProfileOverallProgressRow extends StatelessWidget {
             completed: bibleProgress.completed,
             total: bibleProgress.total,
             fraction: bibleProgress.fraction,
-            color: const Color(0xFFC7923D),
+            color: palette.currentAccentDeep,
             onTap: onTapBible,
           ),
         ),
@@ -1460,6 +1487,7 @@ class _ProfileOverallProgressButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final valueLabel = '$completed/$total';
     final largeText = _profileUsesLargeTextLayout(context);
     return Material(
@@ -1471,9 +1499,9 @@ class _ProfileOverallProgressButton extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 64),
           padding: const EdgeInsets.fromLTRB(10, 9, 10, 9),
           decoration: BoxDecoration(
-            color: const Color(0xEFFFF8E9),
+            color: palette.cardSurface,
             borderRadius: BorderRadius.circular(13),
-            border: Border.all(color: const Color(0x55A8834D), width: 1),
+            border: Border.all(color: palette.subtleBorder, width: 1),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x10000000),
@@ -1497,8 +1525,8 @@ class _ProfileOverallProgressButton extends StatelessWidget {
                           ? TextOverflow.visible
                           : TextOverflow.ellipsis,
                       softWrap: true,
-                      style: const TextStyle(
-                        color: Color(0xFF5A4326),
+                      style: TextStyle(
+                        color: palette.text,
                         fontSize: 12.2,
                         fontWeight: FontWeight.w900,
                         height: 1.1,
@@ -1516,7 +1544,7 @@ class _ProfileOverallProgressButton extends StatelessWidget {
                     child: LinearProgressIndicator(
                       minHeight: 13,
                       value: fraction.clamp(0.0, 1.0).toDouble(),
-                      backgroundColor: const Color(0xFFE4D3AF),
+                      backgroundColor: color.withValues(alpha: 0.16),
                       color: color,
                     ),
                   ),
@@ -1527,8 +1555,8 @@ class _ProfileOverallProgressButton extends StatelessWidget {
                         child: Text(
                           valueLabel,
                           maxLines: 1,
-                          style: const TextStyle(
-                            color: Color(0xFF4E3B21),
+                          style: TextStyle(
+                            color: palette.text,
                             fontSize: 9.4,
                             fontWeight: FontWeight.w900,
                             height: 1.0,
@@ -1562,14 +1590,15 @@ class _StoryProgressSelectedEraMeter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final percent = (fraction.clamp(0.0, 1.0) * 100).round();
     final largeText = _profileUsesLargeTextLayout(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(11, 9, 11, 10),
       decoration: BoxDecoration(
-        color: const Color(0xEFFFF8E9),
+        color: palette.cardSurface,
         borderRadius: BorderRadius.circular(13),
-        border: Border.all(color: const Color(0x55A8834D), width: 1),
+        border: Border.all(color: palette.subtleBorder, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1584,8 +1613,8 @@ class _StoryProgressSelectedEraMeter extends StatelessWidget {
                       ? TextOverflow.visible
                       : TextOverflow.ellipsis,
                   softWrap: true,
-                  style: const TextStyle(
-                    color: Color(0xFF5A4326),
+                  style: TextStyle(
+                    color: palette.text,
                     fontSize: 12.4,
                     fontWeight: FontWeight.w900,
                     height: 1.1,
@@ -1595,8 +1624,8 @@ class _StoryProgressSelectedEraMeter extends StatelessWidget {
               Text(
                 '$percent%',
                 maxLines: 1,
-                style: const TextStyle(
-                  color: AppColors.greenBot,
+                style: TextStyle(
+                  color: palette.successBottom,
                   fontSize: 13.5,
                   fontWeight: FontWeight.w900,
                   height: 1.0,
@@ -1610,16 +1639,16 @@ class _StoryProgressSelectedEraMeter extends StatelessWidget {
             child: LinearProgressIndicator(
               minHeight: 7,
               value: fraction.clamp(0.0, 1.0).toDouble(),
-              backgroundColor: const Color(0xFFE4D3AF),
-              color: AppColors.greenTop,
+              backgroundColor: palette.successFill,
+              color: palette.successBottom,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             '$completed / $total',
             maxLines: 1,
-            style: const TextStyle(
-              color: AppColors.ink300,
+            style: TextStyle(
+              color: palette.mutedText,
               fontSize: 11,
               fontWeight: FontWeight.w800,
               height: 1.0,
@@ -1717,13 +1746,14 @@ class _BibleChapterProgressGrid extends StatelessWidget {
             ? 10
             : (constraints.maxWidth >= 460 ? 8 : 6);
         final rowCount = (chapterCount / columns).ceil();
+        final palette = AppPaletteTheme.of(context);
         return ClipRRect(
           borderRadius: BorderRadius.circular(AppRadii.lg),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: AppColors.parchmentCream.withValues(alpha: 0.54),
+              color: palette.softSurface,
               borderRadius: BorderRadius.circular(AppRadii.lg),
-              border: Border.all(color: const Color(0x228E6F48)),
+              border: Border.all(color: palette.subtleBorder),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -1778,6 +1808,7 @@ class _BibleChapterGridCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     if (chapter > chapterCount) {
       return const SizedBox.shrink();
     }
@@ -1793,9 +1824,7 @@ class _BibleChapterGridCell extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 140),
             alignment: Alignment.center,
-            color: completed
-                ? AppColors.greenTint1.withValues(alpha: 0.86)
-                : Colors.transparent,
+            color: completed ? palette.successFill : Colors.transparent,
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Row(
@@ -1806,7 +1835,9 @@ class _BibleChapterGridCell extends StatelessWidget {
                     '$chapter',
                     maxLines: 1,
                     style: TextStyle(
-                      color: completed ? AppColors.greenBot : AppColors.ink500,
+                      color: completed
+                          ? palette.successBottom
+                          : palette.mutedText,
                       fontSize: AppFontSizes.body,
                       fontWeight: completed ? FontWeight.w900 : FontWeight.w800,
                       height: 1,
@@ -1814,10 +1845,10 @@ class _BibleChapterGridCell extends StatelessWidget {
                   ),
                   if (completed) ...[
                     const SizedBox(width: 4),
-                    const Icon(
+                    Icon(
                       Icons.check_circle_rounded,
                       size: 14,
-                      color: AppColors.greenBot,
+                      color: palette.successBottom,
                     ),
                   ],
                 ],
@@ -1845,14 +1876,15 @@ class _BibleBookProgressFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final percent = (fraction.clamp(0.0, 1.0) * 100).round();
     final largeText = _profileUsesLargeTextLayout(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 11, 12, 12),
       decoration: BoxDecoration(
-        color: const Color(0xEFFFF8E9),
+        color: palette.cardSurface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0x55A8834D), width: 1),
+        border: Border.all(color: palette.subtleBorder, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1867,8 +1899,8 @@ class _BibleBookProgressFooter extends StatelessWidget {
                       ? TextOverflow.visible
                       : TextOverflow.ellipsis,
                   softWrap: true,
-                  style: const TextStyle(
-                    color: Color(0xFF5A4326),
+                  style: TextStyle(
+                    color: palette.text,
                     fontSize: 13.5,
                     fontWeight: FontWeight.w900,
                   ),
@@ -1876,8 +1908,8 @@ class _BibleBookProgressFooter extends StatelessWidget {
               ),
               Text(
                 '$percent%',
-                style: const TextStyle(
-                  color: AppColors.greenBot,
+                style: TextStyle(
+                  color: palette.successBottom,
                   fontSize: 14,
                   fontWeight: FontWeight.w900,
                 ),
@@ -1890,15 +1922,15 @@ class _BibleBookProgressFooter extends StatelessWidget {
             child: LinearProgressIndicator(
               minHeight: 8,
               value: fraction.clamp(0.0, 1.0).toDouble(),
-              backgroundColor: const Color(0xFFE4D3AF),
-              color: AppColors.greenTop,
+              backgroundColor: palette.successFill,
+              color: palette.successBottom,
             ),
           ),
           const SizedBox(height: 7),
           Text(
             '$completed / $total장',
-            style: const TextStyle(
-              color: AppColors.ink300,
+            style: TextStyle(
+              color: palette.mutedText,
               fontSize: 11.5,
               fontWeight: FontWeight.w800,
             ),
@@ -1917,7 +1949,10 @@ class _BibleChapterHorizontalDivider extends StatelessWidget {
     return Container(
       height: 7,
       alignment: Alignment.center,
-      child: Container(height: 1, color: const Color(0x228E6F48)),
+      child: Container(
+        height: 1,
+        color: AppColors.borderCard.withValues(alpha: 0.42),
+      ),
     );
   }
 }
@@ -1933,7 +1968,7 @@ class _BibleChapterVerticalDivider extends StatelessWidget {
       child: Container(
         width: 1,
         margin: const EdgeInsets.symmetric(vertical: 5),
-        color: const Color(0x228E6F48),
+        color: AppColors.borderCard.withValues(alpha: 0.42),
       ),
     );
   }
@@ -1954,6 +1989,7 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Row(
       children: [
         Expanded(
@@ -1962,7 +1998,7 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
             label: '정답',
             count: stats.correct,
             eventCount: stats.correctEventCount,
-            color: const Color(0xFF4BA36A),
+            color: palette.successBottom,
             selected: false,
             onTap: null,
           ),
@@ -1974,7 +2010,7 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
             label: '오답',
             count: stats.wrong,
             eventCount: stats.wrongEventCount,
-            color: const Color(0xFFC75245),
+            color: AppColors.dangerBot,
             selected: selected == _ProfileQuizReviewFilter.wrong,
             onTap: onTapWrong,
           ),
@@ -1986,7 +2022,7 @@ class _ProfileQuizStatsStrip extends StatelessWidget {
             label: '헷갈려요',
             count: stats.confused,
             eventCount: stats.confusedEventCount,
-            color: const Color(0xFFC7923D),
+            color: palette.currentAccentDeep,
             selected: selected == _ProfileQuizReviewFilter.confused,
             onTap: onTapConfused,
           ),
@@ -2017,20 +2053,19 @@ class _ProfileQuizStatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final content = AnimatedContainer(
       duration: const Duration(milliseconds: 160),
       alignment: Alignment.center,
       constraints: const BoxConstraints(minHeight: 62),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       decoration: BoxDecoration(
-        color: selected
-            ? color.withValues(alpha: 0.14)
-            : AppColors.parchmentCream,
+        color: selected ? color.withValues(alpha: 0.14) : palette.cardSurface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: selected
               ? color.withValues(alpha: 0.58)
-              : const Color(0x66A8834D),
+              : palette.subtleBorder,
           width: selected ? 1.1 : 0.8,
         ),
         boxShadow: onTap == null
@@ -2059,8 +2094,8 @@ class _ProfileQuizStatItem extends StatelessWidget {
                   label,
                   maxLines: 1,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Color(0xFF5A4326),
+                  style: TextStyle(
+                    color: palette.text,
                     fontSize: 12.6,
                     fontWeight: FontWeight.w900,
                     height: 1.1,
@@ -2076,8 +2111,8 @@ class _ProfileQuizStatItem extends StatelessWidget {
             child: Text(
               profileQuizCountLabel(quizCount: count, storyCount: eventCount),
               maxLines: 1,
-              style: const TextStyle(
-                color: Color(0xFF2E2114),
+              style: TextStyle(
+                color: palette.text,
                 fontSize: 11.2,
                 fontWeight: FontWeight.w900,
                 height: 1.0,
@@ -2110,17 +2145,18 @@ class _ProfileEraSectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFFEAD6AE),
+        color: palette.selectionFill,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0x998E6F48), width: 1),
+        border: Border.all(color: palette.subtleBorder, width: 1),
       ),
       child: Text(
         '$label · $count개',
-        style: const TextStyle(
-          color: Color(0xFF5A4326),
+        style: TextStyle(
+          color: palette.text,
           fontSize: 11.5,
           fontWeight: FontWeight.w900,
         ),

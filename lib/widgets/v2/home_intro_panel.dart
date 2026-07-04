@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/era.dart';
 import '../../state/story_state.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../story_home_styles.dart';
 import 'era_pick_rows.dart';
@@ -34,7 +35,7 @@ class HomeIntroPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final palette = AppPaletteTheme.of(context);
     final canPickMode = selectedEraId != null;
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     // 시대를 골랐으면 1번 영역(헤더+칩)은 흐리게 처리해 시선을 2번으로 유도.
@@ -105,7 +106,7 @@ class HomeIntroPanel extends StatelessWidget {
                         icon: Icons.access_time_rounded,
                         title: '시간 순',
                         subtitle: '선택한 시대의 사건을\n시간 순으로 봅니다',
-                        accent: const Color(0xFF8C5A2E),
+                        accent: palette.timelineAccent,
                         onTap: () => onPickMode(SelectionMode.timeline),
                       ),
                       _ModeCard(
@@ -113,7 +114,7 @@ class HomeIntroPanel extends StatelessWidget {
                         icon: Icons.people,
                         title: '인물과 걷기',
                         subtitle: '선택한 인물의 사건을\n시간 순으로 봅니다',
-                        accent: theme.colorScheme.tertiary,
+                        accent: palette.characterAccent,
                         onTap: () => onPickMode(SelectionMode.character),
                       ),
                       _ModeCard(
@@ -121,7 +122,7 @@ class HomeIntroPanel extends StatelessWidget {
                         icon: Icons.location_on,
                         title: '장소로 시작',
                         subtitle: '한 장소에서 이야기를\n시간 순으로 봅니다',
-                        accent: theme.colorScheme.primary,
+                        accent: palette.regionAccent,
                         onTap: () => onPickMode(SelectionMode.region),
                       ),
                     ];
@@ -256,8 +257,8 @@ class _ModeCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadii.md),
-        splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
-        highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
+        splashColor: AppColors.oceanBot.withValues(alpha: 0.18),
+        highlightColor: AppColors.oceanBot.withValues(alpha: 0.10),
         child: Container(
           constraints: BoxConstraints(minHeight: minHeight),
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),

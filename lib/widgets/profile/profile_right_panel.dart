@@ -10,12 +10,13 @@ extension ProfileRightPanelExt on ProfileTabPageState {
     required String selectedTestament,
     required ValueChanged<String> onSelectTestament,
   }) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Container(
       constraints: BoxConstraints(minHeight: largeText ? 58 : 50),
       padding: const EdgeInsets.all(4),
       decoration: floatingPanelDecoration(
-        color: const Color(0xFFF7E9D2),
+        color: palette.panelSurface,
         shadowOpacity: 0.08,
       ),
       child: Row(
@@ -41,6 +42,7 @@ extension ProfileRightPanelExt on ProfileTabPageState {
     required String label,
     required VoidCallback onTap,
   }) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
@@ -53,7 +55,11 @@ extension ProfileRightPanelExt on ProfileTabPageState {
             horizontal: 8,
             vertical: largeText ? 8 : 0,
           ),
-          decoration: softButtonDecoration(selected: false),
+          decoration: BoxDecoration(
+            color: palette.cardSurface,
+            borderRadius: BorderRadius.circular(AppRadii.lg),
+            border: Border.all(color: palette.subtleBorder, width: 1),
+          ),
           alignment: Alignment.center,
           child: Text(
             label,
@@ -61,8 +67,8 @@ extension ProfileRightPanelExt on ProfileTabPageState {
             overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
             softWrap: true,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppColors.ink500,
+            style: TextStyle(
+              color: palette.text,
               fontSize: 15.2,
               fontWeight: FontWeight.w900,
             ),
@@ -77,6 +83,7 @@ extension ProfileRightPanelExt on ProfileTabPageState {
     required bool enabled,
     required VoidCallback onTap,
   }) {
+    final palette = AppPaletteTheme.of(context);
     final visibleId = shareId.trim().isEmpty ? '-------' : shareId.trim();
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
@@ -87,9 +94,9 @@ extension ProfileRightPanelExt on ProfileTabPageState {
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
           decoration: BoxDecoration(
-            color: enabled ? const Color(0xDDF7E9D2) : const Color(0x9BEEDFC4),
+            color: enabled ? palette.cardSurface : palette.mutedSurface,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xAA8E6F48), width: 1),
+            border: Border.all(color: palette.subtleBorder, width: 1),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -103,19 +110,15 @@ extension ProfileRightPanelExt on ProfileTabPageState {
                 softWrap: true,
                 style: TextStyle(
                   color: enabled
-                      ? const Color(0xFF6C4C28)
-                      : const Color(0xAA6C4C28),
+                      ? palette.primary
+                      : palette.mutedText.withValues(alpha: 0.72),
                   fontSize: 9.2,
                   fontWeight: FontWeight.w900,
                 ),
               ),
               if (enabled) ...[
                 const SizedBox(width: 2),
-                const Icon(
-                  Icons.copy_rounded,
-                  size: 10,
-                  color: Color(0xFF7A552C),
-                ),
+                Icon(Icons.copy_rounded, size: 10, color: palette.primary),
               ],
             ],
           ),

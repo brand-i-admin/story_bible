@@ -179,8 +179,8 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
     required String hintText,
     bool multiLine = false,
   }) {
-    const borderColor = Color(0xB88E6F48);
-    const focusedBorderColor = Color(0xFFB87731);
+    const borderColor = AppColors.borderFloating;
+    const focusedBorderColor = AppColors.oceanBot;
     return InputDecoration(
       hintText: hintText,
       hintStyle: const TextStyle(
@@ -210,7 +210,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
       ),
       disabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Color(0x558E6F48), width: 1.0),
+        borderSide: const BorderSide(color: AppColors.borderCard, width: 1.0),
       ),
     );
   }
@@ -321,8 +321,11 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
               icon: const Icon(Icons.photo_library_outlined, size: 16),
               label: const Text('사진 바꾸기'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF8A5523),
-                side: const BorderSide(color: Color(0xB88E6F48), width: 1.1),
+                foregroundColor: AppColors.oceanDeep,
+                side: const BorderSide(
+                  color: AppColors.borderFloating,
+                  width: 1.1,
+                ),
                 padding: const EdgeInsets.symmetric(vertical: 11),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -415,7 +418,7 @@ class _CloseButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0x90FFFFFF),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xAA8E6F48), width: 1),
+            border: Border.all(color: AppColors.borderCard, width: 1),
           ),
           child: const Icon(
             Icons.close_rounded,
@@ -447,9 +450,9 @@ class _ProfileImagePreview extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFEFD79B), Color(0xFFC88A3D)],
+          colors: [AppColors.goldHi, AppColors.gold],
         ),
-        border: Border.all(color: const Color(0xFF8C6743), width: 1.8),
+        border: Border.all(color: AppColors.oceanBot, width: 1.8),
       ),
       child: ClipOval(
         child: imageProvider == null

@@ -4,23 +4,26 @@
 // 단계별 액센트 색상 헬퍼를 모은 파트 파일.
 part of '../story_selection_panel.dart';
 
-Color _stageAccentColor(StorySelectionPanelStage stage) {
+Color _stageAccentColor(BuildContext context, StorySelectionPanelStage stage) {
+  final palette = AppPaletteTheme.of(context);
   return switch (stage) {
-    StorySelectionPanelStage.collapsed => const Color(0xFFD2873E),
-    StorySelectionPanelStage.half => const Color(0xFF77A85A),
-    StorySelectionPanelStage.expanded => const Color(0xFF77A85A),
+    StorySelectionPanelStage.collapsed => palette.stepSelect,
+    StorySelectionPanelStage.half => palette.stepStart,
+    StorySelectionPanelStage.expanded => palette.stepStory,
   };
 }
 
 class _PanelTexturePainter extends CustomPainter {
-  const _PanelTexturePainter();
+  const _PanelTexturePainter({required this.lineColor});
+
+  final Color lineColor;
 
   @override
   void paint(Canvas canvas, Size size) {
     final linePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = const Color(0x0E845D38);
+      ..color = lineColor;
     final glowPaint = Paint()
       ..style = PaintingStyle.fill
       ..color = const Color(0x08FFFFFF);
@@ -50,7 +53,9 @@ class _PanelTexturePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _PanelTexturePainter oldDelegate) {
+    return oldDelegate.lineColor != lineColor;
+  }
 }
 
 class _PanelTextureLayer extends StatelessWidget {
@@ -58,13 +63,11 @@ class _PanelTextureLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Opacity(
       opacity: 0.16,
       child: ColorFiltered(
-        colorFilter: const ColorFilter.mode(
-          Color(0xFFB88A57),
-          BlendMode.multiply,
-        ),
+        colorFilter: ColorFilter.mode(palette.primary, BlendMode.multiply),
         child: Image.asset(
           'assets/elements/parchment_texture.png',
           fit: BoxFit.cover,
@@ -81,13 +84,17 @@ class _BottomFadeHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       height: 26,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0x00F2E5CC), Color(0xD7E8D2B1)],
+          colors: [
+            palette.panelSurface.withValues(alpha: 0),
+            palette.mutedSurface.withValues(alpha: 0.86),
+          ],
         ),
       ),
     );
@@ -149,12 +156,9 @@ class _SelectionSheetTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = _stageAccentColor(stage);
-    final containerColor = Color.lerp(
-      const Color(0xFFF8F0DB),
-      accentColor,
-      0.30,
-    )!;
+    final palette = AppPaletteTheme.of(context);
+    final accentColor = _stageAccentColor(context, stage);
+    final containerColor = Color.lerp(palette.softSurface, accentColor, 0.18)!;
     final canStepDown = stage != StorySelectionPanelStage.collapsed;
     final canStepUp = stage == StorySelectionPanelStage.collapsed;
 
@@ -208,6 +212,7 @@ class _SelectionSheetHandle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       width: 44,
       height: 8,
@@ -220,7 +225,7 @@ class _SelectionSheetHandle extends StatelessWidget {
         width: 24,
         height: 3,
         decoration: BoxDecoration(
-          color: const Color(0xAA6E573E),
+          color: palette.text.withValues(alpha: 0.66),
           borderRadius: BorderRadius.circular(99),
         ),
       ),
@@ -245,12 +250,11 @@ class _SheetStepButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final backgroundColor = enabled
-        ? Color.lerp(const Color(0xFFFFFFFF), accentColor, 0.20)!
-        : const Color(0xFFE5DDCC);
-    final foregroundColor = enabled
-        ? const Color(0xFF5F4529)
-        : const Color(0xFFAA977D);
+        ? Color.lerp(palette.softSurface, accentColor, 0.20)!
+        : palette.mutedSurface;
+    final foregroundColor = enabled ? palette.text : palette.mutedText;
 
     return Semantics(
       button: true,

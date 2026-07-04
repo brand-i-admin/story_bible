@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 
 /// 서브 페이지 상단/모서리에 떠있는 홈 이동 버튼.
@@ -12,6 +13,7 @@ class SubPageFloatingHomeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -22,9 +24,9 @@ class SubPageFloatingHomeButton extends StatelessWidget {
           height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.brownWarm2.withValues(alpha: 0.92),
+            color: palette.utilityBackground,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.brownRim, width: 1.4),
+            border: Border.all(color: palette.utilityBorder, width: 1.4),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x33000000),

@@ -2917,9 +2917,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       ),
       borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
       border: Border(
-        top: BorderSide(color: AppColors.brownEdge, width: 1.15),
-        left: BorderSide(color: AppColors.brownEdge, width: 1.15),
-        right: BorderSide(color: AppColors.brownEdge, width: 1.15),
+        top: BorderSide(color: AppColors.borderFloating, width: 1.15),
+        left: BorderSide(color: AppColors.borderFloating, width: 1.15),
+        right: BorderSide(color: AppColors.borderFloating, width: 1.15),
       ),
       boxShadow: [
         BoxShadow(

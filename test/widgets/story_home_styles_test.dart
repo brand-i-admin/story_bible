@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:story_bible/theme/app_color_palette.dart';
+import 'package:story_bible/theme/tokens.dart';
 import 'package:story_bible/widgets/story_home_styles.dart';
 
 void main() {
@@ -43,12 +45,33 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('홈 상단 글자 버튼은 아주 큰 글자에서도 라벨을 말줄임하지 않는다', (tester) async {
+    testWidgets('홈 상단 기본 버튼은 classic 팔레트의 어두운 올리브 chrome을 쓴다', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: topUtilityButton(label: '성경', onTap: () {}),
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        _containerWithColor(AppColorPalette.classic.utilityBackground),
+        findsOneWidget,
+      );
+      expect(
+        tester.widget<Text>(find.text('성경')).style?.color,
+        AppColors.fgOnDark,
+      );
+    });
+
+    testWidgets('홈 상단 색/글자 버튼은 아주 큰 글자에서도 라벨을 말줄임하지 않는다', (tester) async {
       await tester.pumpWidget(
         _largeTextHarness(Center(child: topFontScaleButton(onTap: () {}))),
       );
 
-      final text = tester.widget<Text>(find.text('글자'));
+      final text = tester.widget<Text>(find.text('색/글자'));
       expect(text.maxLines, isNot(1));
       expect(text.overflow, isNot(TextOverflow.ellipsis));
       expect(tester.takeException(), isNull);
@@ -139,7 +162,10 @@ void main() {
         ),
         findsNothing,
       );
-      expect(_missionButtonUsesColor(homeStepperActiveColor), findsOneWidget);
+      expect(
+        _missionButtonUsesColor(AppColorPalette.classic.successBottom),
+        findsOneWidget,
+      );
       expect(tester.widget<Text>(find.text('미션')).style?.color, Colors.white);
       expect(
         tester.getSize(find.byKey(const ValueKey('top-mission-button'))).height,
@@ -149,7 +175,7 @@ void main() {
   });
 
   group('topFontScaleButton', () {
-    testWidgets('홈 상단 글자 크기 버튼은 한글 라벨을 사용한다', (tester) async {
+    testWidgets('홈 상단 색/글자 버튼은 한글 라벨을 사용한다', (tester) async {
       var tapped = false;
 
       await tester.pumpWidget(
@@ -160,7 +186,8 @@ void main() {
         ),
       );
 
-      expect(find.text('글자'), findsOneWidget);
+      expect(find.text('색/글자'), findsOneWidget);
+      expect(find.text('글자'), findsNothing);
       expect(find.text('Tt'), findsNothing);
       expect(find.text('Aa'), findsNothing);
 
@@ -170,7 +197,7 @@ void main() {
       expect(tapped, isTrue);
     });
 
-    testWidgets('홈 상단 글자 크기 버튼은 전역 글자 배율을 따른다', (tester) async {
+    testWidgets('홈 상단 색/글자 버튼은 전역 글자 배율을 따른다', (tester) async {
       Future<double> pumpAndMeasure(double textScale) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -183,7 +210,7 @@ void main() {
           ),
         );
         await tester.pump();
-        return tester.getSize(find.text('글자')).height;
+        return tester.getSize(find.text('색/글자')).height;
       }
 
       final normalHeight = await pumpAndMeasure(1.0);
@@ -211,4 +238,11 @@ Finder _missionButtonUsesColor(Color color) {
       return decoration is BoxDecoration && decoration.color == color;
     }),
   );
+}
+
+Finder _containerWithColor(Color color) {
+  return find.byWidgetPredicate((widget) {
+    final decoration = widget is Container ? widget.decoration : null;
+    return decoration is BoxDecoration && decoration.color == color;
+  });
 }

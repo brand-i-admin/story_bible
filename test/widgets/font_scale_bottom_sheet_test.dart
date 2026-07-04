@@ -4,15 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:story_bible/state/color_palette_providers.dart';
 import 'package:story_bible/state/font_scale_providers.dart';
+import 'package:story_bible/theme/app_color_palette.dart';
 import 'package:story_bible/widgets/font_scale_bottom_sheet.dart';
 
 Future<ProviderContainer> _pumpSheet(
   WidgetTester tester, {
   FontScale initial = FontScale.normal,
+  AppColorPalette initialPalette = AppColorPalette.classic,
 }) async {
   SharedPreferences.setMockInitialValues(<String, Object>{
     'font_scale': initial.storageKey,
+    'color_palette': initialPalette.storageKey,
   });
   final prefs = await SharedPreferences.getInstance();
   final container = ProviderContainer(
@@ -31,6 +35,18 @@ Future<ProviderContainer> _pumpSheet(
 
 void main() {
   group('FontScaleBottomSheet', () {
+    testWidgets('색 조합과 글자 크기 섹션을 렌더한다', (tester) async {
+      await _pumpSheet(tester);
+
+      expect(find.text('색/글자 설정'), findsOneWidget);
+      expect(find.text('색 조합'), findsOneWidget);
+      expect(find.text('글자 크기'), findsOneWidget);
+      expect(find.text('클래식'), findsOneWidget);
+      expect(find.text('지도 남색'), findsOneWidget);
+      expect(find.text('밝은 해안'), findsOneWidget);
+      expect(find.text('알록 지도'), findsOneWidget);
+    });
+
     testWidgets('3단계 버튼(보통/크게/아주크게)을 렌더한다', (tester) async {
       await _pumpSheet(tester);
 
@@ -69,6 +85,17 @@ void main() {
       await tester.pump();
 
       expect(container.read(fontScaleProvider), FontScale.veryLarge);
+    });
+
+    testWidgets('색 조합 버튼 탭 시 colorPaletteProvider.set이 호출된다', (tester) async {
+      final container = await _pumpSheet(tester);
+
+      await tester.tap(
+        find.byKey(const ValueKey('color-palette-button-colorfulMap')),
+      );
+      await tester.pump();
+
+      expect(container.read(colorPaletteProvider), AppColorPalette.colorfulMap);
     });
 
     testWidgets('동일한 단계 탭은 state를 변경하지 않는다', (tester) async {

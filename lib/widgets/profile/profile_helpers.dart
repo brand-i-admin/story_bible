@@ -11,6 +11,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
     required String? photoUrl,
     double size = 42,
   }) {
+    final palette = AppPaletteTheme.of(context);
     final initials = nickname.trim().isEmpty ? '?' : nickname.trim()[0];
     final hasPhoto = (photoUrl ?? '').trim().isNotEmpty;
     return Container(
@@ -18,12 +19,12 @@ extension ProfileHelpersExt on ProfileTabPageState {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFEFD79B), Color(0xFFC88A3D)],
+          colors: [palette.currentFill, palette.currentAccent],
         ),
-        border: Border.all(color: const Color(0xFF8C6743), width: 1.2),
+        border: Border.all(color: palette.currentAccentDeep, width: 1.2),
       ),
       child: ClipOval(
         child: hasPhoto
@@ -35,7 +36,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
                     child: Text(
                       initials,
                       style: TextStyle(
-                        color: AppColors.ink500,
+                        color: palette.text,
                         fontSize: size * 0.34,
                         fontWeight: FontWeight.w900,
                       ),
@@ -47,7 +48,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
                 child: Text(
                   initials,
                   style: TextStyle(
-                    color: AppColors.ink500,
+                    color: palette.text,
                     fontSize: size * 0.34,
                     fontWeight: FontWeight.w900,
                   ),
@@ -62,6 +63,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
     required VoidCallback onTap,
     required IconData icon,
   }) {
+    final palette = AppPaletteTheme.of(context);
     return Tooltip(
       message: tooltip,
       child: Material(
@@ -74,11 +76,11 @@ extension ProfileHelpersExt on ProfileTabPageState {
             height: 32,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: const Color(0xCCF7E9D2),
+              color: palette.cardSurface,
               borderRadius: BorderRadius.circular(9),
-              border: Border.all(color: const Color(0xAA8E6F48), width: 1),
+              border: Border.all(color: palette.subtleBorder, width: 1),
             ),
-            child: Icon(icon, size: 17, color: const Color(0xFF7A552C)),
+            child: Icon(icon, size: 17, color: palette.primary),
           ),
         ),
       ),
@@ -90,6 +92,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
     required bool selected,
     required VoidCallback onTap,
   }) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
@@ -104,7 +107,15 @@ extension ProfileHelpersExt on ProfileTabPageState {
             horizontal: 4,
             vertical: largeText ? 6 : 0,
           ),
-          decoration: softButtonDecoration(selected: selected),
+          decoration: BoxDecoration(
+            color: selected ? palette.primary : palette.cardSurface,
+            borderRadius: BorderRadius.circular(AppRadii.lg),
+            border: Border.all(
+              color: selected ? palette.utilityBorder : palette.subtleBorder,
+              width: selected ? 1.1 : 1,
+            ),
+            boxShadow: selected ? AppShadows.sm : null,
+          ),
           child: Text(
             label,
             maxLines: largeText ? 2 : 1,
@@ -112,7 +123,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
             softWrap: true,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: selected ? AppColors.parchmentCream : AppColors.ink500,
+              color: selected ? AppColors.fgOnDark : palette.text,
               fontSize: 13.2,
               fontWeight: FontWeight.w900,
             ),
@@ -126,12 +137,13 @@ extension ProfileHelpersExt on ProfileTabPageState {
     required List<Character> rowPeople,
     required Set<String> completedEventIds,
   }) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0x88F5E8CF),
+        color: palette.softSurface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xAA8E6F48), width: 1.0),
+        border: Border.all(color: palette.subtleBorder, width: 1.0),
       ),
       child: Row(
         children: List.generate(rowPeople.length, (index) {

@@ -10,7 +10,7 @@ import 'package:story_bible/models/event_emotion_mark.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/models/user_companion_diary_entry.dart';
 import 'package:story_bible/state/story_controller.dart';
-import 'package:story_bible/theme/tokens.dart';
+import 'package:story_bible/theme/app_color_palette.dart';
 import 'package:story_bible/widgets/parchment_page_scaffold.dart';
 import 'package:story_bible/widgets/profile/companion_diary_entry_card.dart';
 import 'package:story_bible/widgets/profile/profile_emotion_diary.dart';
@@ -226,7 +226,7 @@ void _companionDiaryWidgetTests() {
       if (widget is! Container) return false;
       final decoration = widget.decoration;
       return decoration is BoxDecoration &&
-          decoration.color == AppColors.brownWarm;
+          decoration.color == AppColorPalette.classic.primary;
     });
 
     expect(selectedBackground, findsOneWidget);
@@ -767,7 +767,7 @@ void main() {
     expect(find.text('오늘 필요한 만큼 채워주심을 봅니다.'), findsOneWidget);
   });
 
-  testWidgets('선택한 날짜는 검정 날짜와 초록 칸 배경으로 표시된다', (tester) async {
+  testWidgets('선택한 날짜는 팔레트 날짜색과 칸 배경으로 표시된다', (tester) async {
     final repository = _MockStoryRepository();
     when(
       () => repository.fetchEventsByIds(any()),
@@ -789,9 +789,9 @@ void main() {
       find.byKey(const ValueKey('emotion-calendar-day-2026-6-8')),
     );
     final decoration = selectedCell.decoration as BoxDecoration?;
-    expect(decoration?.color, AppColors.greenTint2);
+    expect(decoration?.color, AppColorPalette.classic.selectionFill);
 
     final dayText = tester.widget<Text>(find.text('8'));
-    expect(dayText.style?.color, AppColors.ink900);
+    expect(dayText.style?.color, AppColorPalette.classic.text);
   });
 }

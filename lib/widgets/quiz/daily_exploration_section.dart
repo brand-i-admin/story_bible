@@ -336,10 +336,7 @@ class _DailyExplorationSectionState
                 decoration: BoxDecoration(
                   color: const Color(0x66FFF6E2),
                   borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: const Color(0x99B89A66),
-                    width: 0.9,
-                  ),
+                  border: Border.all(color: AppColors.borderCard, width: 0.9),
                 ),
                 child: SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
@@ -400,9 +397,14 @@ class _DailyExplorationSectionState
                       SizedBox(height: gap),
                       Container(
                         height: timelineHeight + promptHeight,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           border: Border(
-                            top: BorderSide(color: Color(0x55B89A66), width: 1),
+                            top: BorderSide(
+                              color: AppColors.borderCard.withValues(
+                                alpha: 0.56,
+                              ),
+                              width: 1,
+                            ),
                           ),
                         ),
                         child: Column(
@@ -511,16 +513,16 @@ class _DailyExplorationSectionState
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0x55F1E1C0),
+        color: AppColors.greenTint1.withValues(alpha: 0.46),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0x66B89A66), width: 0.8),
+        border: Border.all(color: AppColors.borderCard, width: 0.8),
       ),
       child: Center(
         child: Text(
           text,
           textAlign: TextAlign.center,
           style: const TextStyle(
-            color: Color(0xFF6A4C2E),
+            color: AppColors.ink700,
             fontWeight: FontWeight.w700,
             fontSize: 13,
             height: 1.45,
@@ -543,7 +545,7 @@ class _DailyExplorationIntro extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0x66FFF6E2),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color(0x88B89A66), width: 0.8),
+        border: Border.all(color: AppColors.borderCard, width: 0.8),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -727,7 +729,7 @@ class _DailyExplorationPrimaryAction extends StatelessWidget {
               border: Border.all(
                 color: selected
                     ? AppColors.greenBorder
-                    : const Color(0xCCB89A66),
+                    : AppColors.borderFloating,
                 width: selected ? 1.2 : 0.9,
               ),
             ),
@@ -807,7 +809,7 @@ class _DailyExplorationSideButton extends StatelessWidget {
               border: Border.all(
                 color: selected
                     ? AppColors.greenBorder.withValues(alpha: 0.92)
-                    : const Color(0x99B89A66),
+                    : AppColors.borderCard,
                 width: selected ? 1.2 : 0.8,
               ),
             ),
@@ -892,7 +894,7 @@ class _DailyExplorationCardNoteBanner extends StatelessWidget {
         border: Border.all(
           color: isBlessing
               ? AppColors.greenBorder.withValues(alpha: 0.78)
-              : const Color(0x88B89A66),
+              : AppColors.borderCard,
           width: 0.8,
         ),
       ),
@@ -1001,7 +1003,7 @@ class _DailyCharacterChip extends StatelessWidget {
               alignment: Alignment.center,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.brownWarm2,
+                color: AppColors.oceanDeep,
               ),
               child: const Icon(
                 Icons.groups_rounded,

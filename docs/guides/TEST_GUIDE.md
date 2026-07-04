@@ -72,6 +72,7 @@ enum 문자열, JSON list/map 변환은 정상값과 빈값을 같이 넣는다.
 | Repository | `test/data/user_repository_test.dart` | 유저 프로필, 알림, 진행도, 일지 |
 | Repository | `test/data/auth_repository_test.dart` | 계정 삭제 확인 아이디 선택/비교 helper |
 | Repository | `test/data/font_scale_repository_test.dart` | 접근성 글자 크기 저장/복원 |
+| Repository | `test/data/color_palette_repository_test.dart` | 전역 색 조합 저장/복원 |
 | Repository | `test/data/character_name_fallbacks_test.dart` | 인물 이름 fallback |
 | State | `test/state/story_state_test.dart` | `StoryState.copyWith`, 로딩/에러 상태 |
 | State | `test/state/story_controller_test.dart` | controller orchestration |

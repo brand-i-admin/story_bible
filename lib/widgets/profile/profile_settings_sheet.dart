@@ -32,7 +32,7 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
                   const Text(
                     '설정',
                     style: TextStyle(
-                      color: Color(0xFF3A2B15),
+                      color: AppColors.ink900,
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
                     ),
@@ -80,7 +80,7 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
                     },
                   ),
                   const SizedBox(height: 14),
-                  Container(height: 1, color: const Color(0x448E6F48)),
+                  Container(height: 1, color: AppColors.borderCard),
                   const SizedBox(height: 10),
                   // 관리자 문의 이메일 — 안내성 푸터.
                   const Row(
@@ -89,16 +89,16 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
                       Icon(
                         Icons.mail_outline_rounded,
                         size: 14,
-                        color: Color(0xFF8C6743),
+                        color: AppColors.ink500,
                       ),
                       SizedBox(width: 6),
                       Text(
                         'admin@brand-i.net',
                         style: TextStyle(
-                          color: Color(0xFF6A4C2E),
+                          color: AppColors.ink700,
                           fontWeight: FontWeight.w800,
                           fontSize: 12.5,
-                          letterSpacing: -0.2,
+                          letterSpacing: 0,
                         ),
                       ),
                     ],
@@ -108,7 +108,7 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
                     child: Text(
                       '관리자 문의',
                       style: TextStyle(
-                        color: Color(0xAA8C6743),
+                        color: AppColors.ink400,
                         fontWeight: FontWeight.w700,
                         fontSize: 10.5,
                       ),
@@ -185,7 +185,7 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
     required VoidCallback onTap,
     bool danger = false,
   }) {
-    final fg = danger ? const Color(0xFF8C4A3A) : const Color(0xFF3A2B15);
+    final fg = danger ? AppColors.dangerBot : AppColors.ink800;
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
@@ -196,9 +196,9 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
           constraints: BoxConstraints(minHeight: largeText ? 62 : 50),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: const Color(0x88F7E9D2),
+            color: AppColors.floatingSurfaceDefault,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0x66B89A66), width: 0.8),
+            border: Border.all(color: AppColors.borderCard, width: 0.8),
           ),
           child: Row(
             children: [
@@ -336,7 +336,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                   const Text(
                     '계정을 삭제하면 프로필과 학습 기록이 복구할 수 없게 삭제됩니다.',
                     style: TextStyle(
-                      color: Color(0xFF4C3822),
+                      color: AppColors.ink800,
                       fontWeight: FontWeight.w800,
                       fontSize: 13,
                       height: 1.45,
@@ -346,7 +346,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                   const Text(
                     '삭제되는 정보: 프로필, 프로필 이미지, 저장한 이야기와 말씀, 본문 읽기/퀴즈/감정 기록, 동행 일지, 기도 연결, 알림과 푸시 토큰, 제안 작성 중 올린 이미지',
                     style: TextStyle(
-                      color: Color(0xFF6A4C2E),
+                      color: AppColors.ink600,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
                       height: 1.42,
@@ -356,9 +356,9 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0x99FFF8EA),
+                      color: AppColors.parchmentCream.withValues(alpha: 0.78),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0x88B89A66)),
+                      border: Border.all(color: AppColors.borderCard),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,7 +366,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                         const Text(
                           '삭제하려면 아래 입력란에 이 아이디를 그대로 입력해 주세요.',
                           style: TextStyle(
-                            color: Color(0xFF5C4227),
+                            color: AppColors.ink700,
                             fontWeight: FontWeight.w800,
                             fontSize: 12,
                             height: 1.35,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/tokens.dart';
 import '../parchment_dialog.dart';
 import 'map_tile_style.dart';
 
@@ -43,7 +44,7 @@ class _MapAttributionLine extends StatelessWidget {
       children: [
         const Padding(
           padding: EdgeInsets.only(top: 6, right: 8),
-          child: Icon(Icons.circle, size: 5, color: Color(0xFF9A7A4C)),
+          child: Icon(Icons.circle, size: 5, color: AppColors.goldDeep),
         ),
         Expanded(
           child: RichText(
@@ -51,7 +52,7 @@ class _MapAttributionLine extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 13,
                 height: 1.5,
-                color: Color(0xFF3A2A1A),
+                color: AppColors.ink800,
               ),
               children: [
                 TextSpan(text: source),

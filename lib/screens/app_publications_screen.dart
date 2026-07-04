@@ -32,7 +32,7 @@ class AppPublicationsScreen extends ConsumerWidget {
                 Text(
                   '공지사항을 불러오지 못했어요.\n$error',
                   style: const TextStyle(
-                    color: AppColors.brownWarm2,
+                    color: AppColors.oceanDeep,
                     fontSize: 13.2,
                     fontWeight: FontWeight.w800,
                     height: 1.45,

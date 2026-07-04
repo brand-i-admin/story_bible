@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/app_notification.dart';
 import '../state/notification_providers.dart';
-import '../theme/tokens.dart';
+import '../theme/app_color_palette.dart';
 import '../widgets/notification/notification_list_tile.dart';
 
 /// "전체 보기" 버튼으로 진입하는 알림 히스토리 화면.
@@ -17,12 +17,13 @@ class NotificationHistoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPaletteTheme.of(context);
     final historyAsync = ref.watch(notificationHistoryProvider);
     return Scaffold(
-      backgroundColor: AppColors.parchmentBg,
+      backgroundColor: palette.pageMiddle,
       appBar: AppBar(
-        backgroundColor: AppColors.parchmentMid,
-        foregroundColor: AppColors.ink500,
+        backgroundColor: palette.pageTop,
+        foregroundColor: palette.text,
         title: const Text('알림', style: TextStyle(fontWeight: FontWeight.w900)),
         actions: [
           TextButton(
@@ -32,7 +33,7 @@ class NotificationHistoryScreen extends ConsumerWidget {
               ref.invalidate(notificationHistoryProvider);
               ref.invalidate(unreadNotificationsProvider);
             },
-            style: TextButton.styleFrom(foregroundColor: AppColors.ink450),
+            style: TextButton.styleFrom(foregroundColor: palette.primaryDeep),
             child: const Text(
               '모두 읽음',
               style: TextStyle(fontWeight: FontWeight.w700),
@@ -53,7 +54,7 @@ class NotificationHistoryScreen extends ConsumerWidget {
             children: [
               Text(
                 '알림을 불러오지 못했어요\n$err',
-                style: const TextStyle(color: Color(0xFF8B5A24)),
+                style: TextStyle(color: palette.currentAccentDeep),
               ),
             ],
           ),
@@ -61,19 +62,19 @@ class NotificationHistoryScreen extends ConsumerWidget {
             if (items.isEmpty) {
               return ListView(
                 padding: const EdgeInsets.all(28),
-                children: const [
-                  SizedBox(height: 60),
+                children: [
+                  const SizedBox(height: 60),
                   Icon(
                     Icons.notifications_off_outlined,
                     size: 40,
-                    color: Color(0xFF8B7354),
+                    color: palette.mutedText,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
                     '최근 30일 내 알림이 없어요',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFF7A6244),
+                      color: palette.mutedText,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -88,7 +89,7 @@ class NotificationHistoryScreen extends ConsumerWidget {
                 thickness: 1,
                 indent: 16,
                 endIndent: 16,
-                color: const Color(0xFF8E6F48).withValues(alpha: 0.2),
+                color: palette.subtleBorder,
               ),
               itemBuilder: (_, index) {
                 final n = items[index];

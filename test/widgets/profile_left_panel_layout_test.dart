@@ -3,19 +3,16 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('프로필 활동 탭은 초록 segmented 버튼 톤을 사용한다', () {
+  test('프로필 활동 탭은 팔레트 기반 segmented 버튼 톤을 사용한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();
 
     expect(source, contains('height: 42'));
-    expect(source, contains('color: const Color(0xFFF1E1C0)'));
+    expect(source, contains('color: palette.selectionFill'));
     expect(source, isNot(contains('math.min(constraints.maxWidth, 336.0)')));
-    expect(
-      source,
-      contains('selected ? AppColors.brownWarm : Colors.transparent'),
-    );
-    expect(source, contains('selected ? Colors.white : AppColors.ink350'));
+    expect(source, contains('color: selected ? accent : Colors.transparent'));
+    expect(source, contains('selected ? AppColors.fgOnDark : palette.text'));
     expect(source, contains('boxShadow: selected ? AppShadows.sm : null'));
   });
 

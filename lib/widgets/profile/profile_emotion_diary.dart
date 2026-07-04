@@ -9,6 +9,7 @@ import '../../models/event_emotion_mark.dart';
 import '../../models/story_event.dart';
 import '../../models/user_companion_diary_entry.dart';
 import '../../state/story_controller.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/kst_date.dart';
 import '../emotion_badge_icon.dart';
@@ -295,6 +296,7 @@ class _EmotionDiaryPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final currentMonth = _monthStart(today);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final canGoNext = focusedMonth.isBefore(currentMonth);
@@ -305,9 +307,9 @@ class _EmotionDiaryPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 11, 12, 12),
       decoration: BoxDecoration(
-        color: const Color(0xEFFFF8E9),
+        color: palette.cardSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0x99D6BF8D), width: 0.8),
+        border: Border.all(color: palette.subtleBorder, width: 0.8),
         boxShadow: const [
           BoxShadow(
             color: Color(0x16000000),
@@ -324,7 +326,7 @@ class _EmotionDiaryPanel extends StatelessWidget {
               stats: emotionStats!,
               onTapEmotion: onTapEmotion!,
             ),
-            const Divider(height: 22, color: Color(0x338E6F48)),
+            Divider(height: 22, color: palette.subtleBorder),
           ],
           Row(
             children: [
@@ -336,8 +338,8 @@ class _EmotionDiaryPanel extends StatelessWidget {
                       ? TextOverflow.visible
                       : TextOverflow.ellipsis,
                   softWrap: true,
-                  style: const TextStyle(
-                    color: AppColors.ink800,
+                  style: TextStyle(
+                    color: palette.text,
                     fontSize: 15.4,
                     fontWeight: FontWeight.w900,
                     height: 1.1,
@@ -410,7 +412,7 @@ class _EmotionDiaryPanel extends StatelessWidget {
               },
             ),
           ],
-          const Divider(height: 22, color: Color(0x338E6F48)),
+          Divider(height: 22, color: palette.subtleBorder),
           _DiaryContentTabBar(
             selected: selectedContentTab,
             onSelect: onSelectContentTab,
@@ -450,14 +452,15 @@ class _DiaryContentTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       key: const ValueKey('diary-content-tab-bar'),
       height: 42,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.parchmentCard,
+        color: palette.selectionFill,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xAA8E6F48), width: 0.8),
+        border: Border.all(color: palette.subtleBorder, width: 0.8),
       ),
       child: Row(
         children: [
@@ -495,6 +498,10 @@ class _DiaryContentTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final accent = label == '오늘의 신앙 기록'
+        ? palette.primary
+        : palette.regionAccent;
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
@@ -504,7 +511,7 @@ class _DiaryContentTabButton extends StatelessWidget {
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? AppColors.brownWarm : Colors.transparent,
+            color: selected ? accent : Colors.transparent,
             borderRadius: BorderRadius.circular(9),
             boxShadow: selected ? AppShadows.sm : null,
           ),
@@ -515,7 +522,7 @@ class _DiaryContentTabButton extends StatelessWidget {
             softWrap: true,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: selected ? Colors.white : AppColors.ink350,
+              color: selected ? AppColors.fgOnDark : palette.text,
               fontSize: 11.8,
               fontWeight: FontWeight.w900,
               height: 1,
@@ -532,10 +539,11 @@ class _CalendarGridHorizontalDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       height: 7,
       alignment: Alignment.center,
-      child: Container(height: 1, color: const Color(0x228E6F48)),
+      child: Container(height: 1, color: palette.subtleBorder),
     );
   }
 }
@@ -545,13 +553,14 @@ class _CalendarGridVerticalDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       width: 5,
       alignment: Alignment.center,
       child: Container(
         width: 1,
         margin: const EdgeInsets.symmetric(vertical: 5),
-        color: const Color(0x228E6F48),
+        color: palette.subtleBorder,
       ),
     );
   }
@@ -570,12 +579,11 @@ class _CalendarIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: onTap == null
-            ? const Color(0x44E4DEC8)
-            : AppColors.parchmentCard,
+        color: onTap == null ? palette.mutedSurface : palette.cardSurface,
         borderRadius: BorderRadius.circular(10),
         child: InkWell(
           onTap: onTap,
@@ -585,7 +593,9 @@ class _CalendarIconButton extends StatelessWidget {
             height: 30,
             child: Icon(
               icon,
-              color: onTap == null ? AppColors.ink150 : AppColors.ink500,
+              color: onTap == null
+                  ? palette.mutedText.withValues(alpha: 0.42)
+                  : palette.text,
               size: 20,
             ),
           ),
@@ -603,8 +613,9 @@ class _CalendarToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
-      color: AppColors.brownWarm.withValues(alpha: 0.12),
+      color: palette.selectionFill,
       borderRadius: BorderRadius.circular(999),
       child: InkWell(
         onTap: onTap,
@@ -618,14 +629,14 @@ class _CalendarToggleButton extends StatelessWidget {
                 expanded
                     ? Icons.keyboard_arrow_up_rounded
                     : Icons.keyboard_arrow_down_rounded,
-                color: AppColors.brownWarm2,
+                color: palette.primaryDeep,
                 size: 17,
               ),
               const SizedBox(width: 2),
               Text(
                 expanded ? '접기' : '펼치기',
-                style: const TextStyle(
-                  color: AppColors.brownWarm2,
+                style: TextStyle(
+                  color: palette.primaryDeep,
                   fontSize: 11.4,
                   fontWeight: FontWeight.w900,
                   height: 1,
@@ -646,6 +657,7 @@ class _WeekdayHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Row(
       children: [
         for (final label in labels) ...[
@@ -657,8 +669,8 @@ class _WeekdayHeader extends StatelessWidget {
                 color: label == '일'
                     ? AppColors.dangerBot
                     : label == '토'
-                    ? AppColors.greenBot
-                    : AppColors.ink300,
+                    ? palette.successBottom
+                    : palette.mutedText,
                 fontSize: 10.8,
                 fontWeight: FontWeight.w900,
                 height: 1,
@@ -695,6 +707,7 @@ class _EmotionCalendarDayCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final inFocusedMonth = _isSameMonth(date, focusedMonth);
     final visibleMarks = marks.length > _calendarVisibleEmotionMarksBeforeMore
         ? marks.take(_calendarVisibleEmotionMarksBeforeMore).toList()
@@ -703,10 +716,10 @@ class _EmotionCalendarDayCell extends StatelessWidget {
         ? marks.length - _calendarVisibleEmotionMarksBeforeMore
         : 0;
     final textColor = selected
-        ? AppColors.ink900
+        ? palette.text
         : inFocusedMonth
-        ? AppColors.ink700
-        : AppColors.ink150;
+        ? palette.text.withValues(alpha: 0.86)
+        : palette.mutedText.withValues(alpha: 0.46);
 
     return Semantics(
       button: true,
@@ -723,12 +736,9 @@ class _EmotionCalendarDayCell extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(4, compact ? 4 : 5, 4, 5),
           decoration: selected
               ? BoxDecoration(
-                  color: AppColors.greenTint2,
+                  color: palette.selectionFill,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: AppColors.greenBot.withAlpha(0x66),
-                    width: 1,
-                  ),
+                  border: Border.all(color: palette.selectedBorder, width: 1),
                 )
               : null,
           child: Column(
@@ -862,14 +872,15 @@ class _CalendarCompanionDiaryMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       width: 13,
       height: 13,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.greenTint1,
-        border: Border.all(color: AppColors.greenBot.withAlpha(0x55)),
+        color: palette.currentFill,
+        border: Border.all(color: palette.currentAccentDeep.withAlpha(0x66)),
       ),
       child: const FittedBox(
         fit: BoxFit.scaleDown,
@@ -894,13 +905,14 @@ class _DayNumberText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final text = Text(
       '$day',
       textAlign: TextAlign.center,
       maxLines: 1,
       softWrap: false,
       style: TextStyle(
-        color: today ? AppColors.ink900 : color,
+        color: today ? palette.text : color,
         fontSize: 11.6,
         fontWeight: FontWeight.w900,
         height: 1,
@@ -920,8 +932,8 @@ class _DayNumberText extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: selected ? Colors.transparent : AppColors.parchmentCream,
-        border: Border.all(color: AppColors.goldDeep, width: 1.1),
+        color: selected ? Colors.transparent : palette.cardSurface,
+        border: Border.all(color: palette.currentAccentDeep, width: 1.1),
       ),
       child: Center(child: fittedText),
     );
@@ -956,22 +968,23 @@ class _MoreEmotionMarkBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       width: size,
       height: size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: AppColors.parchmentCard,
+        color: palette.cardSurface,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0x77A8834D), width: 0.8),
+        border: Border.all(color: palette.subtleBorder, width: 0.8),
       ),
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Text(
           '+$count',
           maxLines: 1,
-          style: const TextStyle(
-            color: AppColors.ink400,
+          style: TextStyle(
+            color: palette.mutedText,
             fontSize: 8.0,
             fontWeight: FontWeight.w900,
             height: 1,
@@ -1003,6 +1016,7 @@ class _SelectedDayEmotionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final sorted = [...marks]..sort(_compareMarksNewestFirst);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1020,7 +1034,7 @@ class _SelectedDayEmotionList extends StatelessWidget {
           )
         else ...[
           for (var i = 0; i < sorted.length; i++) ...[
-            if (i > 0) const Divider(height: 16, color: Color(0x55BCA47A)),
+            if (i > 0) Divider(height: 16, color: palette.subtleBorder),
             _SelectedEmotionRow(
               mark: sorted[i],
               event: eventById[sorted[i].eventId],
@@ -1058,6 +1072,7 @@ class _SelectedEmotionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final note = mark.note.trim().isEmpty
         ? '${mark.emotionLabel}으로 새겼어요.'
@@ -1093,8 +1108,8 @@ class _SelectedEmotionRow extends StatelessWidget {
                                 ? TextOverflow.visible
                                 : TextOverflow.ellipsis,
                             softWrap: true,
-                            style: const TextStyle(
-                              color: AppColors.ink200,
+                            style: TextStyle(
+                              color: palette.mutedText,
                               fontSize: 10.8,
                               fontWeight: FontWeight.w800,
                             ),
@@ -1103,8 +1118,8 @@ class _SelectedEmotionRow extends StatelessWidget {
                         const SizedBox(width: 7),
                         Text(
                           mark.emotionLabel,
-                          style: const TextStyle(
-                            color: AppColors.greenBot,
+                          style: TextStyle(
+                            color: palette.successBottom,
                             fontSize: 10.8,
                             fontWeight: FontWeight.w900,
                           ),
@@ -1119,8 +1134,8 @@ class _SelectedEmotionRow extends StatelessWidget {
                           ? TextOverflow.visible
                           : TextOverflow.ellipsis,
                       softWrap: true,
-                      style: const TextStyle(
-                        color: AppColors.ink700,
+                      style: TextStyle(
+                        color: palette.text,
                         fontSize: 13.2,
                         fontWeight: FontWeight.w800,
                         height: 1.35,
@@ -1131,9 +1146,9 @@ class _SelectedEmotionRow extends StatelessWidget {
               ),
               if (event != null) ...[
                 const SizedBox(width: 6),
-                const Icon(
+                Icon(
                   Icons.chevron_right_rounded,
-                  color: AppColors.ink200,
+                  color: palette.mutedText,
                   size: 19,
                 ),
               ],
@@ -1152,13 +1167,14 @@ class _EmotionDiaryEmptyMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Text(
         message,
         textAlign: TextAlign.center,
-        style: const TextStyle(
-          color: AppColors.ink300,
+        style: TextStyle(
+          color: palette.mutedText,
           fontSize: 12.5,
           fontWeight: FontWeight.w700,
           height: 1.45,

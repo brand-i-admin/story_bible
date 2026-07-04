@@ -12,9 +12,10 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     required String selectedTestament,
     required ValueChanged<String> onSelectTestament,
   }) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       clipBehavior: Clip.hardEdge,
-      decoration: floatingPanelDecoration(),
+      decoration: floatingPanelDecoration(color: palette.panelSurface),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
         child: Column(
@@ -49,13 +50,14 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
 
   /// 세 탭 토글 — "나의 다이어리" / "인물과 걷기" / "장소로 시작".
   Widget _profileProgressTabBar() {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       height: 42,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1E1C0),
+        color: palette.selectionFill,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xAA8E6F48), width: 0.8),
+        border: Border.all(color: palette.subtleBorder, width: 0.8),
       ),
       child: Row(
         children: [
@@ -101,6 +103,13 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     required bool selected,
     required VoidCallback onTap,
   }) {
+    final palette = AppPaletteTheme.of(context);
+    final tab = switch (label) {
+      '나의 다이어리' => _ProfileProgressTab.life,
+      '인물과 걷기' => _ProfileProgressTab.walk,
+      _ => _ProfileProgressTab.place,
+    };
+    final accent = _profileProgressAccent(tab, palette);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
@@ -110,7 +119,7 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? AppColors.brownWarm : const Color(0x00000000),
+            color: selected ? accent : const Color(0x00000000),
             borderRadius: BorderRadius.circular(9),
             boxShadow: selected
                 ? const [
@@ -129,7 +138,7 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
             softWrap: true,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: selected ? Colors.white : const Color(0xFF6A4C2E),
+              color: selected ? AppColors.fgOnDark : palette.text,
               fontWeight: FontWeight.w900,
               fontSize: 12.5,
             ),
@@ -195,8 +204,8 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
                     ? '신약 인물 데이터가 없습니다.'
                     : '구약 인물 데이터가 없습니다.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Color(0xFF6D5231),
+                style: TextStyle(
+                  color: AppPaletteTheme.of(context).mutedText,
                   fontWeight: FontWeight.w700,
                   height: 1.5,
                   fontSize: 13.2,
@@ -269,13 +278,14 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
   }
 
   Widget _placeEmptyState() {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       height: 220,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: const Color(0x55F1E1C0),
+        color: palette.softSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0x66B89A66), width: 0.8),
+        border: Border.all(color: palette.subtleBorder, width: 0.8),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -283,23 +293,23 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
           Icon(
             Icons.travel_explore_rounded,
             size: 36,
-            color: const Color(0xFF8C6743).withValues(alpha: 0.8),
+            color: palette.regionAccent.withValues(alpha: 0.86),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             '시대를 골라보세요',
             style: TextStyle(
-              color: Color(0xFF6A4C2E),
+              color: palette.text,
               fontWeight: FontWeight.w900,
               fontSize: 14,
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             '구약/신약 칩에서 시대를 누르면\n그 시대의 지역 진행도가 지도에 표시됩니다.',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Color(0xFF8C6743),
+              color: palette.mutedText,
               fontWeight: FontWeight.w600,
               fontSize: 11.5,
               height: 1.4,
@@ -308,5 +318,16 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
         ],
       ),
     );
+  }
+
+  Color _profileProgressAccent(
+    _ProfileProgressTab tab,
+    AppColorPalette palette,
+  ) {
+    return switch (tab) {
+      _ProfileProgressTab.life => palette.currentAccentDeep,
+      _ProfileProgressTab.walk => palette.characterAccent,
+      _ProfileProgressTab.place => palette.regionAccent,
+    };
   }
 }
