@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/app_user_profile.dart';
 import '../state/auth_providers.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import 'story_home_styles.dart';
 
@@ -139,57 +140,76 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
     }
   }
 
-  Widget _editorSectionLabel(String title, {String? subtitle}) {
+  Widget _editorSectionLabel(
+    String title, {
+    required IconData icon,
+    required Color accent,
+    String? subtitle,
+  }) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: AppColors.ink500,
-            fontSize: 13,
-            fontWeight: FontWeight.w900,
+        _ProfileEditorIconBadge(icon: icon, accent: accent, size: 30),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                style: TextStyle(
+                  color: palette.text,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
+                  height: 1.1,
+                ),
+              ),
+              if (subtitle != null && subtitle.trim().isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(
+                  subtitle.trim(),
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
+                  style: TextStyle(
+                    color: palette.mutedText,
+                    fontSize: 10.4,
+                    fontWeight: FontWeight.w700,
+                    height: 1.2,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
-        if (subtitle != null && subtitle.trim().isNotEmpty) ...[
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              subtitle.trim(),
-              maxLines: largeText ? 2 : 1,
-              overflow: largeText
-                  ? TextOverflow.visible
-                  : TextOverflow.ellipsis,
-              softWrap: true,
-              style: const TextStyle(
-                color: AppColors.ink200,
-                fontSize: 10.4,
-                fontWeight: FontWeight.w700,
-                height: 1.2,
-              ),
-            ),
-          ),
-        ],
       ],
     );
   }
 
   InputDecoration _editorInputDecoration({
     required String hintText,
+    required Color accent,
     bool multiLine = false,
   }) {
-    const borderColor = AppColors.borderFloating;
-    const focusedBorderColor = AppColors.oceanBot;
+    final palette = AppPaletteTheme.of(context);
+    final borderColor = palette.subtleBorder;
     return InputDecoration(
       hintText: hintText,
-      hintStyle: const TextStyle(
-        color: AppColors.ink150,
+      hintStyle: TextStyle(
+        color: palette.mutedText.withValues(alpha: 0.68),
         fontSize: 12.4,
         fontWeight: FontWeight.w600,
       ),
       filled: true,
-      fillColor: const Color(0xFFF9F2E7),
+      fillColor: Color.alphaBlend(
+        accent.withValues(alpha: 0.045),
+        palette.softSurface,
+      ),
       isDense: !multiLine,
       contentPadding: EdgeInsets.symmetric(
         horizontal: 14,
@@ -198,19 +218,19 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
       counterText: '',
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: borderColor, width: 1.1),
+        borderSide: BorderSide(color: borderColor, width: 1.1),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: borderColor, width: 1.1),
+        borderSide: BorderSide(color: borderColor, width: 1.1),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: focusedBorderColor, width: 1.5),
+        borderSide: BorderSide(color: accent, width: 1.5),
       ),
       disabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: AppColors.borderCard, width: 1.0),
+        borderSide: BorderSide(color: palette.subtleBorder, width: 1.0),
       ),
     );
   }
@@ -236,6 +256,8 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
                     _buildHeader(context),
                     const SizedBox(height: 14),
                     _buildResponsiveBody(isWide),
+                    const SizedBox(height: 14),
+                    _buildSaveButton(),
                   ],
                 );
               },
@@ -247,37 +269,54 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Expanded(
+        Expanded(
           child: Text(
             '프로필 수정',
             style: TextStyle(
-              color: Color(0xFF3F2A17),
+              color: palette.text,
               fontSize: 26,
               fontWeight: FontWeight.w900,
+              height: 1.05,
             ),
           ),
         ),
-        TextButton(
-          onPressed: _saving ? null : _saveProfile,
-          style: TextButton.styleFrom(
-            foregroundColor: const Color(0xFF9B5C1E),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            textStyle: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          child: Text(_saving ? '저장 중' : '저장'),
-        ),
-        const SizedBox(width: 8),
         _CloseButton(
           enabled: !_saving,
           onTap: () => Navigator.of(context).pop(),
         ),
       ],
+    );
+  }
+
+  Widget _buildSaveButton() {
+    final palette = AppPaletteTheme.of(context);
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        onPressed: _saving ? null : _saveProfile,
+        icon: Icon(
+          _saving ? Icons.hourglass_top_rounded : Icons.check_rounded,
+          size: 18,
+        ),
+        label: Text(_saving ? '저장 중' : '저장'),
+        style: FilledButton.styleFrom(
+          foregroundColor: AppColors.fgOnDark,
+          backgroundColor: palette.currentAccentDeep,
+          disabledBackgroundColor: palette.currentAccentDeep.withValues(
+            alpha: 0.42,
+          ),
+          disabledForegroundColor: AppColors.fgOnDark.withValues(alpha: 0.78),
+          padding: const EdgeInsets.symmetric(vertical: 13),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
+        ),
+      ),
     );
   }
 
@@ -300,32 +339,44 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
   }
 
   Widget _buildPhotoCard() {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       decoration: floatingPanelDecoration(
-        color: const Color(0xFFF4E6CF),
+        color: Color.alphaBlend(
+          palette.currentAccentDeep.withValues(alpha: 0.10),
+          palette.cardSurface,
+        ),
         shadowOpacity: 0.06,
       ),
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          _editorSectionLabel(
+            '사진',
+            icon: Icons.account_circle_rounded,
+            accent: palette.currentAccentDeep,
+            subtitle: '프로필에 보이는 이미지예요.',
+          ),
+          const SizedBox(height: 12),
           _ProfileImagePreview(
             initials: _initials(),
             imageProvider: _imageProvider(),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: _saving ? null : _pickProfileImage,
-              icon: const Icon(Icons.photo_library_outlined, size: 16),
+              icon: const Icon(Icons.add_photo_alternate_rounded, size: 17),
               label: const Text('사진 바꾸기'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.oceanDeep,
-                side: const BorderSide(
-                  color: AppColors.borderFloating,
-                  width: 1.1,
+                foregroundColor: palette.primaryDeep,
+                backgroundColor: Color.alphaBlend(
+                  palette.primary.withValues(alpha: 0.04),
+                  palette.softSurface,
                 ),
+                side: BorderSide(color: palette.subtleBorder, width: 1.1),
                 padding: const EdgeInsets.symmetric(vertical: 11),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -343,31 +394,49 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
   }
 
   Widget _buildFormCard() {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       decoration: floatingPanelDecoration(
-        color: const Color(0xFFF6EAD4),
+        color: Color.alphaBlend(
+          palette.primary.withValues(alpha: 0.07),
+          palette.cardSurface,
+        ),
         shadowOpacity: 0.05,
       ),
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _editorSectionLabel('닉네임', subtitle: '다른 사람에게 보이는 이름이에요.'),
+          _editorSectionLabel(
+            '닉네임',
+            icon: Icons.person_rounded,
+            accent: palette.primary,
+            subtitle: '다른 사람에게 보이는 이름이에요.',
+          ),
           const SizedBox(height: 6),
           _NicknameField(
             controller: _nicknameController,
             enabled: !_saving,
-            decoration: _editorInputDecoration(hintText: '예: 기도왕, 다윗러버'),
+            decoration: _editorInputDecoration(
+              hintText: '예: 기도왕, 다윗러버',
+              accent: palette.primary,
+            ),
             onChanged: _clearLocalError,
           ),
           const SizedBox(height: 12),
-          _editorSectionLabel('기도제목', subtitle: '함께 기도받고 싶은 내용을 짧게 적어보세요.'),
+          _editorSectionLabel(
+            '기도제목',
+            icon: Icons.self_improvement_rounded,
+            accent: palette.characterAccent,
+            subtitle: '함께 기도받고 싶은 내용을 짧게 적어보세요.',
+          ),
           const SizedBox(height: 6),
           _PrayerField(
             controller: _prayerController,
             enabled: !_saving,
             decoration: _editorInputDecoration(
               hintText: '예: 이번 주에 마음이 지치지 않도록 함께 기도해주세요.',
+              accent: palette.characterAccent,
               multiLine: true,
             ),
             onChanged: _clearLocalError,
@@ -407,6 +476,7 @@ class _CloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -416,15 +486,11 @@ class _CloseButton extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: const Color(0x90FFFFFF),
+            color: palette.softSurface.withValues(alpha: 0.88),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.borderCard, width: 1),
+            border: Border.all(color: palette.subtleBorder, width: 1),
           ),
-          child: const Icon(
-            Icons.close_rounded,
-            color: AppColors.ink300,
-            size: 22,
-          ),
+          child: Icon(Icons.close_rounded, color: palette.mutedText, size: 22),
         ),
       ),
     );
@@ -442,17 +508,31 @@ class _ProfileImagePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       width: 90,
       height: 90,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.goldHi, AppColors.gold],
+          colors: [
+            Color.alphaBlend(
+              palette.currentAccent.withValues(alpha: 0.22),
+              AppColors.goldHi,
+            ),
+            palette.currentAccent,
+          ],
         ),
-        border: Border.all(color: AppColors.oceanBot, width: 1.8),
+        border: Border.all(color: palette.primary, width: 1.8),
+        boxShadow: [
+          BoxShadow(
+            color: palette.currentAccentDeep.withValues(alpha: 0.16),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: ClipOval(
         child: imageProvider == null
@@ -475,11 +555,12 @@ class _InitialsFallback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Center(
       child: Text(
         initials,
-        style: const TextStyle(
-          color: AppColors.ink500,
+        style: TextStyle(
+          color: palette.primaryDeep,
           fontSize: 28,
           fontWeight: FontWeight.w900,
         ),
@@ -566,15 +647,59 @@ class _ErrorMessageBox extends StatelessWidget {
         border: Border.all(color: const Color(0x55A63F2D), width: 1),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: Text(
-        message,
-        style: const TextStyle(
-          color: Color(0xFF8E3626),
-          fontSize: 11,
-          fontWeight: FontWeight.w800,
-          height: 1.4,
-        ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.error_outline_rounded,
+            color: Color(0xFF8E3626),
+            size: 15,
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(
+                color: Color(0xFF8E3626),
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _ProfileEditorIconBadge extends StatelessWidget {
+  const _ProfileEditorIconBadge({
+    required this.icon,
+    required this.accent,
+    this.size = 32,
+  });
+
+  final IconData icon;
+  final Color accent;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: Color.alphaBlend(
+          accent.withValues(alpha: 0.10),
+          palette.softSurface,
+        ),
+        borderRadius: BorderRadius.circular(size * 0.38),
+        border: Border.all(color: accent.withValues(alpha: 0.34), width: 0.9),
+      ),
+      child: Icon(icon, color: accent, size: size * 0.52),
     );
   }
 }

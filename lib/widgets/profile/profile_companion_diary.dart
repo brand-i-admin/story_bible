@@ -4,6 +4,7 @@ import '../../models/user_companion_diary_entry.dart';
 import '../../screens/companion_diary_entries_screen.dart';
 import '../../theme/tokens.dart';
 import 'companion_diary_entry_card.dart';
+import 'glowing_add_button.dart';
 
 class CompanionDiaryTodaySection extends StatelessWidget {
   const CompanionDiaryTodaySection({
@@ -216,6 +217,14 @@ class _CompanionDiaryEmptyState extends StatelessWidget {
       ),
       child: Column(
         children: [
+          if (canWrite) ...[
+            ProfileGlowingAddButton(
+              key: const ValueKey('companion-diary-add-button'),
+              tooltip: '동행 일지 작성',
+              onTap: onAdd,
+            ),
+            const SizedBox(height: 10),
+          ],
           Text(
             error ??
                 (canWrite
@@ -229,15 +238,6 @@ class _CompanionDiaryEmptyState extends StatelessWidget {
               height: 1.42,
             ),
           ),
-          if (canWrite) ...[
-            const SizedBox(height: 10),
-            _CompanionDiaryCircleButton(
-              key: const ValueKey('companion-diary-add-button'),
-              tooltip: '동행 일지 작성',
-              icon: Icons.add_rounded,
-              onTap: onAdd,
-            ),
-          ],
         ],
       ),
     );
@@ -268,39 +268,6 @@ class _CompanionDiaryTextButton extends StatelessWidget {
               fontWeight: FontWeight.w900,
               height: 1,
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CompanionDiaryCircleButton extends StatelessWidget {
-  const _CompanionDiaryCircleButton({
-    super.key,
-    required this.tooltip,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String tooltip;
-  final IconData icon;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: Material(
-        color: AppColors.greenTint2,
-        shape: const CircleBorder(),
-        child: InkWell(
-          onTap: onTap,
-          customBorder: const CircleBorder(),
-          child: SizedBox(
-            width: 34,
-            height: 34,
-            child: Icon(icon, size: 22, color: AppColors.greenBot),
           ),
         ),
       ),

@@ -34,5 +34,12 @@ void main() {
 
       expect(repo.read(), AppColorPalette.classic);
     });
+
+    test('제거된 brightCoast 저장값은 classic으로 보정한다', () async {
+      await prefs.setString(ColorPaletteRepository.key, 'brightCoast');
+      final repo = ColorPaletteRepository(prefs);
+
+      expect(repo.read(), AppColorPalette.classic);
+    });
   });
 }

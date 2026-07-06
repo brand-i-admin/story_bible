@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:story_bible/theme/app_color_palette.dart';
 import 'package:story_bible/widgets/v2/map_hint_overlay.dart';
 
 void main() {
@@ -17,9 +18,16 @@ void main() {
     expect(find.text('화면 아무데나 누르면 사라집니다'), findsOneWidget);
     expect(find.text('노란 지역을 눌러 그곳의 사건을 보세요.'), findsOneWidget);
     final guideText = tester.widget<Text>(find.text('노란 지역을 눌러 그곳의 사건을 보세요.'));
+    expect(guideText.style?.color, Colors.white);
     expect(guideText.style?.fontSize, 12.4);
     expect(guideText.style?.height, 1.38);
     expect(find.byIcon(Icons.hourglass_top_rounded), findsOneWidget);
+    final dismissIcon = tester.widget<Icon>(
+      find.byIcon(Icons.hourglass_top_rounded),
+    );
+    expect(dismissIcon.color, Colors.white);
+    final dismissText = tester.widget<Text>(find.text('화면 아무데나 누르면 사라집니다'));
+    expect(dismissText.style?.color, Colors.white);
     final avatarSize = tester.getSize(
       find.byKey(const ValueKey('map-hint-avatar')),
     );
@@ -60,6 +68,43 @@ void main() {
         .dy;
     expect(messageTop - badgeBottom, greaterThanOrEqualTo(18));
     expect(find.byIcon(Icons.touch_app_rounded), findsNothing);
+  });
+
+  testWidgets('MapHintOverlay는 현재 팔레트의 역할색으로 표면을 나눈다', (tester) async {
+    const palette = AppColorPalette.colorfulMap;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(extensions: const [AppPaletteTheme(palette)]),
+        home: const Scaffold(body: MapHintOverlay(message: '시대를 골라보세요.')),
+      ),
+    );
+
+    BoxDecoration decorationFor(String key) {
+      final container = tester.widget<Container>(find.byKey(ValueKey(key)));
+      return container.decoration as BoxDecoration;
+    }
+
+    final outerColor = decorationFor('map-hint-container').color;
+    final dismissBadgeColor = decorationFor('map-hint-dismiss-badge').color;
+    final speechBubbleColor = decorationFor('map-hint-speech-bubble').color;
+    expect(outerColor, palette.utilityBackground.withValues(alpha: 0.64));
+    expect(
+      dismissBadgeColor,
+      Color.alphaBlend(
+        palette.currentAccentDeep.withValues(alpha: 0.82),
+        palette.utilityBackground,
+      ).withValues(alpha: 0.78),
+    );
+    expect(
+      speechBubbleColor,
+      Color.alphaBlend(
+        palette.characterAccent.withValues(alpha: 0.68),
+        palette.utilityBackground,
+      ).withValues(alpha: 0.72),
+    );
+    expect(dismissBadgeColor, isNot(outerColor));
+    expect(speechBubbleColor, isNot(outerColor));
+    expect(speechBubbleColor, isNot(dismissBadgeColor));
   });
 
   testWidgets('MapHintOverlay는 동그라미 숫자 단계 안내를 표시한다', (tester) async {

@@ -129,21 +129,24 @@ void main() {
       expect(AppColorPalette.classic.currentAccent, const Color(0xFFE8A33D));
     });
 
-    test('brightCoast는 atlasNavy와 겹치지 않는 파스텔 초록·주황·보라 조합이다', () {
-      expect(AppColorPalette.brightCoast.primary, const Color(0xFF7AAA6D));
+    test('알록 지도는 파스텔 보라 primary와 청록·오렌지·핑크 역할색을 사용한다', () {
+      expect(AppColorPalette.values, hasLength(3));
+      expect(AppColorPalette.colorfulMap.primary, const Color(0xFFAA96F2));
+      expect(AppColorPalette.colorfulMap.primaryDeep, const Color(0xFF7359B8));
       expect(
-        AppColorPalette.brightCoast.currentAccent,
-        const Color(0xFFE9A85D),
-      );
-      expect(AppColorPalette.brightCoast.stepStory, const Color(0xFFA982B8));
-      expect(
-        AppColorPalette.brightCoast.primary,
-        isNot(AppColorPalette.atlasNavy.primary),
+        AppColorPalette.colorfulMap.currentAccentDeep,
+        const Color(0xFFE77E20),
       );
       expect(
-        AppColorPalette.brightCoast.primaryDeep,
-        isNot(AppColorPalette.atlasNavy.primaryDeep),
+        AppColorPalette.colorfulMap.characterAccent,
+        const Color(0xFF13A7B1),
       );
+      expect(AppColorPalette.colorfulMap.regionAccent, const Color(0xFFD65AA0));
+      expect(
+        AppColorPalette.colorfulMap.selectionFill,
+        const Color(0xFFDDF5F1),
+      );
+      expect(AppColorPalette.colorfulMap.panelSurface, const Color(0xF8F2FCF7));
     });
   });
 

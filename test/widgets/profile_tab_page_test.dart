@@ -11,10 +11,12 @@ import 'package:story_bible/models/app_user_profile.dart';
 import 'package:story_bible/models/character.dart';
 import 'package:story_bible/models/character_study_progress.dart';
 import 'package:story_bible/models/era.dart';
+import 'package:story_bible/models/event_emotion_mark.dart';
 import 'package:story_bible/models/intercessory_prayer_item.dart';
 import 'package:story_bible/models/paged_result.dart';
 import 'package:story_bible/models/saved_bible_verse.dart';
 import 'package:story_bible/models/story_event.dart';
+import 'package:story_bible/models/user_companion_diary_entry.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/widgets/profile_editor_dialog.dart';
@@ -27,6 +29,44 @@ class _MockUserRepository extends Mock implements UserRepository {}
 class _MockSupabaseClient extends Mock implements SupabaseClient {}
 
 class _MockGoTrueClient extends Mock implements GoTrueClient {}
+
+StoryEvent _profileEvent({
+  required String id,
+  required String title,
+  int storyIndex = 1,
+}) {
+  return StoryEvent(
+    id: id,
+    landmarkId: 'landmark-$id',
+    eraId: 'era-1',
+    title: title,
+    summary: null,
+    storyScenes: const <String>[],
+    sceneCharacters: const <List<String>>[],
+    startYear: null,
+    endYear: null,
+    timePrecision: 'approx',
+    storyIndex: storyIndex,
+    rankInEra: storyIndex,
+    globalRank: storyIndex,
+    placeName: null,
+    lat: null,
+    lng: null,
+    characterCodes: const <String>[],
+    bibleRefs: const [],
+  );
+}
+
+EventEmotionMark _profileEmotionMark(String eventId) {
+  return EventEmotionMark(
+    eventId: eventId,
+    emotionKey: 'joy',
+    emotionLabel: '기쁨',
+    emotionEmoji: '🌟',
+    note: '',
+    updatedAt: DateTime.utc(2026, 5, 26),
+  );
+}
 
 void main() {
   late _MockStoryRepository storyRepository;
@@ -105,6 +145,9 @@ void main() {
     when(
       () => storyRepository.fetchEventsByIds(any()),
     ).thenAnswer((_) async => const <StoryEvent>[]);
+    when(
+      () => userRepository.fetchCompanionDiaryEntries(userId: user.id),
+    ).thenAnswer((_) async => const <UserCompanionDiaryEntry>[]);
 
     when(
       () => userRepository.ensureSignedInUser(user),
@@ -153,15 +196,20 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    final nickname = find.text('기도친구');
-    expect(nickname, findsOneWidget);
-    expect(tester.getTopLeft(nickname).dx, greaterThan(100));
+    final profileGreeting = find.textContaining('기도친구');
+    expect(profileGreeting, findsOneWidget);
+    expect(tester.getTopLeft(profileGreeting).dx, greaterThan(100));
 
-    await tester.tap(nickname);
+    await tester.tap(profileGreeting);
     await tester.pumpAndSettle();
 
     expect(find.byType(ProfileEditorDialog), findsOneWidget);
     expect(find.text('프로필 수정'), findsOneWidget);
+    expect(find.text('사진'), findsOneWidget);
+    expect(find.text('닉네임'), findsOneWidget);
+    expect(find.text('기도제목'), findsOneWidget);
+    expect(find.byIcon(Icons.add_photo_alternate_rounded), findsWidgets);
+    expect(find.byIcon(Icons.check_rounded), findsWidgets);
   });
 
   testWidgets('기도 탭의 내 기도 텍스트를 누르면 수정 다이얼로그를 연다', (tester) async {
@@ -255,11 +303,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.text('기도친구'), findsOneWidget);
+    expect(find.textContaining('기도친구'), findsOneWidget);
     expect(find.widgetWithText(OutlinedButton, '취소'), findsNothing);
   });
 
-  testWidgets('프로필 진행 탭은 다이어리 다음에 인물과 걷기를 먼저 보여준다', (tester) async {
+  testWidgets('프로필 진행 탭은 다이어리 다음에 인물과걷기를 먼저 보여준다', (tester) async {
     await _pumpProfileTab(
       tester,
       user: user,
@@ -268,15 +316,47 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    final diaryX = tester.getCenter(find.text('나의 다이어리')).dx;
-    final walkX = tester.getCenter(find.text('인물과 걷기')).dx;
-    final placeX = tester.getCenter(find.text('장소로 시작')).dx;
+    final diaryX = tester.getCenter(find.text('다이어리')).dx;
+    final walkX = tester.getCenter(find.text('인물과걷기')).dx;
+    final placeX = tester.getCenter(find.text('장소로시작')).dx;
 
     expect(diaryX, lessThan(walkX));
     expect(walkX, lessThan(placeX));
   });
 
-  testWidgets('인물과 걷기 탭은 각 인물의 첫 이야기 순으로 나열한다', (tester) async {
+  testWidgets('좁은 프로필 화면은 활동과 진행 섹션을 하나의 패널에 담고 overflow 없이 보여준다', (
+    tester,
+  ) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      viewSize: const Size(430, 932),
+      textScale: 1.4,
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('기록'), findsOneWidget);
+    expect(find.text('다이어리'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('기록')).dy,
+      lessThan(tester.getTopLeft(find.text('다이어리')).dy),
+    );
+
+    final faithPrompt = find.text('신앙(예배,말씀,기도,삶의 사건)을 기록해보세요');
+    await tester.ensureVisible(faithPrompt);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getBottomLeft(faithPrompt).dy,
+      lessThanOrEqualTo(tester.view.physicalSize.height),
+    );
+  });
+
+  testWidgets('인물과걷기 탭은 각 인물의 첫 이야기 순으로 나열한다', (tester) async {
     when(() => storyRepository.fetchCharactersByEra('era-1')).thenAnswer(
       (_) async => const [
         Character(
@@ -320,7 +400,7 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    await tester.tap(find.text('인물과 걷기'));
+    await tester.tap(find.text('인물과걷기'));
     await tester.pumpAndSettle();
 
     final adamX = tester.getCenter(find.text('아담')).dx;
@@ -434,6 +514,67 @@ void main() {
       findsNothing,
     );
   });
+
+  testWidgets('이야기 진행률 팝업은 전체/완료/미완료 필터로 카드를 거른다', (tester) async {
+    final completedEvent = _profileEvent(
+      id: 'event-done',
+      title: '완료한 이야기',
+      storyIndex: 1,
+    );
+    final incompleteEvent = _profileEvent(
+      id: 'event-todo',
+      title: '미완료 이야기',
+      storyIndex: 2,
+    );
+
+    when(() => auth.currentUser).thenReturn(user);
+    when(
+      () => storyRepository.fetchEventsByEra('era-1'),
+    ).thenAnswer((_) async => [completedEvent, incompleteEvent]);
+    when(() => storyRepository.fetchEventProgress(user.id)).thenAnswer(
+      (_) async => const {
+        'event-done': (bibleRead: true, quizCompleted: true, completed: true),
+      },
+    );
+    when(() => storyRepository.fetchEventEmotionMarks(user.id)).thenAnswer(
+      (_) async => {'event-done': _profileEmotionMark('event-done')},
+    );
+    when(
+      () => storyRepository.fetchQuizAttemptSummaries(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchSavedEventIds(user.id),
+    ).thenAnswer((_) async => const <String>{});
+    when(
+      () => storyRepository.fetchCompletedBibleChapterKeys(user.id),
+    ).thenAnswer((_) async => const <String>{});
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    await tester.tap(find.text('이야기 진행률'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('완료한 이야기'), findsOneWidget);
+    expect(find.text('미완료 이야기'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('story-progress-filter-완료')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('완료한 이야기'), findsOneWidget);
+    expect(find.text('미완료 이야기'), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('story-progress-filter-미완료')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('완료한 이야기'), findsNothing);
+    expect(find.text('미완료 이야기'), findsOneWidget);
+  });
 }
 
 Future<void> _pumpProfileTab(
@@ -448,8 +589,10 @@ Future<void> _pumpProfileTab(
     int? initialVerseNo,
   })?
   onOpenBibleReader,
+  Size viewSize = const Size(900, 700),
+  double textScale = 1.0,
 }) async {
-  tester.view.physicalSize = const Size(900, 700);
+  tester.view.physicalSize = viewSize;
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -463,14 +606,17 @@ Future<void> _pumpProfileTab(
         supabaseClientProvider.overrideWithValue(supabaseClient),
       ],
       child: MaterialApp(
-        home: ProfileTabPage(
-          onStartQuiz: (_) {},
-          onOpenEventDetail: (_, {source, sourceId}) {},
-          onOpenBibleReader:
-              onOpenBibleReader ??
-              ({initialBookNo, initialChapterNo, initialVerseNo}) {
-                return Future<void>.value();
-              },
+        home: MediaQuery(
+          data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
+          child: ProfileTabPage(
+            onStartQuiz: (_) {},
+            onOpenEventDetail: (_, {source, sourceId}) {},
+            onOpenBibleReader:
+                onOpenBibleReader ??
+                ({initialBookNo, initialChapterNo, initialVerseNo}) {
+                  return Future<void>.value();
+                },
+          ),
         ),
       ),
     ),

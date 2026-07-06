@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -132,7 +134,9 @@ Widget _wrap({
 }
 
 void _companionDiaryWidgetTests() {
-  testWidgets('감정 새김이 없으면 동행 일지 탭을 기본으로 보여주고 감정 탭을 전환할 수 있다', (tester) async {
+  testWidgets('감정 새김이 없으면 오늘 주의 동행 일지 탭을 기본으로 보여주고 감정 탭을 전환할 수 있다', (
+    tester,
+  ) async {
     final repository = _MockStoryRepository();
     when(
       () => repository.fetchEventsByIds(any()),
@@ -150,10 +154,22 @@ void _companionDiaryWidgetTests() {
     expect(find.text('나의 다이어리'), findsNothing);
     expect(find.text('내 삶의 지도'), findsNothing);
     expect(find.text('2026년 6월'), findsOneWidget);
-    for (final day in ['31', '1', '2', '3', '4', '5', '6']) {
-      expect(find.text(day), findsOneWidget);
-    }
-    for (final day in ['7', '8', '9', '10', '11', '12', '13']) {
+    for (final day in [
+      '31',
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '10',
+      '11',
+      '12',
+      '13',
+    ]) {
       expect(find.text(day), findsOneWidget);
     }
     expect(find.text('오늘의 내 감정'), findsOneWidget);
@@ -162,6 +178,12 @@ void _companionDiaryWidgetTests() {
     expect(
       find.byKey(const ValueKey('companion-diary-add-button')),
       findsOneWidget,
+    );
+    expect(
+      tester
+          .getTopLeft(find.byKey(const ValueKey('companion-diary-add-button')))
+          .dy,
+      lessThan(tester.getTopLeft(find.text('신앙(예배,말씀,기도,삶의 사건)을 기록해보세요')).dy),
     );
     expect(find.textContaining('오늘 새긴 감정이 없습니다'), findsNothing);
 
@@ -205,7 +227,7 @@ void _companionDiaryWidgetTests() {
     );
   });
 
-  testWidgets('아주크게에서 신앙 기록 탭 선택 배경은 탭 높이를 채운다', (tester) async {
+  testWidgets('아주크게에서 신앙 기록/감정 탭은 아이콘 없이 라벨을 유지한다', (tester) async {
     final repository = _MockStoryRepository();
     when(
       () => repository.fetchEventsByIds(any()),
@@ -222,24 +244,15 @@ void _companionDiaryWidgetTests() {
     );
     await tester.pumpAndSettle();
 
-    final selectedBackground = find.byWidgetPredicate((widget) {
-      if (widget is! Container) return false;
-      final decoration = widget.decoration;
-      return decoration is BoxDecoration &&
-          decoration.color == AppColorPalette.classic.primary;
-    });
-
-    expect(selectedBackground, findsOneWidget);
+    expect(find.byIcon(Icons.edit_note_rounded), findsNothing);
+    expect(find.byIcon(Icons.mood_rounded), findsNothing);
+    expect(find.text('오늘의 신앙 기록'), findsOneWidget);
+    expect(find.text('오늘의 내 감정'), findsOneWidget);
     expect(
       tester
           .getSize(find.byKey(const ValueKey('diary-content-tab-bar')))
           .height,
-      42,
-    );
-    expect(tester.getSize(selectedBackground).height, lessThanOrEqualTo(34));
-    expect(
-      tester.getSize(selectedBackground).height,
-      greaterThan(tester.getSize(find.text('오늘의 신앙 기록')).height + 8),
+      44,
     );
   });
 
@@ -471,6 +484,30 @@ void main() {
     registerFallbackValue(<String>{});
   });
 
+  test('신앙 기록/감정 탭은 밝은 레일과 선택색 본문 표면을 연결한다', () {
+    final source = File(
+      'lib/widgets/profile/profile_emotion_diary.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('_DiaryLinkedTabSection'));
+    expect(source, contains('_profileTabRailDecoration'));
+    expect(source, contains('_profileLinkedTabGroupDecoration'));
+    expect(source, contains('_profileLinkedTabBodyDecoration'));
+    expect(source, contains('_profileSelectedTabButtonSurface'));
+    expect(
+      source,
+      contains('child: selectedContentTab == _DiaryContentTab.companion'),
+    );
+    expect(source, contains('secondaryAccent: palette.regionAccent'));
+    expect(source, contains('selected ? AppColors.fgOnDark : palette.text'));
+    expect(source, isNot(contains('fgOnDark.withValues(alpha: 0.92)')));
+    expect(source, isNot(contains('_DiaryTabContentConnector')));
+    expect(
+      source,
+      isNot(contains('selected == _DiaryContentTab.companion ? 0 : 1')),
+    );
+  });
+
   _companionDiaryWidgetTests();
 
   testWidgets('감정 카테고리 버튼은 달력 연월보다 위에서 동작한다', (tester) async {
@@ -507,7 +544,7 @@ void main() {
     );
     expect(
       tester.getTopLeft(find.text('2026년 6월')).dy,
-      lessThan(tester.getTopLeft(find.text('31')).dy),
+      lessThan(tester.getTopLeft(find.text('7')).dy),
     );
 
     await tester.tap(find.text('기쁨 1'));

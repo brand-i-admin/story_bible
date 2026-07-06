@@ -7,68 +7,115 @@ bool _profileUsesLargeTextLayout(BuildContext context) {
   return MediaQuery.textScalerOf(context).scale(1) >= 1.3;
 }
 
+BoxDecoration _profileTabRailDecoration(
+  BuildContext context, {
+  required Color accent,
+  Color? secondaryAccent,
+}) {
+  final palette = AppPaletteTheme.of(context);
+  final endAccent = secondaryAccent ?? accent;
+  return BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Color.alphaBlend(
+          accent.withValues(alpha: 0.12),
+          palette.cardUnselectedTop,
+        ),
+        Color.alphaBlend(
+          endAccent.withValues(alpha: 0.10),
+          palette.cardUnselectedBottom,
+        ),
+      ],
+    ),
+    borderRadius: BorderRadius.circular(20),
+    border: Border.all(color: accent.withValues(alpha: 0.28), width: 0.9),
+  );
+}
+
+BoxDecoration _profileLinkedTabGroupDecoration(
+  BuildContext context, {
+  required Color accent,
+  Color? secondaryAccent,
+}) {
+  return _profileTabRailDecoration(
+    context,
+    accent: accent,
+    secondaryAccent: secondaryAccent,
+  );
+}
+
+Color _profileSelectedTabSurface(
+  BuildContext context, {
+  required Color accent,
+}) {
+  final palette = AppPaletteTheme.of(context);
+  return Color.alphaBlend(accent.withValues(alpha: 0.24), palette.cardSurface);
+}
+
+Color _profileSelectedTabButtonSurface(Color accent) {
+  return accent;
+}
+
+const double _profileIconTabHeight = 44;
+
+BoxDecoration _profileLinkedTabBodyDecoration(
+  BuildContext context, {
+  required Color accent,
+}) {
+  return BoxDecoration(
+    color: _profileSelectedTabSurface(context, accent: accent),
+    borderRadius: const BorderRadius.only(
+      topLeft: Radius.circular(10),
+      topRight: Radius.circular(10),
+      bottomLeft: Radius.circular(16),
+      bottomRight: Radius.circular(16),
+    ),
+    border: Border.all(color: accent.withValues(alpha: 0.28), width: 0.7),
+  );
+}
+
 extension ProfileLeftPanelExt on ProfileTabPageState {
-  Widget _buildProfileLeftPanel({
+  Widget _buildProfileActivitySection({
     required AppUserProfile profile,
     required bool isAuthenticated,
   }) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final palette = AppPaletteTheme.of(context);
-        final desiredCardHeight = _profileLeftCardHeight(
-          isAuthenticated: isAuthenticated,
-        );
-        final cardHeight = constraints.hasBoundedHeight
-            ? math.min(
-                desiredCardHeight,
-                math.max(180.0, constraints.maxHeight - _profileHeaderBlock),
-              )
-            : desiredCardHeight;
-
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildProfileHeader(profile: profile),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: cardHeight,
-              child: Container(
-                clipBehavior: Clip.hardEdge,
-                decoration: floatingPanelDecoration(
-                  color: palette.panelSurface,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _buildProfileContentTabs(),
-                      const SizedBox(height: 8),
-                      Expanded(
-                        child: _buildProfileContentPanel(
-                          profile: profile,
-                          isAuthenticated: isAuthenticated,
-                        ),
-                      ),
-                    ],
-                  ),
+    final palette = AppPaletteTheme.of(context);
+    final railAccent = palette.primary;
+    final contentAccent = _profileContentTabAccent(palette);
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: _profileLinkedTabGroupDecoration(context, accent: railAccent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+            child: _buildProfileContentTabs(),
+          ),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+              decoration: _profileLinkedTabBodyDecoration(
+                context,
+                accent: contentAccent,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+                child: _buildProfileContentPanel(
+                  profile: profile,
+                  isAuthenticated: isAuthenticated,
                 ),
               ),
             ),
-          ],
-        );
-      },
+          ),
+        ],
+      ),
     );
   }
 
-  static const double _profileHeaderBlock = 56;
-  static const double _profileLeftCardChromeHeight = 74;
-
-  double _profileLeftPanelDesiredHeight({required bool isAuthenticated}) {
-    return _profileHeaderBlock +
-        _profileLeftCardHeight(isAuthenticated: isAuthenticated);
-  }
+  static const double _profileLeftCardChromeHeight = 90;
 
   double _profileLeftCardHeight({required bool isAuthenticated}) {
     return _profileLeftCardChromeHeight +
@@ -83,20 +130,21 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }
 
   double _profileRecordsContentHeight() {
-    final state = ref.read(storyControllerProvider);
-    final stats = buildProfileQuizStats(state.quizAttemptSummaries);
-    return stats.total == 0 ? 188 : 168;
+    return 122;
   }
 
   double _profilePrayerContentHeight({required bool isAuthenticated}) {
+    final largeText = _profileUsesLargeTextLayout(context);
     if (_intercessoryPrayerLoading && _intercessoryPrayerItems.isEmpty) {
-      return 244;
+      return largeText ? 226 : 196;
     }
     if (_intercessoryPrayerError != null && _intercessoryPrayerItems.isEmpty) {
-      return 258;
+      return largeText ? 236 : 206;
     }
     if (_intercessoryPrayerItems.isEmpty) {
-      return isAuthenticated ? 258 : 236;
+      return isAuthenticated
+          ? (largeText ? 236 : 208)
+          : (largeText ? 228 : 198);
     }
     final visibleItems = math.min(_intercessoryPrayerItems.length, 3);
     return (184 + visibleItems * 74).clamp(292.0, 408.0).toDouble();
@@ -144,21 +192,64 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                     ),
                     child: Row(
                       children: [
-                        _buildCurrentUserAvatar(profile: profile, size: 40),
-                        const SizedBox(width: 10),
+                        _buildCurrentUserAvatar(profile: profile, size: 56),
+                        const SizedBox(width: 12),
                         Expanded(
-                          child: Text(
-                            profile.nickname,
-                            maxLines: largeText ? 2 : 1,
-                            overflow: largeText
-                                ? TextOverflow.visible
-                                : TextOverflow.ellipsis,
-                            softWrap: true,
-                            style: TextStyle(
-                              color: palette.text,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w900,
-                            ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: '샬롬! 🙌 ',
+                                      style: TextStyle(
+                                        color: palette.mutedText,
+                                        fontSize: largeText ? 11.4 : 12.0,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: profile.nickname,
+                                      style: TextStyle(
+                                        color: palette.text,
+                                        fontSize: largeText ? 17.2 : 18.4,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '님',
+                                      style: TextStyle(
+                                        color: palette.mutedText,
+                                        fontSize: largeText ? 11.4 : 12.0,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                maxLines: largeText ? 2 : 1,
+                                overflow: largeText
+                                    ? TextOverflow.visible
+                                    : TextOverflow.ellipsis,
+                                softWrap: true,
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                '오늘도 말씀 안에서\n승리하는 하루 되세요!',
+                                maxLines: 2,
+                                overflow: largeText
+                                    ? TextOverflow.visible
+                                    : TextOverflow.ellipsis,
+                                softWrap: true,
+                                style: TextStyle(
+                                  color: palette.mutedText,
+                                  fontSize: largeText ? 11.0 : 11.6,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.18,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -186,41 +277,43 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
   Widget _buildProfileContentTabs() {
     final palette = AppPaletteTheme.of(context);
-    return Container(
-      height: 42,
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: palette.selectionFill,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: palette.subtleBorder, width: 0.8),
-      ),
+    return SizedBox(
+      height: _profileIconTabHeight,
       child: Row(
         children: [
           Expanded(
             child: _profileContentTabButton(
+              icon: Icons.edit_note_rounded,
               label: '기록',
               tab: _ProfileContentTab.records,
+              accent: palette.regionAccent,
             ),
           ),
           const SizedBox(width: 4),
           Expanded(
             child: _profileContentTabButton(
+              icon: Icons.self_improvement_rounded,
               label: '기도',
               tab: _ProfileContentTab.prayer,
+              accent: palette.characterAccent,
             ),
           ),
           const SizedBox(width: 4),
           Expanded(
             child: _profileContentTabButton(
+              icon: Icons.bookmark_rounded,
               label: '저장',
               tab: _ProfileContentTab.saved,
+              accent: palette.primary,
             ),
           ),
           const SizedBox(width: 4),
           Expanded(
             child: _profileContentTabButton(
+              icon: Icons.menu_book_rounded,
               label: '말씀',
               tab: _ProfileContentTab.verses,
+              accent: palette.currentAccentDeep,
             ),
           ),
         ],
@@ -229,54 +322,29 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }
 
   Widget _profileContentTabButton({
+    required IconData icon,
     required String label,
     required _ProfileContentTab tab,
+    required Color accent,
   }) {
     final selected = _profileContentTab == tab;
-    final palette = AppPaletteTheme.of(context);
-    final accent = _profileContentTabAccent(tab, palette);
-    final largeText = _profileUsesLargeTextLayout(context);
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          _selectProfileContentTab(tab);
-        },
-        borderRadius: BorderRadius.circular(9),
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? accent : Colors.transparent,
-            borderRadius: BorderRadius.circular(9),
-            boxShadow: selected ? AppShadows.sm : null,
-          ),
-          child: Text(
-            label,
-            maxLines: largeText ? 2 : 1,
-            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
-            softWrap: true,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: selected ? AppColors.fgOnDark : palette.text,
-              fontSize: 12.5,
-              fontWeight: FontWeight.w900,
-              height: 1,
-            ),
-          ),
-        ),
-      ),
+    return _ProfileIconTabButton(
+      icon: icon,
+      label: label,
+      selected: selected,
+      accent: accent,
+      onTap: () {
+        _selectProfileContentTab(tab);
+      },
     );
   }
 
-  Color _profileContentTabAccent(
-    _ProfileContentTab tab,
-    AppColorPalette palette,
-  ) {
-    return switch (tab) {
-      _ProfileContentTab.records => palette.primary,
-      _ProfileContentTab.prayer => palette.regionAccent,
-      _ProfileContentTab.saved => palette.currentAccentDeep,
-      _ProfileContentTab.verses => palette.primaryDeep,
+  Color _profileContentTabAccent(AppColorPalette palette) {
+    return switch (_profileContentTab) {
+      _ProfileContentTab.records => palette.regionAccent,
+      _ProfileContentTab.prayer => palette.characterAccent,
+      _ProfileContentTab.saved => palette.primary,
+      _ProfileContentTab.verses => palette.currentAccentDeep,
     };
   }
 
@@ -346,33 +414,24 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _ProfileOverallProgressRow(
-            storyProgress: storyProgress,
-            bibleProgress: bibleProgress,
-            onTapStory: _openStoryProgressDialog,
-            onTapBible: _openBibleProgressDialog,
-          ),
-          const SizedBox(height: 9),
-          _ProfileRecordsStatsPanel(
-            quizStats: stats,
-            selectedQuizFilter: null,
-            onTapWrong: () {
-              _openProfileQuizReviewDialog(
-                filter: _ProfileQuizReviewFilter.wrong,
-                eventIds: stats.wrongEventIds,
-              );
-            },
-            onTapConfused: () {
-              _openProfileQuizReviewDialog(
-                filter: _ProfileQuizReviewFilter.confused,
-                eventIds: stats.confusedEventIds,
-              );
-            },
-          ),
-        ],
+      child: _ProfileRecordsDashboard(
+        storyProgress: storyProgress,
+        bibleProgress: bibleProgress,
+        quizStats: stats,
+        onTapStory: _openStoryProgressDialog,
+        onTapBible: _openBibleProgressDialog,
+        onTapWrong: () {
+          _openProfileQuizReviewDialog(
+            filter: _ProfileQuizReviewFilter.wrong,
+            eventIds: stats.wrongEventIds,
+          );
+        },
+        onTapConfused: () {
+          _openProfileQuizReviewDialog(
+            filter: _ProfileQuizReviewFilter.confused,
+            eventIds: stats.confusedEventIds,
+          );
+        },
       ),
     );
   }
@@ -524,45 +583,44 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         const SizedBox(height: 7),
         // 중보 기도 리스트 — 탭 카드의 남은 높이를 채움. 항목이 많으면
         // 내부에서만 스크롤해 다른 프로필 섹션 높이를 밀어내지 않는다.
-        Expanded(
-          child: _intercessoryPrayerLoading && !hasItems
-              ? const Center(child: CircularProgressIndicator())
-              : _intercessoryPrayerError != null && !hasItems
-              ? _buildIntercessoryPrayerErrorCard()
-              : !hasItems
-              ? _buildIntercessoryPrayerEmptyCard(enabled: isAuthenticated)
-              : Stack(
-                  children: [
-                    ListView.separated(
-                      controller: _intercessoryPrayerScrollController,
-                      padding: const EdgeInsets.only(bottom: 52),
-                      itemCount:
-                          _intercessoryPrayerItems.length +
-                          (_intercessoryPrayerLoadingMore ? 1 : 0),
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (context, index) {
-                        if (index >= _intercessoryPrayerItems.length) {
-                          return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.2,
-                              ),
-                            ),
-                          );
-                        }
-                        final item = _intercessoryPrayerItems[index];
-                        return _buildIntercessoryPrayerItemCard(item);
-                      },
-                    ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: _intercessoryPrayerFab(enabled: isAuthenticated),
-                    ),
-                  ],
+        if (_intercessoryPrayerLoading && !hasItems)
+          const Expanded(child: Center(child: CircularProgressIndicator()))
+        else if (_intercessoryPrayerError != null && !hasItems)
+          Expanded(child: _buildIntercessoryPrayerErrorCard())
+        else if (!hasItems)
+          _buildIntercessoryPrayerEmptyCard(enabled: isAuthenticated)
+        else
+          Expanded(
+            child: Stack(
+              children: [
+                ListView.separated(
+                  controller: _intercessoryPrayerScrollController,
+                  padding: const EdgeInsets.only(bottom: 52),
+                  itemCount:
+                      _intercessoryPrayerItems.length +
+                      (_intercessoryPrayerLoadingMore ? 1 : 0),
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    if (index >= _intercessoryPrayerItems.length) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Center(
+                          child: CircularProgressIndicator(strokeWidth: 2.2),
+                        ),
+                      );
+                    }
+                    final item = _intercessoryPrayerItems[index];
+                    return _buildIntercessoryPrayerItemCard(item);
+                  },
                 ),
-        ),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: _intercessoryPrayerFab(enabled: isAuthenticated),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
@@ -782,6 +840,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       for (final character in _profileAllPeople) character.code: character,
       for (final character in state.characters) character.code: character,
     };
+    var storyFilter = _StoryProgressFilter.all;
 
     await showGeneralDialog<void>(
       context: context,
@@ -804,6 +863,26 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
             final selectedCompletedCount = selectedEvents
                 .where((event) => state.completedEventIds.contains(event.id))
                 .length;
+            final filteredEvents = switch (storyFilter) {
+              _StoryProgressFilter.all => selectedEvents,
+              _StoryProgressFilter.completed =>
+                selectedEvents
+                    .where(
+                      (event) => state.completedEventIds.contains(event.id),
+                    )
+                    .toList(growable: false),
+              _StoryProgressFilter.incomplete =>
+                selectedEvents
+                    .where(
+                      (event) => !state.completedEventIds.contains(event.id),
+                    )
+                    .toList(growable: false),
+            };
+            final filteredEmptyText = switch (storyFilter) {
+              _StoryProgressFilter.all => '이 시대의 이야기가 없습니다.',
+              _StoryProgressFilter.completed => '완료한 이야기가 없습니다.',
+              _StoryProgressFilter.incomplete => '미완료 이야기가 없습니다.',
+            };
             final selectedFraction = selectedEvents.isEmpty
                 ? 0.0
                 : (selectedCompletedCount / selectedEvents.length)
@@ -860,16 +939,25 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                                   fraction: selectedFraction,
                                 ),
                                 const SizedBox(height: 10),
+                                _StoryProgressFilterTabs(
+                                  selectedFilter: storyFilter,
+                                  onChanged: (filter) {
+                                    setDialogState(() {
+                                      storyFilter = filter;
+                                    });
+                                  },
+                                ),
+                                const SizedBox(height: 10),
                                 Expanded(
                                   child: ProfileEventReviewGrid(
-                                    events: selectedEvents,
+                                    events: filteredEvents,
                                     eras: state.eras,
                                     charactersByCode: charactersByCode,
                                     completedEventIds: state.completedEventIds,
                                     eventEmotionMarks: state.eventEmotionMarks,
                                     quizAttemptSummaries:
                                         state.quizAttemptSummaries,
-                                    emptyText: '이 시대의 이야기가 없습니다.',
+                                    emptyText: filteredEmptyText,
                                     onOpenEventDetail: (event) {
                                       Navigator.of(dialogContext).pop();
                                       widget.onOpenEventDetail(event);
@@ -1375,92 +1463,310 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }
 }
 
-class _ProfileRecordsStatsPanel extends StatelessWidget {
-  const _ProfileRecordsStatsPanel({
+class _ProfileIconTabButton extends StatelessWidget {
+  const _ProfileIconTabButton({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final largeText = _profileUsesLargeTextLayout(context);
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      child: SizedBox.expand(
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(16),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 170),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              decoration: BoxDecoration(
+                color: selected
+                    ? _profileSelectedTabButtonSurface(accent)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(16),
+                border: selected
+                    ? Border.all(
+                        color: AppColors.fgOnDark.withValues(alpha: 0.38),
+                      )
+                    : null,
+                boxShadow: selected
+                    ? [
+                        BoxShadow(
+                          color: accent.withValues(alpha: 0.18),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 170),
+                    width: largeText ? 26 : 28,
+                    height: largeText ? 26 : 28,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? AppColors.fgOnDark.withValues(alpha: 0.88)
+                          : Color.alphaBlend(
+                              accent.withValues(alpha: 0.08),
+                              AppColors.parchmentCream,
+                            ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: selected
+                            ? AppColors.fgOnDark.withValues(alpha: 0.48)
+                            : palette.subtleBorder.withValues(alpha: 0.58),
+                        width: selected ? 1.0 : 0.7,
+                      ),
+                    ),
+                    child: Icon(icon, color: accent, size: 16.5),
+                  ),
+                  SizedBox(width: largeText ? 3 : 5),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: selected ? AppColors.fgOnDark : palette.text,
+                          fontSize: largeText ? 11.0 : 11.6,
+                          fontWeight: FontWeight.w900,
+                          height: 1.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileRecordsDashboard extends StatelessWidget {
+  const _ProfileRecordsDashboard({
+    required this.storyProgress,
+    required this.bibleProgress,
     required this.quizStats,
-    required this.selectedQuizFilter,
+    required this.onTapStory,
+    required this.onTapBible,
     required this.onTapWrong,
     required this.onTapConfused,
   });
 
+  final ({int completed, int total, double fraction}) storyProgress;
+  final ({int completed, int total, double fraction}) bibleProgress;
   final ProfileQuizStats quizStats;
-  final _ProfileQuizReviewFilter? selectedQuizFilter;
+  final VoidCallback onTapStory;
+  final VoidCallback onTapBible;
+  final VoidCallback onTapWrong;
+  final VoidCallback onTapConfused;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          height: 136,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                flex: 5,
+                child: _ProfileOverallProgressButton(
+                  icon: Icons.menu_book_rounded,
+                  label: '통독 진행률',
+                  completed: bibleProgress.completed,
+                  total: bibleProgress.total,
+                  fraction: bibleProgress.fraction,
+                  color: AppPaletteTheme.of(context).primary,
+                  onTap: onTapBible,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 9,
+                child: _ProfileStoryQuizProgressPanel(
+                  storyProgress: storyProgress,
+                  quizStats: quizStats,
+                  onTapStory: onTapStory,
+                  onTapWrong: onTapWrong,
+                  onTapConfused: onTapConfused,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ProfileStoryQuizProgressPanel extends StatelessWidget {
+  const _ProfileStoryQuizProgressPanel({
+    required this.storyProgress,
+    required this.quizStats,
+    required this.onTapStory,
+    required this.onTapWrong,
+    required this.onTapConfused,
+  });
+
+  final ({int completed, int total, double fraction}) storyProgress;
+  final ProfileQuizStats quizStats;
+  final VoidCallback onTapStory;
   final VoidCallback onTapWrong;
   final VoidCallback onTapConfused;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 11, 12, 11),
-      decoration: BoxDecoration(
-        color: palette.cardSurface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: palette.subtleBorder, width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x14000000),
-            blurRadius: 8,
-            offset: Offset(0, 3),
+    final largeText = _profileUsesLargeTextLayout(context);
+    final storyColor = palette.regionAccent;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final statsWidth = (constraints.maxWidth * 0.48)
+            .clamp(102.0, 128.0)
+            .toDouble();
+        return Container(
+          padding: EdgeInsets.all(largeText ? 6 : 8),
+          decoration: BoxDecoration(
+            color: Color.alphaBlend(
+              storyColor.withValues(alpha: 0.052),
+              AppColors.parchmentCream,
+            ),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: palette.subtleBorder, width: 1),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x12000000),
+                blurRadius: 12,
+                offset: Offset(0, 5),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _ProfileQuizStatsStrip(
-            stats: quizStats,
-            selected: selectedQuizFilter,
-            onTapWrong: onTapWrong,
-            onTapConfused: onTapConfused,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onTapStory,
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: largeText ? 1 : 2,
+                      ),
+                      child: _ProfileProgressSummaryContent(
+                        icon: Icons.auto_stories_rounded,
+                        label: '이야기 진행률',
+                        completed: storyProgress.completed,
+                        total: storyProgress.total,
+                        fraction: storyProgress.fraction,
+                        color: storyColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: 1,
+                margin: EdgeInsets.symmetric(
+                  horizontal: largeText ? 5 : 7,
+                  vertical: 4,
+                ),
+                color: palette.subtleBorder.withValues(alpha: 0.78),
+              ),
+              SizedBox(
+                width: statsWidth,
+                child: _ProfileQuizStatsColumn(
+                  stats: quizStats,
+                  onTapWrong: onTapWrong,
+                  onTapConfused: onTapConfused,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
-class _ProfileOverallProgressRow extends StatelessWidget {
-  const _ProfileOverallProgressRow({
-    required this.storyProgress,
-    required this.bibleProgress,
-    required this.onTapStory,
-    required this.onTapBible,
+class _ProfileQuizStatsColumn extends StatelessWidget {
+  const _ProfileQuizStatsColumn({
+    required this.stats,
+    required this.onTapWrong,
+    required this.onTapConfused,
   });
 
-  final ({int completed, int total, double fraction}) storyProgress;
-  final ({int completed, int total, double fraction}) bibleProgress;
-  final VoidCallback onTapStory;
-  final VoidCallback onTapBible;
+  final ProfileQuizStats stats;
+  final VoidCallback onTapWrong;
+  final VoidCallback onTapConfused;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    return Row(
+    final largeText = _profileUsesLargeTextLayout(context);
+    final itemGap = largeText ? 2.0 : 5.0;
+    final items = [
+      _ProfileQuizStatItem(
+        icon: Icons.check_rounded,
+        label: '정답',
+        count: stats.correct,
+        eventCount: stats.correctEventCount,
+        color: palette.successBottom,
+        onTap: null,
+      ),
+      _ProfileQuizStatItem(
+        icon: Icons.close_rounded,
+        label: '오답',
+        count: stats.wrong,
+        eventCount: stats.wrongEventCount,
+        color: AppColors.dangerBot,
+        onTap: onTapWrong,
+      ),
+      _ProfileQuizStatItem(
+        icon: Icons.question_mark_rounded,
+        label: '헷갈려요',
+        count: stats.confused,
+        eventCount: stats.confusedEventCount,
+        color: palette.currentAccentDeep,
+        onTap: onTapConfused,
+      ),
+    ];
+    return Flex(
+      direction: Axis.vertical,
       children: [
-        Expanded(
-          child: _ProfileOverallProgressButton(
-            icon: Icons.auto_stories_rounded,
-            label: '이야기 진행률',
-            completed: storyProgress.completed,
-            total: storyProgress.total,
-            fraction: storyProgress.fraction,
-            color: palette.characterAccent,
-            onTap: onTapStory,
-          ),
-        ),
-        const SizedBox(width: 9),
-        Expanded(
-          child: _ProfileOverallProgressButton(
-            icon: Icons.menu_book_rounded,
-            label: '통독 진행률',
-            completed: bibleProgress.completed,
-            total: bibleProgress.total,
-            fraction: bibleProgress.fraction,
-            color: palette.currentAccentDeep,
-            onTap: onTapBible,
-          ),
-        ),
+        for (var i = 0; i < items.length; i++) ...[
+          Expanded(child: items[i]),
+          if (i != items.length - 1) SizedBox(height: itemGap),
+        ],
       ],
     );
   }
@@ -1488,88 +1794,213 @@ class _ProfileOverallProgressButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final valueLabel = '$completed/$total';
-    final largeText = _profileUsesLargeTextLayout(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(13),
+        borderRadius: BorderRadius.circular(22),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 64),
-          padding: const EdgeInsets.fromLTRB(10, 9, 10, 9),
+          constraints: const BoxConstraints(minHeight: 124),
+          padding: const EdgeInsets.fromLTRB(9, 9, 9, 9),
           decoration: BoxDecoration(
-            color: palette.cardSurface,
-            borderRadius: BorderRadius.circular(13),
+            color: Color.alphaBlend(
+              color.withValues(alpha: 0.045),
+              AppColors.parchmentCream,
+            ),
+            borderRadius: BorderRadius.circular(22),
             border: Border.all(color: palette.subtleBorder, width: 1),
             boxShadow: const [
               BoxShadow(
-                color: Color(0x10000000),
-                blurRadius: 7,
-                offset: Offset(0, 3),
+                color: Color(0x12000000),
+                blurRadius: 12,
+                offset: Offset(0, 5),
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Icon(icon, size: 16, color: color),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child: Text(
-                      label,
-                      maxLines: largeText ? 2 : 1,
-                      overflow: largeText
-                          ? TextOverflow.visible
-                          : TextOverflow.ellipsis,
-                      softWrap: true,
-                      style: TextStyle(
-                        color: palette.text,
-                        fontSize: 12.2,
-                        fontWeight: FontWeight.w900,
-                        height: 1.1,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(999),
-                    child: LinearProgressIndicator(
-                      minHeight: 13,
-                      value: fraction.clamp(0.0, 1.0).toDouble(),
-                      backgroundColor: color.withValues(alpha: 0.16),
-                      color: color,
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: Center(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          valueLabel,
-                          maxLines: 1,
-                          style: TextStyle(
-                            color: palette.text,
-                            fontSize: 9.4,
-                            fontWeight: FontWeight.w900,
-                            height: 1.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          child: _ProfileProgressSummaryContent(
+            icon: icon,
+            label: label,
+            completed: completed,
+            total: total,
+            fraction: fraction,
+            color: color,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ProfileProgressSummaryContent extends StatelessWidget {
+  const _ProfileProgressSummaryContent({
+    required this.icon,
+    required this.label,
+    required this.completed,
+    required this.total,
+    required this.fraction,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final int completed;
+  final int total;
+  final double fraction;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.13),
+                borderRadius: BorderRadius.circular(9),
+              ),
+              child: Icon(icon, size: 15, color: color),
+            ),
+            const SizedBox(width: 5),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    color: palette.text,
+                    fontSize: 11.6,
+                    fontWeight: FontWeight.w900,
+                    height: 1.05,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 9),
+        _ProfileProgressDonut(
+          completed: completed,
+          total: total,
+          fraction: fraction,
+          color: color,
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileProgressDonut extends StatelessWidget {
+  const _ProfileProgressDonut({
+    required this.completed,
+    required this.total,
+    required this.fraction,
+    required this.color,
+  });
+
+  final int completed;
+  final int total;
+  final double fraction;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return SizedBox(
+      width: 62,
+      height: 62,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox.expand(
+            child: CircularProgressIndicator(
+              value: fraction.clamp(0.0, 1.0).toDouble(),
+              strokeWidth: 6,
+              backgroundColor: color.withValues(alpha: 0.18),
+              color: color,
+            ),
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '$completed',
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: palette.successBottom,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    height: 1,
+                    shadows: [
+                      Shadow(
+                        color: palette.successBottom.withValues(alpha: 0.18),
+                        blurRadius: 5,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Text(
+                '/$total',
+                maxLines: 1,
+                style: TextStyle(
+                  color: palette.mutedText,
+                  fontSize: 9.4,
+                  fontWeight: FontWeight.w800,
+                  height: 1.05,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileCompletedRatioText extends StatelessWidget {
+  const _ProfileCompletedRatioText({
+    required this.completed,
+    required this.totalLabel,
+    this.fontSize = 11,
+  });
+
+  final int completed;
+  final String totalLabel;
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: '$completed',
+            style: TextStyle(
+              color: palette.successBottom,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          TextSpan(text: ' / $totalLabel'),
+        ],
+      ),
+      maxLines: 1,
+      style: TextStyle(
+        color: palette.mutedText,
+        fontSize: fontSize,
+        fontWeight: FontWeight.w800,
+        height: 1.0,
       ),
     );
   }
@@ -1644,16 +2075,79 @@ class _StoryProgressSelectedEraMeter extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            '$completed / $total',
-            maxLines: 1,
-            style: TextStyle(
-              color: palette.mutedText,
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              height: 1.0,
-            ),
+          _ProfileCompletedRatioText(
+            completed: completed,
+            totalLabel: '$total',
+            fontSize: 11,
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StoryProgressFilterTabs extends StatelessWidget {
+  const _StoryProgressFilterTabs({
+    required this.selectedFilter,
+    required this.onChanged,
+  });
+
+  final _StoryProgressFilter selectedFilter;
+  final ValueChanged<_StoryProgressFilter> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final tabs = [
+      (filter: _StoryProgressFilter.all, label: '전체'),
+      (filter: _StoryProgressFilter.completed, label: '완료'),
+      (filter: _StoryProgressFilter.incomplete, label: '미완료'),
+    ];
+    return Container(
+      height: 38,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: palette.softSurface,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: palette.subtleBorder, width: 1),
+      ),
+      child: Row(
+        children: [
+          for (final tab in tabs) ...[
+            Expanded(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  key: ValueKey('story-progress-filter-${tab.label}'),
+                  onTap: () => onChanged(tab.filter),
+                  borderRadius: BorderRadius.circular(999),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: selectedFilter == tab.filter
+                          ? palette.successBottom
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      tab.label,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: selectedFilter == tab.filter
+                            ? AppColors.fgOnDark
+                            : palette.text,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            if (tab != tabs.last) const SizedBox(width: 3),
+          ],
         ],
       ),
     );
@@ -1927,13 +2421,10 @@ class _BibleBookProgressFooter extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 7),
-          Text(
-            '$completed / $total장',
-            style: TextStyle(
-              color: palette.mutedText,
-              fontSize: 11.5,
-              fontWeight: FontWeight.w800,
-            ),
+          _ProfileCompletedRatioText(
+            completed: completed,
+            totalLabel: '$total장',
+            fontSize: 11.5,
           ),
         ],
       ),
@@ -1974,64 +2465,6 @@ class _BibleChapterVerticalDivider extends StatelessWidget {
   }
 }
 
-class _ProfileQuizStatsStrip extends StatelessWidget {
-  const _ProfileQuizStatsStrip({
-    required this.stats,
-    required this.selected,
-    required this.onTapWrong,
-    required this.onTapConfused,
-  });
-
-  final ProfileQuizStats stats;
-  final _ProfileQuizReviewFilter? selected;
-  final VoidCallback onTapWrong;
-  final VoidCallback onTapConfused;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Row(
-      children: [
-        Expanded(
-          child: _ProfileQuizStatItem(
-            icon: Icons.check_rounded,
-            label: '정답',
-            count: stats.correct,
-            eventCount: stats.correctEventCount,
-            color: palette.successBottom,
-            selected: false,
-            onTap: null,
-          ),
-        ),
-        const SizedBox(width: 9),
-        Expanded(
-          child: _ProfileQuizStatItem(
-            icon: Icons.close_rounded,
-            label: '오답',
-            count: stats.wrong,
-            eventCount: stats.wrongEventCount,
-            color: AppColors.dangerBot,
-            selected: selected == _ProfileQuizReviewFilter.wrong,
-            onTap: onTapWrong,
-          ),
-        ),
-        const SizedBox(width: 9),
-        Expanded(
-          child: _ProfileQuizStatItem(
-            icon: Icons.question_mark_rounded,
-            label: '헷갈려요',
-            count: stats.confused,
-            eventCount: stats.confusedEventCount,
-            color: palette.currentAccentDeep,
-            selected: selected == _ProfileQuizReviewFilter.confused,
-            onTap: onTapConfused,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _ProfileQuizStatItem extends StatelessWidget {
   const _ProfileQuizStatItem({
     required this.icon,
@@ -2039,7 +2472,6 @@ class _ProfileQuizStatItem extends StatelessWidget {
     required this.count,
     required this.eventCount,
     required this.color,
-    required this.selected,
     required this.onTap,
   });
 
@@ -2048,74 +2480,79 @@ class _ProfileQuizStatItem extends StatelessWidget {
   final int count;
   final int eventCount;
   final Color color;
-  final bool selected;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final largeText = _profileUsesLargeTextLayout(context);
+    final iconBoxSize = largeText ? 19.0 : 24.0;
     final content = AnimatedContainer(
       duration: const Duration(milliseconds: 160),
       alignment: Alignment.center,
-      constraints: const BoxConstraints(minHeight: 62),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      decoration: BoxDecoration(
-        color: selected ? color.withValues(alpha: 0.14) : palette.cardSurface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: selected
-              ? color.withValues(alpha: 0.58)
-              : palette.subtleBorder,
-          width: selected ? 1.1 : 0.8,
-        ),
-        boxShadow: onTap == null
-            ? null
-            : const [
-                BoxShadow(
-                  color: Color(0x12000000),
-                  blurRadius: 5,
-                  offset: Offset(0, 2),
-                ),
-              ],
+      constraints: const BoxConstraints(minHeight: 32),
+      padding: EdgeInsets.symmetric(
+        horizontal: largeText ? 4 : 6,
+        vertical: largeText ? 1 : 4,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      decoration: BoxDecoration(
+        color: Color.alphaBlend(
+          color.withValues(alpha: 0.09),
+          AppColors.parchmentCream,
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: color.withValues(alpha: onTap == null ? 0.26 : 0.34),
+          width: 0.8,
+        ),
+      ),
+      child: Row(
         children: [
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 15, color: color),
-                const SizedBox(width: 4),
-                Text(
-                  label,
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: palette.text,
-                    fontSize: 12.6,
-                    fontWeight: FontWeight.w900,
-                    height: 1.1,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 5),
-          FittedBox(
-            fit: BoxFit.scaleDown,
+          Container(
+            width: iconBoxSize,
+            height: iconBoxSize,
             alignment: Alignment.center,
-            child: Text(
-              profileQuizCountLabel(quizCount: count, storyCount: eventCount),
-              maxLines: 1,
-              style: TextStyle(
-                color: palette.text,
-                fontSize: 11.2,
-                fontWeight: FontWeight.w900,
-                height: 1.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.parchmentCream.withValues(alpha: 0.84),
+              border: Border.all(color: color.withValues(alpha: 0.72)),
+            ),
+            child: Icon(icon, size: largeText ? 12.5 : 15, color: color),
+          ),
+          SizedBox(width: largeText ? 3 : 5),
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: largeText ? 11.0 : 12.2,
+                      fontWeight: FontWeight.w900,
+                      height: 1.0,
+                    ),
+                  ),
+                  SizedBox(height: largeText ? 1 : 2),
+                  Text(
+                    profileQuizCountLabel(
+                      quizCount: count,
+                      storyCount: eventCount,
+                    ),
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: palette.text,
+                      fontSize: largeText ? 9.5 : 10.4,
+                      fontWeight: FontWeight.w900,
+                      height: 1.0,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -2130,7 +2567,7 @@ class _ProfileQuizStatItem extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         child: content,
       ),
     );

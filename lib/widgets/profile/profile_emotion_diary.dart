@@ -17,6 +17,75 @@ import 'companion_diary_entry_card.dart';
 import 'profile_companion_diary.dart';
 import 'profile_emotion_stats.dart';
 
+BoxDecoration _profileTabRailDecoration(
+  BuildContext context, {
+  required Color accent,
+  Color? secondaryAccent,
+}) {
+  final palette = AppPaletteTheme.of(context);
+  final endAccent = secondaryAccent ?? accent;
+  return BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Color.alphaBlend(
+          accent.withValues(alpha: 0.12),
+          palette.cardUnselectedTop,
+        ),
+        Color.alphaBlend(
+          endAccent.withValues(alpha: 0.10),
+          palette.cardUnselectedBottom,
+        ),
+      ],
+    ),
+    borderRadius: BorderRadius.circular(20),
+    border: Border.all(color: accent.withValues(alpha: 0.28), width: 0.9),
+  );
+}
+
+BoxDecoration _profileLinkedTabGroupDecoration(
+  BuildContext context, {
+  required Color accent,
+  Color? secondaryAccent,
+}) {
+  return _profileTabRailDecoration(
+    context,
+    accent: accent,
+    secondaryAccent: secondaryAccent,
+  );
+}
+
+Color _profileSelectedTabSurface(
+  BuildContext context, {
+  required Color accent,
+}) {
+  final palette = AppPaletteTheme.of(context);
+  return Color.alphaBlend(accent.withValues(alpha: 0.24), palette.cardSurface);
+}
+
+Color _profileSelectedTabButtonSurface(Color accent) {
+  return accent;
+}
+
+const double _diaryContentTabHeight = 44;
+
+BoxDecoration _profileLinkedTabBodyDecoration(
+  BuildContext context, {
+  required Color accent,
+}) {
+  return BoxDecoration(
+    color: _profileSelectedTabSurface(context, accent: accent),
+    borderRadius: const BorderRadius.only(
+      topLeft: Radius.circular(10),
+      topRight: Radius.circular(10),
+      bottomLeft: Radius.circular(16),
+      bottomRight: Radius.circular(16),
+    ),
+    border: Border.all(color: accent.withValues(alpha: 0.28), width: 0.7),
+  );
+}
+
 class ProfileEmotionDiary extends ConsumerStatefulWidget {
   const ProfileEmotionDiary({
     super.key,
@@ -142,7 +211,15 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
               emotionStats: widget.emotionStats,
               eventById: eventById,
               onToggleExpanded: () {
-                setState(() => _expanded = !_expanded);
+                setState(() {
+                  final today = _todayKst();
+                  _expanded = !_expanded;
+                  _focusedMonth = _monthStart(today);
+                  if (!_expanded &&
+                      !_isWithinCollapsedVisibleRange(_selectedDate, today)) {
+                    _selectedDate = today;
+                  }
+                });
               },
               onMoveMonth: _moveMonth,
               onSelectDate: _selectDate,
@@ -302,7 +379,7 @@ class _EmotionDiaryPanel extends StatelessWidget {
     final canGoNext = focusedMonth.isBefore(currentMonth);
     final visibleDates = expanded
         ? _monthVisibleDates(focusedMonth)
-        : _twoWeekVisibleDates(selectedDate);
+        : _collapsedVisibleDates(today);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 11, 12, 12),
@@ -413,31 +490,77 @@ class _EmotionDiaryPanel extends StatelessWidget {
             ),
           ],
           Divider(height: 22, color: palette.subtleBorder),
-          _DiaryContentTabBar(
+          _DiaryLinkedTabSection(
             selected: selectedContentTab,
             onSelect: onSelectContentTab,
+            child: selectedContentTab == _DiaryContentTab.companion
+                ? CompanionDiaryTodaySection(
+                    entryDate: selectedDate,
+                    entry: selectedCompanionDiary,
+                    entries: companionDiaryEntries,
+                    loading: companionDiaryLoading,
+                    error: companionDiaryError,
+                    onSave: onSaveCompanionDiary,
+                    onDelete: onDeleteCompanionDiary,
+                  )
+                : _SelectedDayEmotionList(
+                    date: selectedDate,
+                    today: today,
+                    marks: selectedMarks,
+                    eventById: eventById,
+                    onOpenEventDetail: onOpenEventDetail,
+                    loading: loading,
+                    hasError: hasError,
+                  ),
           ),
-          const SizedBox(height: 11),
-          if (selectedContentTab == _DiaryContentTab.companion)
-            CompanionDiaryTodaySection(
-              entryDate: selectedDate,
-              entry: selectedCompanionDiary,
-              entries: companionDiaryEntries,
-              loading: companionDiaryLoading,
-              error: companionDiaryError,
-              onSave: onSaveCompanionDiary,
-              onDelete: onDeleteCompanionDiary,
-            )
-          else
-            _SelectedDayEmotionList(
-              date: selectedDate,
-              today: today,
-              marks: selectedMarks,
-              eventById: eventById,
-              onOpenEventDetail: onOpenEventDetail,
-              loading: loading,
-              hasError: hasError,
+        ],
+      ),
+    );
+  }
+}
+
+class _DiaryLinkedTabSection extends StatelessWidget {
+  const _DiaryLinkedTabSection({
+    required this.selected,
+    required this.onSelect,
+    required this.child,
+  });
+
+  final _DiaryContentTab selected;
+  final ValueChanged<_DiaryContentTab> onSelect;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final accent = selected == _DiaryContentTab.companion
+        ? palette.currentAccentDeep
+        : palette.regionAccent;
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: _profileLinkedTabGroupDecoration(
+        context,
+        accent: palette.currentAccentDeep,
+        secondaryAccent: palette.regionAccent,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+            child: _DiaryContentTabBar(selected: selected, onSelect: onSelect),
+          ),
+          Container(
+            margin: const EdgeInsets.fromLTRB(4, 3, 4, 4),
+            decoration: _profileLinkedTabBodyDecoration(
+              context,
+              accent: accent,
             ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+              child: child,
+            ),
+          ),
         ],
       ),
     );
@@ -453,21 +576,16 @@ class _DiaryContentTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    return Container(
+    return SizedBox(
       key: const ValueKey('diary-content-tab-bar'),
-      height: 42,
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: palette.selectionFill,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: palette.subtleBorder, width: 0.8),
-      ),
+      height: _diaryContentTabHeight,
       child: Row(
         children: [
           Expanded(
             child: _DiaryContentTabButton(
               label: '오늘의 신앙 기록',
               selected: selected == _DiaryContentTab.companion,
+              accent: palette.currentAccentDeep,
               onTap: () => onSelect(_DiaryContentTab.companion),
             ),
           ),
@@ -476,6 +594,7 @@ class _DiaryContentTabBar extends StatelessWidget {
             child: _DiaryContentTabButton(
               label: '오늘의 내 감정',
               selected: selected == _DiaryContentTab.emotion,
+              accent: palette.regionAccent,
               onTap: () => onSelect(_DiaryContentTab.emotion),
             ),
           ),
@@ -489,43 +608,68 @@ class _DiaryContentTabButton extends StatelessWidget {
   const _DiaryContentTabButton({
     required this.label,
     required this.selected,
+    required this.accent,
     required this.onTap,
   });
 
   final String label;
   final bool selected;
+  final Color accent;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final accent = label == '오늘의 신앙 기록'
-        ? palette.primary
-        : palette.regionAccent;
-    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(9),
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? accent : Colors.transparent,
-            borderRadius: BorderRadius.circular(9),
-            boxShadow: selected ? AppShadows.sm : null,
-          ),
-          child: Text(
-            label,
-            maxLines: largeText ? 2 : 1,
-            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
-            softWrap: true,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: selected ? AppColors.fgOnDark : palette.text,
-              fontSize: 11.8,
-              fontWeight: FontWeight.w900,
-              height: 1,
+    return SizedBox.expand(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 170),
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            decoration: BoxDecoration(
+              color: selected
+                  ? _profileSelectedTabButtonSurface(accent)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+              border: selected
+                  ? Border.all(
+                      color: AppColors.fgOnDark.withValues(alpha: 0.38),
+                    )
+                  : null,
+              boxShadow: selected
+                  ? [
+                      BoxShadow(
+                        color: accent.withValues(alpha: 0.18),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: selected ? AppColors.fgOnDark : palette.text,
+                        fontSize: 12.6,
+                        fontWeight: FontWeight.w900,
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -1229,10 +1373,10 @@ int _compareMarksNewestFirst(EventEmotionMark a, EventEmotionMark b) {
   return a.eventId.compareTo(b.eventId);
 }
 
-List<DateTime> _twoWeekVisibleDates(DateTime selectedDate) {
-  final start = _weekStartSunday(selectedDate);
-  final previousStart = start.subtract(const Duration(days: 7));
-  return [for (var i = 0; i < 14; i++) previousStart.add(Duration(days: i))];
+List<DateTime> _collapsedVisibleDates(DateTime date) {
+  final currentWeekStart = _weekStartSunday(date);
+  final start = currentWeekStart.subtract(const Duration(days: 7));
+  return [for (var i = 0; i < 14; i++) start.add(Duration(days: i))];
 }
 
 List<DateTime> _monthVisibleDates(DateTime month) {
@@ -1253,6 +1397,13 @@ List<DateTime> _monthVisibleDates(DateTime month) {
 
 DateTime _weekStartSunday(DateTime date) {
   return _dateOnly(date).subtract(Duration(days: date.weekday % 7));
+}
+
+bool _isWithinCollapsedVisibleRange(DateTime date, DateTime today) {
+  final start = _weekStartSunday(today).subtract(const Duration(days: 7));
+  final end = start.add(const Duration(days: 13));
+  final value = _dateOnly(date);
+  return !value.isBefore(start) && !value.isAfter(end);
 }
 
 DateTime _monthStart(DateTime date) => DateTime(date.year, date.month);

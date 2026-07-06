@@ -42,9 +42,44 @@ void main() {
       expect(find.text('색 조합'), findsOneWidget);
       expect(find.text('글자 크기'), findsOneWidget);
       expect(find.text('클래식'), findsOneWidget);
-      expect(find.text('지도 남색'), findsOneWidget);
-      expect(find.text('밝은 해안'), findsOneWidget);
+      expect(find.text('남색 지도'), findsOneWidget);
+      expect(find.text('지도 남색'), findsNothing);
+      expect(find.text('밝은 해안'), findsNothing);
       expect(find.text('알록 지도'), findsOneWidget);
+    });
+
+    testWidgets('색 조합 버튼 3개를 한 줄에 배치한다', (tester) async {
+      await _pumpSheet(tester);
+
+      final classic = find.byKey(
+        const ValueKey('color-palette-button-classic'),
+      );
+      final atlas = find.byKey(
+        const ValueKey('color-palette-button-atlasNavy'),
+      );
+      final colorful = find.byKey(
+        const ValueKey('color-palette-button-colorfulMap'),
+      );
+
+      expect(classic, findsOneWidget);
+      expect(atlas, findsOneWidget);
+      expect(colorful, findsOneWidget);
+      expect(
+        (tester.getTopLeft(classic).dy - tester.getTopLeft(atlas).dy).abs(),
+        lessThanOrEqualTo(1),
+      );
+      expect(
+        (tester.getTopLeft(atlas).dy - tester.getTopLeft(colorful).dy).abs(),
+        lessThanOrEqualTo(1),
+      );
+      expect(
+        tester.getCenter(classic).dx,
+        lessThan(tester.getCenter(atlas).dx),
+      );
+      expect(
+        tester.getCenter(atlas).dx,
+        lessThan(tester.getCenter(colorful).dx),
+      );
     });
 
     testWidgets('3단계 버튼(보통/크게/아주크게)을 렌더한다', (tester) async {
@@ -107,10 +142,24 @@ void main() {
       expect(container.read(fontScaleProvider), FontScale.normal);
     });
 
-    testWidgets('미리보기 Text가 현재 textScaler로 렌더된다', (tester) async {
+    testWidgets('미리보기 Text는 글자 크기 제목 아래와 크기 버튼 위에 표시된다', (tester) async {
       await _pumpSheet(tester, initial: FontScale.veryLarge);
 
       expect(find.text('태초에 하나님이 천지를 창조하시니라 (창세기 1:1)'), findsOneWidget);
+      final previewTop = tester
+          .getTopLeft(find.text('태초에 하나님이 천지를 창조하시니라 (창세기 1:1)'))
+          .dy;
+      expect(previewTop, greaterThan(tester.getTopLeft(find.text('글자 크기')).dy));
+      expect(
+        previewTop,
+        lessThan(
+          tester
+              .getTopLeft(
+                find.byKey(const ValueKey('font-scale-button-normal')),
+              )
+              .dy,
+        ),
+      );
     });
 
     testWidgets('아주크게 상태에서도 바텀시트 overflow가 발생하지 않는다', (tester) async {

@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/models/era.dart';
 import 'package:story_bible/state/story_state.dart';
+import 'package:story_bible/theme/app_color_palette.dart';
+import 'package:story_bible/theme/app_theme.dart';
 import 'package:story_bible/widgets/v2/home_intro_panel.dart';
 
 const _eras = [
@@ -126,8 +128,10 @@ void main() {
     required String? selectedEraId,
     required void Function(SelectionMode) onPickMode,
     double textScale = 1,
+    AppColorPalette palette = AppColorPalette.classic,
   }) {
     return MaterialApp(
+      theme: AppTheme.light(palette: palette),
       home: MediaQuery(
         data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
         child: Scaffold(
@@ -242,6 +246,30 @@ void main() {
       lessThanOrEqualTo(tester.getRect(regionCard).bottom),
     );
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('선택한 시대 칩은 현재 팔레트 다이어리 역할색을 따른다', (tester) async {
+    await tester.pumpWidget(
+      homeIntroHarness(
+        width: 390,
+        height: 720,
+        selectedEraId: 'era_divided_kingdom',
+        palette: AppColorPalette.colorfulMap,
+        onPickMode: (_) {},
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final selectedChip = tester.widget<AnimatedContainer>(
+      find.byKey(const ValueKey('era-chip-era_divided_kingdom')),
+    );
+    final decoration = selectedChip.decoration! as BoxDecoration;
+    final gradient = decoration.gradient! as LinearGradient;
+
+    expect(gradient.colors, [
+      AppColorPalette.colorfulMap.currentAccentDeep,
+      AppColorPalette.colorfulMap.currentAccentDeep,
+    ]);
   });
 
   testWidgets('홈 인트로 패널은 하단 빈 공간을 줄인 패딩을 사용한다', (tester) async {

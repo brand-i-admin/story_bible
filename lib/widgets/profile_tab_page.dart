@@ -31,6 +31,7 @@ import 'character_avatar.dart';
 import 'inline_login_prompt_card.dart';
 import 'map/map_attribution_dialog.dart';
 import 'parchment_dialog.dart';
+import 'profile/glowing_add_button.dart';
 import 'profile/profile_emotion_diary.dart';
 import 'profile/profile_emotion_stats.dart';
 import 'profile/profile_event_review_grid.dart';
@@ -94,8 +95,10 @@ enum _ProfileContentTab { records, prayer, saved, verses }
 
 enum _ProfileQuizReviewFilter { wrong, confused }
 
-/// "진행률 표시" 섹션의 탭. `life` = 나의 다이어리,
-/// `place` = 장소로 시작 (지도+region), `walk` = 인물과 걷기.
+enum _StoryProgressFilter { all, completed, incomplete }
+
+/// "진행률 표시" 섹션의 탭. `life` = 다이어리,
+/// `place` = 장소로시작 (지도+region), `walk` = 인물과걷기.
 enum _ProfileProgressTab { life, place, walk }
 
 class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
@@ -129,9 +132,9 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   String? _intercessoryPrayerError;
   int _intercessoryPrayerPageIndex = 0;
   String _profileSelectedTestament = 'old';
-  // 진행률 섹션 — 기본 탭은 나의 다이어리 (감정 새김 기반 첫인상 강조).
+  // 진행률 섹션 — 기본 탭은 다이어리 (감정 새김 기반 첫인상 강조).
   _ProfileProgressTab _profileProgressTab = _ProfileProgressTab.life;
-  // "장소로 시작" 탭에서 사용자가 선택한 era id (null = 미선택, 안내 메시지).
+  // "장소로시작" 탭에서 사용자가 선택한 era id (null = 미선택, 안내 메시지).
   String? _profileProgressSelectedEraId;
   bool _profileLoading = false;
   String? _profileError;
@@ -814,38 +817,41 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         // 있어서 부모 Column 에서 unbounded height 가 되면 안 되므로 각각 고정
         // 높이로 감싼다.
         final isNarrow = constraints.maxWidth < 720;
+        final activitySectionHeight = _profileLeftCardHeight(
+          isAuthenticated: isAuthenticated,
+        );
         if (isNarrow) {
-          final totalHeight = constraints.maxHeight;
-          // 프로필(좌측) 패널은 선택 탭과 콘텐츠 양에 맞춰 필요한 만큼만
-          // 차지한다. 내부 리스트는 남은 높이에 맞춰 스크롤된다.
-          final leftPanelHeight = _profileLeftPanelHeight(
-            totalHeight,
-            isAuthenticated: isAuthenticated,
-          );
-          final rightPanelHeight = (totalHeight * 0.65).clamp(420.0, 720.0);
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(
-                  height: leftPanelHeight.toDouble(),
-                  child: _buildProfileLeftPanel(
-                    profile: profile,
-                    isAuthenticated: isAuthenticated,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: rightPanelHeight.toDouble(),
-                  child: _buildProfileProgressSection(
-                    people: people,
-                    completedEventIds: _profileExploredEventIds(state),
-                    selectedTestament: _profileSelectedTestament,
-                    onSelectTestament: (testament) {
-                      setState(() {
-                        _profileSelectedTestament = testament;
-                      });
-                    },
+                _buildProfileHeader(profile: profile),
+                const SizedBox(height: 6),
+                _profileSectionsFrame(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(
+                        height: activitySectionHeight,
+                        child: _buildProfileActivitySection(
+                          profile: profile,
+                          isAuthenticated: isAuthenticated,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildProfileProgressSection(
+                        people: people,
+                        completedEventIds: _profileExploredEventIds(state),
+                        selectedTestament: _profileSelectedTestament,
+                        scrollBody: false,
+                        onSelectTestament: (testament) {
+                          setState(() {
+                            _profileSelectedTestament = testament;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -859,27 +865,42 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SizedBox(
                 width: leftWidth,
-                child: _buildProfileLeftPanel(
-                  profile: profile,
-                  isAuthenticated: isAuthenticated,
-                ),
+                child: _buildProfileHeader(profile: profile),
               ),
-              SizedBox(width: gap),
+              const SizedBox(height: 6),
               Expanded(
-                child: _buildProfileProgressSection(
-                  people: people,
-                  completedEventIds: _profileExploredEventIds(state),
-                  selectedTestament: _profileSelectedTestament,
-                  onSelectTestament: (testament) {
-                    setState(() {
-                      _profileSelectedTestament = testament;
-                    });
-                  },
+                child: _profileSectionsFrame(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: leftWidth,
+                        height: activitySectionHeight,
+                        child: _buildProfileActivitySection(
+                          profile: profile,
+                          isAuthenticated: isAuthenticated,
+                        ),
+                      ),
+                      SizedBox(width: gap),
+                      Expanded(
+                        child: _buildProfileProgressSection(
+                          people: people,
+                          completedEventIds: _profileExploredEventIds(state),
+                          selectedTestament: _profileSelectedTestament,
+                          onSelectTestament: (testament) {
+                            setState(() {
+                              _profileSelectedTestament = testament;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -889,15 +910,13 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     );
   }
 
-  double _profileLeftPanelHeight(
-    double totalHeight, {
-    required bool isAuthenticated,
-  }) {
-    final desiredHeight = _profileLeftPanelDesiredHeight(
-      isAuthenticated: isAuthenticated,
+  Widget _profileSectionsFrame({required Widget child}) {
+    final palette = AppPaletteTheme.of(context);
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: floatingPanelDecoration(color: palette.panelSurface),
+      child: Padding(padding: const EdgeInsets.all(8), child: child),
     );
-    final maxHeight = math.max(260.0, totalHeight * 0.62);
-    return math.min(desiredHeight, maxHeight);
   }
 
   Future<void> _openProfileEditor() async {

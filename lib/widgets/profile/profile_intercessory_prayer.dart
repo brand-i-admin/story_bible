@@ -36,90 +36,57 @@ extension ProfileIntercessoryPrayerCardsExt on ProfileTabPageState {
   }
 
   Widget _buildIntercessoryPrayerEmptyCard({required bool enabled}) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isVeryCompact = constraints.maxHeight < 150;
-        final isCompact = constraints.maxHeight < 180;
-        final buttonSize = isVeryCompact ? 32.0 : (isCompact ? 38.0 : 44.0);
-        final iconSize = isVeryCompact ? 20.0 : (isCompact ? 24.0 : 26.0);
-        final spacing = isVeryCompact ? 4.0 : (isCompact ? 6.0 : 8.0);
-        final fontSize = isVeryCompact ? 10.4 : (isCompact ? 11.2 : 12.3);
-        return Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: enabled ? _promptAddIntercessoryPrayer : null,
-            borderRadius: BorderRadius.circular(16),
-            child: Center(
-              child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: buttonSize,
-                        height: buttonSize,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: enabled
-                              ? const LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Color(0xFFD99F4A),
-                                    Color(0xFFB26B28),
-                                  ],
-                                )
-                              : const LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Color(0xFFD7CCB9),
-                                    Color(0xFFB6A38A),
-                                  ],
-                                ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x22000000),
-                              blurRadius: 7,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.add_rounded,
-                          color: AppColors.parchmentCream,
-                          size: iconSize,
-                        ),
-                      ),
-                      SizedBox(height: spacing),
-                      Text(
-                        enabled
-                            ? '다른 사람의 기도제목을 공유 받아\n함께 기도해요'
-                            : '로그인하면 다른 사람의 기도제목을\n함께 볼 수 있어요',
-                        textAlign: TextAlign.center,
-                        maxLines: largeText ? null : 2,
-                        overflow: largeText
-                            ? TextOverflow.visible
-                            : TextOverflow.ellipsis,
-                        softWrap: true,
-                        style: TextStyle(
-                          color: const Color(0xFF5A4326),
-                          fontSize: fontSize,
-                          fontWeight: FontWeight.w800,
-                          height: 1.24,
-                        ),
-                      ),
-                    ],
-                  ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: enabled ? _promptAddIntercessoryPrayer : null,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 6, 8, 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _profilePrayerEmptyAddButton(
+                enabled: enabled,
+                onTap: _promptAddIntercessoryPrayer,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                enabled
+                    ? '다른 사람의 기도제목을 공유 받아\n함께 기도해요'
+                    : '로그인하면 다른 사람의 기도제목을\n함께 볼 수 있어요',
+                textAlign: TextAlign.center,
+                maxLines: largeText ? null : 2,
+                overflow: largeText
+                    ? TextOverflow.visible
+                    : TextOverflow.ellipsis,
+                softWrap: true,
+                style: TextStyle(
+                  color: palette.mutedText,
+                  fontSize: largeText ? 11.0 : 12.1,
+                  fontWeight: FontWeight.w800,
+                  height: 1.24,
                 ),
               ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
+    );
+  }
+
+  Widget _profilePrayerEmptyAddButton({
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    final palette = AppPaletteTheme.of(context);
+    return ProfileGlowingAddButton(
+      tooltip: '기도 연결 추가',
+      onTap: enabled ? onTap : null,
+      disabledBackgroundColor: palette.mutedSurface,
+      disabledForegroundColor: palette.mutedText,
     );
   }
 

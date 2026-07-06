@@ -50,6 +50,43 @@ class FontScaleBottomSheet extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
+            Text(
+              '색 조합',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                color: currentPalette.text,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: AppColorPalette.values
+                  .map(
+                    (palette) => Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: _PaletteChoiceButton(
+                          palette: palette,
+                          selected: palette == currentPalette,
+                          onTap: () => ref
+                              .read(colorPaletteProvider.notifier)
+                              .set(palette),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '글자 크기',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                color: currentPalette.text,
+              ),
+            ),
+            const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -66,42 +103,7 @@ class FontScaleBottomSheet extends ConsumerWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            Text(
-              '색 조합',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w900,
-                color: currentPalette.text,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Column(
-              children: AppColorPalette.values
-                  .map(
-                    (palette) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: _PaletteChoiceButton(
-                        palette: palette,
-                        selected: palette == currentPalette,
-                        onTap: () => ref
-                            .read(colorPaletteProvider.notifier)
-                            .set(palette),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '글자 크기',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w900,
-                color: currentPalette.text,
-              ),
-            ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Row(
               children: FontScale.values
                   .map(
@@ -155,8 +157,8 @@ class _PaletteChoiceButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 62),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          constraints: const BoxConstraints(minHeight: 78),
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 9),
           decoration: BoxDecoration(
             color: selected
                 ? palette.selectedSurface
@@ -167,47 +169,38 @@ class _PaletteChoiceButton extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(14),
           ),
-          child: Row(
+          child: Stack(
+            alignment: Alignment.topRight,
             children: [
-              _PaletteWheel(palette: palette),
-              const SizedBox(width: 12),
-              Expanded(
+              Center(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      palette.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w900,
-                        color: palette.text,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      palette.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.visible,
-                      softWrap: true,
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w700,
-                        color: palette.mutedText,
+                    _PaletteWheel(palette: palette),
+                    const SizedBox(height: 6),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        palette.label,
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 13.2,
+                          fontWeight: FontWeight.w900,
+                          color: palette.text,
+                          height: 1.0,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 10),
               Icon(
                 selected
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_unchecked_rounded,
                 color: selected ? palette.primary : palette.mutedText,
-                size: 22,
+                size: 18,
               ),
             ],
           ),

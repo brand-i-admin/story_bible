@@ -1,8 +1,8 @@
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
-// "진행률 표시" 섹션 — 좌측 상단 제목 + 세 탭 (나의 다이어리 / 인물과 걷기 / 장소로 시작) +
-// 그 아래 스크롤 가능한 컨텐츠. 탭 바는 섹션 최상단에 고정(pinned), 컨텐츠만
-// 스크롤되도록 Column[Header, Expanded(SingleChildScrollView)] 구조.
+// "진행률 표시" 섹션 — 좌측 상단 제목 + 세 탭 (다이어리 / 인물과걷기 / 장소로시작) +
+// 그 아래 컨텐츠. 넓은 화면은 섹션 내부 스크롤, 좁은 화면은 프로필 페이지 전체
+// 스크롤이 본문 끝까지 담당한다.
 part of '../profile_tab_page.dart';
 
 extension ProfileProgressSectionExt on ProfileTabPageState {
@@ -11,60 +11,90 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     required Set<String> completedEventIds,
     required String selectedTestament,
     required ValueChanged<String> onSelectTestament,
+    bool scrollBody = true,
   }) {
     final palette = AppPaletteTheme.of(context);
+    final selectedAccent = _profileProgressTabAccent(palette);
+    final body = Container(
+      margin: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+      decoration: _profileLinkedTabBodyDecoration(
+        context,
+        accent: selectedAccent,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+        child: scrollBody
+            ? SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: _profileProgressBody(
+                  people: people,
+                  completedEventIds: completedEventIds,
+                  selectedTestament: selectedTestament,
+                  onSelectTestament: onSelectTestament,
+                ),
+              )
+            : _profileProgressBody(
+                people: people,
+                completedEventIds: completedEventIds,
+                selectedTestament: selectedTestament,
+                onSelectTestament: onSelectTestament,
+              ),
+      ),
+    );
     return Container(
       clipBehavior: Clip.hardEdge,
-      decoration: floatingPanelDecoration(color: palette.panelSurface),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 탭 바를 섹션 최상단에 pinned. 제목은 제거 — 탭 라벨이 자체 설명.
-            _profileProgressTabBar(),
-            const SizedBox(height: 10),
-            // ── 컨텐츠 (이 영역만 스크롤)
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                child: switch (_profileProgressTab) {
-                  _ProfileProgressTab.life => _profileProgressLifeBody(),
-                  _ProfileProgressTab.walk => _profileProgressWalkBody(
-                    people: people,
-                    completedEventIds: completedEventIds,
-                    selectedTestament: selectedTestament,
-                    onSelectTestament: onSelectTestament,
-                  ),
-                  _ProfileProgressTab.place => _profileProgressPlaceBody(
-                    completedEventIds: completedEventIds,
-                  ),
-                },
-              ),
-            ),
-          ],
-        ),
+      decoration: _profileLinkedTabGroupDecoration(
+        context,
+        accent: palette.currentAccentDeep,
+      ),
+      child: Column(
+        mainAxisSize: scrollBody ? MainAxisSize.max : MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 탭 바를 섹션 최상단에 pinned. 제목은 제거 — 탭 라벨이 자체 설명.
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+            child: _profileProgressTabBar(),
+          ),
+          if (scrollBody) Expanded(child: body) else body,
+        ],
       ),
     );
   }
 
-  /// 세 탭 토글 — "나의 다이어리" / "인물과 걷기" / "장소로 시작".
+  Widget _profileProgressBody({
+    required List<Character> people,
+    required Set<String> completedEventIds,
+    required String selectedTestament,
+    required ValueChanged<String> onSelectTestament,
+  }) {
+    return switch (_profileProgressTab) {
+      _ProfileProgressTab.life => _profileProgressLifeBody(),
+      _ProfileProgressTab.walk => _profileProgressWalkBody(
+        people: people,
+        completedEventIds: completedEventIds,
+        selectedTestament: selectedTestament,
+        onSelectTestament: onSelectTestament,
+      ),
+      _ProfileProgressTab.place => _profileProgressPlaceBody(
+        completedEventIds: completedEventIds,
+      ),
+    };
+  }
+
+  /// 세 탭 토글 — "다이어리" / "인물과걷기" / "장소로시작".
   Widget _profileProgressTabBar() {
     final palette = AppPaletteTheme.of(context);
-    return Container(
-      height: 42,
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: palette.selectionFill,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: palette.subtleBorder, width: 0.8),
-      ),
+    return SizedBox(
+      height: _profileIconTabHeight,
       child: Row(
         children: [
           Expanded(
             child: _progressTabButton(
-              label: '나의 다이어리',
+              icon: Icons.calendar_month_rounded,
+              label: '다이어리',
               selected: _profileProgressTab == _ProfileProgressTab.life,
+              accent: palette.currentAccentDeep,
               onTap: () {
                 // ignore: invalid_use_of_protected_member
                 setState(() => _profileProgressTab = _ProfileProgressTab.life);
@@ -74,8 +104,10 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
           const SizedBox(width: 4),
           Expanded(
             child: _progressTabButton(
-              label: '인물과 걷기',
+              icon: Icons.directions_walk_rounded,
+              label: '인물과걷기',
               selected: _profileProgressTab == _ProfileProgressTab.walk,
+              accent: palette.characterAccent,
               onTap: () {
                 // ignore: invalid_use_of_protected_member
                 setState(() => _profileProgressTab = _ProfileProgressTab.walk);
@@ -85,8 +117,10 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
           const SizedBox(width: 4),
           Expanded(
             child: _progressTabButton(
-              label: '장소로 시작',
+              icon: Icons.place_rounded,
+              label: '장소로시작',
               selected: _profileProgressTab == _ProfileProgressTab.place,
+              accent: palette.regionAccent,
               onTap: () {
                 // ignore: invalid_use_of_protected_member
                 setState(() => _profileProgressTab = _ProfileProgressTab.place);
@@ -99,56 +133,30 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
   }
 
   Widget _progressTabButton({
+    required IconData icon,
     required String label,
     required bool selected,
+    required Color accent,
     required VoidCallback onTap,
   }) {
-    final palette = AppPaletteTheme.of(context);
-    final tab = switch (label) {
-      '나의 다이어리' => _ProfileProgressTab.life,
-      '인물과 걷기' => _ProfileProgressTab.walk,
-      _ => _ProfileProgressTab.place,
-    };
-    final accent = _profileProgressAccent(tab, palette);
-    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(9),
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? accent : const Color(0x00000000),
-            borderRadius: BorderRadius.circular(9),
-            boxShadow: selected
-                ? const [
-                    BoxShadow(
-                      color: Color(0x33000000),
-                      blurRadius: 4,
-                      offset: Offset(0, 1),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Text(
-            label,
-            maxLines: largeText ? 2 : 1,
-            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
-            softWrap: true,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: selected ? AppColors.fgOnDark : palette.text,
-              fontWeight: FontWeight.w900,
-              fontSize: 12.5,
-            ),
-          ),
-        ),
-      ),
+    return _ProfileIconTabButton(
+      icon: icon,
+      label: label,
+      selected: selected,
+      accent: accent,
+      onTap: onTap,
     );
   }
 
-  // ──────────────────────── 나의 다이어리 탭 본문 ────────────────────────
+  Color _profileProgressTabAccent(AppColorPalette palette) {
+    return switch (_profileProgressTab) {
+      _ProfileProgressTab.life => palette.currentAccentDeep,
+      _ProfileProgressTab.walk => palette.characterAccent,
+      _ProfileProgressTab.place => palette.regionAccent,
+    };
+  }
+
+  // ───────────────────────── 다이어리 탭 본문 ─────────────────────────
   Widget _profileProgressLifeBody() {
     final state = ref.watch(storyControllerProvider);
     final emotionStats = buildProfileEmotionStats(state.eventEmotionMarks);
@@ -176,7 +184,7 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     );
   }
 
-  // ──────────────────────── 인물과 걷기 탭 본문 ────────────────────────
+  // ──────────────────────── 인물과걷기 탭 본문 ────────────────────────
   Widget _profileProgressWalkBody({
     required List<Character> people,
     required Set<String> completedEventIds,
@@ -234,7 +242,7 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     );
   }
 
-  // ──────────────────────── 장소로 시작 탭 본문 ────────────────────────
+  // ──────────────────────── 장소로시작 탭 본문 ────────────────────────
   Widget _profileProgressPlaceBody({required Set<String> completedEventIds}) {
     final state = ref.watch(storyControllerProvider);
     final selectedEra = state.eras
@@ -318,16 +326,5 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
         ],
       ),
     );
-  }
-
-  Color _profileProgressAccent(
-    _ProfileProgressTab tab,
-    AppColorPalette palette,
-  ) {
-    return switch (tab) {
-      _ProfileProgressTab.life => palette.currentAccentDeep,
-      _ProfileProgressTab.walk => palette.characterAccent,
-      _ProfileProgressTab.place => palette.regionAccent,
-    };
   }
 }
