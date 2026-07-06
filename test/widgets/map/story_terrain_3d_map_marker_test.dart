@@ -243,7 +243,7 @@ void main() {
       );
     });
 
-    test('map taps are suppressed during gestures and panel touches', () {
+    test('map taps and gestures are suppressed during panel touches', () {
       final mapSource = File(
         'lib/widgets/map/story_terrain_3d_map.dart',
       ).readAsStringSync();
@@ -255,6 +255,39 @@ void main() {
       ).readAsStringSync();
 
       expect(mapSource, contains('window.storyBibleSuppressMapTap'));
+      expect(mapSource, contains('window.storyBibleSuspendMapGestures'));
+      expect(mapSource, contains('void suspendGesturesFor(['));
+      expect(mapSource, contains('void clearGestureSuspension()'));
+      expect(mapSource, contains('const setUserGestureHandlersEnabled'));
+      expect(mapSource, contains('setHandlerEnabled(map.dragPan, enabled);'));
+      expect(
+        mapSource,
+        contains('setHandlerEnabled(map.touchZoomRotate, enabled);'),
+      );
+      expect(mapSource, contains('map.dragRotate.enable();'));
+      expect(mapSource, contains('map.touchPitch.enable();'));
+      expect(mapSource, contains('const resumeUserGestureHandlers = () => {'));
+      expect(mapSource, contains('mapGesturesSuspendedUntil = 0;'));
+      expect(mapSource, contains('setUserGestureHandlersEnabled(false);'));
+      expect(mapSource, contains('setUserGestureHandlersEnabled(true);'));
+      expect(
+        mapSource,
+        isNot(
+          contains(r'''
+      if (window.storyBibleSuppressMapTap) {
+        window.storyBibleSuppressMapTap($millis);
+      }
+      if (window.storyBibleSuspendMapGestures)'''),
+        ),
+      );
+      expect(
+        mapSource,
+        contains(r'''
+      if (window.storyBibleSuppressMapTap) {
+        window.storyBibleSuppressMapTap($millis);
+      }
+    '''),
+      );
       expect(mapSource, contains('const sendPointerInteraction = () => {'));
       expect(mapSource, contains('sendPointerInteraction();'));
       expect(mapSource, contains("let suppressMapTapReason = 'external';"));
@@ -300,14 +333,41 @@ void main() {
       );
       expect(
         mapSource,
+        contains(
+          'if (eventUsesModifierKey(event) ||\n            isMapTapExternallySuppressed() ||',
+        ),
+      );
+      expect(
+        mapSource,
         contains('handleMapTapPoint(point, map.unproject(point), {'),
       );
       expect(mapSource, contains('isMapTapExternallySuppressed()'));
       expect(mapSource, contains("suppressMapTap(950, 'mapControl');"));
       expect(panelSource, contains('const Duration(milliseconds: 1200)'));
-      expect(panelSource, contains('onPointerUp: (_) =>'));
-      expect(panelSource, contains('onPointerCancel: (_) =>'));
+      expect(panelSource, contains('onPointerUp: (_) {'));
+      expect(panelSource, contains('onPointerCancel: (_) {'));
       expect(homeSource, contains('void _suppressMapTaps(['));
+      expect(homeSource, contains('void _suspendMapGestures(['));
+      expect(homeSource, contains('void _clearMapGestureSuspension()'));
+      expect(homeSource, contains('Future<void> _openFontScaleSheet()'));
+      expect(
+        homeSource,
+        contains('const modalInputLockDuration = Duration(hours: 1);'),
+      );
+      expect(
+        homeSource,
+        contains('_suspendMapGestures(modalInputLockDuration);'),
+      );
+      expect(
+        homeSource,
+        contains('double _sheetCollapsedPeekSizeFor(Size size)'),
+      );
+      expect(homeSource, contains('64.0'));
+      expect(homeSource, contains('max: _selectionSheetCollapsedSize'));
+      expect(
+        homeSource,
+        contains('if (stage == StorySelectionPanelStage.collapsed)'),
+      );
       expect(
         homeSource,
         contains("key: const ValueKey<String>('selection-sheet')"),
@@ -319,6 +379,7 @@ void main() {
       expect(mapSource, contains('window.storyBibleClearMapTapSuppression'));
       expect(panelSource, contains('void _clearMapTapSuppression()'));
       expect(homeSource, contains('clearMapTapSuppression();'));
+      expect(homeSource, contains('clearMapGestureSuspension();'));
       expect(homeSource, contains('const Duration(milliseconds: 1200)'));
       expect(homeSource, contains('onPointerUp: (_) =>'));
       expect(homeSource, contains('onPointerCancel: (_) =>'));

@@ -460,7 +460,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  double _sheetCollapsedPeekSizeFor(Size size) => _selectionSheetCollapsedSize;
+  double _sheetCollapsedPeekSizeFor(Size size) {
+    return _sheetFractionForHeight(
+      size,
+      64.0,
+      min: 0.07,
+      max: _selectionSheetCollapsedSize,
+    );
+  }
 
   double _sheetSizeForStage(Size size, StorySelectionPanelStage stage) {
     return switch (stage) {
@@ -642,6 +649,29 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     _mapPanelController.suppressMapTaps(duration);
   }
 
+  void _suspendMapGestures([
+    Duration duration = const Duration(milliseconds: 220),
+  ]) {
+    _mapPanelController.suspendMapGestures(duration);
+  }
+
+  void _clearMapGestureSuspension() {
+    _mapPanelController.clearMapGestureSuspension();
+  }
+
+  Future<void> _openFontScaleSheet() async {
+    _handleMapInteraction();
+    const modalInputLockDuration = Duration(hours: 1);
+    _suppressMapTaps(modalInputLockDuration);
+    _suspendMapGestures(modalInputLockDuration);
+    try {
+      await showFontScaleSheet(context);
+    } finally {
+      _mapPanelController.clearMapTapSuppression();
+      _mapPanelController.clearMapGestureSuspension();
+    }
+  }
+
   /// 새 단계로 들어갔거나 mode 가 바뀌었을 때 hint 를 다시 보여 줄 수 있도록
   /// dismiss flag 를 reset. setState 안에서 호출해야 build 에 반영된다.
   void _resetMapHint() {
@@ -668,7 +698,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final viewportSize = MediaQuery.sizeOf(context);
     final maxExtent = _sheetMaxSizeFor(viewportSize);
     final targetExtent = stage == StorySelectionPanelStage.collapsed
-        ? _selectionSheetCollapsedSize
+        ? _sheetCollapsedPeekSizeFor(viewportSize)
         : maxExtent;
     setState(() {
       _selectionPanelStage = stage;
@@ -681,6 +711,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _awaitingRevealComplete = false;
       }
     });
+    if (stage == StorySelectionPanelStage.collapsed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _mapPanelController.clearMapTapSuppression();
+        _mapPanelController.clearMapGestureSuspension();
+      });
+    }
   }
 
   /// MapPanel 이 마지막 핀을 노출 완료했을 때 1회 호출. await 중이었다면
@@ -1066,9 +1102,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final regionEvents = _eventsAtLandmark(state, lm)
       ..sort((a, b) => a.globalRank.compareTo(b.globalRank));
     ctl.setDisplayedEvents(regionEvents.map((e) => e.id).toSet());
+    final collapsedExtent = _sheetCollapsedPeekSizeFor(
+      MediaQuery.sizeOf(context),
+    );
     setState(() {
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = _selectionSheetCollapsedSize;
+      _selectionSheetExtent = collapsedExtent;
       _awaitingRevealComplete = true;
       _revealInstantly = false;
       // region 선택 완료 — hint overlay 사라짐.
@@ -1146,13 +1185,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
     final displayed = timeline.map((event) => event.id).toSet();
     ctl.setDisplayedEvents(displayed);
+    final collapsedExtent = _sheetCollapsedPeekSizeFor(
+      MediaQuery.sizeOf(context),
+    );
     setState(() {
       _mode = _SelectionMode.timeline;
       _selectionStep = 3;
       _draftSelectedCharacterCodes = const <String>{};
       _draftDisplayedEventIds = displayed;
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = _selectionSheetCollapsedSize;
+      _selectionSheetExtent = collapsedExtent;
       _awaitingRevealComplete = true;
       _revealInstantly = false;
       _mapHintDismissed = true;
@@ -1174,6 +1216,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // set. 지도 핀이 0.3초 간격 reveal (StoryMapPanel 의 _eventRevealTimer).
     final timeline = _timelineForSelectedCharacters(state, sanitizedDraft);
     ctl.setDisplayedEvents(timeline.map((e) => e.id).toSet());
+    final collapsedExtent = _sheetCollapsedPeekSizeFor(
+      MediaQuery.sizeOf(context),
+    );
     setState(() {
       _draftSelectedCharacterCodes = sanitizedDraft;
       _draftDisplayedEventIds = timeline.map((e) => e.id).toSet();
@@ -1181,7 +1226,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // panel 을 collapsed 로 내려 사용자가 핀이 박히는 걸 한눈에 보게 한다.
       // 마지막 핀 reveal 완료 시 onRevealComplete 가 panel 을 다시 expand.
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = _selectionSheetCollapsedSize;
+      _selectionSheetExtent = collapsedExtent;
       _awaitingRevealComplete = true;
       _revealInstantly = false;
       // character step 3 진입 — 인물 선택 안내 hint 사라짐.
@@ -2573,16 +2618,24 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             _suppressMapTaps(
                               const Duration(milliseconds: 1200),
                             );
+                            _suspendMapGestures();
                           },
-                          onPointerMove: (_) => _suppressMapTaps(
-                            const Duration(milliseconds: 350),
-                          ),
-                          onPointerUp: (_) => _suppressMapTaps(
-                            const Duration(milliseconds: 1200),
-                          ),
-                          onPointerCancel: (_) => _suppressMapTaps(
-                            const Duration(milliseconds: 1200),
-                          ),
+                          onPointerMove: (_) {
+                            _suppressMapTaps(const Duration(milliseconds: 350));
+                            _suspendMapGestures();
+                          },
+                          onPointerUp: (_) {
+                            _suppressMapTaps(
+                              const Duration(milliseconds: 1200),
+                            );
+                            _clearMapGestureSuspension();
+                          },
+                          onPointerCancel: (_) {
+                            _suppressMapTaps(
+                              const Duration(milliseconds: 1200),
+                            );
+                            _clearMapGestureSuspension();
+                          },
                           onPointerSignal: (_) => _suppressMapTaps(
                             const Duration(milliseconds: 1200),
                           ),
@@ -2781,7 +2834,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                   ),
                                   const SizedBox(width: 4),
                                   topFontScaleButton(
-                                    onTap: () => showFontScaleSheet(context),
+                                    onTap: () =>
+                                        unawaited(_openFontScaleSheet()),
                                   ),
                                   const SizedBox(width: 4),
                                   NotificationBellButton(

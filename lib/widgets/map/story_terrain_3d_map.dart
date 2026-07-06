@@ -115,6 +115,12 @@ class StoryTerrain3dMapController {
 
   void clearTapSuppression() => _state?._clearTapSuppression();
 
+  void suspendGesturesFor([
+    Duration duration = const Duration(milliseconds: 220),
+  ]) => _state?._suspendGesturesFor(duration);
+
+  void clearGestureSuspension() => _state?._clearGestureSuspension();
+
   void moveTo(
     LatLng center,
     double zoom, {
@@ -574,6 +580,18 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     ''');
   }
 
+  void _suspendGesturesFor(Duration duration) {
+    if (!_mapReady) {
+      return;
+    }
+    final millis = duration.inMilliseconds;
+    _runMapJavaScript('''
+      if (window.storyBibleSuspendMapGestures) {
+        window.storyBibleSuspendMapGestures($millis);
+      }
+    ''');
+  }
+
   void _clearTapSuppression() {
     if (!_mapReady) {
       return;
@@ -581,6 +599,17 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     _runMapJavaScript('''
       if (window.storyBibleClearMapTapSuppression) {
         window.storyBibleClearMapTapSuppression();
+      }
+    ''');
+  }
+
+  void _clearGestureSuspension() {
+    if (!_mapReady) {
+      return;
+    }
+    _runMapJavaScript('''
+      if (window.storyBibleClearMapGestureSuspension) {
+        window.storyBibleClearMapGestureSuspension();
       }
     ''');
   }
@@ -1138,7 +1167,14 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     if (map.touchZoomRotate && map.touchZoomRotate.enable) {
       map.touchZoomRotate.enable();
     }
-    if (config.lockPitch) {
+    if (!config.lockPitch) {
+      if (map.dragRotate && map.dragRotate.enable) {
+        map.dragRotate.enable();
+      }
+      if (map.touchPitch && map.touchPitch.enable) {
+        map.touchPitch.enable();
+      }
+    } else {
       if (map.dragRotate && map.dragRotate.disable) {
         map.dragRotate.disable();
       }
@@ -1229,6 +1265,64 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     window.storyBibleClearMapTapSuppression = () => {
       suppressMapTapUntil = 0;
       suppressMapTapReason = 'external';
+    };
+    let mapGesturesSuspendedUntil = 0;
+    let mapGestureResumeTimer = null;
+    const setHandlerEnabled = (handler, enabled) => {
+      if (!handler) return;
+      if (enabled && handler.enable) {
+        handler.enable();
+      } else if (!enabled && handler.disable) {
+        handler.disable();
+      }
+    };
+    const setUserGestureHandlersEnabled = (enabled) => {
+      setHandlerEnabled(map.dragPan, enabled);
+      setHandlerEnabled(map.scrollZoom, enabled);
+      setHandlerEnabled(map.boxZoom, enabled);
+      setHandlerEnabled(map.doubleClickZoom, enabled);
+      setHandlerEnabled(map.keyboard, enabled);
+      setHandlerEnabled(map.touchZoomRotate, enabled);
+      if (!config.lockPitch) {
+        setHandlerEnabled(map.dragRotate, enabled);
+        setHandlerEnabled(map.touchPitch, enabled);
+      } else if (!enabled) {
+        setHandlerEnabled(map.dragRotate, false);
+        setHandlerEnabled(map.touchPitch, false);
+      }
+    };
+    const resumeUserGestureHandlers = () => {
+      setUserGestureHandlersEnabled(true);
+      if (config.lockPitch) {
+        setHandlerEnabled(map.dragRotate, false);
+        setHandlerEnabled(map.touchPitch, false);
+      }
+    };
+    window.storyBibleClearMapGestureSuspension = () => {
+      mapGesturesSuspendedUntil = 0;
+      if (mapGestureResumeTimer !== null) {
+        window.clearTimeout(mapGestureResumeTimer);
+        mapGestureResumeTimer = null;
+      }
+      resumeUserGestureHandlers();
+    };
+    const resumeMapGesturesIfReady = () => {
+      const remainingMs = mapGesturesSuspendedUntil - performance.now();
+      if (remainingMs > 0) {
+        mapGestureResumeTimer = window.setTimeout(resumeMapGesturesIfReady, remainingMs);
+        return;
+      }
+      mapGestureResumeTimer = null;
+      resumeUserGestureHandlers();
+    };
+    window.storyBibleSuspendMapGestures = (durationMs = 650) => {
+      const duration = Number.isFinite(Number(durationMs)) ? Number(durationMs) : 650;
+      mapGesturesSuspendedUntil = Math.max(mapGesturesSuspendedUntil, performance.now() + duration);
+      setUserGestureHandlersEnabled(false);
+      if (mapGestureResumeTimer !== null) {
+        window.clearTimeout(mapGestureResumeTimer);
+      }
+      mapGestureResumeTimer = window.setTimeout(resumeMapGesturesIfReady, duration);
     };
     const eventUsesModifierKey = (event) => {
       const source = event && (event.originalEvent || event);
@@ -2092,7 +2186,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         sendInteraction();
         const regionPickerPointerTap = isRegionPickerActive();
         if (eventUsesModifierKey(event) ||
-            (isMapTapExternallySuppressed() && !regionPickerPointerTap) ||
+            isMapTapExternallySuppressed() ||
             (pointerStartedSuppressed && isMapTapSuppressed() && !regionPickerPointerTap)) {
           suppressMapTap(950, 'mapGesture');
           return;

@@ -61,6 +61,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
   BibleVerse? _selectedVerse;
   final ScrollController _verseScrollController = ScrollController();
   final Map<String, Future<List<BibleVerse>>> _chapterCache = {};
+  final Map<String, Future<List<BibleVerse>>> _readingTargetCache = {};
   Map<String, SavedBibleVerse> _savedVersesByKey =
       const <String, SavedBibleVerse>{};
 
@@ -149,6 +150,19 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
 
   Future<List<BibleVerse>> _loadVersesForReadingTarget(
     BibleNavigationTarget target,
+  ) {
+    final cacheKey =
+        'KRV:${target.bookNo}:${target.chapterNo}:${target.verseNo}:'
+        '${target.endChapterNo ?? target.chapterNo}:'
+        '${target.endVerseNo ?? target.verseNo}';
+    return _readingTargetCache.putIfAbsent(
+      cacheKey,
+      () => _fetchVersesForReadingTarget(target),
+    );
+  }
+
+  Future<List<BibleVerse>> _fetchVersesForReadingTarget(
+    BibleNavigationTarget target,
   ) async {
     final endChapter = target.endChapterNo ?? target.chapterNo;
     final firstChapter = target.chapterNo <= endChapter
@@ -199,9 +213,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
   }
 
   void _selectVerse(BibleVerse verse) {
-    if (_readingTargets.isNotEmpty) {
-      return;
-    }
     final selected = _selectedVerse;
     final nextSelected =
         selected != null && _verseKey(selected) == _verseKey(verse)
@@ -353,6 +364,17 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     Navigator.of(context).pop(true);
   }
 
+  Widget _buildSelectedVerseActionBar(BibleVerse verse) {
+    return _SelectedVerseActionBar(
+      verse: verse,
+      onBlue: () => _toggleVerseHighlight(verse, SavedBibleVerse.highlightBlue),
+      onYellow: () =>
+          _toggleVerseHighlight(verse, SavedBibleVerse.highlightYellow),
+      onSave: () => _saveVerse(verse),
+      onCopy: () => _copyVerse(verse),
+    );
+  }
+
   Future<void> _setCurrentChapterRead({required bool isRead}) async {
     if (ref.read(signedInUserProvider) == null) {
       _requestLogin('통독 기록을 저장하려면 로그인이 필요해요.');
@@ -458,12 +480,26 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     final isSelectedChapterRead = storyState.completedBibleChapterKeys.contains(
       selectedChapterKey,
     );
-    final selectedVerse =
-        !isGuidedReading &&
-            _selectedVerse?.bookNo == selectedBookNoSafe &&
-            _selectedVerse?.chapterNo == selectedChapterSafe
-        ? _selectedVerse
-        : null;
+    final rawSelectedVerse = _selectedVerse;
+    final BibleVerse? selectedVerse;
+    if (rawSelectedVerse == null) {
+      selectedVerse = null;
+    } else if (readingTarget != null) {
+      selectedVerse =
+          readingTarget.containsVerse(
+            bookNo: rawSelectedVerse.bookNo,
+            chapterNo: rawSelectedVerse.chapterNo,
+            verseNo: rawSelectedVerse.verseNo,
+          )
+          ? rawSelectedVerse
+          : null;
+    } else {
+      selectedVerse =
+          rawSelectedVerse.bookNo == selectedBookNoSafe &&
+              rawSelectedVerse.chapterNo == selectedChapterSafe
+          ? rawSelectedVerse
+          : null;
+    }
 
     return SubPageScaffold(
       title: '성경',
@@ -546,7 +582,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
               selectedVerseKey: selectedVerse == null
                   ? null
                   : _verseKey(selectedVerse),
-              onTapVerse: isGuidedReading ? null : _selectVerse,
+              onTapVerse: _selectVerse,
               footer: isGuidedReading
                   ? null
                   : _ChapterReadButton(
@@ -557,33 +593,21 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
                     ),
             ),
           ),
-          if (isGuidedReading)
+          if (selectedVerse != null)
+            _buildSelectedVerseActionBar(selectedVerse)
+          else if (isGuidedReading)
             _GuidedReadingBottomBar(
               isLast: _readingTargetIndex == _readingTargets.length - 1,
               onNext: _goToNextReadingTarget,
               onComplete: _completeGuidedReading,
             )
           else
-            selectedVerse == null
-                ? _BibleBottomBar(
-                    canPrev: selectedChapterSafe > 1,
-                    canNext: selectedChapterSafe < chapterCount,
-                    onPrev: () => _goToChapter(-1),
-                    onNext: () => _goToChapter(1),
-                  )
-                : _SelectedVerseActionBar(
-                    verse: selectedVerse,
-                    onBlue: () => _toggleVerseHighlight(
-                      selectedVerse,
-                      SavedBibleVerse.highlightBlue,
-                    ),
-                    onYellow: () => _toggleVerseHighlight(
-                      selectedVerse,
-                      SavedBibleVerse.highlightYellow,
-                    ),
-                    onSave: () => _saveVerse(selectedVerse),
-                    onCopy: () => _copyVerse(selectedVerse),
-                  ),
+            _BibleBottomBar(
+              canPrev: selectedChapterSafe > 1,
+              canNext: selectedChapterSafe < chapterCount,
+              onPrev: () => _goToChapter(-1),
+              onNext: () => _goToChapter(1),
+            ),
         ],
       ),
     );
@@ -1146,22 +1170,24 @@ class _VerseRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final persistentHighlight = _readerHighlightBackground(highlightColor);
-    final highlight = isInReadRange
-        ? palette.currentAccent.withValues(alpha: 0.20)
-        : persistentHighlight ??
-              (isSelected ? palette.selectionFill : null) ??
-              (isSaved
-                  ? palette.currentAccent.withValues(alpha: 0.18)
-                  : Colors.transparent);
-    final leadingBorder = isInReadRange
+    final highlight =
+        persistentHighlight ??
+        (isSelected ? palette.selectionFill : null) ??
+        (isInReadRange
+            ? palette.currentAccent.withValues(alpha: 0.20)
+            : null) ??
+        (isSaved
+            ? palette.currentAccent.withValues(alpha: 0.18)
+            : Colors.transparent);
+    final leadingBorder = isSelected
+        ? Border(left: BorderSide(color: palette.primary, width: 3))
+        : isInReadRange
         ? Border(
             left: BorderSide(
               color: palette.currentAccentDeep,
               width: isReadRangeBoundary ? 4 : 2,
             ),
           )
-        : isSelected
-        ? Border(left: BorderSide(color: palette.primary, width: 3))
         : null;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 160),

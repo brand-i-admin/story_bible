@@ -284,14 +284,22 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
               alignment: Alignment.bottomCenter,
               child: Listener(
                 behavior: HitTestBehavior.translucent,
-                onPointerDown: (_) =>
-                    _suppressMapTaps(const Duration(milliseconds: 1200)),
-                onPointerMove: (_) =>
-                    _suppressMapTaps(const Duration(milliseconds: 350)),
-                onPointerUp: (_) =>
-                    _suppressMapTaps(const Duration(milliseconds: 1200)),
-                onPointerCancel: (_) =>
-                    _suppressMapTaps(const Duration(milliseconds: 1200)),
+                onPointerDown: (_) {
+                  _suppressMapTaps(const Duration(milliseconds: 1200));
+                  _suspendMapGestures();
+                },
+                onPointerMove: (_) {
+                  _suppressMapTaps(const Duration(milliseconds: 350));
+                  _suspendMapGestures();
+                },
+                onPointerUp: (_) {
+                  _suppressMapTaps(const Duration(milliseconds: 1200));
+                  _clearMapGestureSuspension();
+                },
+                onPointerCancel: (_) {
+                  _suppressMapTaps(const Duration(milliseconds: 1200));
+                  _clearMapGestureSuspension();
+                },
                 onPointerSignal: (_) =>
                     _suppressMapTaps(const Duration(milliseconds: 1200)),
                 child: WebPointerInterceptor(child: widget.bottomOverlay!),
@@ -348,6 +356,16 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
   void _clearMapTapSuppression() {
     _terrain3dController.clearTapSuppression();
+  }
+
+  void _suspendMapGestures([
+    Duration duration = const Duration(milliseconds: 220),
+  ]) {
+    _terrain3dController.suspendGesturesFor(duration);
+  }
+
+  void _clearMapGestureSuspension() {
+    _terrain3dController.clearGestureSuspension();
   }
 
   /// 랜드마크 탭 처리. onLandmarkTap 콜백 (popup) 호출.

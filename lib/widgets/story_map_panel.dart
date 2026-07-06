@@ -174,6 +174,12 @@ class StoryMapPanelController {
 
   void clearMapTapSuppression() => _state?._clearMapTapSuppression();
 
+  void suspendMapGestures([
+    Duration duration = const Duration(milliseconds: 220),
+  ]) => _state?._suspendMapGestures(duration);
+
+  void clearMapGestureSuspension() => _state?._clearMapGestureSuspension();
+
   void skipAnimation() => _state?.skipAnimation();
 
   /// "다음" 버튼처럼 외부 트리거로 핀 reveal 애니메이션을 다시 재생한다.

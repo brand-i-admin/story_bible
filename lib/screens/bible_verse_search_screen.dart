@@ -655,24 +655,32 @@ class _VerseButtonGrid extends StatelessWidget {
                       if (rowIndex > 0) const _VerseGridHorizontalDivider(),
                       SizedBox(
                         height: 42,
-                        child: Row(
+                        child: Stack(
                           children: [
-                            for (
-                              var colIndex = 0;
-                              colIndex < columns;
-                              colIndex++
-                            ) ...[
-                              Expanded(
-                                child: _verseAt(
-                                  numbers,
-                                  columns,
-                                  rowIndex,
-                                  colIndex,
+                            Row(
+                              children: [
+                                for (
+                                  var colIndex = 0;
+                                  colIndex < columns;
+                                  colIndex++
+                                )
+                                  Expanded(
+                                    child: _verseAt(
+                                      numbers,
+                                      columns,
+                                      rowIndex,
+                                      colIndex,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: _VerseGridVerticalDividers(
+                                  columns: columns,
                                 ),
                               ),
-                              if (colIndex < columns - 1)
-                                const _VerseGridVerticalDivider(),
-                            ],
+                            ),
                           ],
                         ),
                       ),
@@ -875,20 +883,33 @@ class _VerseGridHorizontalDivider extends StatelessWidget {
   }
 }
 
-class _VerseGridVerticalDivider extends StatelessWidget {
-  const _VerseGridVerticalDivider();
+class _VerseGridVerticalDividers extends StatelessWidget {
+  const _VerseGridVerticalDividers({required this.columns});
+
+  final int columns;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    return Container(
-      width: 5,
-      alignment: Alignment.center,
-      child: Container(
-        width: 1,
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        color: palette.subtleBorder,
-      ),
+    if (columns <= 1) {
+      return const SizedBox.shrink();
+    }
+    return Row(
+      children: [
+        for (var colIndex = 0; colIndex < columns; colIndex++)
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: colIndex < columns - 1
+                  ? Container(
+                      width: 1,
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      color: palette.subtleBorder,
+                    )
+                  : const SizedBox.shrink(),
+            ),
+          ),
+      ],
     );
   }
 }
