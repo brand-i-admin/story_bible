@@ -1,6 +1,6 @@
 // 부모 라이브러리: lib/widgets/profile_tab_page.dart
 //
-// 프로필 좌측 패널 (아바타/헤더/콘텐츠 탭/기록·기도·저장·말씀 미리보기).
+// 프로필 좌측 패널 (아바타/헤더/기도 패널/이야기 탐험).
 part of '../profile_tab_page.dart';
 
 bool _profileUsesLargeTextLayout(BuildContext context) {
@@ -120,17 +120,12 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   double _profileLeftCardHeight({required bool isAuthenticated}) {
     return _profileLeftCardChromeHeight +
         switch (_profileContentTab) {
-          _ProfileContentTab.records => _profileRecordsContentHeight(),
           _ProfileContentTab.prayer => _profilePrayerContentHeight(
             isAuthenticated: isAuthenticated,
           ),
           _ProfileContentTab.saved => _profileSavedStoriesContentHeight(),
           _ProfileContentTab.verses => _profileSavedVersesContentHeight(),
         };
-  }
-
-  double _profileRecordsContentHeight() {
-    return 122;
   }
 
   double _profilePrayerContentHeight({required bool isAuthenticated}) {
@@ -283,37 +278,10 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         children: [
           Expanded(
             child: _profileContentTabButton(
-              icon: Icons.edit_note_rounded,
-              label: '기록',
-              tab: _ProfileContentTab.records,
-              accent: palette.regionAccent,
-            ),
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: _profileContentTabButton(
               icon: Icons.self_improvement_rounded,
               label: '기도',
               tab: _ProfileContentTab.prayer,
               accent: palette.characterAccent,
-            ),
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: _profileContentTabButton(
-              icon: Icons.bookmark_rounded,
-              label: '저장',
-              tab: _ProfileContentTab.saved,
-              accent: palette.primary,
-            ),
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: _profileContentTabButton(
-              icon: Icons.menu_book_rounded,
-              label: '말씀',
-              tab: _ProfileContentTab.verses,
-              accent: palette.currentAccentDeep,
             ),
           ),
         ],
@@ -341,7 +309,6 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
   Color _profileContentTabAccent(AppColorPalette palette) {
     return switch (_profileContentTab) {
-      _ProfileContentTab.records => palette.regionAccent,
       _ProfileContentTab.prayer => palette.characterAccent,
       _ProfileContentTab.saved => palette.primary,
       _ProfileContentTab.verses => palette.currentAccentDeep,
@@ -355,7 +322,6 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 2, 2, 0),
       child: switch (_profileContentTab) {
-        _ProfileContentTab.records => _buildProfileRecordsTabBody(),
         _ProfileContentTab.saved => _buildProfileSavedStoriesTabBody(),
         _ProfileContentTab.verses => _buildProfileVersesTabBody(),
         _ProfileContentTab.prayer => _buildProfilePrayerTabBody(
@@ -406,33 +372,104 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     return bibleBooks.fold<int>(0, (sum, book) => sum + book.chapters);
   }
 
-  Widget _buildProfileRecordsTabBody() {
-    final state = ref.watch(storyControllerProvider);
-    final stats = buildProfileQuizStats(state.quizAttemptSummaries);
-    final storyProgress = _profileStoryProgress(state);
-    final bibleProgress = _profileBibleProgress(state);
+  StoryEvent? _lastEmotionMarkedEvent({
+    required List<StoryEvent> events,
+    required Map<String, EventEmotionMark> marks,
+  }) {
+    if (events.isEmpty || marks.isEmpty) {
+      return null;
+    }
+    final eventById = {for (final event in events) event.id: event};
+    final sortedMarks = marks.values.toList()..sort(_compareEmotionMarksNewest);
+    for (final mark in sortedMarks) {
+      final event = eventById[mark.eventId];
+      if (event != null) {
+        return event;
+      }
+    }
+    return null;
+  }
 
-    return SingleChildScrollView(
-      physics: const ClampingScrollPhysics(),
-      child: _ProfileRecordsDashboard(
-        storyProgress: storyProgress,
-        bibleProgress: bibleProgress,
-        quizStats: stats,
-        onTapStory: _openStoryProgressDialog,
-        onTapBible: _openBibleProgressDialog,
-        onTapWrong: () {
-          _openProfileQuizReviewDialog(
-            filter: _ProfileQuizReviewFilter.wrong,
-            eventIds: stats.wrongEventIds,
+  List<_StoryJourneyDeckEntry> _profileStoryJourneyEntries({
+    required StoryEvent? current,
+    required List<StoryEvent> events,
+    required List<Era> eras,
+  }) {
+    final ordered = _sortEventsByEraThenIndex(events, eras);
+    if (ordered.isEmpty || current == null) return const [];
+    final index = ordered.indexWhere((event) => event.id == current.id);
+    if (index < 0) return const [];
+    return [for (final event in ordered) _StoryJourneyDeckEntry(event: event)];
+  }
+
+  int _compareEmotionMarksNewest(EventEmotionMark a, EventEmotionMark b) {
+    final aTime = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+    final bTime = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+    final timeCompare = bTime.compareTo(aTime);
+    if (timeCompare != 0) {
+      return timeCompare;
+    }
+    return a.eventId.compareTo(b.eventId);
+  }
+
+  Widget _buildProfileStoryExplorationDashboard() {
+    final state = ref.watch(storyControllerProvider);
+    final events = _profileAllEvents.isNotEmpty
+        ? _profileAllEvents
+        : state.events;
+    final orderedJourneyEvents = _sortEventsByEraThenIndex(events, state.eras);
+    final lastEmotionEvent = _lastEmotionMarkedEvent(
+      events: orderedJourneyEvents,
+      marks: state.eventEmotionMarks,
+    );
+    final journeyEntries = _profileStoryJourneyEntries(
+      current: lastEmotionEvent,
+      events: orderedJourneyEvents,
+      eras: state.eras,
+    );
+    final recentJourneyIndex = lastEmotionEvent == null
+        ? -1
+        : journeyEntries.indexWhere(
+            (entry) => entry.event?.id == lastEmotionEvent.id,
           );
-        },
-        onTapConfused: () {
-          _openProfileQuizReviewDialog(
-            filter: _ProfileQuizReviewFilter.confused,
-            eventIds: stats.confusedEventIds,
-          );
-        },
-      ),
+    final nextJourneyEventId =
+        recentJourneyIndex >= 0 &&
+            recentJourneyIndex + 1 < journeyEntries.length
+        ? journeyEntries[recentJourneyIndex + 1].event?.id
+        : null;
+    final charactersByCode = <String, Character>{
+      for (final character in _profileAllPeople) character.code: character,
+      for (final character in state.characters) character.code: character,
+    };
+
+    return _ProfileStoryExplorationDashboard(
+      entries: journeyEntries,
+      initialSelectedEventId: lastEmotionEvent?.id,
+      eras: state.eras,
+      charactersByCode: charactersByCode,
+      eventEmotionMarks: state.eventEmotionMarks,
+      quizAttemptSummaries: state.quizAttemptSummaries,
+      storyProgress: _profileStoryProgress(state),
+      savedStoryCount: state.savedEventIds.length,
+      savedVerseCount: _profileSavedVersesCount,
+      onExploreStoriesFromHome: widget.onExploreStoriesFromHome,
+      onOpenStoryProgress: _openStoryProgressPage,
+      onOpenSavedStories: _openSavedStoriesOverview,
+      onOpenSavedVerses: _openSavedVersesPage,
+      onOpenStory: (target) {
+        final from = lastEmotionEvent;
+        final navigate = widget.onNavigateStory;
+        final isCanonicalNextStory =
+            nextJourneyEventId != null && target.id == nextJourneyEventId;
+        if (from != null && isCanonicalNextStory && navigate != null) {
+          unawaited(navigate(from: from, target: target));
+          return;
+        }
+        widget.onOpenEventDetail(
+          target,
+          source: ProfileEventOpenSource.targetOnly,
+        );
+      },
     );
   }
 
@@ -826,7 +863,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
-  Future<void> _openStoryProgressDialog() async {
+  Future<void> _openStoryProgressPage() async {
     final state = ref.read(storyControllerProvider);
     final events = _profileAllEvents.isNotEmpty
         ? _profileAllEvents
@@ -835,163 +872,48 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     final eras = state.eras
         .where((era) => eraIdsWithEvents.contains(era.id))
         .toList(growable: false);
-    var selectedEraId = eras.firstOrNull?.id;
+    final selectedEraId = eras.firstOrNull?.id;
     final charactersByCode = <String, Character>{
       for (final character in _profileAllPeople) character.code: character,
       for (final character in state.characters) character.code: character,
     };
-    var storyFilter = _StoryProgressFilter.all;
-
-    await showGeneralDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'close',
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 260),
-      pageBuilder: (dialogContext, _, __) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            final palette = AppPaletteTheme.of(context);
-            final selectedEra = eras
-                .where((era) => era.id == selectedEraId)
-                .firstOrNull;
-            final selectedEvents = selectedEra == null
-                ? const <StoryEvent>[]
-                : events
-                      .where((event) => event.eraId == selectedEra.id)
-                      .toList(growable: false);
-            final selectedCompletedCount = selectedEvents
-                .where((event) => state.completedEventIds.contains(event.id))
-                .length;
-            final filteredEvents = switch (storyFilter) {
-              _StoryProgressFilter.all => selectedEvents,
-              _StoryProgressFilter.completed =>
-                selectedEvents
-                    .where(
-                      (event) => state.completedEventIds.contains(event.id),
-                    )
-                    .toList(growable: false),
-              _StoryProgressFilter.incomplete =>
-                selectedEvents
-                    .where(
-                      (event) => !state.completedEventIds.contains(event.id),
-                    )
-                    .toList(growable: false),
-            };
-            final filteredEmptyText = switch (storyFilter) {
-              _StoryProgressFilter.all => '이 시대의 이야기가 없습니다.',
-              _StoryProgressFilter.completed => '완료한 이야기가 없습니다.',
-              _StoryProgressFilter.incomplete => '미완료 이야기가 없습니다.',
-            };
-            final selectedFraction = selectedEvents.isEmpty
-                ? 0.0
-                : (selectedCompletedCount / selectedEvents.length)
-                      .clamp(0.0, 1.0)
-                      .toDouble();
-            return Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: 880,
-                  maxHeight: MediaQuery.of(dialogContext).size.height * 0.86,
-                  minWidth: 320,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: modalSurfaceDecoration(),
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  '이야기 진행률',
-                                  style: TextStyle(
-                                    color: palette.text,
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                EraPickRows(
-                                  eras: eras,
-                                  selectedEraId: selectedEraId,
-                                  onSelectEra: (eraId) {
-                                    setDialogState(() {
-                                      selectedEraId = eraId;
-                                    });
-                                  },
-                                  trailingScrollPadding: 8,
-                                ),
-                                const SizedBox(height: 10),
-                                _StoryProgressSelectedEraMeter(
-                                  eraName: selectedEra?.name ?? '시대',
-                                  completed: selectedCompletedCount,
-                                  total: selectedEvents.length,
-                                  fraction: selectedFraction,
-                                ),
-                                const SizedBox(height: 10),
-                                _StoryProgressFilterTabs(
-                                  selectedFilter: storyFilter,
-                                  onChanged: (filter) {
-                                    setDialogState(() {
-                                      storyFilter = filter;
-                                    });
-                                  },
-                                ),
-                                const SizedBox(height: 10),
-                                Expanded(
-                                  child: ProfileEventReviewGrid(
-                                    events: filteredEvents,
-                                    eras: state.eras,
-                                    charactersByCode: charactersByCode,
-                                    completedEventIds: state.completedEventIds,
-                                    eventEmotionMarks: state.eventEmotionMarks,
-                                    quizAttemptSummaries:
-                                        state.quizAttemptSummaries,
-                                    emptyText: filteredEmptyText,
-                                    onOpenEventDetail: (event) {
-                                      Navigator.of(dialogContext).pop();
-                                      widget.onOpenEventDetail(event);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            right: 12,
-                            top: 12,
-                            child: modalCloseButton(
-                              onTap: () => Navigator.of(dialogContext).pop(),
-                              size: 32,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+    final quizStats = buildProfileQuizStats(state.quizAttemptSummaries);
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => _ProfileStoryProgressPage(
+          events: events,
+          eras: eras,
+          selectedEraId: selectedEraId,
+          charactersByCode: charactersByCode,
+          completedEventIds: state.completedEventIds,
+          eventEmotionMarks: state.eventEmotionMarks,
+          quizAttemptSummaries: state.quizAttemptSummaries,
+          quizStats: quizStats,
+          onTapWrong: () {
+            _openProfileQuizReviewDialog(
+              filter: _ProfileQuizReviewFilter.wrong,
+              eventIds: quizStats.wrongEventIds,
             );
           },
-        );
-      },
+          onTapConfused: () {
+            _openProfileQuizReviewDialog(
+              filter: _ProfileQuizReviewFilter.confused,
+              eventIds: quizStats.confusedEventIds,
+            );
+          },
+          onOpenEventDetail: widget.onOpenEventDetail,
+        ),
+      ),
     );
   }
 
   Future<void> _openBibleProgressDialog() async {
     final state = ref.read(storyControllerProvider);
-    var selectedTestament = 'old';
-    var selectedBookNo = oldTestamentFirstBookNo;
+    final latestVerse = _profileSavedVersesPreview.firstOrNull;
+    var selectedBookNo =
+        latestVerse?.bookNo.clamp(1, bibleBooks.length).toInt() ??
+        oldTestamentFirstBookNo;
+    var selectedTestament = isNewTestamentBook(selectedBookNo) ? 'new' : 'old';
 
     await showGeneralDialog<void>(
       context: context,
@@ -1132,6 +1054,46 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
+  Future<void> _openBibleReaderFromLatestSavedVerse() async {
+    final latestVerse = _profileSavedVersesPreview.firstOrNull;
+    if (latestVerse == null) {
+      await widget.onOpenBibleReader(
+        initialBookNo: oldTestamentFirstBookNo,
+        initialChapterNo: 1,
+      );
+      return;
+    }
+
+    final target = _nextBibleChapterAfter(latestVerse);
+    if (target == null) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('마지막 장이었습니다.')));
+      return;
+    }
+    await widget.onOpenBibleReader(
+      initialBookNo: target.bookNo,
+      initialChapterNo: target.chapterNo,
+    );
+  }
+
+  ({int bookNo, int chapterNo})? _nextBibleChapterAfter(SavedBibleVerse verse) {
+    final bookNo = verse.bookNo.clamp(1, bibleBooks.length).toInt();
+    final maxChapter = bibleBooks[bookNo - 1].chapters;
+    final chapterNo = verse.chapterNo.clamp(1, maxChapter).toInt();
+
+    if (chapterNo < maxChapter) {
+      return (bookNo: bookNo, chapterNo: chapterNo + 1);
+    }
+    if (bookNo < bibleBooks.length) {
+      return (bookNo: bookNo + 1, chapterNo: 1);
+    }
+    return null;
+  }
+
   Future<void> _openProfileReviewDialog({
     required String title,
     required Set<String> eventIds,
@@ -1254,6 +1216,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required List<StoryEvent> events,
     required StoryState state,
     bool compact = false,
+    ProfileEventDetailCallback? onOpenEventDetail,
   }) {
     final charactersByCode = <String, Character>{
       for (final character in _profileAllPeople) character.code: character,
@@ -1324,7 +1287,11 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                   emotionKey: state.eventEmotionMarks[event.id]?.emotionKey,
                   attemptSummary: state.quizAttemptSummaries[event.id],
                   loader: loader,
-                  onTap: () => widget.onOpenEventDetail(event),
+                  onTap: () {
+                    final openDetail =
+                        onOpenEventDetail ?? widget.onOpenEventDetail;
+                    openDetail(event);
+                  },
                 );
               },
             ),
@@ -1335,72 +1302,38 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }
 
   Future<void> _openSavedStoriesOverview() async {
-    if (_profileSavedEventsPreview.isEmpty) {
-      return;
-    }
     final state = ref.read(storyControllerProvider);
-    await showGeneralDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'close',
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 260),
-      pageBuilder: (dialogContext, _, __) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: 820,
-              maxHeight: MediaQuery.of(dialogContext).size.height * 0.84,
-              minWidth: 320,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  clipBehavior: Clip.hardEdge,
-                  decoration: modalSurfaceDecoration(),
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const Text(
-                              '저장한 이야기',
-                              style: TextStyle(
-                                color: AppColors.ink900,
-                                fontSize: 21,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Expanded(
-                              child: _buildEventGroupsByEra(
-                                events: _profileSavedEventsPreview,
-                                state: state,
-                              ),
-                            ),
-                          ],
-                        ),
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ParchmentListPageScaffold(
+          title: '저장한 이야기',
+          child: ParchmentCard(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
+            child: _profileSavedEventsPreview.isEmpty
+                ? const Center(
+                    child: Text(
+                      '아직 저장한 이야기가 없습니다.\n사건 상세에서 별표를 눌러 저장해 보세요.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.ink300,
+                        fontSize: 13.2,
+                        fontWeight: FontWeight.w800,
+                        height: 1.55,
                       ),
-                      Positioned(
-                        right: 12,
-                        top: 12,
-                        child: modalCloseButton(
-                          onTap: () => Navigator.of(dialogContext).pop(),
-                          size: 32,
+                    ),
+                  )
+                : _buildEventGroupsByEra(
+                    events: _profileSavedEventsPreview,
+                    state: state,
+                    onOpenEventDetail: (event, {source}) =>
+                        widget.onOpenEventDetail(
+                          event,
+                          source: ProfileEventOpenSource.detailOnly,
                         ),
-                      ),
-                    ],
                   ),
-                ),
-              ),
-            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -1568,56 +1501,95 @@ class _ProfileIconTabButton extends StatelessWidget {
   }
 }
 
-class _ProfileRecordsDashboard extends StatelessWidget {
-  const _ProfileRecordsDashboard({
+class _ProfileStoryExplorationDashboard extends StatelessWidget {
+  const _ProfileStoryExplorationDashboard({
+    required this.entries,
+    required this.initialSelectedEventId,
+    required this.eras,
+    required this.charactersByCode,
+    required this.eventEmotionMarks,
+    required this.quizAttemptSummaries,
     required this.storyProgress,
-    required this.bibleProgress,
-    required this.quizStats,
-    required this.onTapStory,
-    required this.onTapBible,
-    required this.onTapWrong,
-    required this.onTapConfused,
+    required this.savedStoryCount,
+    required this.savedVerseCount,
+    required this.onExploreStoriesFromHome,
+    required this.onOpenStoryProgress,
+    required this.onOpenSavedStories,
+    required this.onOpenSavedVerses,
+    required this.onOpenStory,
   });
 
+  final List<_StoryJourneyDeckEntry> entries;
+  final String? initialSelectedEventId;
+  final List<Era> eras;
+  final Map<String, Character> charactersByCode;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
   final ({int completed, int total, double fraction}) storyProgress;
-  final ({int completed, int total, double fraction}) bibleProgress;
-  final ProfileQuizStats quizStats;
-  final VoidCallback onTapStory;
-  final VoidCallback onTapBible;
-  final VoidCallback onTapWrong;
-  final VoidCallback onTapConfused;
+  final int savedStoryCount;
+  final int savedVerseCount;
+  final VoidCallback? onExploreStoriesFromHome;
+  final VoidCallback onOpenStoryProgress;
+  final VoidCallback onOpenSavedStories;
+  final VoidCallback onOpenSavedVerses;
+  final ValueChanged<StoryEvent> onOpenStory;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SizedBox(
-          height: 136,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                flex: 5,
-                child: _ProfileOverallProgressButton(
-                  icon: Icons.menu_book_rounded,
-                  label: '통독 진행률',
-                  completed: bibleProgress.completed,
-                  total: bibleProgress.total,
-                  fraction: bibleProgress.fraction,
-                  color: AppPaletteTheme.of(context).primary,
-                  onTap: onTapBible,
+        final palette = AppPaletteTheme.of(context);
+        return Container(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.alphaBlend(
+                  palette.regionAccent.withValues(alpha: 0.05),
+                  Colors.white,
                 ),
+                Color.alphaBlend(
+                  palette.currentAccent.withValues(alpha: 0.04),
+                  AppColors.parchmentCream.withValues(alpha: 0.92),
+                ),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: palette.regionAccent.withValues(alpha: 0.16),
+              width: 1,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x12000000),
+                blurRadius: 16,
+                offset: Offset(0, 6),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                flex: 9,
-                child: _ProfileStoryQuizProgressPanel(
-                  storyProgress: storyProgress,
-                  quizStats: quizStats,
-                  onTapStory: onTapStory,
-                  onTapWrong: onTapWrong,
-                  onTapConfused: onTapConfused,
-                ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _StoryExplorationSummarySection(
+                storyProgress: storyProgress,
+                savedStoryCount: savedStoryCount,
+                savedVerseCount: savedVerseCount,
+                onOpenStoryProgress: onOpenStoryProgress,
+                onOpenSavedStories: onOpenSavedStories,
+                onOpenSavedVerses: onOpenSavedVerses,
+              ),
+              const SizedBox(height: 10),
+              _ProfileStoryJourneyDeck(
+                entries: entries,
+                initialSelectedEventId: initialSelectedEventId,
+                eras: eras,
+                charactersByCode: charactersByCode,
+                eventEmotionMarks: eventEmotionMarks,
+                quizAttemptSummaries: quizAttemptSummaries,
+                onExploreStoriesFromHome: onExploreStoriesFromHome,
+                onOpenStory: onOpenStory,
               ),
             ],
           ),
@@ -1627,93 +1599,1533 @@ class _ProfileRecordsDashboard extends StatelessWidget {
   }
 }
 
-class _ProfileStoryQuizProgressPanel extends StatelessWidget {
-  const _ProfileStoryQuizProgressPanel({
+class _StoryExplorationSummarySection extends StatelessWidget {
+  const _StoryExplorationSummarySection({
     required this.storyProgress,
-    required this.quizStats,
-    required this.onTapStory,
-    required this.onTapWrong,
-    required this.onTapConfused,
+    required this.savedStoryCount,
+    required this.savedVerseCount,
+    required this.onOpenStoryProgress,
+    required this.onOpenSavedStories,
+    required this.onOpenSavedVerses,
   });
 
   final ({int completed, int total, double fraction}) storyProgress;
-  final ProfileQuizStats quizStats;
-  final VoidCallback onTapStory;
-  final VoidCallback onTapWrong;
-  final VoidCallback onTapConfused;
+  final int savedStoryCount;
+  final int savedVerseCount;
+  final VoidCallback onOpenStoryProgress;
+  final VoidCallback onOpenSavedStories;
+  final VoidCallback onOpenSavedVerses;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final totalLabel = math.max(storyProgress.total, 301);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _ProfileDashboardTitle(
+          icon: Icons.bar_chart_rounded,
+          label: '이야기 탐험 요약',
+          color: palette.currentAccentDeep,
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Expanded(
+              child: _StoryExplorationSummaryCard(
+                key: const ValueKey('profile-story-summary-explored'),
+                label: '탐험한 이야기',
+                icon: Icons.flag_rounded,
+                color: palette.regionAccent,
+                onTap: onOpenStoryProgress,
+                value: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: '${storyProgress.completed}'),
+                      TextSpan(
+                        text: '/$totalLabel',
+                        style: TextStyle(
+                          color: palette.mutedText,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 7),
+            Expanded(
+              child: _StoryExplorationSummaryCard(
+                key: const ValueKey('profile-story-summary-saved-stories'),
+                label: '저장 이야기 개수',
+                icon: Icons.bookmark_rounded,
+                color: palette.primary,
+                onTap: onOpenSavedStories,
+                value: Text('$savedStoryCount개'),
+              ),
+            ),
+            const SizedBox(width: 7),
+            Expanded(
+              child: _StoryExplorationSummaryCard(
+                key: const ValueKey('profile-story-summary-saved-verses'),
+                label: '저장한 말씀',
+                icon: Icons.menu_book_rounded,
+                color: palette.currentAccentDeep,
+                onTap: onOpenSavedVerses,
+                value: Text('$savedVerseCount개'),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _StoryExplorationSummaryCard extends StatelessWidget {
+  const _StoryExplorationSummaryCard({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.value,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final Widget value;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final largeText = _profileUsesLargeTextLayout(context);
-    final storyColor = palette.regionAccent;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final statsWidth = (constraints.maxWidth * 0.48)
-            .clamp(102.0, 128.0)
-            .toDouble();
-        return Container(
-          padding: EdgeInsets.all(largeText ? 6 : 8),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 74),
+          padding: EdgeInsets.fromLTRB(8, largeText ? 8 : 9, 8, 8),
           decoration: BoxDecoration(
-            color: Color.alphaBlend(
-              storyColor.withValues(alpha: 0.052),
-              AppColors.parchmentCream,
-            ),
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: palette.subtleBorder, width: 1),
+            color: Colors.white.withValues(alpha: 0.96),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: color.withValues(alpha: 0.24), width: 1),
             boxShadow: const [
               BoxShadow(
-                color: Color(0x12000000),
-                blurRadius: 12,
-                offset: Offset(0, 5),
+                color: Color(0x0F000000),
+                blurRadius: 8,
+                offset: Offset(0, 3),
               ),
             ],
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: onTapStory,
-                    borderRadius: BorderRadius.circular(16),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: largeText ? 1 : 2,
-                      ),
-                      child: _ProfileProgressSummaryContent(
-                        icon: Icons.auto_stories_rounded,
-                        label: '이야기 진행률',
-                        completed: storyProgress.completed,
-                        total: storyProgress.total,
-                        fraction: storyProgress.fraction,
-                        color: storyColor,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, size: 13.5, color: color),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: palette.mutedText,
+                        fontSize: largeText ? 10.2 : 11.2,
+                        fontWeight: FontWeight.w900,
+                        height: 1,
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-              Container(
-                width: 1,
-                margin: EdgeInsets.symmetric(
-                  horizontal: largeText ? 5 : 7,
-                  vertical: 4,
+              const SizedBox(height: 7),
+              DefaultTextStyle(
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: palette.text,
+                  fontSize: largeText ? 17.2 : 18.8,
+                  fontWeight: FontWeight.w900,
+                  height: 1,
                 ),
-                color: palette.subtleBorder.withValues(alpha: 0.78),
+                child: FittedBox(fit: BoxFit.scaleDown, child: value),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileStoryProgressPage extends StatefulWidget {
+  const _ProfileStoryProgressPage({
+    required this.events,
+    required this.eras,
+    required this.selectedEraId,
+    required this.charactersByCode,
+    required this.completedEventIds,
+    required this.eventEmotionMarks,
+    required this.quizAttemptSummaries,
+    required this.quizStats,
+    required this.onTapWrong,
+    required this.onTapConfused,
+    required this.onOpenEventDetail,
+  });
+
+  final List<StoryEvent> events;
+  final List<Era> eras;
+  final String? selectedEraId;
+  final Map<String, Character> charactersByCode;
+  final Set<String> completedEventIds;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+  final ProfileQuizStats quizStats;
+  final VoidCallback onTapWrong;
+  final VoidCallback onTapConfused;
+  final ProfileEventDetailCallback onOpenEventDetail;
+
+  @override
+  State<_ProfileStoryProgressPage> createState() =>
+      _ProfileStoryProgressPageState();
+}
+
+class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
+  String? _selectedEraId;
+  _StoryProgressFilter _storyFilter = _StoryProgressFilter.all;
+  Set<String> _selectedEmotionKeys = <String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedEraId = widget.selectedEraId;
+  }
+
+  @override
+  void didUpdateWidget(covariant _ProfileStoryProgressPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final hasSelected = widget.eras.any((era) => era.id == _selectedEraId);
+    if (!hasSelected || oldWidget.selectedEraId != widget.selectedEraId) {
+      _selectedEraId = widget.selectedEraId;
+    }
+  }
+
+  void _openEventDetail(StoryEvent event) {
+    widget.onOpenEventDetail(event, source: ProfileEventOpenSource.detailOnly);
+  }
+
+  void _openEmotionMarksAllPage({
+    required List<EventEmotionMark> marks,
+    required Map<String, StoryEvent> eventById,
+    required String emptyMessage,
+  }) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (pageContext) => _ProfileEmotionMarksAllPage(
+          marks: marks,
+          eventById: eventById,
+          emptyMessage: emptyMessage,
+          onOpenEventDetail: (event) {
+            Navigator.of(pageContext).pop();
+            if (!mounted) return;
+            _openEventDetail(event);
+          },
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final selectedEra = widget.eras
+        .where((era) => era.id == _selectedEraId)
+        .firstOrNull;
+    final selectedEvents = selectedEra == null
+        ? const <StoryEvent>[]
+        : widget.events
+              .where((event) => event.eraId == selectedEra.id)
+              .toList(growable: false);
+    final selectedCompletedCount = selectedEvents
+        .where((event) => widget.completedEventIds.contains(event.id))
+        .length;
+    final selectedFraction = selectedEvents.isEmpty
+        ? 0.0
+        : (selectedCompletedCount / selectedEvents.length)
+              .clamp(0.0, 1.0)
+              .toDouble();
+    final filteredEvents = switch (_storyFilter) {
+      _StoryProgressFilter.all => selectedEvents,
+      _StoryProgressFilter.completed =>
+        selectedEvents
+            .where((event) => widget.completedEventIds.contains(event.id))
+            .toList(growable: false),
+      _StoryProgressFilter.incomplete =>
+        selectedEvents
+            .where((event) => !widget.completedEventIds.contains(event.id))
+            .toList(growable: false),
+    };
+    final filteredEmptyText = switch (_storyFilter) {
+      _StoryProgressFilter.all => '이 시대의 이야기가 없습니다.',
+      _StoryProgressFilter.completed => '완료한 이야기가 없습니다.',
+      _StoryProgressFilter.incomplete => '미완료 이야기가 없습니다.',
+    };
+    final eventById = {for (final event in widget.events) event.id: event};
+    final marks = widget.eventEmotionMarks.values.toList()
+      ..sort((a, b) {
+        final aTime = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bTime = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final timeCompare = bTime.compareTo(aTime);
+        if (timeCompare != 0) {
+          return timeCompare;
+        }
+        return a.eventId.compareTo(b.eventId);
+      });
+    final filteredMarks = _selectedEmotionKeys.isEmpty
+        ? marks
+        : marks
+              .where((mark) => _selectedEmotionKeys.contains(mark.emotionKey))
+              .toList(growable: false);
+    final emptyEmotionText = _selectedEmotionKeys.isEmpty
+        ? '아직 새긴 감정이 없습니다.'
+        : '선택한 감정으로 새긴 이야기가 없습니다.';
+    final emotionCountsByKey = {
+      for (final option in EventEmotionOption.options)
+        option.key: marks.where((mark) => mark.emotionKey == option.key).length,
+    };
+
+    return ParchmentListPageScaffold(
+      title: '탐험한 이야기',
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
+          decoration: BoxDecoration(
+            color: palette.cardSurface.withValues(alpha: 0.90),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: palette.subtleBorder, width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const _ProfileProgressPageSectionTitle(label: '내가 새긴 감정들'),
+              const SizedBox(height: 8),
+              _EmotionMarksPreviewPanel(
+                marks: filteredMarks,
+                allCount: marks.length,
+                countsByKey: emotionCountsByKey,
+                selectedKeys: _selectedEmotionKeys,
+                emptyMessage: emptyEmotionText,
+                eventById: eventById,
+                onToggleAll: () {
+                  setState(() => _selectedEmotionKeys = <String>{});
+                },
+                onToggleOption: (option) {
+                  setState(() {
+                    final next = {..._selectedEmotionKeys};
+                    if (next.contains(option.key)) {
+                      next.remove(option.key);
+                    } else {
+                      next.add(option.key);
+                    }
+                    _selectedEmotionKeys = next;
+                  });
+                },
+                onOpenAll: () {
+                  _openEmotionMarksAllPage(
+                    marks: filteredMarks,
+                    eventById: eventById,
+                    emptyMessage: emptyEmotionText,
+                  );
+                },
+                onOpenEventDetail: _openEventDetail,
+              ),
+              const _ProfileProgressPageDivider(),
+              const _ProfileProgressPageSectionTitle(label: '복습 항목'),
+              const SizedBox(height: 8),
+              _ProfileQuizStatsColumn(
+                stats: widget.quizStats,
+                onTapWrong: widget.onTapWrong,
+                onTapConfused: widget.onTapConfused,
+              ),
+              const _ProfileProgressPageDivider(),
+              const _ProfileProgressPageSectionTitle(label: '이야기 진행률'),
+              const SizedBox(height: 10),
+              EraPickRows(
+                eras: widget.eras,
+                selectedEraId: _selectedEraId,
+                onSelectEra: (eraId) {
+                  setState(() {
+                    _selectedEraId = eraId;
+                    _storyFilter = _StoryProgressFilter.all;
+                  });
+                },
+                trailingScrollPadding: 8,
+              ),
+              const SizedBox(height: 10),
+              _StoryProgressSelectedEraMeter(
+                eraName: selectedEra?.name ?? '시대',
+                completed: selectedCompletedCount,
+                total: selectedEvents.length,
+                fraction: selectedFraction,
+              ),
+              const SizedBox(height: 10),
+              _StoryProgressFilterTabs(
+                selectedFilter: _storyFilter,
+                onChanged: (filter) {
+                  setState(() => _storyFilter = filter);
+                },
+              ),
+              const SizedBox(height: 10),
               SizedBox(
-                width: statsWidth,
-                child: _ProfileQuizStatsColumn(
-                  stats: quizStats,
-                  onTapWrong: onTapWrong,
-                  onTapConfused: onTapConfused,
+                height: 520,
+                child: ProfileEventReviewGrid(
+                  key: const ValueKey('story-progress-review-grid'),
+                  events: filteredEvents,
+                  eras: widget.eras,
+                  charactersByCode: widget.charactersByCode,
+                  completedEventIds: widget.completedEventIds,
+                  eventEmotionMarks: widget.eventEmotionMarks,
+                  quizAttemptSummaries: widget.quizAttemptSummaries,
+                  emptyText: filteredEmptyText,
+                  onOpenEventDetail: _openEventDetail,
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileEmotionMarksAllPage extends StatelessWidget {
+  const _ProfileEmotionMarksAllPage({
+    required this.marks,
+    required this.eventById,
+    required this.emptyMessage,
+    required this.onOpenEventDetail,
+  });
+
+  final List<EventEmotionMark> marks;
+  final Map<String, StoryEvent> eventById;
+  final String emptyMessage;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return ParchmentListPageScaffold(
+      title: '내가 새긴 감정들',
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+        decoration: BoxDecoration(
+          color: palette.cardSurface.withValues(alpha: 0.92),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: palette.subtleBorder, width: 1),
+        ),
+        child: ProfileEmotionMarksList(
+          key: const ValueKey('emotion-marks-all-list'),
+          marks: marks,
+          eventById: eventById,
+          emptyMessage: emptyMessage,
+          loading: false,
+          hasError: false,
+          showTimestamp: true,
+          onOpenEventDetail: onOpenEventDetail,
+        ),
+      ),
+    );
+  }
+}
+
+class _EmotionMarksPreviewPanel extends StatelessWidget {
+  const _EmotionMarksPreviewPanel({
+    required this.marks,
+    required this.allCount,
+    required this.countsByKey,
+    required this.selectedKeys,
+    required this.emptyMessage,
+    required this.eventById,
+    required this.onToggleAll,
+    required this.onToggleOption,
+    required this.onOpenAll,
+    required this.onOpenEventDetail,
+  });
+
+  final List<EventEmotionMark> marks;
+  final int allCount;
+  final Map<String, int> countsByKey;
+  final Set<String> selectedKeys;
+  final String emptyMessage;
+  final Map<String, StoryEvent> eventById;
+  final VoidCallback onToggleAll;
+  final ValueChanged<EventEmotionOption> onToggleOption;
+  final VoidCallback onOpenAll;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final previewMarks = marks.take(3).toList(growable: false);
+    final hasMore = marks.length > previewMarks.length;
+    return Container(
+      key: const ValueKey('emotion-marks-review-list'),
+      padding: const EdgeInsets.fromLTRB(9, 9, 9, 10),
+      decoration: BoxDecoration(
+        color: palette.softSurface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: palette.subtleBorder, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _EmotionFilterChips(
+            allCount: allCount,
+            countsByKey: countsByKey,
+            selectedKeys: selectedKeys,
+            onToggleAll: onToggleAll,
+            onToggleOption: onToggleOption,
+          ),
+          Divider(height: 18, color: palette.subtleBorder),
+          ProfileEmotionMarksList(
+            marks: previewMarks,
+            eventById: eventById,
+            emptyMessage: emptyMessage,
+            loading: false,
+            hasError: false,
+            showTimestamp: true,
+            onOpenEventDetail: onOpenEventDetail,
+          ),
+          if (hasMore) ...[
+            const SizedBox(height: 6),
+            Text(
+              '...',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: palette.mutedText,
+                fontSize: 15,
+                fontWeight: FontWeight.w900,
+                height: 1,
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: TextButton(
+                key: const ValueKey('emotion-marks-open-all'),
+                onPressed: onOpenAll,
+                style: TextButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 5,
+                  ),
+                  foregroundColor: palette.currentAccentDeep,
+                  textStyle: const TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                child: const Text('전체보기'),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileProgressPageDivider extends StatelessWidget {
+  const _ProfileProgressPageDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Divider(
+        height: 1,
+        thickness: 1,
+        color: AppPaletteTheme.of(context).subtleBorder.withValues(alpha: 0.72),
+      ),
+    );
+  }
+}
+
+class _ProfileProgressPageSectionTitle extends StatelessWidget {
+  const _ProfileProgressPageSectionTitle({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Text(
+      label,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: AppTextStyles.sectionTitle.copyWith(
+        color: palette.text,
+        fontSize: 14.8,
+      ),
+    );
+  }
+}
+
+class _ProfileDashboardTitle extends StatelessWidget {
+  const _ProfileDashboardTitle({
+    required this.icon,
+    required this.label,
+    required this.color,
+    this.trailing,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Row(
+      children: [
+        Container(
+          width: 24,
+          height: 24,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.12),
+            shape: BoxShape.circle,
+            border: Border.all(color: color.withValues(alpha: 0.28)),
+          ),
+          child: Icon(icon, size: 14.5, color: color),
+        ),
+        const SizedBox(width: 7),
+        Expanded(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.sectionTitle.copyWith(
+              color: palette.text,
+              fontSize: AppFontSizes.input,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+        if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+      ],
+    );
+  }
+}
+
+class _StoryJourneyDeckEntry {
+  const _StoryJourneyDeckEntry({required this.event});
+
+  final StoryEvent? event;
+}
+
+class _StoryJourneyDeckLayoutItem {
+  const _StoryJourneyDeckLayoutItem({
+    required this.index,
+    required this.slot,
+    required this.entry,
+  });
+
+  final int index;
+  final int slot;
+  final _StoryJourneyDeckEntry entry;
+}
+
+class _ProfileStoryJourneyDeck extends StatefulWidget {
+  const _ProfileStoryJourneyDeck({
+    required this.entries,
+    required this.initialSelectedEventId,
+    required this.eras,
+    required this.charactersByCode,
+    required this.eventEmotionMarks,
+    required this.quizAttemptSummaries,
+    required this.onExploreStoriesFromHome,
+    required this.onOpenStory,
+  });
+
+  final List<_StoryJourneyDeckEntry> entries;
+  final String? initialSelectedEventId;
+  final List<Era> eras;
+  final Map<String, Character> charactersByCode;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+  final VoidCallback? onExploreStoriesFromHome;
+  final ValueChanged<StoryEvent> onOpenStory;
+
+  @override
+  State<_ProfileStoryJourneyDeck> createState() =>
+      _ProfileStoryJourneyDeckState();
+}
+
+class _ProfileStoryJourneyDeckState extends State<_ProfileStoryJourneyDeck> {
+  String? _mainEventId;
+  double _dragDistance = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _mainEventId = _resolvedInitialMainEventId();
+  }
+
+  @override
+  void didUpdateWidget(covariant _ProfileStoryJourneyDeck oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final hasSelected = widget.entries.any(
+      (entry) => entry.event?.id == _mainEventId,
+    );
+    if (!hasSelected ||
+        oldWidget.initialSelectedEventId != widget.initialSelectedEventId) {
+      _mainEventId = _resolvedInitialMainEventId();
+    }
+  }
+
+  int _recentIndex() {
+    final recentId = widget.initialSelectedEventId;
+    if (recentId == null) return -1;
+    return widget.entries.indexWhere((entry) => entry.event?.id == recentId);
+  }
+
+  int _initialMainIndex() {
+    final recentIndex = _recentIndex();
+    if (recentIndex < 0) return widget.entries.isEmpty ? -1 : 0;
+    final nextIndex = recentIndex + 1;
+    if (nextIndex < widget.entries.length) {
+      return nextIndex;
+    }
+    return recentIndex;
+  }
+
+  String? _resolvedInitialMainEventId() {
+    final index = _initialMainIndex();
+    if (index < 0 || index >= widget.entries.length) return null;
+    return widget.entries[index].event?.id;
+  }
+
+  int _mainIndex() {
+    final index = widget.entries.indexWhere(
+      (entry) => entry.event?.id == _mainEventId,
+    );
+    if (index >= 0) return index;
+    return _initialMainIndex().clamp(0, widget.entries.length - 1).toInt();
+  }
+
+  void _resetToInitialDeck() {
+    setState(() => _mainEventId = _resolvedInitialMainEventId());
+  }
+
+  void _moveMainBy(int delta) {
+    if (widget.entries.isEmpty) return;
+    final nextIndex = (_mainIndex() + delta).clamp(
+      0,
+      widget.entries.length - 1,
+    );
+    final nextEventId = widget.entries[nextIndex].event?.id;
+    if (nextEventId == null || nextEventId == _mainEventId) {
+      return;
+    }
+    setState(() => _mainEventId = nextEventId);
+  }
+
+  void _handleHorizontalDragStart(DragStartDetails details) {
+    _dragDistance = 0;
+  }
+
+  void _handleHorizontalDragUpdate(DragUpdateDetails details) {
+    _dragDistance += details.primaryDelta ?? 0;
+  }
+
+  void _handleHorizontalDragEnd(DragEndDetails details) {
+    final velocity = details.primaryVelocity ?? 0;
+    final distance = _dragDistance;
+    _dragDistance = 0;
+    if (velocity.abs() < 180 && distance.abs() < 42) {
+      return;
+    }
+    if (velocity < -180 || distance < -42) {
+      _moveMainBy(1);
+    } else if (velocity > 180 || distance > 42) {
+      _moveMainBy(-1);
+    }
+  }
+
+  void _handleHorizontalDragCancel() {
+    _dragDistance = 0;
+  }
+
+  List<_StoryJourneyDeckLayoutItem> _visibleDeckItems(int mainIndex) {
+    final count = widget.entries.length;
+    if (count == 0 || mainIndex < 0) return const [];
+
+    final targetCount = math.min(3, count);
+    final slotsByIndex = <int, int>{};
+
+    void add(int index, int slot) {
+      if (index < 0 || index >= count) return;
+      slotsByIndex.putIfAbsent(index, () => slot);
+    }
+
+    add(mainIndex - 1, -1);
+    add(mainIndex, 0);
+    add(mainIndex + 1, 1);
+
+    var nextRight = mainIndex + 2;
+    while (slotsByIndex.length < targetCount && nextRight < count) {
+      add(nextRight, nextRight - mainIndex);
+      nextRight += 1;
+    }
+
+    var nextLeft = mainIndex - 2;
+    while (slotsByIndex.length < targetCount && nextLeft >= 0) {
+      add(nextLeft, nextLeft - mainIndex);
+      nextLeft -= 1;
+    }
+
+    final items = [
+      for (final entry in slotsByIndex.entries)
+        _StoryJourneyDeckLayoutItem(
+          index: entry.key,
+          slot: entry.value,
+          entry: widget.entries[entry.key],
+        ),
+    ]..sort((a, b) => a.slot.compareTo(b.slot));
+    return items;
+  }
+
+  String _labelForIndex(int index) {
+    final recentIndex = _recentIndex();
+    if (index == recentIndex) {
+      return '최근 탐험 이야기';
+    }
+    if (recentIndex >= 0 && index == recentIndex + 1) {
+      return '다음 이야기';
+    }
+    return '';
+  }
+
+  void _handleEntryTap(_StoryJourneyDeckEntry entry) {
+    final event = entry.event;
+    if (event == null) {
+      return;
+    }
+    if (_mainEventId == event.id) {
+      widget.onOpenStory(event);
+      return;
+    }
+    setState(() => _mainEventId = event.id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const largeHeight = 136.0;
+    const sideScale = 0.82;
+    const farSideScale = 0.72;
+    const sidePeekTop = 9.0;
+    const farSidePeekTop = 14.0;
+    final entries = widget.entries;
+    final mainIndex = entries.isEmpty ? -1 : _mainIndex();
+    final initialMainEventId = _resolvedInitialMainEventId();
+    final canReset =
+        initialMainEventId != null && _mainEventId != initialMainEventId;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _ProfileDashboardTitle(
+          icon: Icons.explore_rounded,
+          label: '이야기 탐험',
+          color: AppPaletteTheme.of(context).regionAccent,
+          trailing: AnimatedOpacity(
+            opacity: canReset ? 1 : 0,
+            duration: const Duration(milliseconds: 180),
+            child: IgnorePointer(
+              ignoring: !canReset,
+              child: TextButton.icon(
+                onPressed: _resetToInitialDeck,
+                icon: const Icon(Icons.restart_alt_rounded, size: 14),
+                label: const Text('되돌아가기'),
+                style: TextButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 7,
+                    vertical: 3,
+                  ),
+                  textStyle: const TextStyle(
+                    fontSize: 11.0,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 2),
+        if (entries.isEmpty)
+          _EmptyStoryJourneyCtaCard(onTap: widget.onExploreStoriesFromHome)
+        else
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final maxWidth = constraints.maxWidth;
+              final deckWidth = (maxWidth * 0.95).clamp(260.0, maxWidth);
+              final deckLeft = (maxWidth - deckWidth) / 2;
+              final deckRight = deckLeft + deckWidth;
+              final largeWidth = (deckWidth * 0.43).clamp(136.0, 226.0);
+              final sideWidth = (deckWidth * 0.34).clamp(112.0, 190.0);
+              final farSideWidth = (deckWidth * 0.30).clamp(96.0, 170.0);
+              const sideHeight = largeHeight * sideScale;
+              const farSideHeight = largeHeight * farSideScale;
+              const deckHeight = largeHeight;
+              final largeLeft = (deckLeft + deckWidth * 0.50 - largeWidth / 2)
+                  .clamp(deckLeft, deckRight - largeWidth);
+              final deckItems = _visibleDeckItems(mainIndex);
+              final paintItems = [...deckItems]
+                ..sort((a, b) {
+                  final aMain = a.slot == 0;
+                  final bMain = b.slot == 0;
+                  if (aMain != bMain) {
+                    return aMain ? 1 : -1;
+                  }
+                  final aDistance = a.slot.abs();
+                  final bDistance = b.slot.abs();
+                  return bDistance.compareTo(aDistance);
+                });
+
+              return GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onHorizontalDragStart: _handleHorizontalDragStart,
+                onHorizontalDragUpdate: _handleHorizontalDragUpdate,
+                onHorizontalDragEnd: _handleHorizontalDragEnd,
+                onHorizontalDragCancel: _handleHorizontalDragCancel,
+                child: SizedBox(
+                  height: deckHeight,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      for (final item in paintItems)
+                        Builder(
+                          builder: (context) {
+                            final entry = item.entry;
+                            final isMain = item.slot == 0;
+                            final isFarSide = item.slot.abs() > 1;
+                            final width = isMain
+                                ? largeWidth
+                                : (isFarSide ? farSideWidth : sideWidth);
+                            final height = isMain
+                                ? largeHeight
+                                : (isFarSide ? farSideHeight : sideHeight);
+                            final contentScale = isMain
+                                ? 1.0
+                                : (isFarSide ? farSideScale : sideScale);
+                            final label = _labelForIndex(item.index);
+                            final top = isMain
+                                ? 0.0
+                                : (isFarSide ? farSidePeekTop : sidePeekTop);
+                            final left = switch (item.slot) {
+                              <= -2 => deckLeft,
+                              -1 => (largeLeft - sideWidth * 0.72).clamp(
+                                deckLeft,
+                                deckRight - width,
+                              ),
+                              0 => largeLeft,
+                              1 =>
+                                (largeLeft + largeWidth - sideWidth * 0.28)
+                                    .clamp(deckLeft, deckRight - width),
+                              _ => deckRight - width,
+                            };
+                            final card = _StoryJourneyCard(
+                              label: label,
+                              event: entry.event,
+                              eras: widget.eras,
+                              charactersByCode: widget.charactersByCode,
+                              eventEmotionMarks: widget.eventEmotionMarks,
+                              quizAttemptSummaries: widget.quizAttemptSummaries,
+                              onTap: () => _handleEntryTap(entry),
+                              muted: !isMain,
+                              emptyMessage: isMain
+                                  ? '아직 탐험한 이야기가 없어요.'
+                                  : '기록 없음',
+                              contentScale: contentScale,
+                              highlight: label == '다음 이야기',
+                            );
+                            return AnimatedPositioned(
+                              key: ValueKey(
+                                'profile-story-journey-${entry.event?.id}',
+                              ),
+                              duration: const Duration(milliseconds: 280),
+                              curve: Curves.easeOutCubic,
+                              top: top,
+                              left: left,
+                              width: width,
+                              height: height,
+                              child: card,
+                            );
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+}
+
+class _StoryJourneyCard extends StatelessWidget {
+  const _StoryJourneyCard({
+    required this.label,
+    required this.event,
+    required this.eras,
+    required this.charactersByCode,
+    required this.eventEmotionMarks,
+    required this.quizAttemptSummaries,
+    required this.onTap,
+    required this.muted,
+    required this.emptyMessage,
+    required this.contentScale,
+    required this.highlight,
+  });
+
+  final String label;
+  final StoryEvent? event;
+  final List<Era> eras;
+  final Map<String, Character> charactersByCode;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+  final VoidCallback? onTap;
+  final bool muted;
+  final String emptyMessage;
+  final double contentScale;
+  final bool highlight;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final event = this.event;
+    final rawCard = event == null
+        ? _EmptyStoryJourneyCard(
+            message: emptyMessage,
+            onTap: onTap,
+            muted: muted,
+          )
+        : StoryEventThumbCard(
+            event: event,
+            era: {for (final era in eras) era.id: era}[event.eraId],
+            charactersByCode: charactersByCode,
+            selected: false,
+            completed: eventEmotionMarks.containsKey(event.id),
+            emotionKey: eventEmotionMarks[event.id]?.emotionKey,
+            attemptSummary: quizAttemptSummaries[event.id],
+            orderNumber: event.storyIndex,
+            showSummary: false,
+            forceOpaqueSurface: !muted,
+            expandSurface: true,
+            loader: SceneAssetLoader(),
+            onTap: onTap ?? () {},
+          );
+    final currentTextScale = MediaQuery.textScalerOf(context).scale(1);
+    final cappedTextScale = math.min(currentTextScale, muted ? 1.12 : 1.4);
+    final card = MediaQuery(
+      data: MediaQuery.of(
+        context,
+      ).copyWith(textScaler: TextScaler.linear(cappedTextScale)),
+      child: rawCard,
+    );
+
+    final content = Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned.fill(
+          child: Opacity(opacity: muted ? 0.74 : 1, child: card),
+        ),
+        if (label.isNotEmpty)
+          Positioned(
+            top: 8,
+            left: 9,
+            child: _StoryJourneyLabel(
+              label: label,
+              color: muted ? palette.regionAccent : palette.currentAccentDeep,
+              filled: !muted,
+            ),
+          ),
+      ],
+    );
+    final scaledContent = contentScale == 1
+        ? content
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Transform.scale(
+                  scale: contentScale,
+                  alignment: Alignment.topLeft,
+                  child: SizedBox(
+                    width: constraints.maxWidth / contentScale,
+                    height: constraints.maxHeight / contentScale,
+                    child: content,
+                  ),
+                ),
+              );
+            },
+          );
+    if (!highlight) {
+      return scaledContent;
+    }
+    return _StoryJourneyNextGlow(child: scaledContent);
+  }
+}
+
+class _StoryJourneyNextGlow extends StatefulWidget {
+  const _StoryJourneyNextGlow({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_StoryJourneyNextGlow> createState() => _StoryJourneyNextGlowState();
+}
+
+class _StoryJourneyNextGlowState extends State<_StoryJourneyNextGlow>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  var _remainingPulses = 4;
+  var _visible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..addStatusListener(_handleStatus);
+    _controller.forward(from: 0);
+  }
+
+  void _handleStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed) {
+      return;
+    }
+    _remainingPulses -= 1;
+    if (_remainingPulses > 0) {
+      _controller.forward(from: 0);
+      return;
+    }
+    if (!mounted) {
+      _visible = false;
+      return;
+    }
+    setState(() => _visible = false);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_visible) {
+      return widget.child;
+    }
+    const glowColor = AppColors.gold;
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final t = math.sin(_controller.value * math.pi);
+        return Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+          foregroundDecoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: glowColor.withValues(alpha: 0.025 + 0.055 * t),
+            border: Border.all(
+              color: glowColor.withValues(alpha: 0.38 + 0.34 * t),
+              width: 1.5,
+            ),
+          ),
+          child: child,
         );
       },
+      child: widget.child,
+    );
+  }
+}
+
+class _EmptyStoryJourneyCtaCard extends StatelessWidget {
+  const _EmptyStoryJourneyCtaCard({required this.onTap});
+
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          height: 178,
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+          decoration: BoxDecoration(
+            color: palette.cardSurface.withValues(alpha: 0.72),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: palette.regionAccent.withValues(alpha: 0.24),
+              width: 1,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '홈 화면에서 이야기를 탐험해보세요!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: palette.text,
+                  fontSize: 14.2,
+                  fontWeight: FontWeight.w900,
+                  height: 1.25,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ProfileGlowingAddButton(
+                tooltip: '이야기 탐험 시작',
+                onTap: onTap,
+                size: 42,
+                iconSize: 27,
+                backgroundColor: palette.regionAccent.withValues(alpha: 0.16),
+                foregroundColor: palette.regionAccent,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StoryJourneyLabel extends StatelessWidget {
+  const _StoryJourneyLabel({
+    required this.label,
+    required this.color,
+    required this.filled,
+  });
+
+  final String label;
+  final Color color;
+  final bool filled;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: filled ? color : palette.cardSurface.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: 0.34), width: 0.8),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: filled ? 0.16 : 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: filled ? AppColors.fgOnDark : color,
+          fontSize: 10.5,
+          fontWeight: FontWeight.w900,
+          height: 1,
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyStoryJourneyCard extends StatelessWidget {
+  const _EmptyStoryJourneyCard({
+    required this.message,
+    required this.onTap,
+    required this.muted,
+  });
+
+  final String message;
+  final VoidCallback? onTap;
+  final bool muted;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Material(
+      color: muted ? palette.softSurface : palette.cardSurface,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.fromLTRB(12, 34, 12, 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: palette.subtleBorder, width: 1.2),
+          ),
+          child: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: palette.mutedText,
+              fontSize: 12.2,
+              fontWeight: FontWeight.w800,
+              height: 1.35,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmotionFilterChips extends StatelessWidget {
+  const _EmotionFilterChips({
+    required this.allCount,
+    required this.countsByKey,
+    required this.selectedKeys,
+    required this.onToggleAll,
+    required this.onToggleOption,
+  });
+
+  final int allCount;
+  final Map<String, int> countsByKey;
+  final Set<String> selectedKeys;
+  final VoidCallback onToggleAll;
+  final ValueChanged<EventEmotionOption> onToggleOption;
+
+  @override
+  Widget build(BuildContext context) {
+    final topOptions = EventEmotionOption.options.take(4).toList();
+    final bottomOptions = EventEmotionOption.options.skip(4).toList();
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _EmotionFilterChip(
+                key: const ValueKey('emotion-filter-all'),
+                label: '전체',
+                count: allCount,
+                selected: selectedKeys.isEmpty,
+                onTap: onToggleAll,
+              ),
+              for (final option in topOptions) ...[
+                const SizedBox(width: 6),
+                _EmotionFilterChip(
+                  key: ValueKey('emotion-filter-${option.key}'),
+                  label: option.label,
+                  count: countsByKey[option.key] ?? 0,
+                  selected: selectedKeys.contains(option.key),
+                  emotionKey: option.key,
+                  onTap: () => onToggleOption(option),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              for (var index = 0; index < bottomOptions.length; index++) ...[
+                if (index > 0) const SizedBox(width: 6),
+                _EmotionFilterChip(
+                  key: ValueKey('emotion-filter-${bottomOptions[index].key}'),
+                  label: bottomOptions[index].label,
+                  count: countsByKey[bottomOptions[index].key] ?? 0,
+                  selected: selectedKeys.contains(bottomOptions[index].key),
+                  emotionKey: bottomOptions[index].key,
+                  onTap: () => onToggleOption(bottomOptions[index]),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmotionFilterChip extends StatelessWidget {
+  const _EmotionFilterChip({
+    super.key,
+    required this.label,
+    required this.count,
+    required this.selected,
+    required this.onTap,
+    this.emotionKey,
+  });
+
+  final String label;
+  final int count;
+  final bool selected;
+  final VoidCallback onTap;
+  final String? emotionKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final accent = palette.currentAccentDeep;
+    return Material(
+      color: selected ? accent : Colors.white.withValues(alpha: 0.88),
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 38),
+          padding: const EdgeInsets.fromLTRB(9, 6, 10, 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: selected
+                  ? AppColors.fgOnDark.withValues(alpha: 0.22)
+                  : palette.subtleBorder,
+              width: 0.9,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _EmotionFilterBadge(
+                emotionKey: emotionKey,
+                count: count,
+                selected: selected,
+              ),
+              const SizedBox(width: 7),
+              Text(
+                label,
+                style: TextStyle(
+                  color: selected ? AppColors.fgOnDark : palette.text,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w900,
+                  height: 1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmotionFilterBadge extends StatelessWidget {
+  const _EmotionFilterBadge({
+    required this.emotionKey,
+    required this.count,
+    required this.selected,
+  });
+
+  final String? emotionKey;
+  final int count;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return SizedBox(
+      width: 25,
+      height: 25,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: emotionKey == null
+                ? Container(
+                    width: 22,
+                    height: 22,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? AppColors.fgOnDark.withValues(alpha: 0.18)
+                          : palette.currentFill,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: selected
+                            ? AppColors.fgOnDark.withValues(alpha: 0.28)
+                            : palette.currentAccentDeep.withValues(alpha: 0.26),
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.apps_rounded,
+                      size: 12,
+                      color: selected
+                          ? AppColors.fgOnDark
+                          : palette.currentAccentDeep,
+                    ),
+                  )
+                : EmotionBadgeIcon(
+                    emotionKey: emotionKey!,
+                    size: 22,
+                    iconSize: 12.5,
+                    elevation: false,
+                  ),
+          ),
+          Positioned(
+            right: -3,
+            bottom: -3,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+              decoration: BoxDecoration(
+                color: selected
+                    ? AppColors.fgOnDark
+                    : palette.currentAccentDeep,
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(
+                  color: selected ? palette.currentAccentDeep : Colors.white,
+                  width: 0.8,
+                ),
+              ),
+              child: Text(
+                '+$count',
+                style: TextStyle(
+                  color: selected
+                      ? palette.currentAccentDeep
+                      : AppColors.fgOnDark,
+                  fontSize: 7.6,
+                  fontWeight: FontWeight.w900,
+                  height: 1,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1733,235 +3145,45 @@ class _ProfileQuizStatsColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final largeText = _profileUsesLargeTextLayout(context);
-    final itemGap = largeText ? 2.0 : 5.0;
     final items = [
       _ProfileQuizStatItem(
         icon: Icons.check_rounded,
         label: '정답',
-        count: stats.correct,
-        eventCount: stats.correctEventCount,
+        storyCount: stats.correctEventCount,
+        quizCount: stats.correct,
         color: palette.successBottom,
         onTap: null,
       ),
       _ProfileQuizStatItem(
         icon: Icons.close_rounded,
         label: '오답',
-        count: stats.wrong,
-        eventCount: stats.wrongEventCount,
+        storyCount: stats.wrongEventCount,
+        quizCount: stats.wrong,
         color: AppColors.dangerBot,
         onTap: onTapWrong,
       ),
       _ProfileQuizStatItem(
         icon: Icons.question_mark_rounded,
         label: '헷갈려요',
-        count: stats.confused,
-        eventCount: stats.confusedEventCount,
+        storyCount: stats.confusedEventCount,
+        quizCount: stats.confused,
         color: palette.currentAccentDeep,
         onTap: onTapConfused,
       ),
     ];
-    return Flex(
-      direction: Axis.vertical,
-      children: [
-        for (var i = 0; i < items.length; i++) ...[
-          Expanded(child: items[i]),
-          if (i != items.length - 1) SizedBox(height: itemGap),
-        ],
-      ],
-    );
-  }
-}
-
-class _ProfileOverallProgressButton extends StatelessWidget {
-  const _ProfileOverallProgressButton({
-    required this.icon,
-    required this.label,
-    required this.completed,
-    required this.total,
-    required this.fraction,
-    required this.color,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final int completed;
-  final int total;
-  final double fraction;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 124),
-          padding: const EdgeInsets.fromLTRB(9, 9, 9, 9),
-          decoration: BoxDecoration(
-            color: Color.alphaBlend(
-              color.withValues(alpha: 0.045),
-              AppColors.parchmentCream,
-            ),
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: palette.subtleBorder, width: 1),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x12000000),
-                blurRadius: 12,
-                offset: Offset(0, 5),
-              ),
-            ],
-          ),
-          child: _ProfileProgressSummaryContent(
-            icon: icon,
-            label: label,
-            completed: completed,
-            total: total,
-            fraction: fraction,
-            color: color,
-          ),
-        ),
+    return Container(
+      padding: EdgeInsets.all(largeText ? 7 : 8),
+      decoration: BoxDecoration(
+        color: palette.softSurface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: palette.subtleBorder, width: 1),
       ),
-    );
-  }
-}
-
-class _ProfileProgressSummaryContent extends StatelessWidget {
-  const _ProfileProgressSummaryContent({
-    required this.icon,
-    required this.label,
-    required this.completed,
-    required this.total,
-    required this.fraction,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final int completed;
-  final int total;
-  final double fraction;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 24,
-              height: 24,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.13),
-                borderRadius: BorderRadius.circular(9),
-              ),
-              child: Icon(icon, size: 15, color: color),
-            ),
-            const SizedBox(width: 5),
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  softWrap: false,
-                  style: TextStyle(
-                    color: palette.text,
-                    fontSize: 11.6,
-                    fontWeight: FontWeight.w900,
-                    height: 1.05,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 9),
-        _ProfileProgressDonut(
-          completed: completed,
-          total: total,
-          fraction: fraction,
-          color: color,
-        ),
-      ],
-    );
-  }
-}
-
-class _ProfileProgressDonut extends StatelessWidget {
-  const _ProfileProgressDonut({
-    required this.completed,
-    required this.total,
-    required this.fraction,
-    required this.color,
-  });
-
-  final int completed;
-  final int total;
-  final double fraction;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return SizedBox(
-      width: 62,
-      height: 62,
-      child: Stack(
-        alignment: Alignment.center,
+      child: Row(
         children: [
-          SizedBox.expand(
-            child: CircularProgressIndicator(
-              value: fraction.clamp(0.0, 1.0).toDouble(),
-              strokeWidth: 6,
-              backgroundColor: color.withValues(alpha: 0.18),
-              color: color,
-            ),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  '$completed',
-                  maxLines: 1,
-                  style: TextStyle(
-                    color: palette.successBottom,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    height: 1,
-                    shadows: [
-                      Shadow(
-                        color: palette.successBottom.withValues(alpha: 0.18),
-                        blurRadius: 5,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Text(
-                '/$total',
-                maxLines: 1,
-                style: TextStyle(
-                  color: palette.mutedText,
-                  fontSize: 9.4,
-                  fontWeight: FontWeight.w800,
-                  height: 1.05,
-                ),
-              ),
-            ],
-          ),
+          for (var i = 0; i < items.length; i++) ...[
+            Expanded(child: items[i]),
+            if (i != items.length - 1) const SizedBox(width: 7),
+          ],
         ],
       ),
     );
@@ -2469,16 +3691,16 @@ class _ProfileQuizStatItem extends StatelessWidget {
   const _ProfileQuizStatItem({
     required this.icon,
     required this.label,
-    required this.count,
-    required this.eventCount,
+    required this.storyCount,
+    required this.quizCount,
     required this.color,
     required this.onTap,
   });
 
   final IconData icon;
   final String label;
-  final int count;
-  final int eventCount;
+  final int storyCount;
+  final int quizCount;
   final Color color;
   final VoidCallback? onTap;
 
@@ -2486,88 +3708,98 @@ class _ProfileQuizStatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final largeText = _profileUsesLargeTextLayout(context);
-    final iconBoxSize = largeText ? 19.0 : 24.0;
-    final content = AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      alignment: Alignment.center,
-      constraints: const BoxConstraints(minHeight: 32),
-      padding: EdgeInsets.symmetric(
-        horizontal: largeText ? 4 : 6,
-        vertical: largeText ? 1 : 4,
-      ),
+    final enabled = onTap != null;
+    final content = Container(
+      padding: EdgeInsets.fromLTRB(8, largeText ? 8 : 9, 8, 9),
       decoration: BoxDecoration(
-        color: Color.alphaBlend(
-          color.withValues(alpha: 0.09),
-          AppColors.parchmentCream,
-        ),
-        borderRadius: BorderRadius.circular(18),
+        color: enabled
+            ? Color.alphaBlend(
+                color.withValues(alpha: 0.07),
+                palette.cardSurface,
+              )
+            : palette.cardSurface.withValues(alpha: 0.68),
+        borderRadius: BorderRadius.circular(13),
         border: Border.all(
-          color: color.withValues(alpha: onTap == null ? 0.26 : 0.34),
-          width: 0.8,
+          color: color.withValues(alpha: enabled ? 0.36 : 0.20),
+          width: 1,
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: iconBoxSize,
-            height: iconBoxSize,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.parchmentCream.withValues(alpha: 0.84),
-              border: Border.all(color: color.withValues(alpha: 0.72)),
-            ),
-            child: Icon(icon, size: largeText ? 12.5 : 15, color: color),
+          Row(
+            children: [
+              Container(
+                width: largeText ? 24 : 27,
+                height: largeText ? 24 : 27,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: color.withValues(alpha: 0.09),
+                  border: Border.all(color: color.withValues(alpha: 0.46)),
+                ),
+                child: Icon(icon, size: largeText ? 14 : 16, color: color),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: largeText ? 10.2 : 11.2,
+                    fontWeight: FontWeight.w900,
+                    height: 1,
+                  ),
+                ),
+              ),
+            ],
           ),
-          SizedBox(width: largeText ? 3 : 5),
-          Expanded(
+          const SizedBox(height: 8),
+          Center(
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: largeText ? 11.0 : 12.2,
-                      fontWeight: FontWeight.w900,
-                      height: 1.0,
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '$storyCount이야기',
+                      style: TextStyle(
+                        color: palette.text,
+                        fontSize: largeText ? 10.0 : 10.8,
+                        fontWeight: FontWeight.w900,
+                        height: 1,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: largeText ? 1 : 2),
-                  Text(
-                    profileQuizCountLabel(
-                      quizCount: count,
-                      storyCount: eventCount,
+                    TextSpan(
+                      text: ' · $quizCount문항',
+                      style: TextStyle(
+                        color: palette.mutedText,
+                        fontSize: largeText ? 9.2 : 10.0,
+                        fontWeight: FontWeight.w800,
+                        height: 1,
+                      ),
                     ),
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: palette.text,
-                      fontSize: largeText ? 9.5 : 10.4,
-                      fontWeight: FontWeight.w900,
-                      height: 1.0,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
+                maxLines: 1,
+                textAlign: TextAlign.center,
               ),
             ),
           ),
         ],
       ),
     );
-
-    if (onTap == null) {
+    if (!enabled) {
       return content;
     }
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(13),
         child: content,
       ),
     );

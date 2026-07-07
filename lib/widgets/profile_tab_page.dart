@@ -14,6 +14,7 @@ import '../models/character.dart';
 import '../models/era.dart';
 import '../models/event_emotion_mark.dart';
 import '../models/intercessory_prayer_item.dart';
+import '../models/quiz_attempt_summary.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
 import '../models/user_companion_diary_entry.dart';
@@ -24,19 +25,21 @@ import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
+import '../theme/typography.dart';
 import '../utils/bible_book_meta.dart';
+import '../utils/kst_date.dart';
 import '../utils/scene_asset_loader.dart';
 import 'emotion_badge_icon.dart';
 import 'inline_login_prompt_card.dart';
 import 'map/map_attribution_dialog.dart';
 import 'parchment_dialog.dart';
+import 'parchment_page_scaffold.dart';
 import 'profile/glowing_add_button.dart';
 import 'profile/profile_emotion_diary.dart';
-import 'profile/profile_emotion_stats.dart';
 import 'profile/profile_event_review_grid.dart';
+import 'profile/profile_feature_flags.dart';
 import 'profile/profile_quiz_stats.dart';
 import 'profile_editor_dialog.dart';
-import 'pulse_highlight.dart';
 import 'saved_verse_row.dart';
 import 'share_id_input_dialog.dart';
 import 'story_home_styles.dart';
@@ -53,12 +56,27 @@ part 'profile/profile_progress_section.dart';
 part 'profile/profile_right_panel.dart';
 part 'profile/profile_settings_sheet.dart';
 
-enum ProfileEventOpenSource { general, detailOnly }
+enum ProfileEventOpenSource { general, targetOnly, detailOnly }
 
 typedef ProfileEventDetailCallback =
     void Function(StoryEvent event, {ProfileEventOpenSource? source});
 
-/// 프로필 탭 페이지 (프로필 정보 + 기록/기도/저장/말씀).
+const Map<String, int> _profileStoryEraCodeOrder = {
+  'era_primeval': 0,
+  'era_patriarch': 1,
+  'era_exodus': 2,
+  'era_judges': 3,
+  'era_monarchy': 4,
+  'era_divided_kingdom': 5,
+  'era_exile_return': 6,
+  'era_nt_public_ministry': 7,
+  'era_nt_apostolic': 8,
+  'era_nt_post_apostolic': 9,
+};
+
+/// 프로필 탭 페이지 (프로필 정보 + 이야기 탐험/진행 대시보드).
+///
+/// 기도 기능은 pending 상태로 코드/DB 배관만 보존하고 현재 화면에는 노출하지 않는다.
 ///
 /// 외부 콜백:
 /// - [onStartQuiz]: 인물 상세에서 이벤트 퀴즈 시작
@@ -71,6 +89,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
     required this.onOpenEventDetail,
     required this.onOpenBibleReader,
     this.onNavigateStory,
+    this.onExploreStoriesFromHome,
   });
 
   final void Function(String eventId) onStartQuiz;
@@ -86,12 +105,13 @@ class ProfileTabPage extends ConsumerStatefulWidget {
     required StoryEvent target,
   })?
   onNavigateStory;
+  final VoidCallback? onExploreStoriesFromHome;
 
   @override
   ConsumerState<ProfileTabPage> createState() => ProfileTabPageState();
 }
 
-enum _ProfileContentTab { records, prayer, saved, verses }
+enum _ProfileContentTab { prayer, saved, verses }
 
 enum _ProfileQuizReviewFilter { wrong, confused }
 
@@ -107,10 +127,11 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   List<Character> _profileAllPeople = const [];
   List<StoryEvent> _profileAllEvents = const [];
   AppUserProfile? _profileUser;
-  _ProfileContentTab _profileContentTab = _ProfileContentTab.records;
+  _ProfileContentTab _profileContentTab = _ProfileContentTab.prayer;
   List<StoryEvent> _profileSavedEventsPreview = const [];
   List<SavedBibleVerse> _profileSavedVersesPreview = const [];
   List<UserCompanionDiaryEntry> _profileCompanionDiaryEntries = const [];
+  int _profileSavedVersesCount = 0;
   bool _profileSavedEventsLoading = false;
   bool _profileSavedVersesLoading = false;
   bool _profileCompanionDiaryLoading = false;
@@ -171,7 +192,6 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         unawaited(_loadProfileSavedEventsPreview(showLoading: true));
       case _ProfileContentTab.verses:
         unawaited(_loadProfileSavedVersesPreview(showLoading: true));
-      case _ProfileContentTab.records:
       case _ProfileContentTab.prayer:
         break;
     }
@@ -336,6 +356,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       }
       setState(() {
         _profileSavedVersesPreview = const [];
+        _profileSavedVersesCount = 0;
         _profileSavedVersesLoading = false;
         _profileSavedVersesError = null;
       });
@@ -359,11 +380,15 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             pageIndex: 0,
             pageSize: _profilePreviewPageSize,
           );
+      final totalCount = await ref
+          .read(userRepositoryProvider)
+          .countSavedVerses(userId: user.id);
       if (!mounted) {
         return;
       }
       setState(() {
         _profileSavedVersesPreview = result.items;
+        _profileSavedVersesCount = totalCount;
         _profileSavedVersesLoading = false;
       });
     } catch (error) {
@@ -521,14 +546,10 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
 
       final allPeople = characterByCode.values.toList()
         ..sort(_compareProfilePeople);
-      final allEvents = eventsByEra.expand((events) => events).toList()
-        ..sort((a, b) {
-          final rank = a.globalRank.compareTo(b.globalRank);
-          if (rank != 0) {
-            return rank;
-          }
-          return a.id.compareTo(b.id);
-        });
+      final allEvents = _sortEventsByEraThenIndex(
+        eventsByEra.expand((events) => events).toList(),
+        state.eras,
+      );
 
       AppUserProfile? profile;
 
@@ -564,7 +585,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       });
       if (user != null) {
         await Future.wait([
-          _loadIntercessoryPrayerPage(),
+          if (!profilePrayerFeaturePending) _loadIntercessoryPrayerPage(),
           _refreshProfileTabPreviews(),
         ]);
       }
@@ -583,20 +604,29 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     List<StoryEvent> events,
     List<Era> eras,
   ) {
-    final orderByEraId = <String, int>{
-      for (final era in eras) era.id: era.displayOrder,
-    };
-    final sorted = [...events];
+    final eraById = <String, Era>{for (final era in eras) era.id: era};
+    final sorted = events.where((event) {
+      final era = eraById[event.eraId];
+      if (era == null || isHiddenEraCode(era.code)) {
+        return false;
+      }
+      return _profileStoryEraCodeOrder.containsKey(era.code);
+    }).toList();
     sorted.sort((a, b) {
-      final eraOrder = (orderByEraId[a.eraId] ?? 1 << 30).compareTo(
-        orderByEraId[b.eraId] ?? 1 << 30,
-      );
+      final aEra = eraById[a.eraId];
+      final bEra = eraById[b.eraId];
+      final eraOrder = (_profileStoryEraCodeOrder[aEra?.code] ?? 1 << 30)
+          .compareTo(_profileStoryEraCodeOrder[bEra?.code] ?? 1 << 30);
       if (eraOrder != 0) {
         return eraOrder;
       }
       final storyOrder = a.storyIndex.compareTo(b.storyIndex);
       if (storyOrder != 0) {
         return storyOrder;
+      }
+      final rankInEraOrder = a.rankInEra.compareTo(b.rankInEra);
+      if (rankInEraOrder != 0) {
+        return rankInEraOrder;
       }
       return a.globalRank.compareTo(b.globalRank);
     });
@@ -700,6 +730,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         // 있어서 부모 Column 에서 unbounded height 가 되면 안 되므로 각각 고정
         // 높이로 감싼다.
         final isNarrow = constraints.maxWidth < 720;
+        final showPrayerActivitySection = !profilePrayerFeaturePending;
         final activitySectionHeight = _profileLeftCardHeight(
           isAuthenticated: isAuthenticated,
         );
@@ -711,22 +742,19 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
               children: [
                 _buildProfileHeader(profile: profile),
                 const SizedBox(height: 6),
-                _profileSectionsFrame(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(
-                        height: activitySectionHeight,
-                        child: _buildProfileActivitySection(
-                          profile: profile,
-                          isAuthenticated: isAuthenticated,
-                        ),
+                _buildProfileProgressSection(scrollBody: false),
+                if (showPrayerActivitySection) ...[
+                  const SizedBox(height: 8),
+                  _profileSectionsFrame(
+                    child: SizedBox(
+                      height: activitySectionHeight,
+                      child: _buildProfileActivitySection(
+                        profile: profile,
+                        isAuthenticated: isAuthenticated,
                       ),
-                      const SizedBox(height: 8),
-                      _buildProfileProgressSection(scrollBody: false),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           );
@@ -741,29 +769,30 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
-                width: leftWidth,
-                child: _buildProfileHeader(profile: profile),
-              ),
+              _buildProfileHeader(profile: profile),
               const SizedBox(height: 6),
               Expanded(
-                child: _profileSectionsFrame(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: leftWidth,
-                        height: activitySectionHeight,
-                        child: _buildProfileActivitySection(
-                          profile: profile,
-                          isAuthenticated: isAuthenticated,
-                        ),
-                      ),
-                      SizedBox(width: gap),
-                      Expanded(child: _buildProfileProgressSection()),
-                    ],
-                  ),
-                ),
+                child: showPrayerActivitySection
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: _buildProfileProgressSection()),
+                          SizedBox(width: gap),
+                          SizedBox(
+                            width: leftWidth,
+                            child: _profileSectionsFrame(
+                              child: SizedBox(
+                                height: activitySectionHeight,
+                                child: _buildProfileActivitySection(
+                                  profile: profile,
+                                  isAuthenticated: isAuthenticated,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : _buildProfileProgressSection(),
               ),
             ],
           ),

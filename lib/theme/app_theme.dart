@@ -8,6 +8,7 @@ class AppTheme {
   AppTheme._();
 
   static ThemeData light({AppColorPalette palette = AppColorPalette.classic}) {
+    final darkPalette = palette == AppColorPalette.blackMap;
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(seedColor: palette.seedColor).copyWith(
@@ -20,11 +21,13 @@ class AppTheme {
         onTertiary: AppColors.fgOnDark,
         outline: palette.selectedBorder,
         outlineVariant: palette.utilityBorder,
-        surface: AppColors.parchmentLight,
+        surface: darkPalette ? palette.cardSurface : AppColors.parchmentLight,
         onSurface: palette.text,
         onSurfaceVariant: palette.mutedText,
       ),
-      scaffoldBackgroundColor: AppColors.parchmentBg,
+      scaffoldBackgroundColor: darkPalette
+          ? palette.pageMiddle
+          : AppColors.parchmentBg,
       appBarTheme: AppBarTheme(
         backgroundColor: palette.pageMiddle,
         foregroundColor: palette.text,

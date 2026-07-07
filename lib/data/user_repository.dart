@@ -138,6 +138,13 @@ class UserRepository {
     );
   }
 
+  Future<int> countSavedVerses({required String userId}) async {
+    return _client
+        .from('user_saved_verses')
+        .count(CountOption.exact)
+        .eq('user_id', userId);
+  }
+
   Future<Map<String, SavedBibleVerse>> fetchSavedVerseMap(String userId) async {
     final rows = await _client
         .from('user_saved_verses')

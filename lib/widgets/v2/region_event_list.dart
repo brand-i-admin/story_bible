@@ -178,6 +178,8 @@ class StoryEventThumbCard extends StatelessWidget {
     this.attemptSummary,
     this.orderNumber,
     this.showSummary = true,
+    this.forceOpaqueSurface = false,
+    this.expandSurface = false,
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
     this.publicUrlForStoragePath,
@@ -193,6 +195,8 @@ class StoryEventThumbCard extends StatelessWidget {
   final QuizAttemptSummary? attemptSummary;
   final int? orderNumber;
   final bool showSummary;
+  final bool forceOpaqueSurface;
+  final bool expandSurface;
   final SceneAssetLoader loader;
   final VoidCallback onTap;
   final String Function(String storagePath)? publicUrlForStoragePath;
@@ -229,6 +233,7 @@ class StoryEventThumbCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Stack(
       clipBehavior: Clip.none,
+      fit: expandSurface ? StackFit.expand : StackFit.loose,
       children: [
         _buildCardSurface(context, theme),
         if (orderNumber != null ||
@@ -248,7 +253,9 @@ class StoryEventThumbCard extends StatelessWidget {
             ? palette.completedSurface
             : (selected
                   ? palette.selectedSurface
-                  : Colors.white.withValues(alpha: 0.85)));
+                  : (forceOpaqueSurface
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: 0.85))));
     final borderColor =
         quizTone?.border ??
         (completed
@@ -265,7 +272,9 @@ class StoryEventThumbCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: borderColor, width: selected ? 2 : 1.6),
           ),
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
+          padding: expandSurface
+              ? const EdgeInsets.fromLTRB(8, 10, 8, 7)
+              : const EdgeInsets.fromLTRB(10, 10, 10, 8),
           child: LayoutBuilder(
             builder: (context, constraints) {
               final body = _buildCardBody(context, theme);
@@ -293,14 +302,21 @@ class StoryEventThumbCard extends StatelessWidget {
     final summary = (event.summary ?? '').trim();
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final compactLargeText = textScale >= 1.3;
-    final thumbnailSize = compactLargeText ? 44.0 : 64.0;
-    final characterPillsHeight = compactLargeText ? 24.0 : 18.0;
-    final titleMaxLines = compactLargeText ? null : 2;
+    final deckCompact = expandSurface && !showSummary;
+    final thumbnailSize = deckCompact
+        ? (compactLargeText ? 38.0 : 48.0)
+        : (compactLargeText ? 44.0 : 64.0);
+    final characterPillsHeight = deckCompact
+        ? (compactLargeText ? 21.0 : 18.0)
+        : (compactLargeText ? 24.0 : 18.0);
+    final titleMaxLines = deckCompact ? 2 : (compactLargeText ? null : 2);
     final summaryMaxLines = compactLargeText ? null : 2;
-    final gapAfterThumbnail = compactLargeText ? 3.0 : 6.0;
-    final gapAfterTitle = compactLargeText ? 2.0 : 4.0;
+    final gapAfterThumbnail = deckCompact
+        ? (compactLargeText ? 2.0 : 4.0)
+        : (compactLargeText ? 3.0 : 6.0);
+    final gapAfterTitle = deckCompact ? 2.0 : (compactLargeText ? 2.0 : 4.0);
     final gapBeforeSummary = compactLargeText ? 3.0 : 6.0;
-    final gapBeforePills = compactLargeText ? 4.0 : 6.0;
+    final gapBeforePills = deckCompact ? 4.0 : (compactLargeText ? 4.0 : 6.0);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -312,7 +328,12 @@ class StoryEventThumbCard extends StatelessWidget {
           publicUrlForStoragePath: publicUrlForStoragePath,
         ),
         SizedBox(height: gapAfterThumbnail),
-        _ThumbTitle(event: event, theme: theme, maxLines: titleMaxLines),
+        _ThumbTitle(
+          event: event,
+          theme: theme,
+          maxLines: titleMaxLines,
+          fontSize: deckCompact ? 11.2 : 12,
+        ),
         SizedBox(height: gapAfterTitle),
         _ThumbMetaRow(placeName: event.placeName, yearLabel: _yearLabel()),
         if (showSummary && summary.isNotEmpty) ...[
@@ -406,11 +427,13 @@ class _ThumbTitle extends StatelessWidget {
     required this.event,
     required this.theme,
     required this.maxLines,
+    required this.fontSize,
   });
 
   final StoryEvent event;
   final ThemeData theme;
   final int? maxLines;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -422,7 +445,7 @@ class _ThumbTitle extends StatelessWidget {
       textAlign: TextAlign.center,
       style: theme.textTheme.titleSmall?.copyWith(
         fontWeight: FontWeight.w700,
-        fontSize: 12,
+        fontSize: fontSize,
         height: maxLines == null ? 1.14 : 1.08,
       ),
     );

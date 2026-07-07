@@ -46,9 +46,10 @@ void main() {
       expect(find.text('지도 남색'), findsNothing);
       expect(find.text('밝은 해안'), findsNothing);
       expect(find.text('알록 지도'), findsOneWidget);
+      expect(find.text('블랙 지도'), findsOneWidget);
     });
 
-    testWidgets('색 조합 버튼 3개를 한 줄에 배치한다', (tester) async {
+    testWidgets('색 조합 버튼 4개를 한 줄에 배치한다', (tester) async {
       await _pumpSheet(tester);
 
       final classic = find.byKey(
@@ -60,10 +61,12 @@ void main() {
       final colorful = find.byKey(
         const ValueKey('color-palette-button-colorfulMap'),
       );
+      final black = find.byKey(const ValueKey('color-palette-button-blackMap'));
 
       expect(classic, findsOneWidget);
       expect(atlas, findsOneWidget);
       expect(colorful, findsOneWidget);
+      expect(black, findsOneWidget);
       expect(
         (tester.getTopLeft(classic).dy - tester.getTopLeft(atlas).dy).abs(),
         lessThanOrEqualTo(1),
@@ -73,12 +76,20 @@ void main() {
         lessThanOrEqualTo(1),
       );
       expect(
+        (tester.getTopLeft(colorful).dy - tester.getTopLeft(black).dy).abs(),
+        lessThanOrEqualTo(1),
+      );
+      expect(
         tester.getCenter(classic).dx,
         lessThan(tester.getCenter(atlas).dx),
       );
       expect(
         tester.getCenter(atlas).dx,
         lessThan(tester.getCenter(colorful).dx),
+      );
+      expect(
+        tester.getCenter(colorful).dx,
+        lessThan(tester.getCenter(black).dx),
       );
     });
 
@@ -131,6 +142,17 @@ void main() {
       await tester.pump();
 
       expect(container.read(colorPaletteProvider), AppColorPalette.colorfulMap);
+    });
+
+    testWidgets('블랙 지도 버튼 탭 시 colorPaletteProvider.set이 호출된다', (tester) async {
+      final container = await _pumpSheet(tester);
+
+      await tester.tap(
+        find.byKey(const ValueKey('color-palette-button-blackMap')),
+      );
+      await tester.pump();
+
+      expect(container.read(colorPaletteProvider), AppColorPalette.blackMap);
     });
 
     testWidgets('동일한 단계 탭은 state를 변경하지 않는다', (tester) async {

@@ -14,11 +14,8 @@ import 'web_pointer_interceptor.dart';
 Future<void> showFontScaleSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: AppColors.parchmentLight,
+    backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
     builder: (_) => const WebPointerInterceptor(child: FontScaleBottomSheet()),
   );
 }
@@ -35,102 +32,109 @@ class FontScaleBottomSheet extends ConsumerWidget {
 
     return SafeArea(
       top: false,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              '색/글자 설정',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: currentPalette.text,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '색 조합',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w900,
-                color: currentPalette.text,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: AppColorPalette.values
-                  .map(
-                    (palette) => Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: _PaletteChoiceButton(
-                          palette: palette,
-                          selected: palette == currentPalette,
-                          onTap: () => ref
-                              .read(colorPaletteProvider.notifier)
-                              .set(palette),
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '글자 크기',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w900,
-                color: currentPalette.text,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.parchmentCard,
-                border: Border.all(color: currentPalette.selectedBorder),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                _previewText,
+      child: Container(
+        decoration: BoxDecoration(
+          color: currentPalette.panelSurface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border(top: BorderSide(color: currentPalette.panelBorder)),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                '색/글자 설정',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
                   color: currentPalette.text,
-                  height: 1.4,
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: FontScale.values
-                  .map(
-                    (scale) => Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: _FontScaleChoiceButton(
-                          scale: scale,
-                          palette: currentPalette,
-                          selected: scale == current,
-                          onTap: () =>
-                              ref.read(fontScaleProvider.notifier).set(scale),
+              const SizedBox(height: 16),
+              Text(
+                '색 조합',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  color: currentPalette.text,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: AppColorPalette.values
+                    .map(
+                      (palette) => Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: _PaletteChoiceButton(
+                            palette: palette,
+                            selected: palette == currentPalette,
+                            onTap: () => ref
+                                .read(colorPaletteProvider.notifier)
+                                .set(palette),
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.center,
-              child: TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('닫기'),
+                    )
+                    .toList(),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                '글자 크기',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  color: currentPalette.text,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: currentPalette.cardSurface,
+                  border: Border.all(color: currentPalette.selectedBorder),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  _previewText,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: currentPalette.text,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: FontScale.values
+                    .map(
+                      (scale) => Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: _FontScaleChoiceButton(
+                            scale: scale,
+                            palette: currentPalette,
+                            selected: scale == current,
+                            onTap: () =>
+                                ref.read(fontScaleProvider.notifier).set(scale),
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+              const SizedBox(height: 16),
+              Align(
+                alignment: Alignment.center,
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('닫기'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -150,6 +154,7 @@ class _PaletteChoiceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final labelColor = selected ? palette.text : AppColors.ink700;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -187,7 +192,7 @@ class _PaletteChoiceButton extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13.2,
                           fontWeight: FontWeight.w900,
-                          color: palette.text,
+                          color: labelColor,
                           height: 1.0,
                         ),
                       ),
@@ -199,7 +204,7 @@ class _PaletteChoiceButton extends StatelessWidget {
                 selected
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_unchecked_rounded,
-                color: selected ? palette.primary : palette.mutedText,
+                color: selected ? palette.currentAccentDeep : AppColors.ink300,
                 size: 18,
               ),
             ],

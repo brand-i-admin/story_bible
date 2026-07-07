@@ -160,7 +160,7 @@ class CompanionDiaryEntryDetailDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ParchmentDialog(
-      title: '동행 일지 상세',
+      title: '신앙 다이어리 상세',
       subtitle: formatCompanionDiaryEntryDate(entry.entryDate),
       showCloseButton: true,
       actions: [
@@ -235,8 +235,8 @@ Future<bool> showCompanionDiaryDeleteConfirmDialog(
     builder: (dialogContext) {
       final largeText = MediaQuery.textScalerOf(dialogContext).scale(1) >= 1.3;
       return ParchmentDialog(
-        title: '동행 일지를 삭제할까요?',
-        subtitle: '남긴 일지를 삭제합니다.',
+        title: '신앙 다이어리를 삭제할까요?',
+        subtitle: '남긴 다이어리를 삭제합니다.',
         actions: [
           ParchmentDialogActionButton(
             label: '취소',
@@ -308,7 +308,7 @@ class _CompanionDiaryEditorDialogState
   Widget build(BuildContext context) {
     final isEditing = widget.initialEntry != null;
     return ParchmentDialog(
-      title: isEditing ? '동행 일지 수정' : '동행 일지 작성',
+      title: isEditing ? '신앙 다이어리 수정' : '신앙 다이어리 작성',
       subtitle: '오늘 하루 예수님과 동행한 마음을 기록해 보세요.',
       showCloseButton: true,
       actions: [

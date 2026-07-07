@@ -9,9 +9,12 @@ import '../models/app_user_profile.dart';
 import '../state/auth_providers.dart';
 import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
+import 'profile/profile_feature_flags.dart';
 import 'story_home_styles.dart';
 
-/// 사용자 프로필(닉네임/사진/기도제목)을 수정하는 모달 다이얼로그.
+/// 사용자 프로필(닉네임/사진)을 수정하는 모달 다이얼로그.
+///
+/// 기도제목 편집 코드는 pending 상태로 보존하되 현재 화면에서는 숨긴다.
 ///
 /// 저장에 성공하면 `Navigator.pop`으로 갱신된 [AppUserProfile]을 반환한다.
 class ProfileEditorDialog extends ConsumerStatefulWidget {
@@ -117,7 +120,9 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
           .updateUserProfile(
             userId: widget.userId,
             nickname: nickname,
-            prayerRequest: _prayerController.text,
+            prayerRequest: profilePrayerFeaturePending
+                ? widget.initialProfile.prayerRequest
+                : _prayerController.text,
             photoUrl: nextPhotoUrl,
           );
       if (!mounted) {
@@ -418,29 +423,31 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
             controller: _nicknameController,
             enabled: !_saving,
             decoration: _editorInputDecoration(
-              hintText: '예: 기도왕, 다윗러버',
+              hintText: '예: 말씀여행자, 다윗러버',
               accent: palette.primary,
             ),
             onChanged: _clearLocalError,
           ),
-          const SizedBox(height: 12),
-          _editorSectionLabel(
-            '기도제목',
-            icon: Icons.self_improvement_rounded,
-            accent: palette.characterAccent,
-            subtitle: '함께 기도받고 싶은 내용을 짧게 적어보세요.',
-          ),
-          const SizedBox(height: 6),
-          _PrayerField(
-            controller: _prayerController,
-            enabled: !_saving,
-            decoration: _editorInputDecoration(
-              hintText: '예: 이번 주에 마음이 지치지 않도록 함께 기도해주세요.',
+          if (!profilePrayerFeaturePending) ...[
+            const SizedBox(height: 12),
+            _editorSectionLabel(
+              '기도제목',
+              icon: Icons.self_improvement_rounded,
               accent: palette.characterAccent,
-              multiLine: true,
+              subtitle: '함께 기도받고 싶은 내용을 짧게 적어보세요.',
             ),
-            onChanged: _clearLocalError,
-          ),
+            const SizedBox(height: 6),
+            _PrayerField(
+              controller: _prayerController,
+              enabled: !_saving,
+              decoration: _editorInputDecoration(
+                hintText: '예: 이번 주에 마음이 지치지 않도록 함께 기도해주세요.',
+                accent: palette.characterAccent,
+                multiLine: true,
+              ),
+              onChanged: _clearLocalError,
+            ),
+          ],
           if (_localError != null) ...[
             const SizedBox(height: 12),
             _ErrorMessageBox(message: _localError!),

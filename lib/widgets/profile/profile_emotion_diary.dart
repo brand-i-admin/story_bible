@@ -1,131 +1,84 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../models/event_emotion_mark.dart';
+import '../../models/saved_bible_verse.dart';
 import '../../models/story_event.dart';
 import '../../models/user_companion_diary_entry.dart';
-import '../../state/story_controller.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
+import '../../theme/typography.dart';
 import '../../utils/kst_date.dart';
 import '../emotion_badge_icon.dart';
+import '../pulse_highlight.dart';
 import 'companion_diary_entry_card.dart';
 import 'profile_companion_diary.dart';
-import 'profile_emotion_stats.dart';
 
-BoxDecoration _profileTabRailDecoration(
-  BuildContext context, {
-  required Color accent,
-  Color? secondaryAccent,
-}) {
-  final palette = AppPaletteTheme.of(context);
-  final endAccent = secondaryAccent ?? accent;
-  return BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        Color.alphaBlend(
-          accent.withValues(alpha: 0.12),
-          palette.cardUnselectedTop,
-        ),
-        Color.alphaBlend(
-          endAccent.withValues(alpha: 0.10),
-          palette.cardUnselectedBottom,
-        ),
-      ],
-    ),
-    borderRadius: BorderRadius.circular(20),
-    border: Border.all(color: accent.withValues(alpha: 0.28), width: 0.9),
-  );
+class ProfileBibleProgressSummary {
+  const ProfileBibleProgressSummary({
+    required this.completed,
+    required this.total,
+    required this.fraction,
+    this.lastVerse,
+  });
+
+  final int completed;
+  final int total;
+  final double fraction;
+  final SavedBibleVerse? lastVerse;
+
+  int get percent => (fraction.clamp(0.0, 1.0) * 100).round();
+
+  String get referenceText => lastVerse?.referenceText ?? '창세기 1:1';
+
+  String get chapterReferenceText {
+    final verse = lastVerse;
+    if (verse == null) {
+      return '창세기 1장';
+    }
+    return '${verse.bookName} ${verse.chapterNo}장';
+  }
 }
 
-BoxDecoration _profileLinkedTabGroupDecoration(
-  BuildContext context, {
-  required Color accent,
-  Color? secondaryAccent,
-}) {
-  return _profileTabRailDecoration(
-    context,
-    accent: accent,
-    secondaryAccent: secondaryAccent,
-  );
-}
-
-Color _profileSelectedTabSurface(
-  BuildContext context, {
-  required Color accent,
-}) {
-  final palette = AppPaletteTheme.of(context);
-  return Color.alphaBlend(accent.withValues(alpha: 0.24), palette.cardSurface);
-}
-
-Color _profileSelectedTabButtonSurface(Color accent) {
-  return accent;
-}
-
-const double _diaryContentTabHeight = 44;
-
-BoxDecoration _profileLinkedTabBodyDecoration(
-  BuildContext context, {
-  required Color accent,
-}) {
-  return BoxDecoration(
-    color: _profileSelectedTabSurface(context, accent: accent),
-    borderRadius: const BorderRadius.only(
-      topLeft: Radius.circular(10),
-      topRight: Radius.circular(10),
-      bottomLeft: Radius.circular(16),
-      bottomRight: Radius.circular(16),
-    ),
-    border: Border.all(color: accent.withValues(alpha: 0.28), width: 0.7),
-  );
-}
-
-class ProfileEmotionDiary extends ConsumerStatefulWidget {
+class ProfileEmotionDiary extends StatefulWidget {
   const ProfileEmotionDiary({
     super.key,
     required this.eventEmotionMarks,
-    required this.onOpenEventDetail,
     this.companionDiaryEntries = const <UserCompanionDiaryEntry>[],
     this.companionDiaryLoading = false,
     this.companionDiaryError,
     this.onSaveCompanionDiary,
     this.onDeleteCompanionDiary,
-    this.emotionStats,
-    this.onTapEmotion,
+    this.bibleProgress,
+    this.onOpenBibleProgress,
+    this.onContinueBibleReading,
     this.now,
+    this.featureCardsFirst = false,
+    this.showFeatureCards = true,
   });
 
   final Map<String, EventEmotionMark> eventEmotionMarks;
-  final ValueChanged<StoryEvent> onOpenEventDetail;
   final List<UserCompanionDiaryEntry> companionDiaryEntries;
   final bool companionDiaryLoading;
   final String? companionDiaryError;
   final CompanionDiarySaveCallback? onSaveCompanionDiary;
   final CompanionDiaryDeleteCallback? onDeleteCompanionDiary;
-  final ProfileEmotionStats? emotionStats;
-  final ValueChanged<EventEmotionOption>? onTapEmotion;
+  final ProfileBibleProgressSummary? bibleProgress;
+  final VoidCallback? onOpenBibleProgress;
+  final VoidCallback? onContinueBibleReading;
   final DateTime? now;
+  final bool featureCardsFirst;
+  final bool showFeatureCards;
 
   @override
-  ConsumerState<ProfileEmotionDiary> createState() =>
-      _ProfileEmotionDiaryState();
+  State<ProfileEmotionDiary> createState() => _ProfileEmotionDiaryState();
 }
 
-class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
-  late Future<List<StoryEvent>> _eventsFuture;
-  String _eventIdFingerprint = '';
+class _ProfileEmotionDiaryState extends State<ProfileEmotionDiary> {
   late DateTime _focusedMonth;
   late DateTime _selectedDate;
-  _DiaryContentTab _selectedContentTab = _DiaryContentTab.companion;
   bool _expanded = false;
-  String? _openingEventId;
-  Timer? _openingResetTimer;
 
   @override
   void initState() {
@@ -133,18 +86,11 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
     final today = _todayKst();
     _focusedMonth = _monthStart(today);
     _selectedDate = today;
-    _eventIdFingerprint = _fingerprint(widget.eventEmotionMarks.keys);
-    _eventsFuture = _loadMarkedEvents();
   }
 
   @override
   void didUpdateWidget(covariant ProfileEmotionDiary oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final nextFingerprint = _fingerprint(widget.eventEmotionMarks.keys);
-    if (nextFingerprint != _eventIdFingerprint) {
-      _eventIdFingerprint = nextFingerprint;
-      _eventsFuture = _loadMarkedEvents();
-    }
     if (oldWidget.now != widget.now) {
       final today = _todayKst();
       if (_selectedDate.isAfter(today)) {
@@ -152,23 +98,6 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
         _focusedMonth = _monthStart(today);
       }
     }
-  }
-
-  @override
-  void dispose() {
-    _openingResetTimer?.cancel();
-    super.dispose();
-  }
-
-  Future<List<StoryEvent>> _loadMarkedEvents() {
-    return ref
-        .read(storyRepositoryProvider)
-        .fetchEventsByIds(widget.eventEmotionMarks.keys.toSet());
-  }
-
-  String _fingerprint(Iterable<String> ids) {
-    final sorted = ids.toList()..sort();
-    return sorted.join('|');
   }
 
   DateTime _todayKst() => _dateOnly(toKst(widget.now ?? DateTime.now()));
@@ -185,107 +114,38 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
       widget.companionDiaryEntries,
     );
 
-    return FutureBuilder<List<StoryEvent>>(
-      future: _eventsFuture,
-      builder: (context, snapshot) {
-        final events = snapshot.data ?? const <StoryEvent>[];
-        final eventById = {for (final event in events) event.id: event};
-        final selectedMarks =
-            marksByDate[_selectedDate] ?? const <EventEmotionMark>[];
-        final selectedCompanionDiary =
-            companionDiaryByDate[_dateOnly(_selectedDate)];
-        return Stack(
-          children: [
-            _EmotionDiaryPanel(
-              focusedMonth: _focusedMonth,
-              selectedDate: _selectedDate,
-              today: today,
-              expanded: _expanded,
-              marksByDate: marksByDate,
-              companionDiaryByDate: companionDiaryByDate,
-              companionDiaryEntries: widget.companionDiaryEntries,
-              selectedCompanionDiary: selectedCompanionDiary,
-              companionDiaryLoading: widget.companionDiaryLoading,
-              companionDiaryError: widget.companionDiaryError,
-              selectedMarks: selectedMarks,
-              emotionStats: widget.emotionStats,
-              eventById: eventById,
-              onToggleExpanded: () {
-                setState(() {
-                  final today = _todayKst();
-                  _expanded = !_expanded;
-                  _focusedMonth = _monthStart(today);
-                  if (!_expanded &&
-                      !_isWithinCollapsedVisibleRange(_selectedDate, today)) {
-                    _selectedDate = today;
-                  }
-                });
-              },
-              onMoveMonth: _moveMonth,
-              onSelectDate: _selectDate,
-              selectedContentTab: _selectedContentTab,
-              onSelectContentTab: (tab) {
-                setState(() => _selectedContentTab = tab);
-              },
-              onSaveCompanionDiary: widget.onSaveCompanionDiary,
-              onDeleteCompanionDiary: widget.onDeleteCompanionDiary,
-              onTapEmotion: widget.onTapEmotion,
-              onOpenEventDetail: _openEventDetailWithLoading,
-              loading: snapshot.connectionState == ConnectionState.waiting,
-              hasError: snapshot.hasError,
-            ),
-            if (_openingEventId != null)
-              Positioned.fill(
-                child: AbsorbPointer(
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.parchmentCream.withValues(alpha: 0.62),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColors.parchmentCream,
-                        borderRadius: BorderRadius.circular(999),
-                        border: Border.all(
-                          color: const Color(0x99D6BF8D),
-                          width: 0.8,
-                        ),
-                        boxShadow: AppShadows.sm,
-                      ),
-                      child: const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2.4),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        );
+    return _EmotionDiaryPanel(
+      focusedMonth: _focusedMonth,
+      selectedDate: _selectedDate,
+      today: today,
+      expanded: _expanded,
+      marksByDate: marksByDate,
+      companionDiaryByDate: companionDiaryByDate,
+      companionDiaryEntries: widget.companionDiaryEntries,
+      todayCompanionDiary: companionDiaryByDate[_dateOnly(today)],
+      companionDiaryLoading: widget.companionDiaryLoading,
+      companionDiaryError: widget.companionDiaryError,
+      onToggleExpanded: () {
+        setState(() {
+          final today = _todayKst();
+          _expanded = !_expanded;
+          _focusedMonth = _monthStart(today);
+          if (!_expanded &&
+              !_isWithinCollapsedVisibleRange(_selectedDate, today)) {
+            _selectedDate = today;
+          }
+        });
       },
+      onMoveMonth: _moveMonth,
+      onSelectDate: _selectDate,
+      onSaveCompanionDiary: widget.onSaveCompanionDiary,
+      onDeleteCompanionDiary: widget.onDeleteCompanionDiary,
+      bibleProgress: widget.bibleProgress,
+      onOpenBibleProgress: widget.onOpenBibleProgress,
+      onContinueBibleReading: widget.onContinueBibleReading,
+      featureCardsFirst: widget.featureCardsFirst,
+      showFeatureCards: widget.showFeatureCards,
     );
-  }
-
-  void _openEventDetailWithLoading(StoryEvent event) {
-    if (_openingEventId != null) {
-      return;
-    }
-    _openingResetTimer?.cancel();
-    setState(() => _openingEventId = event.id);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) {
-        return;
-      }
-      widget.onOpenEventDetail(event);
-      _openingResetTimer = Timer(const Duration(milliseconds: 650), () {
-        if (mounted) {
-          setState(() => _openingEventId = null);
-        }
-      });
-    });
   }
 
   void _selectDate(DateTime date) {
@@ -316,8 +176,6 @@ class _ProfileEmotionDiaryState extends ConsumerState<ProfileEmotionDiary> {
   }
 }
 
-enum _DiaryContentTab { companion, emotion }
-
 class _EmotionDiaryPanel extends StatelessWidget {
   const _EmotionDiaryPanel({
     required this.focusedMonth,
@@ -327,23 +185,19 @@ class _EmotionDiaryPanel extends StatelessWidget {
     required this.marksByDate,
     required this.companionDiaryByDate,
     required this.companionDiaryEntries,
-    required this.selectedCompanionDiary,
+    required this.todayCompanionDiary,
     required this.companionDiaryLoading,
     required this.companionDiaryError,
-    required this.selectedMarks,
-    required this.emotionStats,
-    required this.eventById,
     required this.onToggleExpanded,
     required this.onMoveMonth,
     required this.onSelectDate,
-    required this.selectedContentTab,
-    required this.onSelectContentTab,
     required this.onSaveCompanionDiary,
     required this.onDeleteCompanionDiary,
-    required this.onTapEmotion,
-    required this.onOpenEventDetail,
-    required this.loading,
-    required this.hasError,
+    required this.bibleProgress,
+    required this.onOpenBibleProgress,
+    required this.onContinueBibleReading,
+    required this.featureCardsFirst,
+    required this.showFeatureCards,
   });
 
   final DateTime focusedMonth;
@@ -353,23 +207,19 @@ class _EmotionDiaryPanel extends StatelessWidget {
   final Map<DateTime, List<EventEmotionMark>> marksByDate;
   final Map<DateTime, UserCompanionDiaryEntry> companionDiaryByDate;
   final List<UserCompanionDiaryEntry> companionDiaryEntries;
-  final UserCompanionDiaryEntry? selectedCompanionDiary;
+  final UserCompanionDiaryEntry? todayCompanionDiary;
   final bool companionDiaryLoading;
   final String? companionDiaryError;
-  final List<EventEmotionMark> selectedMarks;
-  final ProfileEmotionStats? emotionStats;
-  final Map<String, StoryEvent> eventById;
   final VoidCallback onToggleExpanded;
   final ValueChanged<int> onMoveMonth;
   final ValueChanged<DateTime> onSelectDate;
-  final _DiaryContentTab selectedContentTab;
-  final ValueChanged<_DiaryContentTab> onSelectContentTab;
   final CompanionDiarySaveCallback? onSaveCompanionDiary;
   final CompanionDiaryDeleteCallback? onDeleteCompanionDiary;
-  final ValueChanged<EventEmotionOption>? onTapEmotion;
-  final ValueChanged<StoryEvent> onOpenEventDetail;
-  final bool loading;
-  final bool hasError;
+  final ProfileBibleProgressSummary? bibleProgress;
+  final VoidCallback? onOpenBibleProgress;
+  final VoidCallback? onContinueBibleReading;
+  final bool featureCardsFirst;
+  final bool showFeatureCards;
 
   @override
   Widget build(BuildContext context) {
@@ -380,6 +230,20 @@ class _EmotionDiaryPanel extends StatelessWidget {
     final visibleDates = expanded
         ? _monthVisibleDates(focusedMonth)
         : _collapsedVisibleDates(today);
+    final featureCards = showFeatureCards
+        ? ProfileDiaryFeatureCards(
+            today: today,
+            todayCompanionDiary: todayCompanionDiary,
+            companionDiaryEntries: companionDiaryEntries,
+            companionDiaryLoading: companionDiaryLoading,
+            companionDiaryError: companionDiaryError,
+            onSaveCompanionDiary: onSaveCompanionDiary,
+            onDeleteCompanionDiary: onDeleteCompanionDiary,
+            bibleProgress: bibleProgress,
+            onOpenBibleProgress: onOpenBibleProgress,
+            onContinueBibleReading: onContinueBibleReading,
+          )
+        : null;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 11, 12, 12),
@@ -398,11 +262,8 @@ class _EmotionDiaryPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (emotionStats != null && onTapEmotion != null) ...[
-            ProfileEmotionStatsRows(
-              stats: emotionStats!,
-              onTapEmotion: onTapEmotion!,
-            ),
+          if (showFeatureCards && featureCardsFirst) ...[
+            featureCards!,
             Divider(height: 22, color: palette.subtleBorder),
           ],
           Row(
@@ -489,76 +350,251 @@ class _EmotionDiaryPanel extends StatelessWidget {
               },
             ),
           ],
-          Divider(height: 22, color: palette.subtleBorder),
-          _DiaryLinkedTabSection(
-            selected: selectedContentTab,
-            onSelect: onSelectContentTab,
-            child: selectedContentTab == _DiaryContentTab.companion
-                ? CompanionDiaryTodaySection(
-                    entryDate: selectedDate,
-                    entry: selectedCompanionDiary,
-                    entries: companionDiaryEntries,
-                    loading: companionDiaryLoading,
-                    error: companionDiaryError,
-                    onSave: onSaveCompanionDiary,
-                    onDelete: onDeleteCompanionDiary,
-                  )
-                : _SelectedDayEmotionList(
-                    date: selectedDate,
-                    today: today,
-                    marks: selectedMarks,
-                    eventById: eventById,
-                    onOpenEventDetail: onOpenEventDetail,
-                    loading: loading,
-                    hasError: hasError,
-                  ),
-          ),
+          if (showFeatureCards && !featureCardsFirst) ...[
+            Divider(height: 22, color: palette.subtleBorder),
+            featureCards!,
+          ],
         ],
       ),
     );
   }
 }
 
-class _DiaryLinkedTabSection extends StatelessWidget {
-  const _DiaryLinkedTabSection({
-    required this.selected,
-    required this.onSelect,
-    required this.child,
+class ProfileDiaryFeatureCards extends StatelessWidget {
+  const ProfileDiaryFeatureCards({
+    super.key,
+    required this.today,
+    required this.todayCompanionDiary,
+    required this.companionDiaryEntries,
+    required this.companionDiaryLoading,
+    required this.companionDiaryError,
+    required this.onSaveCompanionDiary,
+    required this.onDeleteCompanionDiary,
+    required this.bibleProgress,
+    required this.onOpenBibleProgress,
+    required this.onContinueBibleReading,
   });
 
-  final _DiaryContentTab selected;
-  final ValueChanged<_DiaryContentTab> onSelect;
-  final Widget child;
+  final DateTime today;
+  final UserCompanionDiaryEntry? todayCompanionDiary;
+  final List<UserCompanionDiaryEntry> companionDiaryEntries;
+  final bool companionDiaryLoading;
+  final String? companionDiaryError;
+  final CompanionDiarySaveCallback? onSaveCompanionDiary;
+  final CompanionDiaryDeleteCallback? onDeleteCompanionDiary;
+  final ProfileBibleProgressSummary? bibleProgress;
+  final VoidCallback? onOpenBibleProgress;
+  final VoidCallback? onContinueBibleReading;
+
+  @override
+  Widget build(BuildContext context) {
+    final diaryCard = CompanionDiaryFeatureCard(
+      entryDate: today,
+      entry: todayCompanionDiary,
+      entries: companionDiaryEntries,
+      loading: companionDiaryLoading,
+      error: companionDiaryError,
+      onSave: onSaveCompanionDiary,
+      onDelete: onDeleteCompanionDiary,
+    );
+    final bibleCard = _BibleProgressFeatureCard(
+      summary: bibleProgress,
+      onTapCard: onOpenBibleProgress,
+      onContinue: onContinueBibleReading,
+    );
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: diaryCard),
+          const SizedBox(width: 10),
+          Expanded(child: bibleCard),
+        ],
+      ),
+    );
+  }
+}
+
+class _BibleProgressFeatureCard extends StatelessWidget {
+  const _BibleProgressFeatureCard({
+    required this.summary,
+    required this.onTapCard,
+    required this.onContinue,
+  });
+
+  final ProfileBibleProgressSummary? summary;
+  final VoidCallback? onTapCard;
+  final VoidCallback? onContinue;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final accent = selected == _DiaryContentTab.companion
-        ? palette.currentAccentDeep
-        : palette.regionAccent;
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: _profileLinkedTabGroupDecoration(
-        context,
-        accent: palette.currentAccentDeep,
-        secondaryAccent: palette.regionAccent,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
-            child: _DiaryContentTabBar(selected: selected, onSelect: onSelect),
-          ),
-          Container(
-            margin: const EdgeInsets.fromLTRB(4, 3, 4, 4),
-            decoration: _profileLinkedTabBodyDecoration(
-              context,
-              accent: accent,
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final progress =
+        summary ??
+        const ProfileBibleProgressSummary(completed: 0, total: 0, fraction: 0);
+    final fraction = progress.fraction.clamp(0.0, 1.0).toDouble();
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: const ValueKey('bible-progress-feature-card'),
+        onTap: onTapCard,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 138),
+          padding: const EdgeInsets.fromLTRB(13, 12, 13, 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withValues(alpha: 0.98),
+                palette.currentFill.withValues(alpha: 0.46),
+              ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-              child: child,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: palette.currentAccentDeep.withValues(alpha: 0.24),
+              width: 0.9,
+            ),
+            boxShadow: AppShadows.sm,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: palette.currentFill,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: palette.currentAccentDeep.withValues(
+                          alpha: 0.30,
+                        ),
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.menu_book_rounded,
+                      size: 14,
+                      color: palette.currentAccentDeep,
+                    ),
+                  ),
+                  const SizedBox(width: 7),
+                  Expanded(
+                    child: Text(
+                      '통독 진행률',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.sectionTitle.copyWith(
+                        color: palette.text,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 19,
+                    color: palette.mutedText,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _BibleProgressDonut(
+                    fraction: fraction,
+                    percent: progress.percent,
+                    dimension: largeText ? 48 : 54,
+                  ),
+                  SizedBox(width: largeText ? 7 : 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '마지막 묵상 구절',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: palette.mutedText,
+                            fontSize: AppFontSizes.xs,
+                            fontWeight: FontWeight.w900,
+                            height: 1,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          progress.chapterReferenceText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: palette.text,
+                            fontSize: 12.8,
+                            fontWeight: FontWeight.w900,
+                            height: 1.1,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        PulseHighlight(
+                          active: onContinue != null,
+                          pulseCount: 2,
+                          borderRadius: BorderRadius.circular(999),
+                          color: palette.currentAccentDeep,
+                          child: _BibleContinueButton(onTap: onContinue),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BibleProgressDonut extends StatelessWidget {
+  const _BibleProgressDonut({
+    required this.fraction,
+    required this.percent,
+    required this.dimension,
+  });
+
+  final double fraction;
+  final int percent;
+  final double dimension;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return SizedBox.square(
+      dimension: dimension,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox.expand(
+            child: CircularProgressIndicator(
+              value: fraction,
+              strokeWidth: 5.2,
+              backgroundColor: palette.currentFill,
+              color: palette.currentAccentDeep,
+            ),
+          ),
+          Text(
+            '$percent%',
+            maxLines: 1,
+            style: TextStyle(
+              color: palette.currentAccentDeep,
+              fontSize: 12.2,
+              fontWeight: FontWeight.w900,
+              height: 1,
             ),
           ),
         ],
@@ -567,109 +603,57 @@ class _DiaryLinkedTabSection extends StatelessWidget {
   }
 }
 
-class _DiaryContentTabBar extends StatelessWidget {
-  const _DiaryContentTabBar({required this.selected, required this.onSelect});
+class _BibleContinueButton extends StatelessWidget {
+  const _BibleContinueButton({required this.onTap});
 
-  final _DiaryContentTab selected;
-  final ValueChanged<_DiaryContentTab> onSelect;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     return SizedBox(
-      key: const ValueKey('diary-content-tab-bar'),
-      height: _diaryContentTabHeight,
-      child: Row(
-        children: [
-          Expanded(
-            child: _DiaryContentTabButton(
-              label: '오늘의 신앙 기록',
-              selected: selected == _DiaryContentTab.companion,
-              accent: palette.currentAccentDeep,
-              onTap: () => onSelect(_DiaryContentTab.companion),
-            ),
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: _DiaryContentTabButton(
-              label: '오늘의 내 감정',
-              selected: selected == _DiaryContentTab.emotion,
-              accent: palette.regionAccent,
-              onTap: () => onSelect(_DiaryContentTab.emotion),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DiaryContentTabButton extends StatelessWidget {
-  const _DiaryContentTabButton({
-    required this.label,
-    required this.selected,
-    required this.accent,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final Color accent;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return SizedBox.expand(
+      width: double.infinity,
       child: Material(
-        color: Colors.transparent,
+        color: onTap == null
+            ? palette.mutedSurface
+            : palette.currentAccentDeep.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(999),
         child: InkWell(
+          key: const ValueKey('bible-progress-continue-button'),
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 170),
-            padding: const EdgeInsets.symmetric(horizontal: 3),
-            decoration: BoxDecoration(
-              color: selected
-                  ? _profileSelectedTabButtonSurface(accent)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-              border: selected
-                  ? Border.all(
-                      color: AppColors.fgOnDark.withValues(alpha: 0.38),
-                    )
-                  : null,
-              boxShadow: selected
-                  ? [
-                      BoxShadow(
-                        color: accent.withValues(alpha: 0.18),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
+          borderRadius: BorderRadius.circular(999),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
+            child: SizedBox(
+              height: 15,
+              width: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '이어 읽기',
                       style: TextStyle(
-                        color: selected ? AppColors.fgOnDark : palette.text,
-                        fontSize: 12.6,
+                        color: onTap == null
+                            ? palette.mutedText
+                            : AppColors.fgOnDark,
+                        fontSize: 11.6,
                         fontWeight: FontWeight.w900,
                         height: 1,
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                      color: onTap == null
+                          ? palette.mutedText
+                          : AppColors.fgOnDark,
+                      size: 15,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -1139,24 +1123,25 @@ class _MoreEmotionMarkBadge extends StatelessWidget {
   }
 }
 
-class _SelectedDayEmotionList extends StatelessWidget {
-  const _SelectedDayEmotionList({
-    required this.date,
-    required this.today,
+class ProfileEmotionMarksList extends StatelessWidget {
+  const ProfileEmotionMarksList({
+    super.key,
     required this.marks,
     required this.eventById,
     required this.onOpenEventDetail,
     required this.loading,
     required this.hasError,
+    required this.emptyMessage,
+    this.showTimestamp = false,
   });
 
-  final DateTime date;
-  final DateTime today;
   final List<EventEmotionMark> marks;
   final Map<String, StoryEvent> eventById;
   final ValueChanged<StoryEvent> onOpenEventDetail;
   final bool loading;
   final bool hasError;
+  final String emptyMessage;
+  final bool showTimestamp;
 
   @override
   Widget build(BuildContext context) {
@@ -1171,11 +1156,7 @@ class _SelectedDayEmotionList extends StatelessWidget {
             child: Center(child: CircularProgressIndicator(strokeWidth: 2.2)),
           )
         else if (sorted.isEmpty)
-          _EmotionDiaryEmptyMessage(
-            message: _isSameDate(date, today)
-                ? '오늘 새긴 감정이 없습니다.\n이야기를 마치고 마음에 남은 감정을 남겨보세요.'
-                : '이 날에 새긴 감정이 없습니다.',
-          )
+          _EmotionDiaryEmptyMessage(message: emptyMessage)
         else ...[
           for (var i = 0; i < sorted.length; i++) ...[
             if (i > 0) Divider(height: 16, color: palette.subtleBorder),
@@ -1183,6 +1164,7 @@ class _SelectedDayEmotionList extends StatelessWidget {
               mark: sorted[i],
               event: eventById[sorted[i].eventId],
               onOpenEventDetail: onOpenEventDetail,
+              showTimestamp: showTimestamp,
             ),
           ],
           if (hasError)
@@ -1208,11 +1190,13 @@ class _SelectedEmotionRow extends StatelessWidget {
     required this.mark,
     required this.event,
     required this.onOpenEventDetail,
+    required this.showTimestamp,
   });
 
   final EventEmotionMark mark;
   final StoryEvent? event;
   final ValueChanged<StoryEvent> onOpenEventDetail;
+  final bool showTimestamp;
 
   @override
   Widget build(BuildContext context) {
@@ -1221,6 +1205,11 @@ class _SelectedEmotionRow extends StatelessWidget {
     final note = mark.note.trim().isEmpty
         ? '${mark.emotionLabel}으로 새겼어요.'
         : mark.note.trim();
+    final metaLabel = showTimestamp
+        ? (mark.updatedAt == null
+              ? ''
+              : _formatEmotionMarkDate(mark.updatedAt!))
+        : mark.emotionLabel;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1259,15 +1248,17 @@ class _SelectedEmotionRow extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 7),
-                        Text(
-                          mark.emotionLabel,
-                          style: TextStyle(
-                            color: palette.successBottom,
-                            fontSize: 10.8,
-                            fontWeight: FontWeight.w900,
+                        if (metaLabel.isNotEmpty) ...[
+                          const SizedBox(width: 7),
+                          Text(
+                            metaLabel,
+                            style: TextStyle(
+                              color: palette.successBottom,
+                              fontSize: 10.8,
+                              fontWeight: FontWeight.w900,
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -1371,6 +1362,11 @@ int _compareMarksNewestFirst(EventEmotionMark a, EventEmotionMark b) {
   final timeCompare = bTime.compareTo(aTime);
   if (timeCompare != 0) return timeCompare;
   return a.eventId.compareTo(b.eventId);
+}
+
+String _formatEmotionMarkDate(DateTime updatedAt) {
+  final kst = toKst(updatedAt);
+  return '${kst.month}월 ${kst.day}일';
 }
 
 List<DateTime> _collapsedVisibleDates(DateTime date) {

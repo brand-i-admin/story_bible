@@ -343,9 +343,11 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    '삭제되는 정보: 프로필, 프로필 이미지, 저장한 이야기와 말씀, 본문 읽기/퀴즈/감정 기록, 동행 일지, 기도 연결, 알림과 푸시 토큰, 제안 작성 중 올린 이미지',
-                    style: TextStyle(
+                  Text(
+                    profilePrayerFeaturePending
+                        ? '삭제되는 정보: 프로필, 프로필 이미지, 저장한 이야기와 말씀, 본문 읽기/퀴즈/감정 기록, 동행 일지, 알림과 푸시 토큰, 제안 작성 중 올린 이미지'
+                        : '삭제되는 정보: 프로필, 프로필 이미지, 저장한 이야기와 말씀, 본문 읽기/퀴즈/감정 기록, 동행 일지, 기도 연결, 알림과 푸시 토큰, 제안 작성 중 올린 이미지',
+                    style: const TextStyle(
                       color: AppColors.ink600,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,

@@ -6,35 +6,13 @@ part of '../profile_tab_page.dart';
 
 extension ProfileProgressSectionExt on ProfileTabPageState {
   Widget _buildProfileProgressSection({bool scrollBody = true}) {
-    final palette = AppPaletteTheme.of(context);
-    final selectedAccent = palette.currentAccentDeep;
-    final body = Container(
-      margin: const EdgeInsets.all(4),
-      decoration: _profileLinkedTabBodyDecoration(
-        context,
-        accent: selectedAccent,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-        child: scrollBody
-            ? SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                child: _profileProgressLifeBody(),
-              )
-            : _profileProgressLifeBody(),
-      ),
-    );
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: _profileLinkedTabGroupDecoration(
-        context,
-        accent: palette.currentAccentDeep,
-      ),
-      child: Column(
-        mainAxisSize: scrollBody ? MainAxisSize.max : MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [if (scrollBody) Expanded(child: body) else body],
-      ),
+    final body = _profileProgressLifeBody();
+    if (!scrollBody) {
+      return body;
+    }
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      child: body,
     );
   }
 
@@ -42,23 +20,54 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
   Widget _profileProgressLifeBody() {
     final state = ref.watch(storyControllerProvider);
     final bibleProgress = _profileBibleProgress(state);
-    return ProfileEmotionDiary(
-      eventEmotionMarks: state.eventEmotionMarks,
-      companionDiaryEntries: _profileCompanionDiaryEntries,
-      companionDiaryLoading: _profileCompanionDiaryLoading,
-      companionDiaryError: _profileCompanionDiaryError,
-      onSaveCompanionDiary: _saveCompanionDiaryEntry,
-      onDeleteCompanionDiary: _deleteCompanionDiaryEntry,
-      bibleProgress: ProfileBibleProgressSummary(
-        completed: bibleProgress.completed,
-        total: bibleProgress.total,
-        fraction: bibleProgress.fraction,
-        lastVerse: _profileSavedVersesPreview.firstOrNull,
-      ),
-      onOpenBibleProgress: _openBibleProgressDialog,
-      onContinueBibleReading: () {
-        unawaited(_openBibleReaderFromLatestSavedVerse());
-      },
+    final today = toKst(DateTime.now());
+    final bibleProgressSummary = ProfileBibleProgressSummary(
+      completed: bibleProgress.completed,
+      total: bibleProgress.total,
+      fraction: bibleProgress.fraction,
+      lastVerse: _profileSavedVersesPreview.firstOrNull,
     );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ProfileLeftPanelExt(this)._buildProfileStoryExplorationDashboard(),
+        const SizedBox(height: 10),
+        ProfileDiaryFeatureCards(
+          today: today,
+          todayCompanionDiary: _profileCompanionDiaryEntries
+              .where((entry) => _isSameProfileDate(entry.entryDate, today))
+              .firstOrNull,
+          companionDiaryEntries: _profileCompanionDiaryEntries,
+          companionDiaryLoading: _profileCompanionDiaryLoading,
+          companionDiaryError: _profileCompanionDiaryError,
+          onSaveCompanionDiary: _saveCompanionDiaryEntry,
+          onDeleteCompanionDiary: _deleteCompanionDiaryEntry,
+          bibleProgress: bibleProgressSummary,
+          onOpenBibleProgress: _openBibleProgressDialog,
+          onContinueBibleReading: () {
+            unawaited(_openBibleReaderFromLatestSavedVerse());
+          },
+        ),
+        const SizedBox(height: 10),
+        ProfileEmotionDiary(
+          eventEmotionMarks: state.eventEmotionMarks,
+          companionDiaryEntries: _profileCompanionDiaryEntries,
+          companionDiaryLoading: _profileCompanionDiaryLoading,
+          companionDiaryError: _profileCompanionDiaryError,
+          onSaveCompanionDiary: _saveCompanionDiaryEntry,
+          onDeleteCompanionDiary: _deleteCompanionDiaryEntry,
+          bibleProgress: bibleProgressSummary,
+          onOpenBibleProgress: _openBibleProgressDialog,
+          onContinueBibleReading: () {
+            unawaited(_openBibleReaderFromLatestSavedVerse());
+          },
+          showFeatureCards: false,
+        ),
+      ],
+    );
+  }
+
+  bool _isSameProfileDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

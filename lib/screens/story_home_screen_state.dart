@@ -1450,9 +1450,38 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           onNavigateStory: ({required from, required target}) async {
             await _openProfileNextStory(from: from, target: target);
           },
+          onExploreStoriesFromHome: _returnProfileToHomeIntroGuide,
         ),
       ),
     );
+  }
+
+  void _returnProfileToHomeIntroGuide() {
+    if (!mounted) {
+      return;
+    }
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+    }
+    final ctl = ref.read(storyControllerProvider.notifier);
+    unawaited(ctl.setSelectedEra(null));
+    ctl.clearSelectionMode();
+    ctl.selectLandmark(null);
+    ctl.setSelectedTimelineUnits(const <String>{});
+    ctl.setDisplayedEvents(const <String>{});
+    setState(() {
+      _mode = null;
+      _selectionStep = 1;
+      _draftSelectedCharacterCodes = const <String>{};
+      _draftDisplayedEventIds = const <String>{};
+      _awaitingRevealComplete = false;
+      _revealInstantly = false;
+      _mapAnimationInputLocked = false;
+      _resetMapHint();
+    });
+    _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
+    _scheduleHomeIntroMapAffordance();
   }
 
   Future<void> _openProfileEventDetailPage(
@@ -1544,7 +1573,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
     final regionId = _regionLandmarkIdForEvent(state, homeEvent);
     final region = regionId == null ? null : state.landmarkById(regionId);
-    if (region != null && region.isRegion) {
+    if (source != ProfileEventOpenSource.targetOnly &&
+        region != null &&
+        region.isRegion) {
       notifier.setSelectionMode(SelectionMode.region);
       notifier.selectLandmark(region.id);
       state = ref.read(storyControllerProvider);

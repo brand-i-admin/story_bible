@@ -101,6 +101,39 @@ enum AppColorPalette {
     timelineAccent: Color(0xFFFFB13B),
     characterAccent: Color(0xFF13A7B1),
     regionAccent: Color(0xFFD65AA0),
+  ),
+  blackMap(
+    storageKey: 'blackMap',
+    label: '블랙 지도',
+    description: '검은 지도 톤과 금빛 포인트',
+    seedColor: Color(0xFF111827),
+    primary: Color(0xFF1F2937),
+    primaryDeep: Color(0xFF05070B),
+    text: Color(0xFFEAF2F7),
+    mutedText: Color(0xFFA7B3C4),
+    actionTop: Color(0xF235445E),
+    actionBottom: Color(0xF2111828),
+    actionBorder: Color(0xB8F59E0B),
+    utilityBackground: Color(0xE6050710),
+    utilitySelectedBackground: Color(0xF21F2937),
+    utilityBorder: Color(0xAA8492A6),
+    selectedSurface: Color(0x5538BDF8),
+    selectedBorder: Color(0xCC38BDF8),
+    verseBadge: Color(0xE2111828),
+    verseBadgeSelected: Color(0xF2F59E0B),
+    verseRail: Color(0x5538BDF8),
+    completedSurface: Color(0xB8142F27),
+    completedBorder: Color(0xAA34D399),
+    successTop: Color(0xFF34D399),
+    successBottom: Color(0xFF0F766E),
+    currentAccent: Color(0xFFF59E0B),
+    currentAccentDeep: Color(0xFFD97706),
+    stepStart: Color(0xFF38BDF8),
+    stepSelect: Color(0xFFF59E0B),
+    stepStory: Color(0xFFA78BFA),
+    timelineAccent: Color(0xFFF59E0B),
+    characterAccent: Color(0xFF38BDF8),
+    regionAccent: Color(0xFFA78BFA),
   );
 
   const AppColorPalette({
@@ -172,42 +205,49 @@ enum AppColorPalette {
   Color get pageTop => switch (this) {
     AppColorPalette.classic => const Color(0xFFF8F4E7),
     AppColorPalette.colorfulMap => const Color(0xFFFFF6E7),
+    AppColorPalette.blackMap => const Color(0xFF111827),
     _ => _tint(AppColors.parchmentLight, primary, 0.035),
   };
 
   Color get pageMiddle => switch (this) {
     AppColorPalette.classic => const Color(0xFFEDE7D6),
     AppColorPalette.colorfulMap => const Color(0xFFEAF9F6),
+    AppColorPalette.blackMap => const Color(0xFF0B1120),
     _ => _tint(AppColors.parchmentMid, primary, 0.055),
   };
 
   Color get pageBottom => switch (this) {
     AppColorPalette.classic => const Color(0xFFE6D9BF),
     AppColorPalette.colorfulMap => const Color(0xFFF9E8F1),
+    AppColorPalette.blackMap => const Color(0xFF05070B),
     _ => _tint(AppColors.parchmentWarm, currentAccent, 0.05),
   };
 
   Color get panelSurface => switch (this) {
     AppColorPalette.classic => const Color(0xF5F3EBD9),
     AppColorPalette.colorfulMap => const Color(0xF8F2FCF7),
+    AppColorPalette.blackMap => const Color(0xF20D1322),
     _ => _tint(AppColors.floatingSurfaceDefault, primary, 0.045),
   };
 
   Color get cardSurface => switch (this) {
     AppColorPalette.classic => const Color(0xFFF2EAD8),
     AppColorPalette.colorfulMap => const Color(0xFFFFF7E8),
+    AppColorPalette.blackMap => const Color(0xFF172033),
     _ => _tint(AppColors.parchmentCard, primary, 0.035),
   };
 
   Color get softSurface => switch (this) {
     AppColorPalette.classic => const Color(0xFFFCF8EC),
     AppColorPalette.colorfulMap => const Color(0xFFFFEEF7),
+    AppColorPalette.blackMap => const Color(0xFF1F2937),
     _ => _tint(AppColors.parchmentCream, primary, 0.06),
   };
 
   Color get mutedSurface => switch (this) {
     AppColorPalette.classic => const Color(0xFFEAE4D3),
     AppColorPalette.colorfulMap => const Color(0xFFE2F5F2),
+    AppColorPalette.blackMap => const Color(0xFF111827),
     _ => _tint(AppColors.parchmentCream, mutedText, 0.045),
   };
   Color get panelBorder => selectedBorder.withValues(alpha: 0.68);
@@ -216,38 +256,45 @@ enum AppColorPalette {
   Color get selectionFill => switch (this) {
     AppColorPalette.classic => const Color(0xFFE7F0DB),
     AppColorPalette.colorfulMap => const Color(0xFFDDF5F1),
+    AppColorPalette.blackMap => const Color(0xFF253247),
     _ => _tint(AppColors.parchmentCream, primary, 0.16),
   };
 
   Color get currentFill => switch (this) {
     AppColorPalette.classic => const Color(0xFFE7D8A2),
     AppColorPalette.colorfulMap => const Color(0xFFFFE3BD),
+    AppColorPalette.blackMap => const Color(0xFF36281A),
     _ => _tint(AppColors.parchmentCream, currentAccent, 0.18),
   };
 
   Color get successFill => switch (this) {
     AppColorPalette.classic => const Color(0xFFD9E8C7),
     AppColorPalette.colorfulMap => const Color(0xFFE8F6DD),
+    AppColorPalette.blackMap => const Color(0xFF153127),
     _ => _tint(AppColors.parchmentCream, successBottom, 0.14),
   };
 
   Color get cardSelectedTop => switch (this) {
     AppColorPalette.colorfulMap => primary,
+    AppColorPalette.blackMap => const Color(0xFF273449),
     _ => actionTop,
   };
 
   Color get cardSelectedBottom => switch (this) {
     AppColorPalette.colorfulMap => primaryDeep,
+    AppColorPalette.blackMap => const Color(0xFF0B1020),
     _ => actionBottom,
   };
 
   Color get cardUnselectedTop => switch (this) {
     AppColorPalette.colorfulMap => const Color(0xFFFFFBEE),
+    AppColorPalette.blackMap => const Color(0xFF172033),
     _ => cardSurface,
   };
 
   Color get cardUnselectedBottom => switch (this) {
     AppColorPalette.colorfulMap => const Color(0xFFEAF7F4),
+    AppColorPalette.blackMap => const Color(0xFF111827),
     _ => mutedSurface,
   };
 

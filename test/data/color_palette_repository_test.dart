@@ -22,10 +22,10 @@ void main() {
     test('선택한 팔레트를 같은 키로 저장한다', () async {
       final repo = ColorPaletteRepository(prefs);
 
-      await repo.write(AppColorPalette.colorfulMap);
+      await repo.write(AppColorPalette.blackMap);
 
-      expect(prefs.getString(ColorPaletteRepository.key), 'colorfulMap');
-      expect(repo.read(), AppColorPalette.colorfulMap);
+      expect(prefs.getString(ColorPaletteRepository.key), 'blackMap');
+      expect(repo.read(), AppColorPalette.blackMap);
     });
 
     test('알 수 없는 저장값은 classic으로 보정한다', () async {

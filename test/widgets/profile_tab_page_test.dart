@@ -18,6 +18,7 @@ import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/models/user_companion_diary_entry.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
+import 'package:story_bible/widgets/parchment_page_scaffold.dart';
 import 'package:story_bible/widgets/profile_editor_dialog.dart';
 import 'package:story_bible/widgets/profile_tab_page.dart';
 
@@ -116,7 +117,7 @@ void main() {
       (_) async => [
         const Era(
           id: 'era-1',
-          code: 'era_test',
+          code: 'era_patriarch',
           testament: 'old',
           name: '테스트 시대',
           displayOrder: 1,
@@ -182,6 +183,23 @@ void main() {
         hasNextPage: false,
       ),
     );
+    when(
+      () => userRepository.fetchSavedVersesPage(
+        userId: user.id,
+        pageIndex: 0,
+        pageSize: 10,
+      ),
+    ).thenAnswer(
+      (_) async => const PagedResult<SavedBibleVerse>(
+        items: [],
+        pageIndex: 0,
+        pageSize: 10,
+        hasNextPage: false,
+      ),
+    );
+    when(
+      () => userRepository.countSavedVerses(userId: user.id),
+    ).thenAnswer((_) async => 0);
   });
 
   testWidgets('프로필 헤더의 이름을 누르면 수정 다이얼로그를 연다', (tester) async {
@@ -204,12 +222,12 @@ void main() {
     expect(find.text('프로필 수정'), findsOneWidget);
     expect(find.text('사진'), findsOneWidget);
     expect(find.text('닉네임'), findsOneWidget);
-    expect(find.text('기도제목'), findsOneWidget);
+    expect(find.text('기도제목'), findsNothing);
     expect(find.byIcon(Icons.add_photo_alternate_rounded), findsWidgets);
     expect(find.byIcon(Icons.check_rounded), findsWidgets);
   });
 
-  testWidgets('기도 탭의 내 기도 텍스트를 누르면 수정 다이얼로그를 연다', (tester) async {
+  testWidgets('기도 기능은 pending 상태로 코드만 보존하고 화면에는 표시하지 않는다', (tester) async {
     await _pumpProfileTab(
       tester,
       user: user,
@@ -218,14 +236,10 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    await tester.tap(find.text('기도'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('오늘 함께 기도해주세요.'));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(ProfileEditorDialog), findsOneWidget);
-    expect(find.text('프로필 수정'), findsOneWidget);
+    expect(find.text('기도'), findsNothing);
+    expect(find.text('내 기도'), findsNothing);
+    expect(find.text('중보 기도'), findsNothing);
+    expect(find.text('오늘 함께 기도해주세요.'), findsNothing);
   });
 
   testWidgets('설정 시트에서 지도 설명을 열 수 있다', (tester) async {
@@ -304,7 +318,7 @@ void main() {
     expect(find.widgetWithText(OutlinedButton, '취소'), findsNothing);
   });
 
-  testWidgets('프로필 진행 섹션은 다이어리만 보여준다', (tester) async {
+  testWidgets('프로필 진행 섹션은 이야기 탐험과 다이어리 카드를 보여준다', (tester) async {
     await _pumpProfileTab(
       tester,
       user: user,
@@ -318,9 +332,52 @@ void main() {
     expect(find.byIcon(Icons.place_rounded), findsNothing);
   });
 
-  testWidgets('좁은 프로필 화면은 활동과 진행 섹션을 하나의 패널에 담고 overflow 없이 보여준다', (
-    tester,
-  ) async {
+  testWidgets('탐험 기록이 없으면 홈 탐험 CTA를 보여주고 콜백을 호출한다', (tester) async {
+    final firstEvent = _profileEvent(id: 'event-first', title: '첫 이야기');
+
+    when(() => auth.currentUser).thenReturn(user);
+    when(
+      () => storyRepository.fetchEventsByEra('era-1'),
+    ).thenAnswer((_) async => [firstEvent]);
+    when(() => storyRepository.fetchEventProgress(user.id)).thenAnswer(
+      (_) async =>
+          const <
+            String,
+            ({bool bibleRead, bool quizCompleted, bool completed})
+          >{},
+    );
+    when(
+      () => storyRepository.fetchEventEmotionMarks(user.id),
+    ).thenAnswer((_) async => const <String, EventEmotionMark>{});
+    when(
+      () => storyRepository.fetchQuizAttemptSummaries(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchSavedEventIds(user.id),
+    ).thenAnswer((_) async => const <String>{});
+    when(
+      () => storyRepository.fetchCompletedBibleChapterKeys(user.id),
+    ).thenAnswer((_) async => const <String>{});
+
+    var tapped = false;
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      onExploreStoriesFromHome: () => tapped = true,
+    );
+
+    expect(find.text('홈 화면에서 이야기를 탐험해보세요!'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('이야기 탐험 시작'));
+    await tester.pump();
+
+    expect(tapped, isTrue);
+  });
+
+  testWidgets('좁은 프로필 화면은 기도 없이 독립 진행 카드를 overflow 없이 보여준다', (tester) async {
     await _pumpProfileTab(
       tester,
       user: user,
@@ -332,10 +389,12 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('기록'), findsOneWidget);
+    expect(find.text('기록'), findsNothing);
+    expect(find.text('기도'), findsNothing);
     expect(find.text('신앙 다이어리'), findsWidgets);
+    expect(find.text('이야기 탐험'), findsOneWidget);
     expect(
-      tester.getTopLeft(find.text('기록')).dy,
+      tester.getTopLeft(find.text('이야기 탐험')).dy,
       lessThan(tester.getTopLeft(find.text('신앙 다이어리').first).dy),
     );
 
@@ -350,7 +409,134 @@ void main() {
     );
   });
 
-  testWidgets('저장 탭을 누르면 저장한 이야기 미리보기를 다시 불러온다', (tester) async {
+  testWidgets('아주크게에서 이야기 탐험 메인 카드 제목도 커진다', (tester) async {
+    final recentEvent = _profileEvent(
+      id: 'event-recent',
+      title: '최근 탐험한 이야기',
+      storyIndex: 1,
+    );
+    final nextEvent = _profileEvent(
+      id: 'event-next',
+      title: '고라의 반역: 권위에 맞서다',
+      storyIndex: 2,
+    );
+
+    when(() => auth.currentUser).thenReturn(user);
+    when(
+      () => storyRepository.fetchEventsByEra('era-1'),
+    ).thenAnswer((_) async => [recentEvent, nextEvent]);
+    when(() => storyRepository.fetchEventProgress(user.id)).thenAnswer(
+      (_) async =>
+          const <
+            String,
+            ({bool bibleRead, bool quizCompleted, bool completed})
+          >{},
+    );
+    when(() => storyRepository.fetchEventEmotionMarks(user.id)).thenAnswer(
+      (_) async => {
+        recentEvent.id: _profileEmotionMark(
+          recentEvent.id,
+          emotionKey: 'gratitude',
+          emotionLabel: '감사',
+          emotionEmoji: '💛',
+        ),
+      },
+    );
+    when(
+      () => storyRepository.fetchQuizAttemptSummaries(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchSavedEventIds(user.id),
+    ).thenAnswer((_) async => const <String>{});
+    when(
+      () => storyRepository.fetchCompletedBibleChapterKeys(user.id),
+    ).thenAnswer((_) async => const <String>{});
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      viewSize: const Size(430, 932),
+      textScale: 1.4,
+    );
+
+    final titleFinder = find.text('고라의 반역: 권위에 맞서다');
+    expect(titleFinder, findsOneWidget);
+    expect(
+      MediaQuery.textScalerOf(tester.element(titleFinder)).scale(1),
+      greaterThanOrEqualTo(1.3),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('하단 저장/말씀 탭 대신 이야기 탐험 요약 카드를 보여준다', (tester) async {
+    final savedVerse = SavedBibleVerse(
+      id: 'saved-1',
+      userId: user.id,
+      translation: '개역개정',
+      bookNo: 1,
+      bookName: '창세기',
+      chapterNo: 1,
+      verseNo: 1,
+      verseText: '태초에 하나님이 천지를 창조하시니라',
+      comment: '처음 저장한 말씀',
+      createdAt: now,
+    );
+    final savedEvent = _profileEvent(id: 'saved-event', title: '저장한 이야기');
+
+    when(() => auth.currentUser).thenReturn(user);
+    when(
+      () => storyRepository.fetchSavedEventIds(user.id),
+    ).thenAnswer((_) async => {'saved-event'});
+    when(
+      () => storyRepository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => [savedEvent]);
+    when(
+      () => storyRepository.fetchEventProgress(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchEventEmotionMarks(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchQuizAttemptSummaries(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchCompletedBibleChapterKeys(user.id),
+    ).thenAnswer((_) async => const <String>{});
+    when(
+      () => userRepository.fetchSavedVersesPage(
+        userId: user.id,
+        pageIndex: 0,
+        pageSize: 5,
+      ),
+    ).thenAnswer(
+      (_) async => PagedResult<SavedBibleVerse>(
+        items: [savedVerse],
+        pageIndex: 0,
+        pageSize: 5,
+        hasNextPage: false,
+      ),
+    );
+    when(
+      () => userRepository.fetchSavedVersesPage(
+        userId: user.id,
+        pageIndex: 0,
+        pageSize: 10,
+      ),
+    ).thenAnswer(
+      (_) async => PagedResult<SavedBibleVerse>(
+        items: [savedVerse],
+        pageIndex: 0,
+        pageSize: 10,
+        hasNextPage: false,
+      ),
+    );
+    when(
+      () => userRepository.countSavedVerses(userId: user.id),
+    ).thenAnswer((_) async => 1);
+
     await _pumpProfileTab(
       tester,
       user: user,
@@ -358,16 +544,25 @@ void main() {
       userRepository: userRepository,
       supabaseClient: supabaseClient,
     );
-    clearInteractions(storyRepository);
 
-    await tester.tap(find.text('저장'));
+    expect(find.text('저장'), findsNothing);
+    expect(find.text('말씀'), findsNothing);
+    expect(find.text('이야기 탐험 요약'), findsOneWidget);
+    expect(find.text('탐험한 이야기'), findsOneWidget);
+    expect(find.text('저장 이야기 개수'), findsOneWidget);
+    expect(find.text('저장한 말씀'), findsOneWidget);
+    expect(find.text('1개'), findsWidgets);
+
+    await tester.tap(
+      find.byKey(const ValueKey('profile-story-summary-saved-stories')),
+    );
     await tester.pumpAndSettle();
 
-    verify(() => storyRepository.fetchEventsByIds(any())).called(1);
+    expect(find.text('저장한 이야기'), findsWidgets);
+    expect(find.byType(ParchmentListPageScaffold), findsOneWidget);
   });
 
-  testWidgets('말씀 탭을 누르면 저장한 말씀 미리보기를 최신으로 다시 불러온다', (tester) async {
-    var fetchCount = 0;
+  testWidgets('저장한 말씀 요약 카드는 저장 말씀 페이지로 이동한다', (tester) async {
     final savedVerse = SavedBibleVerse(
       id: 'saved-1',
       userId: user.id,
@@ -386,15 +581,31 @@ void main() {
         pageIndex: 0,
         pageSize: 5,
       ),
-    ).thenAnswer((_) async {
-      fetchCount += 1;
-      return PagedResult<SavedBibleVerse>(
-        items: fetchCount == 1 ? const [] : [savedVerse],
+    ).thenAnswer(
+      (_) async => PagedResult<SavedBibleVerse>(
+        items: [savedVerse],
         pageIndex: 0,
         pageSize: 5,
         hasNextPage: false,
-      );
-    });
+      ),
+    );
+    when(
+      () => userRepository.fetchSavedVersesPage(
+        userId: user.id,
+        pageIndex: 0,
+        pageSize: 10,
+      ),
+    ).thenAnswer(
+      (_) async => PagedResult<SavedBibleVerse>(
+        items: [savedVerse],
+        pageIndex: 0,
+        pageSize: 10,
+        hasNextPage: false,
+      ),
+    );
+    when(
+      () => userRepository.countSavedVerses(userId: user.id),
+    ).thenAnswer((_) async => 1);
 
     await _pumpProfileTab(
       tester,
@@ -404,15 +615,12 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    expect(find.text('태초에 하나님이 천지를 창조하시니라'), findsNothing);
-
-    await tester.tap(find.text('말씀'));
+    await tester.tap(
+      find.byKey(const ValueKey('profile-story-summary-saved-verses')),
+    );
     await tester.pumpAndSettle();
 
-    expect(fetchCount, greaterThanOrEqualTo(2));
-    expect(find.text('저장한 말씀'), findsNothing);
-    expect(find.text('태초에 하나님이 천지를 창조하시니라'), findsOneWidget);
-    expect(find.text('처음 저장한 말씀'), findsOneWidget);
+    expect(find.text('저장한 성경 구절'), findsOneWidget);
   });
 
   testWidgets('통독 진행률 팝업에서 장을 누르면 해당 장 성경 리더를 연다', (tester) async {
@@ -434,7 +642,12 @@ void main() {
           },
     );
 
-    await tester.tap(find.text('통독 진행률'));
+    final bibleProgressCard = find.byKey(
+      const ValueKey('bible-progress-feature-card'),
+    );
+    await tester.ensureVisible(bibleProgressCard);
+    await tester.pumpAndSettle();
+    await tester.tap(bibleProgressCard);
     await tester.pumpAndSettle();
 
     expect(
@@ -454,7 +667,119 @@ void main() {
     );
   });
 
-  testWidgets('이야기 진행률 팝업은 전체/완료/미완료 필터로 카드를 거른다', (tester) async {
+  testWidgets('통독 진행률 팝업은 마지막 묵상 권으로 열린다', (tester) async {
+    final savedVerse = SavedBibleVerse(
+      id: 'saved-john',
+      userId: user.id,
+      translation: '개역개정',
+      bookNo: 43,
+      bookName: '요한복음',
+      chapterNo: 3,
+      verseNo: 16,
+      verseText: '하나님이 세상을 이처럼 사랑하사',
+      createdAt: now,
+    );
+    when(
+      () => userRepository.fetchSavedVersesPage(
+        userId: user.id,
+        pageIndex: 0,
+        pageSize: 5,
+      ),
+    ).thenAnswer(
+      (_) async => PagedResult<SavedBibleVerse>(
+        items: [savedVerse],
+        pageIndex: 0,
+        pageSize: 5,
+        hasNextPage: false,
+      ),
+    );
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    final bibleProgressCard = find.byKey(
+      const ValueKey('bible-progress-feature-card'),
+    );
+    await tester.ensureVisible(bibleProgressCard);
+    await tester.pumpAndSettle();
+    await tester.tap(bibleProgressCard);
+    await tester.pumpAndSettle();
+
+    expect(find.text('신약'), findsOneWidget);
+    expect(find.text('요한복음'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('bible-progress-chapter-21')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('bible-progress-chapter-22')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('통독 이어 읽기는 마지막 묵상 다음 장을 연다', (tester) async {
+    int? openedBookNo;
+    int? openedChapterNo;
+    int? openedVerseNo;
+    final savedVerse = SavedBibleVerse(
+      id: 'saved-john',
+      userId: user.id,
+      translation: '개역개정',
+      bookNo: 43,
+      bookName: '요한복음',
+      chapterNo: 3,
+      verseNo: 16,
+      verseText: '하나님이 세상을 이처럼 사랑하사',
+      createdAt: now,
+    );
+    when(
+      () => userRepository.fetchSavedVersesPage(
+        userId: user.id,
+        pageIndex: 0,
+        pageSize: 5,
+      ),
+    ).thenAnswer(
+      (_) async => PagedResult<SavedBibleVerse>(
+        items: [savedVerse],
+        pageIndex: 0,
+        pageSize: 5,
+        hasNextPage: false,
+      ),
+    );
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      onOpenBibleReader:
+          ({initialBookNo, initialChapterNo, initialVerseNo}) async {
+            openedBookNo = initialBookNo;
+            openedChapterNo = initialChapterNo;
+            openedVerseNo = initialVerseNo;
+          },
+    );
+
+    final continueButton = find.byKey(
+      const ValueKey('bible-progress-continue-button'),
+    );
+    await tester.ensureVisible(continueButton);
+    await tester.pumpAndSettle();
+    await tester.tap(continueButton);
+    await tester.pumpAndSettle();
+
+    expect(openedBookNo, 43);
+    expect(openedChapterNo, 4);
+    expect(openedVerseNo, isNull);
+  });
+
+  testWidgets('이야기 진행률 페이지는 전체/완료/미완료 필터로 카드를 거른다', (tester) async {
     final completedEvent = _profileEvent(
       id: 'event-done',
       title: '완료한 이야기',
@@ -497,29 +822,36 @@ void main() {
     );
 
     final storyProgressCard = find.byKey(
-      const ValueKey('profile-story-progress-card'),
+      const ValueKey('profile-story-summary-explored'),
     );
     await tester.ensureVisible(storyProgressCard);
     await tester.pumpAndSettle();
     await tester.tap(storyProgressCard);
     await tester.pumpAndSettle();
 
+    final progressGrid = find.byKey(
+      const ValueKey('story-progress-review-grid'),
+    );
+    Finder progressGridTitle(String title) {
+      return find.descendant(of: progressGrid, matching: find.text(title));
+    }
+
     expect(find.text('완료한 이야기'), findsWidgets);
-    expect(find.text('미완료 이야기'), findsOneWidget);
+    expect(progressGridTitle('미완료 이야기'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('story-progress-filter-완료')));
     await tester.pumpAndSettle();
 
-    expect(find.text('완료한 이야기'), findsWidgets);
-    expect(find.text('미완료 이야기'), findsNothing);
+    expect(progressGridTitle('완료한 이야기'), findsOneWidget);
+    expect(progressGridTitle('미완료 이야기'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('story-progress-filter-미완료')));
     await tester.pumpAndSettle();
 
-    expect(find.text('미완료 이야기'), findsOneWidget);
+    expect(progressGridTitle('미완료 이야기'), findsOneWidget);
   });
 
-  testWidgets('내가 새긴 감정들 팝업은 복수 감정 필터를 적용한다', (tester) async {
+  testWidgets('이야기 진행률 페이지는 복수 감정 필터를 적용한다', (tester) async {
     final joyEvent = _profileEvent(
       id: 'event-joy',
       title: '기쁨으로 새긴 이야기',
@@ -530,11 +862,23 @@ void main() {
       title: '감사로 새긴 이야기',
       storyIndex: 2,
     );
+    final comfortEvent = _profileEvent(
+      id: 'event-comfort',
+      title: '위로로 새긴 이야기',
+      storyIndex: 3,
+    );
+    final fearEvent = _profileEvent(
+      id: 'event-fear',
+      title: '두려움으로 새긴 이야기',
+      storyIndex: 4,
+    );
+    StoryEvent? openedEmotionEvent;
+    ProfileEventOpenSource? openedEmotionSource;
 
     when(() => auth.currentUser).thenReturn(user);
-    when(
-      () => storyRepository.fetchEventsByEra('era-1'),
-    ).thenAnswer((_) async => [joyEvent, gratitudeEvent]);
+    when(() => storyRepository.fetchEventsByEra('era-1')).thenAnswer(
+      (_) async => [joyEvent, gratitudeEvent, comfortEvent, fearEvent],
+    );
     when(() => storyRepository.fetchEventProgress(user.id)).thenAnswer(
       (_) async =>
           const <
@@ -557,6 +901,22 @@ void main() {
           note: '감사 메모',
           updatedAt: DateTime.utc(2026, 5, 26),
         ),
+        'event-comfort': _profileEmotionMark(
+          'event-comfort',
+          emotionKey: 'comfort',
+          emotionLabel: '위로',
+          emotionEmoji: '🌿',
+          note: '위로 메모',
+          updatedAt: DateTime.utc(2026, 5, 24),
+        ),
+        'event-fear': _profileEmotionMark(
+          'event-fear',
+          emotionKey: 'fear',
+          emotionLabel: '두려움',
+          emotionEmoji: '⚡',
+          note: '두려움 메모',
+          updatedAt: DateTime.utc(2026, 5, 23),
+        ),
       },
     );
     when(
@@ -575,31 +935,71 @@ void main() {
       storyRepository: storyRepository,
       userRepository: userRepository,
       supabaseClient: supabaseClient,
+      onOpenEventDetail: (event, {source}) {
+        openedEmotionEvent = event;
+        openedEmotionSource = source;
+      },
     );
 
-    final emotionGrid = find.byKey(
-      const ValueKey('profile-emotion-stats-grid'),
+    final storyProgressCard = find.byKey(
+      const ValueKey('profile-story-summary-explored'),
     );
-    await tester.ensureVisible(emotionGrid);
+    await tester.ensureVisible(storyProgressCard);
     await tester.pumpAndSettle();
-    await tester.tap(emotionGrid);
+    await tester.tap(storyProgressCard);
     await tester.pumpAndSettle();
 
-    expect(find.text('기쁨으로 새긴 이야기'), findsOneWidget);
-    expect(find.text('감사로 새긴 이야기'), findsWidgets);
-    expect(find.textContaining('5월 26일'), findsWidgets);
+    final emotionList = find.byKey(const ValueKey('emotion-marks-review-list'));
+    Finder emotionListTitle(String title) {
+      return find.descendant(of: emotionList, matching: find.text(title));
+    }
+
+    expect(emotionListTitle('기쁨으로 새긴 이야기'), findsOneWidget);
+    expect(emotionListTitle('감사로 새긴 이야기'), findsOneWidget);
+    expect(emotionListTitle('위로로 새긴 이야기'), findsOneWidget);
+    expect(emotionListTitle('두려움으로 새긴 이야기'), findsNothing);
+    expect(
+      find.descendant(of: emotionList, matching: find.textContaining('5월 26일')),
+      findsWidgets,
+    );
+    expect(
+      find.byKey(const ValueKey('emotion-marks-open-all')),
+      findsOneWidget,
+    );
+
+    await tester.tap(emotionListTitle('감사로 새긴 이야기'));
+    await tester.pumpAndSettle();
+
+    expect(openedEmotionEvent?.title, '감사로 새긴 이야기');
+    expect(openedEmotionSource, ProfileEventOpenSource.detailOnly);
+    expect(
+      find.byKey(const ValueKey('emotion-marks-review-list')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('emotion-marks-open-all')));
+    await tester.pumpAndSettle();
+
+    final allEmotionList = find.byKey(const ValueKey('emotion-marks-all-list'));
+    expect(
+      find.descendant(of: allEmotionList, matching: find.text('두려움으로 새긴 이야기')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded).last);
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(const ValueKey('emotion-filter-gratitude')));
     await tester.pumpAndSettle();
 
-    expect(find.text('기쁨으로 새긴 이야기'), findsNothing);
-    expect(find.text('감사로 새긴 이야기'), findsWidgets);
+    expect(emotionListTitle('기쁨으로 새긴 이야기'), findsNothing);
+    expect(emotionListTitle('감사로 새긴 이야기'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('emotion-filter-joy')));
     await tester.pumpAndSettle();
 
-    expect(find.text('기쁨으로 새긴 이야기'), findsOneWidget);
-    expect(find.text('감사로 새긴 이야기'), findsWidgets);
+    expect(emotionListTitle('기쁨으로 새긴 이야기'), findsOneWidget);
+    expect(emotionListTitle('감사로 새긴 이야기'), findsOneWidget);
   });
 }
 
@@ -617,6 +1017,8 @@ Future<void> _pumpProfileTab(
   onOpenBibleReader,
   Size viewSize = const Size(900, 700),
   double textScale = 1.0,
+  VoidCallback? onExploreStoriesFromHome,
+  ProfileEventDetailCallback? onOpenEventDetail,
 }) async {
   tester.view.physicalSize = viewSize;
   tester.view.devicePixelRatio = 1.0;
@@ -636,12 +1038,13 @@ Future<void> _pumpProfileTab(
           data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
           child: ProfileTabPage(
             onStartQuiz: (_) {},
-            onOpenEventDetail: (_, {source}) {},
+            onOpenEventDetail: onOpenEventDetail ?? (_, {source}) {},
             onOpenBibleReader:
                 onOpenBibleReader ??
                 ({initialBookNo, initialChapterNo, initialVerseNo}) {
                   return Future<void>.value();
                 },
+            onExploreStoriesFromHome: onExploreStoriesFromHome,
           ),
         ),
       ),

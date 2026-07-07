@@ -151,7 +151,7 @@ data/ (Supabase 쿼리 + Model 변환)
   │
   ├── user_repository.dart
   │     fetchUserProfile() → AppUserProfile
-  │     fetchSavedVersesPage() → 저장 구절 페이지네이션
+  │     fetchSavedVersesPage() / countSavedVerses() → 저장 구절 페이지네이션·개수
   │     saveBibleVerse() / setBibleVerseHighlight() / clearBibleVerseHighlight() → 말씀 저장·하이라이트
   │     fetchIntercessoryPrayerPage() → 중보기도 목록
   │     recordAttendance() / recordStudyDay() → 출석/학습 기록
