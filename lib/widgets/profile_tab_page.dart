@@ -11,8 +11,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/auth_repository.dart';
 import '../models/app_user_profile.dart';
 import '../models/character.dart';
-import '../models/character_study_progress.dart';
 import '../models/era.dart';
+import '../models/event_emotion_mark.dart';
 import '../models/intercessory_prayer_item.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
@@ -26,8 +26,7 @@ import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/scene_asset_loader.dart';
-import 'avatar_progress_ring.dart';
-import 'character_avatar.dart';
+import 'emotion_badge_icon.dart';
 import 'inline_login_prompt_card.dart';
 import 'map/map_attribution_dialog.dart';
 import 'parchment_dialog.dart';
@@ -35,9 +34,9 @@ import 'profile/glowing_add_button.dart';
 import 'profile/profile_emotion_diary.dart';
 import 'profile/profile_emotion_stats.dart';
 import 'profile/profile_event_review_grid.dart';
-import 'profile/profile_mini_map.dart';
 import 'profile/profile_quiz_stats.dart';
 import 'profile_editor_dialog.dart';
+import 'pulse_highlight.dart';
 import 'saved_verse_row.dart';
 import 'share_id_input_dialog.dart';
 import 'story_home_styles.dart';
@@ -50,21 +49,16 @@ import 'v2/region_event_list.dart' show StoryEventThumbCard;
 part 'profile/profile_helpers.dart';
 part 'profile/profile_intercessory_prayer.dart';
 part 'profile/profile_left_panel.dart';
-part 'profile/profile_character_overview.dart';
 part 'profile/profile_progress_section.dart';
 part 'profile/profile_right_panel.dart';
 part 'profile/profile_settings_sheet.dart';
 
-enum ProfileEventOpenSource { general, place, character, detailOnly }
+enum ProfileEventOpenSource { general, detailOnly }
 
 typedef ProfileEventDetailCallback =
-    void Function(
-      StoryEvent event, {
-      ProfileEventOpenSource? source,
-      String? sourceId,
-    });
+    void Function(StoryEvent event, {ProfileEventOpenSource? source});
 
-/// 프로필 탭 페이지 (프로필 정보 + 인물 진행도 + 기록/기도/저장/말씀).
+/// 프로필 탭 페이지 (프로필 정보 + 기록/기도/저장/말씀).
 ///
 /// 외부 콜백:
 /// - [onStartQuiz]: 인물 상세에서 이벤트 퀴즈 시작
@@ -76,6 +70,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
     required this.onStartQuiz,
     required this.onOpenEventDetail,
     required this.onOpenBibleReader,
+    this.onNavigateStory,
   });
 
   final void Function(String eventId) onStartQuiz;
@@ -86,6 +81,11 @@ class ProfileTabPage extends ConsumerStatefulWidget {
     int? initialVerseNo,
   })
   onOpenBibleReader;
+  final Future<void> Function({
+    required StoryEvent from,
+    required StoryEvent target,
+  })?
+  onNavigateStory;
 
   @override
   ConsumerState<ProfileTabPage> createState() => ProfileTabPageState();
@@ -97,10 +97,6 @@ enum _ProfileQuizReviewFilter { wrong, confused }
 
 enum _StoryProgressFilter { all, completed, incomplete }
 
-/// "진행률 표시" 섹션의 탭. `life` = 다이어리,
-/// `place` = 장소로시작 (지도+region), `walk` = 인물과걷기.
-enum _ProfileProgressTab { life, place, walk }
-
 class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   static const int _intercessoryPrayerPageSize = 12;
   static const int _profilePreviewPageSize = 5;
@@ -110,11 +106,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
 
   List<Character> _profileAllPeople = const [];
   List<StoryEvent> _profileAllEvents = const [];
-  Map<String, String> _profileCharacterTestamentByCode = const {};
   AppUserProfile? _profileUser;
-  Map<String, CharacterStudyProgress> _profileStudyProgressByCharacterCode =
-      const {};
-  Map<String, int> _profileCharacterTimelineOrderByCode = const {};
   _ProfileContentTab _profileContentTab = _ProfileContentTab.records;
   List<StoryEvent> _profileSavedEventsPreview = const [];
   List<SavedBibleVerse> _profileSavedVersesPreview = const [];
@@ -131,21 +123,10 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   bool _intercessoryPrayerHasNextPage = false;
   String? _intercessoryPrayerError;
   int _intercessoryPrayerPageIndex = 0;
-  String _profileSelectedTestament = 'old';
-  // 진행률 섹션 — 기본 탭은 다이어리 (감정 새김 기반 첫인상 강조).
-  _ProfileProgressTab _profileProgressTab = _ProfileProgressTab.life;
-  // "장소로시작" 탭에서 사용자가 선택한 era id (null = 미선택, 안내 메시지).
-  String? _profileProgressSelectedEraId;
   bool _profileLoading = false;
   String? _profileError;
   bool _signingOut = false;
   bool _deletingAccount = false;
-
-  Set<String> _profileExploredEventIds(StoryState state) => {
-    ...state.completedEventIds,
-    ...state.quizCompletedEventIds,
-    ...state.eventEmotionMarks.keys,
-  };
 
   @override
   void initState() {
@@ -162,17 +143,6 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       ..removeListener(_handleIntercessoryPrayerScroll)
       ..dispose();
     super.dispose();
-  }
-
-  String _eraTestament(Era era) {
-    final raw = era.testament.toString().trim().toLowerCase();
-    if (raw == 'new' || raw == 'nt' || raw == 'new_testament') {
-      return 'new';
-    }
-    if (era.code.toString().startsWith('era_nt_')) {
-      return 'new';
-    }
-    return 'old';
   }
 
   /// 외부에서 퀴즈 완료 후 프로필 진행도를 다시 불러올 때 호출한다.
@@ -540,29 +510,17 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       final eventsByEra = await Future.wait(
         state.eras.map((era) => repo.fetchEventsByEra(era.id)),
       );
-      final characterTimelineOrderByCode = await repo
-          .fetchCharacterTimelineOrder();
 
       final characterByCode = <String, Character>{};
-      final testamentByCharacterCode = <String, String>{};
       for (var i = 0; i < state.eras.length; i++) {
-        final era = state.eras[i];
         final eraPeople = peopleByEra[i];
-        final testament = _eraTestament(era);
         for (final character in eraPeople) {
           characterByCode.putIfAbsent(character.code, () => character);
-          testamentByCharacterCode.putIfAbsent(character.code, () => testament);
         }
       }
 
       final allPeople = characterByCode.values.toList()
-        ..sort(
-          (a, b) => _compareProfilePeople(
-            a,
-            b,
-            timelineOrderByCode: characterTimelineOrderByCode,
-          ),
-        );
+        ..sort(_compareProfilePeople);
       final allEvents = eventsByEra.expand((events) => events).toList()
         ..sort((a, b) {
           final rank = a.globalRank.compareTo(b.globalRank);
@@ -573,18 +531,9 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         });
 
       AppUserProfile? profile;
-      Map<String, CharacterStudyProgress> progressByCharacterCode = const {};
 
       if (user != null) {
         profile = await userRepo.ensureSignedInUser(user);
-        final studyProgress = await userRepo.fetchCharacterStudyProgress(
-          userId: user.id,
-          people: allPeople,
-        );
-        progressByCharacterCode = {
-          for (final progress in studyProgress)
-            progress.character.code: progress,
-        };
         await ref
             .read(storyControllerProvider.notifier)
             .refreshQuizAttemptSummaries();
@@ -600,10 +549,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       setState(() {
         _profileAllPeople = allPeople;
         _profileAllEvents = allEvents;
-        _profileCharacterTestamentByCode = testamentByCharacterCode;
         _profileUser = profile;
-        _profileStudyProgressByCharacterCode = progressByCharacterCode;
-        _profileCharacterTimelineOrderByCode = characterTimelineOrderByCode;
         if (user == null) {
           _intercessoryPrayerItems = const [];
           _intercessoryPrayerHasNextPage = false;
@@ -633,53 +579,6 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     }
   }
 
-  List<Character> _profilePeople(StoryState state) {
-    final timelineOrderByCode = _effectiveProfileTimelineOrder(state);
-    final people =
-        [
-            ...(_profileAllPeople.isNotEmpty
-                ? _profileAllPeople
-                : state.characters),
-          ]
-          ..retainWhere((character) {
-            final testament =
-                _profileCharacterTestamentByCode[character.code] ?? 'old';
-            return testament == _profileSelectedTestament;
-          })
-          ..sort(
-            (a, b) => _compareProfilePeople(
-              a,
-              b,
-              timelineOrderByCode: timelineOrderByCode,
-            ),
-          );
-    return people;
-  }
-
-  Map<String, int> _effectiveProfileTimelineOrder(StoryState state) {
-    final orderByCode = _timelineOrderFromEvents(state.events);
-    orderByCode.addAll(_profileCharacterTimelineOrderByCode);
-    return orderByCode;
-  }
-
-  Map<String, int> _timelineOrderFromEvents(Iterable<StoryEvent> events) {
-    final sortedEvents = [...events]
-      ..sort((a, b) {
-        final rank = a.globalRank.compareTo(b.globalRank);
-        if (rank != 0) {
-          return rank;
-        }
-        return a.id.compareTo(b.id);
-      });
-    final orderByCode = <String, int>{};
-    for (final event in sortedEvents) {
-      for (final code in event.characterCodes) {
-        orderByCode.putIfAbsent(code, () => event.globalRank);
-      }
-    }
-    return orderByCode;
-  }
-
   List<StoryEvent> _sortEventsByEraThenIndex(
     List<StoryEvent> events,
     List<Era> eras,
@@ -704,22 +603,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     return sorted;
   }
 
-  int _compareProfilePeople(
-    Character a,
-    Character b, {
-    required Map<String, int> timelineOrderByCode,
-  }) {
-    final aTimeline = timelineOrderByCode[a.code];
-    final bTimeline = timelineOrderByCode[b.code];
-    if (aTimeline != null || bTimeline != null) {
-      final timelineOrder = (aTimeline ?? 1 << 30).compareTo(
-        bTimeline ?? 1 << 30,
-      );
-      if (timelineOrder != 0) {
-        return timelineOrder;
-      }
-    }
-
+  int _compareProfilePeople(Character a, Character b) {
     final displayOrder = a.displayOrder.compareTo(b.displayOrder);
     if (displayOrder != 0) {
       return displayOrder;
@@ -789,9 +673,8 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     required StoryState state,
     required bool isAuthenticated,
   }) {
-    final people = _profilePeople(state);
     final profile = _profileUser ?? _guestPreviewProfile();
-    if (_profileLoading && people.isEmpty) {
+    if (_profileLoading && _profileAllPeople.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
     if (_profileError != null && isAuthenticated && _profileUser == null) {
@@ -840,17 +723,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      _buildProfileProgressSection(
-                        people: people,
-                        completedEventIds: _profileExploredEventIds(state),
-                        selectedTestament: _profileSelectedTestament,
-                        scrollBody: false,
-                        onSelectTestament: (testament) {
-                          setState(() {
-                            _profileSelectedTestament = testament;
-                          });
-                        },
-                      ),
+                      _buildProfileProgressSection(scrollBody: false),
                     ],
                   ),
                 ),
@@ -887,18 +760,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
                         ),
                       ),
                       SizedBox(width: gap),
-                      Expanded(
-                        child: _buildProfileProgressSection(
-                          people: people,
-                          completedEventIds: _profileExploredEventIds(state),
-                          selectedTestament: _profileSelectedTestament,
-                          onSelectTestament: (testament) {
-                            setState(() {
-                              _profileSelectedTestament = testament;
-                            });
-                          },
-                        ),
-                      ),
+                      Expanded(child: _buildProfileProgressSection()),
                     ],
                   ),
                 ),

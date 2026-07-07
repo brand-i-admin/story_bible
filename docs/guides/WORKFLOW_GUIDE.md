@@ -1086,13 +1086,11 @@ Referenced paths in event_proposals: 12
   0 3 * * 0 cd /path/to/story_bible && make cleanup-orphan-proposal-assets ENV=dev
   ```
 
-### 17.5 진행도 트래킹 — 새 이벤트/캐릭터 추가 시 자동 반영
+### 17.5 진행도 트래킹 — 새 이벤트 추가 시 자동 반영
 
 - `user_event_progress(user_id, event_id)` 는 UUID 기반이라, 승인으로 새 event
   가 생기면 **누구의 user_event_progress 에도 그 UUID 가 없음** → 자동으로
   "아직 완료 안 함" 상태
-- `CharacterStudyProgress.fetchCharacterStudyProgress` 는 `events_ordered` view
-  를 매번 쿼리 → 새 event 가 포함되면 totalCount 자동 증가
 - `insert_event_at_position` 은 story_index 만 시프트 — UUID 건드리지 않음 →
   기존 user_event_progress 행 그대로 유효
 - 주의: 홈 화면이 열려있는 상태에서 다른 기기/관리자가 승인하면 — 시대

@@ -44,7 +44,7 @@ void main() {
     expect(source, contains('alignment: Alignment.center'));
     expect(source, contains('crossAxisAlignment: CrossAxisAlignment.center'));
     expect(source, contains('_profileLeftCardChromeHeight = 90'));
-    expect(source, contains('return 122;'));
+    expect(source, contains('return 258;'));
     expect(source, isNot(contains('labelBelow')));
     expect(source, isNot(contains('fgOnDark.withValues(alpha: 0.92)')));
     expect(source, isNot(contains('floatingPanelDecoration')));
@@ -52,48 +52,47 @@ void main() {
     expect(source, isNot(contains('math.min(constraints.maxWidth, 336.0)')));
   });
 
-  test('프로필 기록 영역은 통독 카드와 이야기+퀴즈 통합 카드를 사용한다', () {
+  test('프로필 기록 영역은 이야기 탐험과 이야기 통계 카드를 사용한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();
 
     expect(source, contains('_ProfileRecordsDashboard'));
-    expect(source, contains('_ProfileProgressDonut'));
     expect(source, contains('_ProfileCompletedRatioText'));
-    expect(source, contains('_ProfileStoryQuizProgressPanel'));
-    expect(source, contains('CircularProgressIndicator'));
+    expect(source, contains('_ProfileStoryExplorationPanel'));
+    expect(source, contains('_ProfileStoryStatsPanel'));
+    expect(source, contains('_ProfileEmotionStatsGrid'));
+    expect(source, contains('_StoryProgressMiniCard'));
     expect(source, contains('_ProfileQuizStatsColumn'));
-    expect(source, contains('height: 136'));
+    expect(source, contains("'이야기 탐험'"));
+    expect(source, contains("'이야기 통계'"));
+    expect(source, contains("'내가 새긴 감정들'"));
+    expect(source, contains("'다음 이야기'"));
     expect(source, contains('BoxConstraints(minHeight: 32)'));
     expect(source, contains('final itemGap = largeText ? 2.0 : 5.0'));
     expect(source, contains('fit: BoxFit.scaleDown'));
     expect(source, contains('Axis.vertical'));
-    expect(
-      source.indexOf("label: '통독 진행률'"),
-      lessThan(source.indexOf("label: '이야기 진행률'")),
-    );
+    expect(source, isNot(contains("label: '통독 진행률'")));
     expect(source, isNot(contains('_ProfileRecordsStatsPanel')));
-    expect(source, isNot(contains('final useVertical')));
     expect(source, isNot(contains('textScale >= 1.3')));
   });
 
-  test('프로필 전체 진행률 카드는 작은 도넛 안에만 완료 수와 전체 수를 표시한다', () {
+  test('프로필 기록 진행률은 긴 progress bar와 작은 숫자로 표시한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();
 
-    expect(source, contains('Stack('));
-    expect(source, contains('alignment: Alignment.center'));
-    expect(source, contains('width: 62'));
-    expect(source, contains('height: 62'));
-    expect(source, contains('fontSize: 16'));
+    expect(source, contains('_StoryProgressMiniCard'));
+    expect(source, contains('LinearProgressIndicator'));
+    expect(source, contains('minHeight: 6'));
+    expect(source, contains('fontSize: 14'));
     expect(source, contains('color: palette.successBottom'));
     expect(
       source,
       isNot(contains("final valueLabel = '\$completed/\$total';")),
     );
     expect(source, isNot(contains("replaceFirst('/', ' / ')")));
-    expect(source, contains('fit: BoxFit.scaleDown'));
+    expect(source, isNot(contains('_ProfileProgressDonut')));
     expect(source, isNot(contains("valueSuffix: '장'")));
     expect(source, isNot(contains("'퀴즈를 풀면 기록이 쌓여요.'")));
   });
@@ -131,7 +130,7 @@ void main() {
     expect(source, isNot(contains('selectedAccent')));
   });
 
-  test('프로필 진행률 탭은 밝은 레일과 선택색 본문 표면을 연결한다', () {
+  test('프로필 진행률 섹션은 다이어리 본문 표면만 밝은 레일 안에 담는다', () {
     final source = File(
       'lib/widgets/profile/profile_progress_section.dart',
     ).readAsStringSync();
@@ -142,15 +141,13 @@ void main() {
     expect(source, contains('accent: palette.currentAccentDeep'));
     expect(source, contains('_profileLinkedTabGroupDecoration'));
     expect(source, contains('_profileLinkedTabBodyDecoration'));
-    expect(source, contains('_profileProgressTabAccent(palette)'));
     expect(source, contains('selectedAccent'));
-    expect(source, contains('Icons.calendar_month_rounded'));
-    expect(source, contains('Icons.directions_walk_rounded'));
-    expect(source, contains('Icons.place_rounded'));
-    expect(source, contains('_ProfileIconTabButton'));
-    expect(source, contains("label: '다이어리'"));
-    expect(source, contains("label: '인물과걷기'"));
-    expect(source, contains("label: '장소로시작'"));
+    expect(source, contains('ProfileEmotionDiary'));
+    expect(source, isNot(contains('_profileProgressTabAccent(palette)')));
+    expect(source, isNot(contains('Icons.directions_walk_rounded')));
+    expect(source, isNot(contains('Icons.place_rounded')));
+    expect(source, isNot(contains('_ProfileIconTabButton')));
+    expect(source, isNot(contains('_profileProgressTabBar')));
     expect(source, isNot(contains('floatingPanelDecoration')));
     expect(pageSource, contains('_profileSectionsFrame'));
     expect(pageSource, contains('floatingPanelDecoration'));

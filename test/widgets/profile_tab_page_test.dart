@@ -9,7 +9,6 @@ import 'package:story_bible/data/story_repository.dart';
 import 'package:story_bible/data/user_repository.dart';
 import 'package:story_bible/models/app_user_profile.dart';
 import 'package:story_bible/models/character.dart';
-import 'package:story_bible/models/character_study_progress.dart';
 import 'package:story_bible/models/era.dart';
 import 'package:story_bible/models/event_emotion_mark.dart';
 import 'package:story_bible/models/intercessory_prayer_item.dart';
@@ -57,14 +56,21 @@ StoryEvent _profileEvent({
   );
 }
 
-EventEmotionMark _profileEmotionMark(String eventId) {
+EventEmotionMark _profileEmotionMark(
+  String eventId, {
+  String emotionKey = 'joy',
+  String emotionLabel = '기쁨',
+  String emotionEmoji = '🌟',
+  String note = '',
+  DateTime? updatedAt,
+}) {
   return EventEmotionMark(
     eventId: eventId,
-    emotionKey: 'joy',
-    emotionLabel: '기쁨',
-    emotionEmoji: '🌟',
-    note: '',
-    updatedAt: DateTime.utc(2026, 5, 26),
+    emotionKey: emotionKey,
+    emotionLabel: emotionLabel,
+    emotionEmoji: emotionEmoji,
+    note: note,
+    updatedAt: updatedAt ?? DateTime.utc(2026, 5, 26),
   );
 }
 
@@ -140,9 +146,6 @@ void main() {
       () => storyRepository.fetchEventsByEra('era-1'),
     ).thenAnswer((_) async => const <StoryEvent>[]);
     when(
-      () => storyRepository.fetchCharacterTimelineOrder(),
-    ).thenAnswer((_) async => const <String, int>{});
-    when(
       () => storyRepository.fetchEventsByIds(any()),
     ).thenAnswer((_) async => const <StoryEvent>[]);
     when(
@@ -152,12 +155,6 @@ void main() {
     when(
       () => userRepository.ensureSignedInUser(user),
     ).thenAnswer((_) async => profile);
-    when(
-      () => userRepository.fetchCharacterStudyProgress(
-        userId: user.id,
-        people: any(named: 'people'),
-      ),
-    ).thenAnswer((_) async => const <CharacterStudyProgress>[]);
     when(
       () => userRepository.fetchIntercessoryPrayerPage(
         pageIndex: 0,
@@ -307,7 +304,7 @@ void main() {
     expect(find.widgetWithText(OutlinedButton, '취소'), findsNothing);
   });
 
-  testWidgets('프로필 진행 탭은 다이어리 다음에 인물과걷기를 먼저 보여준다', (tester) async {
+  testWidgets('프로필 진행 섹션은 다이어리만 보여준다', (tester) async {
     await _pumpProfileTab(
       tester,
       user: user,
@@ -316,12 +313,9 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    final diaryX = tester.getCenter(find.text('다이어리')).dx;
-    final walkX = tester.getCenter(find.text('인물과걷기')).dx;
-    final placeX = tester.getCenter(find.text('장소로시작')).dx;
-
-    expect(diaryX, lessThan(walkX));
-    expect(walkX, lessThan(placeX));
+    expect(find.text('신앙 다이어리'), findsWidgets);
+    expect(find.byIcon(Icons.directions_walk_rounded), findsNothing);
+    expect(find.byIcon(Icons.place_rounded), findsNothing);
   });
 
   testWidgets('좁은 프로필 화면은 활동과 진행 섹션을 하나의 패널에 담고 overflow 없이 보여준다', (
@@ -339,13 +333,13 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('기록'), findsOneWidget);
-    expect(find.text('다이어리'), findsOneWidget);
+    expect(find.text('신앙 다이어리'), findsWidgets);
     expect(
       tester.getTopLeft(find.text('기록')).dy,
-      lessThan(tester.getTopLeft(find.text('다이어리')).dy),
+      lessThan(tester.getTopLeft(find.text('신앙 다이어리').first).dy),
     );
 
-    final faithPrompt = find.text('신앙(예배,말씀,기도,삶의 사건)을 기록해보세요');
+    final faithPrompt = find.text('오늘 하나님과 함께한 순간을 기록해 보세요!');
     await tester.ensureVisible(faithPrompt);
     await tester.pumpAndSettle();
 
@@ -354,61 +348,6 @@ void main() {
       tester.getBottomLeft(faithPrompt).dy,
       lessThanOrEqualTo(tester.view.physicalSize.height),
     );
-  });
-
-  testWidgets('인물과걷기 탭은 각 인물의 첫 이야기 순으로 나열한다', (tester) async {
-    when(() => storyRepository.fetchCharactersByEra('era-1')).thenAnswer(
-      (_) async => const [
-        Character(
-          id: 'person-saul',
-          code: 'saul',
-          name: '사울',
-          tagline: null,
-          description: null,
-          avatarUrl: null,
-          displayOrder: 1,
-        ),
-        Character(
-          id: 'person-abraham',
-          code: 'abraham',
-          name: '아브라함',
-          tagline: null,
-          description: null,
-          avatarUrl: null,
-          displayOrder: 2,
-        ),
-        Character(
-          id: 'person-adam',
-          code: 'adam',
-          name: '아담',
-          tagline: null,
-          description: null,
-          avatarUrl: null,
-          displayOrder: 3,
-        ),
-      ],
-    );
-    when(
-      () => storyRepository.fetchCharacterTimelineOrder(),
-    ).thenAnswer((_) async => const {'adam': 1, 'abraham': 20, 'saul': 60});
-
-    await _pumpProfileTab(
-      tester,
-      user: user,
-      storyRepository: storyRepository,
-      userRepository: userRepository,
-      supabaseClient: supabaseClient,
-    );
-
-    await tester.tap(find.text('인물과걷기'));
-    await tester.pumpAndSettle();
-
-    final adamX = tester.getCenter(find.text('아담')).dx;
-    final abrahamX = tester.getCenter(find.text('아브라함')).dx;
-    final saulX = tester.getCenter(find.text('사울')).dx;
-
-    expect(adamX, lessThan(abrahamX));
-    expect(abrahamX, lessThan(saulX));
   });
 
   testWidgets('저장 탭을 누르면 저장한 이야기 미리보기를 다시 불러온다', (tester) async {
@@ -557,23 +496,110 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    await tester.tap(find.text('이야기 진행률'));
+    final storyProgressCard = find.byKey(
+      const ValueKey('profile-story-progress-card'),
+    );
+    await tester.ensureVisible(storyProgressCard);
+    await tester.pumpAndSettle();
+    await tester.tap(storyProgressCard);
     await tester.pumpAndSettle();
 
-    expect(find.text('완료한 이야기'), findsOneWidget);
+    expect(find.text('완료한 이야기'), findsWidgets);
     expect(find.text('미완료 이야기'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('story-progress-filter-완료')));
     await tester.pumpAndSettle();
 
-    expect(find.text('완료한 이야기'), findsOneWidget);
+    expect(find.text('완료한 이야기'), findsWidgets);
     expect(find.text('미완료 이야기'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('story-progress-filter-미완료')));
     await tester.pumpAndSettle();
 
-    expect(find.text('완료한 이야기'), findsNothing);
     expect(find.text('미완료 이야기'), findsOneWidget);
+  });
+
+  testWidgets('내가 새긴 감정들 팝업은 복수 감정 필터를 적용한다', (tester) async {
+    final joyEvent = _profileEvent(
+      id: 'event-joy',
+      title: '기쁨으로 새긴 이야기',
+      storyIndex: 1,
+    );
+    final gratitudeEvent = _profileEvent(
+      id: 'event-gratitude',
+      title: '감사로 새긴 이야기',
+      storyIndex: 2,
+    );
+
+    when(() => auth.currentUser).thenReturn(user);
+    when(
+      () => storyRepository.fetchEventsByEra('era-1'),
+    ).thenAnswer((_) async => [joyEvent, gratitudeEvent]);
+    when(() => storyRepository.fetchEventProgress(user.id)).thenAnswer(
+      (_) async =>
+          const <
+            String,
+            ({bool bibleRead, bool quizCompleted, bool completed})
+          >{},
+    );
+    when(() => storyRepository.fetchEventEmotionMarks(user.id)).thenAnswer(
+      (_) async => {
+        'event-joy': _profileEmotionMark(
+          'event-joy',
+          note: '기쁨 메모',
+          updatedAt: DateTime.utc(2026, 5, 25),
+        ),
+        'event-gratitude': _profileEmotionMark(
+          'event-gratitude',
+          emotionKey: 'gratitude',
+          emotionLabel: '감사',
+          emotionEmoji: '💛',
+          note: '감사 메모',
+          updatedAt: DateTime.utc(2026, 5, 26),
+        ),
+      },
+    );
+    when(
+      () => storyRepository.fetchQuizAttemptSummaries(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchSavedEventIds(user.id),
+    ).thenAnswer((_) async => const <String>{});
+    when(
+      () => storyRepository.fetchCompletedBibleChapterKeys(user.id),
+    ).thenAnswer((_) async => const <String>{});
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    final emotionGrid = find.byKey(
+      const ValueKey('profile-emotion-stats-grid'),
+    );
+    await tester.ensureVisible(emotionGrid);
+    await tester.pumpAndSettle();
+    await tester.tap(emotionGrid);
+    await tester.pumpAndSettle();
+
+    expect(find.text('기쁨으로 새긴 이야기'), findsOneWidget);
+    expect(find.text('감사로 새긴 이야기'), findsWidgets);
+    expect(find.textContaining('5월 26일'), findsWidgets);
+
+    await tester.tap(find.byKey(const ValueKey('emotion-filter-gratitude')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('기쁨으로 새긴 이야기'), findsNothing);
+    expect(find.text('감사로 새긴 이야기'), findsWidgets);
+
+    await tester.tap(find.byKey(const ValueKey('emotion-filter-joy')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('기쁨으로 새긴 이야기'), findsOneWidget);
+    expect(find.text('감사로 새긴 이야기'), findsWidgets);
   });
 }
 
@@ -610,7 +636,7 @@ Future<void> _pumpProfileTab(
           data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
           child: ProfileTabPage(
             onStartQuiz: (_) {},
-            onOpenEventDetail: (_, {source, sourceId}) {},
+            onOpenEventDetail: (_, {source}) {},
             onOpenBibleReader:
                 onOpenBibleReader ??
                 ({initialBookNo, initialChapterNo, initialVerseNo}) {

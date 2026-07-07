@@ -8,7 +8,7 @@ import '../../theme/typography.dart';
 import '../story_home_styles.dart';
 
 /// 시대 선택 칩 — 구약/신약 두 줄. HomeIntroPanel 과 ProfileTabPage 의
-/// "장소로 시작" 탭이 공유한다.
+/// 이야기 진행률 팝업이 공유한다.
 ///
 /// 비선택 시 시대 고유 색([EraColors.forCode]) 점 + 아이콘 노출, 선택 시
 /// 현재 팔레트의 다이어리 역할색으로 활성 표시. 같은 시대 색은 지도 폴리곤에도 사용된다.

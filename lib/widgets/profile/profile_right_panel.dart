@@ -6,38 +6,6 @@
 part of '../profile_tab_page.dart';
 
 extension ProfileRightPanelExt on ProfileTabPageState {
-  Widget _profileTestamentToggle({
-    required String selectedTestament,
-    required ValueChanged<String> onSelectTestament,
-  }) {
-    final palette = AppPaletteTheme.of(context);
-    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
-    return Container(
-      constraints: BoxConstraints(minHeight: largeText ? 58 : 50),
-      padding: const EdgeInsets.all(4),
-      decoration: floatingPanelDecoration(
-        color: palette.panelSurface,
-        shadowOpacity: 0.08,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _profileTestamentToggleButton(
-            label: '구약',
-            selected: selectedTestament != 'new',
-            onTap: () => onSelectTestament('old'),
-          ),
-          const SizedBox(width: 4),
-          _profileTestamentToggleButton(
-            label: '신약',
-            selected: selectedTestament == 'new',
-            onTap: () => onSelectTestament('new'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _profileMiniActionButton({
     required String label,
     required VoidCallback onTap,

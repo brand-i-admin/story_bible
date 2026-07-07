@@ -54,7 +54,7 @@ python3 tools/lint/check_code_metrics.py
 | `app_notification_test.dart` | 알림 row 파싱, deep link/metadata |
 | `app_user_profile_test.dart` | 프로필 모델 기본값과 role |
 | `bible_ref_test.dart`, `bible_verse_test.dart`, `saved_bible_verse_test.dart` | 성경 본문/저장 구절 값 변환 |
-| `character_test.dart`, `character_study_progress_test.dart` | 인물, 아바타, 학습 진행 모델 |
+| `character_test.dart` | 인물, 아바타 모델 |
 | `era_test.dart`, `story_event_test.dart`, `landmark_test.dart` | 시대/사건/랜드마크 row 변환 |
 | `event_emotion_mark_test.dart`, `intercessory_prayer_item_test.dart` | 감정/기도 모델 |
 | `event_proposal_test.dart` | 제안 상태, 제안 payload, 관리자 workflow 데이터 |

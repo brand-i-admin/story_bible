@@ -164,32 +164,6 @@ class StoryRepository {
     return true;
   }
 
-  /// 인물별 첫 등장 시점을 [StoryEvent.globalRank] 기준으로 반환한다.
-  /// 키는 `characters.code` (어드민/외부 기여 모두 코드 기반).
-  Future<Map<String, int>> fetchCharacterTimelineOrder() async {
-    final rows = await _client
-        .from('events_ordered')
-        .select('era_id, global_rank, character_codes')
-        .order('global_rank', ascending: true);
-
-    final hiddenEraIds = await _fetchHiddenEraIds();
-    final firstAppearanceByCode = <String, int>{};
-    for (final row in rows) {
-      if (hiddenEraIds.contains(row['era_id'] as String?)) {
-        continue;
-      }
-      final globalRank = (row['global_rank'] as num?)?.toInt() ?? 0;
-      final codes = row['character_codes'];
-      if (codes is! List) {
-        continue;
-      }
-      for (final code in codes.whereType<String>()) {
-        firstAppearanceByCode.putIfAbsent(code, () => globalRank);
-      }
-    }
-    return firstAppearanceByCode;
-  }
-
   Future<List<StoryEvent>> searchEventsByText(String query) async {
     final normalized = query.trim().toLowerCase();
     if (normalized.isEmpty) {

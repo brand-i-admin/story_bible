@@ -517,7 +517,6 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `fetchEventsByEra(eraId)` | `events_ordered` view WHERE era_id ORDER BY rank_in_era → 숨김 era 제외 | `List<StoryEvent>` |
 | `fetchEventsForCharacter(personCode)` | `events_ordered` WHERE character_codes @> ARRAY[code] ORDER BY global_rank → 숨김 era 제외 | `List<StoryEvent>` |
 | `fetchEventsByIds(eventIds)` | `events_ordered` WHERE id IN (...) ORDER BY global_rank → 숨김 era 제외 | `List<StoryEvent>` |
-| `fetchCharacterTimelineOrder()` | `events_ordered` → 숨김 era 제외 → personCode별 첫 등장 global_rank | `Map<String, int>` |
 | `searchEventsByText(query)` | 전체 `events_ordered` + persons name lookup → 숨김 era 제외 → 클라이언트 가중치 검색 | `List<StoryEvent>` (상위 20) |
 | `fetchQuizQuestions(eventId)` | `quiz_questions` WHERE event_id | `List<QuizQuestion>` |
 | `fetchBibleVersesByChapter(...)` | `bible_verses` WHERE book_no, chapter_no | `List<BibleVerse>` |
@@ -553,7 +552,6 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `deleteCompanionDiaryEntry(...)` | DELETE `user_companion_diary_entries` WHERE user_id AND entry_date | void |
 | `fetchIntercessoryPrayerPage(...)` | RPC list_intercessory_prayer_requests | `PagedResult<IntercessoryPrayerItem>` |
 | `addIntercessoryPrayerByShareId(shareId)` | RPC add_intercessory_prayer_by_share_id | `IntercessoryPrayerItem` |
-| `fetchCharacterStudyProgress(...)` | user_event_progress + events_ordered.character_codes (배열 매치) | `List<CharacterStudyProgress>` |
 
 ### 5.x NotificationRepository (`lib/data/notification_repository.dart`, 2026-04-22)
 

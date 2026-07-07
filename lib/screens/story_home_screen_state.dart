@@ -1427,12 +1427,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         builder: (_) => ProfileTabPage(
           key: _profileTabKey,
           onStartQuiz: _startQuiz,
-          onOpenEventDetail: (event, {source, sourceId}) {
+          onOpenEventDetail: (event, {source}) {
             unawaited(
               _openProfileEventDetailPage(
                 event,
                 source: source ?? ProfileEventOpenSource.general,
-                sourceId: sourceId,
               ),
             );
           },
@@ -1448,6 +1447,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   initialVerseNo: initialVerseNo,
                 );
               },
+          onNavigateStory: ({required from, required target}) async {
+            await _openProfileNextStory(from: from, target: target);
+          },
         ),
       ),
     );
@@ -1456,27 +1458,69 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _openProfileEventDetailPage(
     StoryEvent event, {
     ProfileEventOpenSource source = ProfileEventOpenSource.general,
-    String? sourceId,
   }) async {
     if (source == ProfileEventOpenSource.detailOnly) {
       await _openEventDetailPage(event);
       return;
     }
-    await _prepareHomeMapForProfileEvent(
-      event,
-      source: source,
-      sourceId: sourceId,
-    );
+    await _prepareHomeMapForProfileEvent(event, source: source);
     if (!mounted) {
       return;
     }
     await _openEventDetailPage(event, revealHomeBeforeMapAnimation: true);
   }
 
+  Future<void> _openProfileNextStory({
+    required StoryEvent from,
+    required StoryEvent target,
+  }) async {
+    if (!mounted || _mapAnimationInputLocked) {
+      return;
+    }
+    final notifier = ref.read(storyControllerProvider.notifier);
+    var state = ref.read(storyControllerProvider);
+    if (state.selectedEraId != target.eraId ||
+        !state.events.any((event) => event.id == target.id)) {
+      await notifier.selectEra(target.eraId);
+    }
+    if (!mounted) {
+      return;
+    }
+    state = ref.read(storyControllerProvider);
+    final targetEvent =
+        state.events.where((event) => event.id == target.id).firstOrNull ??
+        target;
+    final viewportSize = MediaQuery.sizeOf(context);
+    final collapsedExtent = _sheetSizeForStage(
+      viewportSize,
+      StorySelectionPanelStage.collapsed,
+    );
+
+    notifier.clearSelectionMode();
+    notifier.setDisplayedEvents({targetEvent.id});
+    notifier.selectEvent(from.id);
+    setState(() {
+      _mode = null;
+      _selectionStep = 3;
+      _draftSelectedCharacterCodes = const <String>{};
+      _draftDisplayedEventIds = {from.id, targetEvent.id};
+      _selectionPanelStage = StorySelectionPanelStage.collapsed;
+      _selectionSheetExtent = collapsedExtent;
+      _awaitingRevealComplete = false;
+      _revealInstantly = true;
+      _mapHintDismissed = true;
+    });
+
+    await _navigateDetailThroughMap(
+      from: from,
+      target: targetEvent,
+      revealHomeBeforeMapAnimation: true,
+    );
+  }
+
   Future<void> _prepareHomeMapForProfileEvent(
     StoryEvent event, {
     required ProfileEventOpenSource source,
-    String? sourceId,
   }) async {
     final notifier = ref.read(storyControllerProvider.notifier);
     var state = ref.read(storyControllerProvider);
@@ -1498,43 +1542,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       StorySelectionPanelStage.collapsed,
     );
 
-    if (source == ProfileEventOpenSource.character) {
-      final characterCode =
-          sourceId != null && homeEvent.characterCodes.contains(sourceId)
-          ? sourceId
-          : homeEvent.characterCodes.firstOrNull;
-      if (characterCode != null) {
-        final selectedCodes = {characterCode};
-        notifier.setSelectionMode(SelectionMode.character);
-        notifier.setSelectedCharacters(selectedCodes);
-        state = ref.read(storyControllerProvider);
-        final timeline = _timelineForSelectedCharacters(state, selectedCodes);
-        final displayed = timeline.isEmpty
-            ? {homeEvent.id}
-            : timeline.map((entry) => entry.id).toSet();
-        notifier.setDisplayedEvents(displayed);
-        notifier.selectEvent(homeEvent.id);
-        setState(() {
-          _mode = _SelectionMode.character;
-          _selectionStep = 3;
-          _draftSelectedCharacterCodes = selectedCodes;
-          _draftDisplayedEventIds = displayed;
-          _selectionPanelStage = StorySelectionPanelStage.collapsed;
-          _selectionSheetExtent = collapsedExtent;
-          _awaitingRevealComplete = false;
-          _revealInstantly = true;
-          _mapHintDismissed = true;
-        });
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) _mapPanelController.focusSelectedEvent(force: true);
-        });
-        return;
-      }
-    }
-
-    final regionId = source == ProfileEventOpenSource.place
-        ? sourceId ?? _regionLandmarkIdForEvent(state, homeEvent)
-        : _regionLandmarkIdForEvent(state, homeEvent);
+    final regionId = _regionLandmarkIdForEvent(state, homeEvent);
     final region = regionId == null ? null : state.landmarkById(regionId);
     if (region != null && region.isRegion) {
       notifier.setSelectionMode(SelectionMode.region);

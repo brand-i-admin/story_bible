@@ -154,7 +154,6 @@ data/ (Supabase 쿼리 + Model 변환)
   │     fetchSavedVersesPage() → 저장 구절 페이지네이션
   │     saveBibleVerse() / setBibleVerseHighlight() / clearBibleVerseHighlight() → 말씀 저장·하이라이트
   │     fetchIntercessoryPrayerPage() → 중보기도 목록
-  │     fetchCharacterStudyProgress() → 인물별 진행도
   │     recordAttendance() / recordStudyDay() → 출석/학습 기록
   │
   └── auth_repository.dart
@@ -189,7 +188,8 @@ story_home_screen.dart (메인 화면 — 모든 것의 허브)
   │     ├── profile/profile_right_panel.dart      (part)
   │     ├── profile/profile_helpers.dart          (part)
   │     ├── profile/profile_intercessory_prayer.dart (part)
-  │     └── profile/profile_character_overview.dart  (part)
+  │     ├── profile/profile_progress_section.dart    (part)
+  │     └── profile/profile_settings_sheet.dart      (part)
   ├── ParchmentDialog       → 이야기 상세 모달
   ├── BibleReaderPage       → 성경 리더
   ├── EventDetailPage       → 사건 상세
