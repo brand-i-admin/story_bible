@@ -118,7 +118,35 @@ BoxDecoration headerChipDecoration() {
   );
 }
 
-BoxDecoration softButtonDecoration({required bool selected}) {
+BoxDecoration softButtonDecoration({
+  required bool selected,
+  AppColorPalette? palette,
+}) {
+  if (palette != null) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: selected
+            ? [palette.cardSelectedTop, palette.cardSelectedBottom]
+            : [palette.cardUnselectedTop, palette.cardUnselectedBottom],
+      ),
+      borderRadius: BorderRadius.circular(AppRadii.lg),
+      border: Border.all(
+        color: selected ? palette.actionBorder : palette.subtleBorder,
+        width: 1.0,
+      ),
+      boxShadow: selected
+          ? [
+              BoxShadow(
+                color: palette.actionBottom.withValues(alpha: 0.18),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ]
+          : AppShadows.sm,
+    );
+  }
   return BoxDecoration(
     gradient: selected
         ? LinearGradient(

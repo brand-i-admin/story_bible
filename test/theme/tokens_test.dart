@@ -130,7 +130,7 @@ void main() {
     });
 
     test('알록 지도는 파스텔 보라 primary와 청록·오렌지·핑크 역할색을 사용한다', () {
-      expect(AppColorPalette.values, hasLength(3));
+      expect(AppColorPalette.values, hasLength(4));
       expect(AppColorPalette.colorfulMap.primary, const Color(0xFFAA96F2));
       expect(AppColorPalette.colorfulMap.primaryDeep, const Color(0xFF7359B8));
       expect(
@@ -147,6 +147,19 @@ void main() {
         const Color(0xFFDDF5F1),
       );
       expect(AppColorPalette.colorfulMap.panelSurface, const Color(0xF8F2FCF7));
+    });
+
+    test('블랙 지도는 어두운 표면 위에 밝은 액션색과 텍스트를 사용한다', () {
+      expect(AppColorPalette.blackMap.primary, const Color(0xFF38BDF8));
+      expect(AppColorPalette.blackMap.primaryDeep, const Color(0xFF7DD3FC));
+      expect(AppColorPalette.blackMap.successBottom, const Color(0xFF14B8A6));
+      expect(AppColorPalette.blackMap.panelSurface, const Color(0xFF141C2F));
+      expect(
+        ThemeData.estimateBrightnessForColor(
+          AppColorPalette.blackMap.panelSurface,
+        ),
+        Brightness.dark,
+      );
     });
   });
 

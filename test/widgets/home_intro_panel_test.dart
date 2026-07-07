@@ -272,6 +272,25 @@ void main() {
     ]);
   });
 
+  testWidgets('블랙 팔레트의 보기 방식 문구는 팔레트 글자색을 따른다', (tester) async {
+    await tester.pumpWidget(
+      homeIntroHarness(
+        width: 390,
+        height: 720,
+        selectedEraId: 'era_divided_kingdom',
+        palette: AppColorPalette.blackMap,
+        onPickMode: (_) {},
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final title = tester.widget<Text>(find.text('시간 순'));
+    final subtitle = tester.widget<Text>(find.text('선택한 시대의 사건을\n시간 순으로 봅니다'));
+
+    expect(title.style?.color, AppColorPalette.blackMap.text);
+    expect(subtitle.style?.color, AppColorPalette.blackMap.mutedText);
+  });
+
   testWidgets('홈 인트로 패널은 하단 빈 공간을 줄인 패딩을 사용한다', (tester) async {
     await tester.pumpWidget(
       MaterialApp(

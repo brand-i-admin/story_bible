@@ -107,10 +107,10 @@ enum AppColorPalette {
     label: '블랙 지도',
     description: '검은 지도 톤과 금빛 포인트',
     seedColor: Color(0xFF111827),
-    primary: Color(0xFF1F2937),
-    primaryDeep: Color(0xFF05070B),
+    primary: Color(0xFF38BDF8),
+    primaryDeep: Color(0xFF7DD3FC),
     text: Color(0xFFEAF2F7),
-    mutedText: Color(0xFFA7B3C4),
+    mutedText: Color(0xFFC2CAD8),
     actionTop: Color(0xF235445E),
     actionBottom: Color(0xF2111828),
     actionBorder: Color(0xB8F59E0B),
@@ -125,7 +125,7 @@ enum AppColorPalette {
     completedSurface: Color(0xB8142F27),
     completedBorder: Color(0xAA34D399),
     successTop: Color(0xFF34D399),
-    successBottom: Color(0xFF0F766E),
+    successBottom: Color(0xFF14B8A6),
     currentAccent: Color(0xFFF59E0B),
     currentAccentDeep: Color(0xFFD97706),
     stepStart: Color(0xFF38BDF8),
@@ -226,28 +226,28 @@ enum AppColorPalette {
   Color get panelSurface => switch (this) {
     AppColorPalette.classic => const Color(0xF5F3EBD9),
     AppColorPalette.colorfulMap => const Color(0xF8F2FCF7),
-    AppColorPalette.blackMap => const Color(0xF20D1322),
+    AppColorPalette.blackMap => const Color(0xFF141C2F),
     _ => _tint(AppColors.floatingSurfaceDefault, primary, 0.045),
   };
 
   Color get cardSurface => switch (this) {
     AppColorPalette.classic => const Color(0xFFF2EAD8),
     AppColorPalette.colorfulMap => const Color(0xFFFFF7E8),
-    AppColorPalette.blackMap => const Color(0xFF172033),
+    AppColorPalette.blackMap => const Color(0xFF1A253A),
     _ => _tint(AppColors.parchmentCard, primary, 0.035),
   };
 
   Color get softSurface => switch (this) {
     AppColorPalette.classic => const Color(0xFFFCF8EC),
     AppColorPalette.colorfulMap => const Color(0xFFFFEEF7),
-    AppColorPalette.blackMap => const Color(0xFF1F2937),
+    AppColorPalette.blackMap => const Color(0xFF243149),
     _ => _tint(AppColors.parchmentCream, primary, 0.06),
   };
 
   Color get mutedSurface => switch (this) {
     AppColorPalette.classic => const Color(0xFFEAE4D3),
     AppColorPalette.colorfulMap => const Color(0xFFE2F5F2),
-    AppColorPalette.blackMap => const Color(0xFF111827),
+    AppColorPalette.blackMap => const Color(0xFF111A2E),
     _ => _tint(AppColors.parchmentCream, mutedText, 0.045),
   };
   Color get panelBorder => selectedBorder.withValues(alpha: 0.68);
@@ -256,7 +256,7 @@ enum AppColorPalette {
   Color get selectionFill => switch (this) {
     AppColorPalette.classic => const Color(0xFFE7F0DB),
     AppColorPalette.colorfulMap => const Color(0xFFDDF5F1),
-    AppColorPalette.blackMap => const Color(0xFF253247),
+    AppColorPalette.blackMap => const Color(0xFF2A3850),
     _ => _tint(AppColors.parchmentCream, primary, 0.16),
   };
 
@@ -276,25 +276,25 @@ enum AppColorPalette {
 
   Color get cardSelectedTop => switch (this) {
     AppColorPalette.colorfulMap => primary,
-    AppColorPalette.blackMap => const Color(0xFF273449),
+    AppColorPalette.blackMap => const Color(0xFF2D3C56),
     _ => actionTop,
   };
 
   Color get cardSelectedBottom => switch (this) {
     AppColorPalette.colorfulMap => primaryDeep,
-    AppColorPalette.blackMap => const Color(0xFF0B1020),
+    AppColorPalette.blackMap => const Color(0xFF10182A),
     _ => actionBottom,
   };
 
   Color get cardUnselectedTop => switch (this) {
     AppColorPalette.colorfulMap => const Color(0xFFFFFBEE),
-    AppColorPalette.blackMap => const Color(0xFF172033),
+    AppColorPalette.blackMap => const Color(0xFF1A253A),
     _ => cardSurface,
   };
 
   Color get cardUnselectedBottom => switch (this) {
     AppColorPalette.colorfulMap => const Color(0xFFEAF7F4),
-    AppColorPalette.blackMap => const Color(0xFF111827),
+    AppColorPalette.blackMap => const Color(0xFF111A2E),
     _ => mutedSurface,
   };
 

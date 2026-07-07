@@ -90,7 +90,7 @@ class EraPickRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final palette = AppPaletteTheme.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -100,9 +100,9 @@ class EraPickRow extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10),
             child: Text(
               '$label:',
-              style: theme.textTheme.labelLarge?.copyWith(
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: theme.colorScheme.onSurfaceVariant,
+                color: palette.mutedText,
               ),
             ),
           ),
@@ -157,8 +157,8 @@ class _EraChip extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadii.lg),
-        splashColor: AppColors.oceanBot.withValues(alpha: 0.18),
-        highlightColor: AppColors.oceanBot.withValues(alpha: 0.10),
+        splashColor: eraColor.withValues(alpha: 0.18),
+        highlightColor: eraColor.withValues(alpha: 0.10),
         child: AnimatedContainer(
           key: ValueKey('era-chip-${era.id}'),
           duration: const Duration(milliseconds: 220),
@@ -169,7 +169,7 @@ class _EraChip extends StatelessWidget {
           ),
           decoration: selected
               ? _selectedEraChipDecoration(selectedColors)
-              : softButtonDecoration(selected: false),
+              : softButtonDecoration(selected: false, palette: palette),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -194,7 +194,7 @@ class _EraChip extends StatelessWidget {
                 _shortEraLabel(era),
                 style: AppTextStyles.chipLabel.copyWith(
                   fontSize: 11.5,
-                  color: selected ? AppColors.parchmentCream : AppColors.ink800,
+                  color: selected ? AppColors.fgOnDark : palette.text,
                 ),
               ),
               if (selected) ...[

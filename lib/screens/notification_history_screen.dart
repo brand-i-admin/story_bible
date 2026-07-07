@@ -30,6 +30,7 @@ class NotificationHistoryScreen extends ConsumerWidget {
             onPressed: () async {
               final repo = ref.read(notificationRepositoryProvider);
               await repo.markAllRead();
+              ref.invalidate(unreadNotificationCountProvider);
               ref.invalidate(notificationHistoryProvider);
               ref.invalidate(unreadNotificationsProvider);
             },

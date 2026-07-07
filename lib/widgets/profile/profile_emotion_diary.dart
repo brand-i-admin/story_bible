@@ -3,12 +3,12 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../models/event_emotion_mark.dart';
-import '../../models/saved_bible_verse.dart';
 import '../../models/story_event.dart';
 import '../../models/user_companion_diary_entry.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
+import '../../utils/bible_book_meta.dart';
 import '../../utils/kst_date.dart';
 import '../emotion_badge_icon.dart';
 import '../pulse_highlight.dart';
@@ -20,24 +20,30 @@ class ProfileBibleProgressSummary {
     required this.completed,
     required this.total,
     required this.fraction,
-    this.lastVerse,
+    this.lastCompletedBookNo,
+    this.lastCompletedChapterNo,
   });
 
   final int completed;
   final int total;
   final double fraction;
-  final SavedBibleVerse? lastVerse;
+  final int? lastCompletedBookNo;
+  final int? lastCompletedChapterNo;
 
   int get percent => (fraction.clamp(0.0, 1.0) * 100).round();
 
-  String get referenceText => lastVerse?.referenceText ?? '창세기 1:1';
-
   String get chapterReferenceText {
-    final verse = lastVerse;
-    if (verse == null) {
+    final bookNo = lastCompletedBookNo;
+    final chapterNo = lastCompletedChapterNo;
+    if (bookNo == null ||
+        chapterNo == null ||
+        bookNo < 1 ||
+        bookNo > bibleBooks.length) {
       return '창세기 1장';
     }
-    return '${verse.bookName} ${verse.chapterNo}장';
+    final maxChapter = bibleBooks[bookNo - 1].chapters;
+    final safeChapterNo = chapterNo.clamp(1, maxChapter).toInt();
+    return '${bibleBooks[bookNo - 1].name} $safeChapterNo장';
   }
 }
 
@@ -56,6 +62,7 @@ class ProfileEmotionDiary extends StatefulWidget {
     this.now,
     this.featureCardsFirst = false,
     this.showFeatureCards = true,
+    this.onSelectedDateChanged,
   });
 
   final Map<String, EventEmotionMark> eventEmotionMarks;
@@ -70,6 +77,7 @@ class ProfileEmotionDiary extends StatefulWidget {
   final DateTime? now;
   final bool featureCardsFirst;
   final bool showFeatureCards;
+  final ValueChanged<DateTime>? onSelectedDateChanged;
 
   @override
   State<ProfileEmotionDiary> createState() => _ProfileEmotionDiaryState();
@@ -126,6 +134,7 @@ class _ProfileEmotionDiaryState extends State<ProfileEmotionDiary> {
       companionDiaryLoading: widget.companionDiaryLoading,
       companionDiaryError: widget.companionDiaryError,
       onToggleExpanded: () {
+        DateTime? selectedDateAfterToggle;
         setState(() {
           final today = _todayKst();
           _expanded = !_expanded;
@@ -134,7 +143,12 @@ class _ProfileEmotionDiaryState extends State<ProfileEmotionDiary> {
               !_isWithinCollapsedVisibleRange(_selectedDate, today)) {
             _selectedDate = today;
           }
+          selectedDateAfterToggle = _selectedDate;
         });
+        final selected = selectedDateAfterToggle;
+        if (selected != null) {
+          widget.onSelectedDateChanged?.call(selected);
+        }
       },
       onMoveMonth: _moveMonth,
       onSelectDate: _selectDate,
@@ -158,6 +172,7 @@ class _ProfileEmotionDiaryState extends State<ProfileEmotionDiary> {
       _selectedDate = _dateOnly(date);
       _focusedMonth = nextMonth;
     });
+    widget.onSelectedDateChanged?.call(_selectedDate);
   }
 
   void _moveMonth(int delta) {
@@ -173,6 +188,7 @@ class _ProfileEmotionDiaryState extends State<ProfileEmotionDiary> {
         _selectedDate = _isSameMonth(today, nextMonth) ? today : nextMonth;
       }
     });
+    widget.onSelectedDateChanged?.call(_selectedDate);
   }
 }
 
@@ -434,6 +450,9 @@ class _BibleProgressFeatureCard extends StatelessWidget {
         summary ??
         const ProfileBibleProgressSummary(completed: 0, total: 0, fraction: 0);
     final fraction = progress.fraction.clamp(0.0, 1.0).toDouble();
+    final darkSurface =
+        ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
+        Brightness.dark;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -448,13 +467,25 @@ class _BibleProgressFeatureCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.98),
-                palette.currentFill.withValues(alpha: 0.46),
+                Color.alphaBlend(
+                  palette.currentAccent.withValues(
+                    alpha: darkSurface ? 0.11 : 0.08,
+                  ),
+                  palette.cardSurface,
+                ),
+                Color.alphaBlend(
+                  palette.currentAccent.withValues(
+                    alpha: darkSurface ? 0.18 : 0.14,
+                  ),
+                  palette.softSurface,
+                ),
               ],
             ),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: palette.currentAccentDeep.withValues(alpha: 0.24),
+              color: palette.currentAccentDeep.withValues(
+                alpha: darkSurface ? 0.48 : 0.32,
+              ),
               width: 0.9,
             ),
             boxShadow: AppShadows.sm,
@@ -503,7 +534,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _BibleProgressDonut(
                     fraction: fraction,
@@ -517,7 +548,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          '마지막 묵상 구절',
+                          '마지막 통독 장',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -530,27 +561,30 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                         const SizedBox(height: 5),
                         Text(
                           progress.chapterReferenceText,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: largeText ? 2 : 1,
+                          overflow: largeText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          softWrap: true,
                           style: TextStyle(
                             color: palette.text,
-                            fontSize: 12.8,
+                            fontSize: largeText ? 12.2 : 12.8,
                             fontWeight: FontWeight.w900,
                             height: 1.1,
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        PulseHighlight(
-                          active: onContinue != null,
-                          pulseCount: 2,
-                          borderRadius: BorderRadius.circular(999),
-                          color: palette.currentAccentDeep,
-                          child: _BibleContinueButton(onTap: onContinue),
                         ),
                       ],
                     ),
                   ),
                 ],
+              ),
+              const Spacer(),
+              PulseHighlight(
+                active: onContinue != null,
+                pulseCount: 2,
+                borderRadius: BorderRadius.circular(999),
+                color: palette.currentAccentDeep,
+                child: _BibleContinueButton(onTap: onContinue),
               ),
             ],
           ),
@@ -574,6 +608,16 @@ class _BibleProgressDonut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final darkSurface =
+        ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
+        Brightness.dark;
+    final trackColor = Color.alphaBlend(
+      palette.currentAccent.withValues(alpha: darkSurface ? 0.30 : 0.24),
+      palette.cardSurface,
+    );
+    final progressColor = darkSurface
+        ? palette.currentAccent
+        : palette.currentAccentDeep;
     return SizedBox.square(
       dimension: dimension,
       child: Stack(
@@ -581,17 +625,18 @@ class _BibleProgressDonut extends StatelessWidget {
         children: [
           SizedBox.expand(
             child: CircularProgressIndicator(
+              key: const ValueKey('bible-progress-donut-indicator'),
               value: fraction,
               strokeWidth: 5.2,
-              backgroundColor: palette.currentFill,
-              color: palette.currentAccentDeep,
+              backgroundColor: trackColor,
+              color: progressColor,
             ),
           ),
           Text(
             '$percent%',
             maxLines: 1,
             style: TextStyle(
-              color: palette.currentAccentDeep,
+              color: progressColor,
               fontSize: 12.2,
               fontWeight: FontWeight.w900,
               height: 1,
@@ -1202,14 +1247,10 @@ class _SelectedEmotionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
-    final note = mark.note.trim().isEmpty
-        ? '${mark.emotionLabel}으로 새겼어요.'
-        : mark.note.trim();
-    final metaLabel = showTimestamp
-        ? (mark.updatedAt == null
-              ? ''
-              : _formatEmotionMarkDate(mark.updatedAt!))
-        : mark.emotionLabel;
+    final note = mark.note.trim();
+    final metaLabel = showTimestamp && mark.updatedAt != null
+        ? _formatEmotionMarkDate(mark.updatedAt!)
+        : '';
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1261,21 +1302,23 @@ class _SelectedEmotionRow extends StatelessWidget {
                         ],
                       ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      note,
-                      maxLines: largeText ? null : 2,
-                      overflow: largeText
-                          ? TextOverflow.visible
-                          : TextOverflow.ellipsis,
-                      softWrap: true,
-                      style: TextStyle(
-                        color: palette.text,
-                        fontSize: 13.2,
-                        fontWeight: FontWeight.w800,
-                        height: 1.35,
+                    if (note.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        note,
+                        maxLines: largeText ? null : 2,
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
+                        style: TextStyle(
+                          color: palette.text,
+                          fontSize: 13.2,
+                          fontWeight: FontWeight.w800,
+                          height: 1.35,
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),

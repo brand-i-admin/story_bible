@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/models/era.dart';
 import 'package:story_bible/models/story_event.dart';
+import 'package:story_bible/theme/app_color_palette.dart';
+import 'package:story_bible/theme/app_theme.dart';
 import 'package:story_bible/utils/scene_asset_loader.dart';
 import 'package:story_bible/widgets/completion_celebration.dart';
 import 'package:story_bible/widgets/emotion_badge_icon.dart';
@@ -58,8 +60,10 @@ Widget _harness(
   double width = 360,
   double height = 280,
   double textScale = 1,
+  AppColorPalette palette = AppColorPalette.classic,
 }) {
   return MaterialApp(
+    theme: AppTheme.light(palette: palette),
     home: MediaQuery(
       data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
       child: Scaffold(
@@ -546,6 +550,44 @@ void main() {
 
       expect(orderRect.center.dx, greaterThan(emotionRect.center.dx));
       expect(orderRect.center.dy, greaterThan(emotionRect.center.dy));
+    });
+
+    testWidgets('블랙 테마 사건 카드는 팔레트 표면과 제목색을 사용한다', (tester) async {
+      const title = '오순절 성령 강림과 베드로의 설교';
+
+      await tester.pumpWidget(
+        _harness(
+          StoryEventThumbCard(
+            event: _event(2, title: title, characterCodes: const ['peter']),
+            era: _era(),
+            charactersByCode: const {},
+            selected: false,
+            loader: SceneAssetLoader(),
+            onTap: () {},
+            forceOpaqueSurface: true,
+          ),
+          palette: AppColorPalette.blackMap,
+        ),
+      );
+      await tester.pump();
+
+      final titleText = tester.widget<Text>(find.text(title));
+      final characterText = tester.widget<Text>(find.text('베드로'));
+      final cardMaterials = tester.widgetList<Material>(
+        find.descendant(
+          of: find.byType(StoryEventThumbCard),
+          matching: find.byType(Material),
+        ),
+      );
+
+      expect(titleText.style?.color, AppColorPalette.blackMap.text);
+      expect(characterText.style?.color, AppColorPalette.blackMap.text);
+      expect(
+        cardMaterials.any(
+          (material) => material.color == AppColorPalette.blackMap.cardSurface,
+        ),
+        isTrue,
+      );
     });
   });
 }

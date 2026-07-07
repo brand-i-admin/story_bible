@@ -101,6 +101,7 @@ class NotificationDropdown extends ConsumerWidget {
             onMarkAllRead: () async {
               final repo = ref.read(notificationRepositoryProvider);
               await repo.markAllRead();
+              ref.invalidate(unreadNotificationCountProvider);
               ref.invalidate(unreadNotificationsProvider);
               ref.invalidate(notificationHistoryProvider);
             },

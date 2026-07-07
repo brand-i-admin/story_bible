@@ -9,11 +9,11 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:story_bible/data/story_repository.dart';
 import 'package:story_bible/models/event_emotion_mark.dart';
-import 'package:story_bible/models/saved_bible_verse.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/models/user_companion_diary_entry.dart';
 import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/theme/app_color_palette.dart';
+import 'package:story_bible/theme/app_theme.dart';
 import 'package:story_bible/widgets/emotion_badge_icon.dart';
 import 'package:story_bible/widgets/parchment_page_scaffold.dart';
 import 'package:story_bible/widgets/profile/companion_diary_entry_card.dart';
@@ -96,10 +96,12 @@ Widget _wrap({
   ProfileBibleProgressSummary? bibleProgress,
   VoidCallback? onOpenBibleProgress,
   VoidCallback? onContinueBibleReading,
+  AppColorPalette palette = AppColorPalette.classic,
 }) {
   return ProviderScope(
     overrides: [storyRepositoryProvider.overrideWithValue(repository)],
     child: MaterialApp(
+      theme: AppTheme.light(palette: palette),
       home: MediaQuery(
         data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
         child: Scaffold(
@@ -179,6 +181,12 @@ void _companionDiaryWidgetTests() {
     }
     expect(find.text('신앙 다이어리'), findsOneWidget);
     expect(find.text('오늘 하나님과 함께한 순간을 기록해 보세요!'), findsOneWidget);
+    final diaryTitle = tester.widget<Text>(find.text('신앙 다이어리'));
+    final diaryPrompt = tester.widget<Text>(
+      find.text('오늘 하나님과 함께한 순간을 기록해 보세요!'),
+    );
+    expect(diaryTitle.style?.color, AppColorPalette.classic.text);
+    expect(diaryPrompt.style?.color, AppColorPalette.classic.text);
     expect(find.text('기록하기'), findsOneWidget);
     expect(find.text('전체 보기'), findsNothing);
     expect(
@@ -186,7 +194,7 @@ void _companionDiaryWidgetTests() {
       findsOneWidget,
     );
     expect(find.text('통독 진행률'), findsOneWidget);
-    expect(find.text('마지막 묵상 구절'), findsOneWidget);
+    expect(find.text('마지막 통독 장'), findsOneWidget);
     expect(find.text('이어 읽기'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('companion-diary-add-button')),
@@ -199,6 +207,36 @@ void _companionDiaryWidgetTests() {
       greaterThan(tester.getTopLeft(find.text('오늘 하나님과 함께한 순간을 기록해 보세요!')).dy),
     );
     expect(find.textContaining('오늘 새긴 감정이 없습니다'), findsNothing);
+  });
+
+  testWidgets('남색 테마의 기록하기 버튼과 통독 도넛은 충분한 대비를 갖는다', (tester) async {
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: const <String, EventEmotionMark>{},
+        now: DateTime.utc(2026, 6, 10),
+        palette: AppColorPalette.atlasNavy,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final writePill = tester.widget<Material>(
+      find.byKey(const ValueKey('companion-diary-write-button-pill')),
+    );
+    final writeLabel = tester.widget<Text>(find.text('기록하기'));
+    final donut = tester.widget<CircularProgressIndicator>(
+      find.byKey(const ValueKey('bible-progress-donut-indicator')),
+    );
+
+    expect(writePill.color, isNot(AppColorPalette.atlasNavy.cardSurface));
+    expect(writeLabel.style?.color, AppColorPalette.atlasNavy.successBottom);
+    expect(donut.backgroundColor, isNot(AppColorPalette.atlasNavy.currentFill));
+    expect(donut.color, AppColorPalette.atlasNavy.currentAccentDeep);
   });
 
   testWidgets('아주크게에서도 두 자리 날짜는 한 줄로 표시된다', (tester) async {
@@ -253,7 +291,7 @@ void _companionDiaryWidgetTests() {
     expect(find.byKey(const ValueKey('diary-content-tab-bar')), findsNothing);
   });
 
-  testWidgets('아주크게에서 긴 마지막 묵상 권도 통독 카드 안에 맞춘다', (tester) async {
+  testWidgets('아주크게에서 긴 마지막 통독 권도 통독 카드 안에 맞춘다', (tester) async {
     final repository = _MockStoryRepository();
     when(
       () => repository.fetchEventsByIds(any()),
@@ -266,27 +304,21 @@ void _companionDiaryWidgetTests() {
         now: DateTime.utc(2026, 6, 25),
         width: 390,
         textScale: 1.4,
-        bibleProgress: ProfileBibleProgressSummary(
+        bibleProgress: const ProfileBibleProgressSummary(
           completed: 12,
           total: 1189,
           fraction: 12 / 1189,
-          lastVerse: SavedBibleVerse(
-            id: 'saved-acts',
-            userId: 'user_1',
-            translation: '개역개정',
-            bookNo: 44,
-            bookName: '사도행전',
-            chapterNo: 15,
-            verseNo: 1,
-            verseText: '어떤 사람들이 유대로부터 내려와서',
-            createdAt: DateTime.utc(2026, 6, 25),
-          ),
+          lastCompletedBookNo: 44,
+          lastCompletedChapterNo: 15,
         ),
       ),
     );
     await tester.pumpAndSettle();
 
     expect(find.text('사도행전 15장'), findsOneWidget);
+    final chapterText = tester.widget<Text>(find.text('사도행전 15장'));
+    expect(chapterText.maxLines, 2);
+    expect(chapterText.overflow, TextOverflow.visible);
     expect(find.text('이어 읽기'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -576,7 +608,7 @@ void main() {
     expect(continuedReading, 1);
   });
 
-  testWidgets('통독 카드는 마지막 묵상 구절을 권과 장으로 표시한다', (tester) async {
+  testWidgets('통독 카드는 마지막 통독 완료 장을 권과 장으로 표시한다', (tester) async {
     final repository = _MockStoryRepository();
     when(
       () => repository.fetchEventsByIds(any()),
@@ -586,21 +618,12 @@ void main() {
       _wrap(
         repository: repository,
         marks: const <String, EventEmotionMark>{},
-        bibleProgress: ProfileBibleProgressSummary(
+        bibleProgress: const ProfileBibleProgressSummary(
           completed: 12,
           total: 1189,
           fraction: 12 / 1189,
-          lastVerse: SavedBibleVerse(
-            id: 'verse-1',
-            userId: 'user-1',
-            translation: '개역개정',
-            bookNo: 43,
-            bookName: '요한복음',
-            chapterNo: 3,
-            verseNo: 16,
-            verseText: '하나님이 세상을 이처럼 사랑하사',
-            createdAt: DateTime.utc(2026, 6, 10),
-          ),
+          lastCompletedBookNo: 43,
+          lastCompletedChapterNo: 3,
         ),
         now: DateTime.utc(2026, 6, 10),
       ),
@@ -795,7 +818,7 @@ void main() {
       event: event,
       emotionKey: 'joy',
       emotionLabel: '기쁨',
-      note: '구원의 기쁨을 기억합니다.',
+      note: '',
       updatedAt: DateTime.utc(2026, 6, 9, 16),
     );
     var openCount = 0;
@@ -819,6 +842,8 @@ void main() {
     await tester.tap(find.text('홍해를 건너다'));
     await tester.pump();
 
+    expect(find.text('기쁨'), findsNothing);
+    expect(find.text('기쁨으로 새겼어요.'), findsNothing);
     expect(openCount, 1);
   });
 

@@ -267,7 +267,7 @@ is_active boolean DEFAULT true
 
 ### 2.2c App publications — 공지사항과 사용법
 
-홈 좌상단 메가폰 버튼에서 보여 줄 개발자 게시 콘텐츠다. bell 알림과 달리 읽음
+프로필 헤더의 메가폰 버튼에서 보여 줄 개발자 게시 콘텐츠다. bell 알림과 달리 읽음
 상태나 30일 보관 정책에 묶이지 않고, `is_published`와 `published_at`으로 노출을
 제어한다.
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/user_companion_diary_entry.dart';
 import '../../screens/companion_diary_entries_screen.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
 import 'companion_diary_entry_card.dart';
@@ -218,6 +219,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final canWrite = onSave != null;
     final hasEntry = entry != null;
     final message = error ?? '오늘 하나님과 함께한 순간을 기록해 보세요!';
@@ -235,12 +237,18 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withValues(alpha: 0.98),
-                AppColors.greenTint1.withValues(alpha: 0.68),
+                Color.alphaBlend(
+                  palette.successBottom.withValues(alpha: 0.08),
+                  palette.cardSurface,
+                ),
+                Color.alphaBlend(
+                  palette.successTop.withValues(alpha: 0.14),
+                  palette.softSurface,
+                ),
               ],
             ),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.greenBorder, width: 0.9),
+            border: Border.all(color: palette.completedBorder, width: 0.9),
             boxShadow: AppShadows.sm,
           ),
           child: Stack(
@@ -260,14 +268,14 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                         height: 22,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: AppColors.greenTint2,
+                          color: palette.successFill,
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.greenBorder),
+                          border: Border.all(color: palette.completedBorder),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.edit_note_rounded,
                           size: 13.5,
-                          color: AppColors.greenBot,
+                          color: palette.successBottom,
                         ),
                       ),
                       const SizedBox(width: 7),
@@ -277,14 +285,14 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.sectionTitle.copyWith(
-                            color: AppColors.ink900,
+                            color: palette.text,
                           ),
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.chevron_right_rounded,
                         size: 19,
-                        color: AppColors.ink300,
+                        color: palette.mutedText,
                       ),
                     ],
                   ),
@@ -294,9 +302,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: error == null
-                          ? AppColors.ink900
-                          : AppColors.dangerBot,
+                      color: error == null ? palette.text : AppColors.dangerBot,
                       fontSize: AppFontSizes.base,
                       fontWeight: FontWeight.w800,
                       height: 1.45,
@@ -320,10 +326,10 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                       ),
                     )
                   else if (!canWrite)
-                    const Text(
+                    Text(
                       '로그인하면 기록할 수 있어요.',
                       style: TextStyle(
-                        color: AppColors.ink300,
+                        color: palette.mutedText,
                         fontSize: 11.5,
                         fontWeight: FontWeight.w800,
                       ),
@@ -400,14 +406,31 @@ class _DiaryWriteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final darkSurface =
+        ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
+        Brightness.dark;
+    final backgroundColor = Color.alphaBlend(
+      palette.successBottom.withValues(alpha: darkSurface ? 0.32 : 0.16),
+      palette.cardSurface,
+    );
+    final labelColor = darkSurface ? AppColors.fgOnDark : palette.successBottom;
     return Material(
-      color: AppColors.parchmentCream.withValues(alpha: 0.76),
+      key: const ValueKey('companion-diary-write-button-pill'),
+      color: backgroundColor,
       borderRadius: BorderRadius.circular(999),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(999),
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.fromLTRB(8, 5, 11, 5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: palette.successBottom.withValues(alpha: 0.58),
+              width: 1,
+            ),
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -417,15 +440,15 @@ class _DiaryWriteButton extends StatelessWidget {
                 onTap: onTap,
                 size: 28,
                 iconSize: 19,
-                backgroundColor: AppColors.goldDeep,
+                backgroundColor: palette.successBottom,
                 foregroundColor: AppColors.fgOnDark,
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 '기록하기',
                 style: TextStyle(
-                  color: AppColors.greenBot,
-                  fontSize: 11.6,
+                  color: labelColor,
+                  fontSize: 12.1,
                   fontWeight: FontWeight.w900,
                 ),
               ),

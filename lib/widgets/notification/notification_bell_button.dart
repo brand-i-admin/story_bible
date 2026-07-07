@@ -10,7 +10,7 @@ import '../web_pointer_interceptor.dart';
 import 'notification_badge.dart';
 import 'notification_dropdown.dart';
 
-/// 홈화면 상단의 종(bell) 아이콘 버튼.
+/// 프로필 헤더의 종(bell) 아이콘 버튼.
 ///
 /// - `unreadNotificationCountProvider` 를 구독해 읽지 않은 개수가 1개 이상이면
 ///   빨간 느낌표 배지 표시.

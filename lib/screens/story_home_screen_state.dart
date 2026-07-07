@@ -1447,10 +1447,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   initialVerseNo: initialVerseNo,
                 );
               },
-          onNavigateStory: ({required from, required target}) async {
-            await _openProfileNextStory(from: from, target: target);
-          },
           onExploreStoriesFromHome: _returnProfileToHomeIntroGuide,
+          onOpenAppPublications: _openAppPublications,
+          onNavigateNotification: _handleNotificationTap,
+          onOpenNotificationHistory: _openNotificationHistory,
         ),
       ),
     );
@@ -1496,55 +1496,23 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (!mounted) {
       return;
     }
+    if (source == ProfileEventOpenSource.targetOnly) {
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.popUntil((route) => route.isFirst);
+        await Future<void>.delayed(const Duration(milliseconds: 220));
+      }
+      if (!mounted) {
+        return;
+      }
+      await WidgetsBinding.instance.endOfFrame;
+      _mapPanelController.focusSelectedEvent(force: true);
+      await Future<void>.delayed(const Duration(milliseconds: 420));
+      if (!mounted) {
+        return;
+      }
+    }
     await _openEventDetailPage(event, revealHomeBeforeMapAnimation: true);
-  }
-
-  Future<void> _openProfileNextStory({
-    required StoryEvent from,
-    required StoryEvent target,
-  }) async {
-    if (!mounted || _mapAnimationInputLocked) {
-      return;
-    }
-    final notifier = ref.read(storyControllerProvider.notifier);
-    var state = ref.read(storyControllerProvider);
-    if (state.selectedEraId != target.eraId ||
-        !state.events.any((event) => event.id == target.id)) {
-      await notifier.selectEra(target.eraId);
-    }
-    if (!mounted) {
-      return;
-    }
-    state = ref.read(storyControllerProvider);
-    final targetEvent =
-        state.events.where((event) => event.id == target.id).firstOrNull ??
-        target;
-    final viewportSize = MediaQuery.sizeOf(context);
-    final collapsedExtent = _sheetSizeForStage(
-      viewportSize,
-      StorySelectionPanelStage.collapsed,
-    );
-
-    notifier.clearSelectionMode();
-    notifier.setDisplayedEvents({targetEvent.id});
-    notifier.selectEvent(from.id);
-    setState(() {
-      _mode = null;
-      _selectionStep = 3;
-      _draftSelectedCharacterCodes = const <String>{};
-      _draftDisplayedEventIds = {from.id, targetEvent.id};
-      _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = collapsedExtent;
-      _awaitingRevealComplete = false;
-      _revealInstantly = true;
-      _mapHintDismissed = true;
-    });
-
-    await _navigateDetailThroughMap(
-      from: from,
-      target: targetEvent,
-      revealHomeBeforeMapAnimation: true,
-    );
   }
 
   Future<void> _prepareHomeMapForProfileEvent(
@@ -2262,6 +2230,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     } catch (_) {
       // 읽음 실패는 무시 (다음 refresh 에 반영됨)
     }
+    ref.invalidate(unreadNotificationCountProvider);
     ref.invalidate(unreadNotificationsProvider);
     ref.invalidate(notificationHistoryProvider);
 
@@ -2817,7 +2786,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           ),
                         ),
                       ),
-                    // 세로 모드: 핵심 버튼 + 글자 크기/알림/이야기등록을
+                    // 세로 모드: 핵심 버튼 + 글자 크기/이야기등록을
                     // 좌우 끝까지 가득 펼치고 horizontal scroll 로 추가 노출.
                     Positioned(
                       left: 0,
@@ -2842,12 +2811,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  topUtilityIconButton(
-                                    icon: Icons.campaign_rounded,
-                                    tooltip: '공지사항과 사용법',
-                                    onTap: _openAppPublications,
-                                  ),
-                                  const SizedBox(width: 4),
                                   // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
                                   // 항상 일부 보이므로 별도 토글 불필요.
                                   topUtilityIconButton(
@@ -2875,11 +2838,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                   topFontScaleButton(
                                     onTap: () =>
                                         unawaited(_openFontScaleSheet()),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  NotificationBellButton(
-                                    onNavigate: _handleNotificationTap,
-                                    onOpenHistory: _openNotificationHistory,
                                   ),
                                   if (kIsWeb) ...[
                                     const SizedBox(width: 4),

@@ -33,7 +33,6 @@ import '../widgets/completion_celebration.dart';
 import '../widgets/event_detail_page.dart';
 import '../widgets/event_quiz_dialog.dart';
 import '../widgets/font_scale_bottom_sheet.dart';
-import '../widgets/notification/notification_bell_button.dart';
 import '../widgets/notification/notification_deep_link.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/profile_tab_page.dart';

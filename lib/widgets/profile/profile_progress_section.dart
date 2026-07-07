@@ -5,8 +5,14 @@
 part of '../profile_tab_page.dart';
 
 extension ProfileProgressSectionExt on ProfileTabPageState {
-  Widget _buildProfileProgressSection({bool scrollBody = true}) {
-    final body = _profileProgressLifeBody();
+  Widget _buildProfileProgressSection({
+    required AppUserProfile profile,
+    bool scrollBody = true,
+  }) {
+    final body = ProfileLeftPanelExt(this)._buildProfileBodyShell(
+      profile: profile,
+      child: _profileProgressLifeBody(),
+    );
     if (!scrollBody) {
       return body;
     }
@@ -20,12 +26,16 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
   Widget _profileProgressLifeBody() {
     final state = ref.watch(storyControllerProvider);
     final bibleProgress = _profileBibleProgress(state);
+    final lastCompletedChapter = _profileLastCompletedBibleChapter(
+      state.completedBibleChapterKeys,
+    );
     final today = toKst(DateTime.now());
     final bibleProgressSummary = ProfileBibleProgressSummary(
       completed: bibleProgress.completed,
       total: bibleProgress.total,
       fraction: bibleProgress.fraction,
-      lastVerse: _profileSavedVersesPreview.firstOrNull,
+      lastCompletedBookNo: lastCompletedChapter?.bookNo,
+      lastCompletedChapterNo: lastCompletedChapter?.chapterNo,
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -45,23 +55,8 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
           bibleProgress: bibleProgressSummary,
           onOpenBibleProgress: _openBibleProgressDialog,
           onContinueBibleReading: () {
-            unawaited(_openBibleReaderFromLatestSavedVerse());
+            unawaited(_openBibleReaderFromLastCompletedChapter());
           },
-        ),
-        const SizedBox(height: 10),
-        ProfileEmotionDiary(
-          eventEmotionMarks: state.eventEmotionMarks,
-          companionDiaryEntries: _profileCompanionDiaryEntries,
-          companionDiaryLoading: _profileCompanionDiaryLoading,
-          companionDiaryError: _profileCompanionDiaryError,
-          onSaveCompanionDiary: _saveCompanionDiaryEntry,
-          onDeleteCompanionDiary: _deleteCompanionDiaryEntry,
-          bibleProgress: bibleProgressSummary,
-          onOpenBibleProgress: _openBibleProgressDialog,
-          onContinueBibleReading: () {
-            unawaited(_openBibleReaderFromLatestSavedVerse());
-          },
-          showFeatureCards: false,
         ),
       ],
     );

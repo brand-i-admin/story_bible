@@ -75,11 +75,14 @@ extension ProfileHelpersExt on ProfileTabPageState {
             height: 32,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: palette.cardSurface,
+              color: Color.alphaBlend(
+                palette.primary.withValues(alpha: 0.06),
+                palette.cardSurface,
+              ),
               borderRadius: BorderRadius.circular(9),
               border: Border.all(color: palette.subtleBorder, width: 1),
             ),
-            child: Icon(icon, size: 17, color: palette.primary),
+            child: Icon(icon, size: 17, color: palette.text),
           ),
         ),
       ),

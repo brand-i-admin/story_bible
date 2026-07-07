@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/auth_repository.dart';
+import '../models/app_notification.dart';
 import '../models/app_user_profile.dart';
 import '../models/character.dart';
 import '../models/era.dart';
@@ -29,9 +30,9 @@ import '../theme/typography.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/kst_date.dart';
 import '../utils/scene_asset_loader.dart';
-import 'emotion_badge_icon.dart';
 import 'inline_login_prompt_card.dart';
 import 'map/map_attribution_dialog.dart';
+import 'notification/notification_bell_button.dart';
 import 'parchment_dialog.dart';
 import 'parchment_page_scaffold.dart';
 import 'profile/glowing_add_button.dart';
@@ -82,13 +83,16 @@ const Map<String, int> _profileStoryEraCodeOrder = {
 /// - [onStartQuiz]: 인물 상세에서 이벤트 퀴즈 시작
 /// - [onOpenEventDetail]: 이벤트 상세 페이지 열기
 /// - [onOpenBibleReader]: 저장 구절 이동 시 성경 리더 열기
+/// - [onOpenAppPublications]: 공지사항과 사용법 페이지 열기
 class ProfileTabPage extends ConsumerStatefulWidget {
   const ProfileTabPage({
     super.key,
     required this.onStartQuiz,
     required this.onOpenEventDetail,
     required this.onOpenBibleReader,
-    this.onNavigateStory,
+    required this.onOpenAppPublications,
+    required this.onNavigateNotification,
+    required this.onOpenNotificationHistory,
     this.onExploreStoriesFromHome,
   });
 
@@ -100,11 +104,9 @@ class ProfileTabPage extends ConsumerStatefulWidget {
     int? initialVerseNo,
   })
   onOpenBibleReader;
-  final Future<void> Function({
-    required StoryEvent from,
-    required StoryEvent target,
-  })?
-  onNavigateStory;
+  final VoidCallback onOpenAppPublications;
+  final void Function(AppNotification notification) onNavigateNotification;
+  final VoidCallback onOpenNotificationHistory;
   final VoidCallback? onExploreStoriesFromHome;
 
   @override
@@ -112,8 +114,6 @@ class ProfileTabPage extends ConsumerStatefulWidget {
 }
 
 enum _ProfileContentTab { prayer, saved, verses }
-
-enum _ProfileQuizReviewFilter { wrong, confused }
 
 enum _StoryProgressFilter { all, completed, incomplete }
 
@@ -740,9 +740,12 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildProfileHeader(profile: profile),
+                _buildProfileHeader(),
                 const SizedBox(height: 6),
-                _buildProfileProgressSection(scrollBody: false),
+                _buildProfileProgressSection(
+                  profile: profile,
+                  scrollBody: false,
+                ),
                 if (showPrayerActivitySection) ...[
                   const SizedBox(height: 8),
                   _profileSectionsFrame(
@@ -769,14 +772,18 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildProfileHeader(profile: profile),
+              _buildProfileHeader(),
               const SizedBox(height: 6),
               Expanded(
                 child: showPrayerActivitySection
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(child: _buildProfileProgressSection()),
+                          Expanded(
+                            child: _buildProfileProgressSection(
+                              profile: profile,
+                            ),
+                          ),
                           SizedBox(width: gap),
                           SizedBox(
                             width: leftWidth,
@@ -792,7 +799,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
                           ),
                         ],
                       )
-                    : _buildProfileProgressSection(),
+                    : _buildProfileProgressSection(profile: profile),
               ),
             ],
           ),

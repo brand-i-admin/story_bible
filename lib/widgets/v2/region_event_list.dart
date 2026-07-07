@@ -178,6 +178,7 @@ class StoryEventThumbCard extends StatelessWidget {
     this.attemptSummary,
     this.orderNumber,
     this.showSummary = true,
+    this.showCharacterPills = true,
     this.forceOpaqueSurface = false,
     this.expandSurface = false,
     this.highlightedCharacterCodes = const <String>{},
@@ -195,6 +196,7 @@ class StoryEventThumbCard extends StatelessWidget {
   final QuizAttemptSummary? attemptSummary;
   final int? orderNumber;
   final bool showSummary;
+  final bool showCharacterPills;
   final bool forceOpaqueSurface;
   final bool expandSurface;
   final SceneAssetLoader loader;
@@ -246,21 +248,24 @@ class StoryEventThumbCard extends StatelessWidget {
 
   Widget _buildCardSurface(BuildContext context, ThemeData theme) {
     final palette = AppPaletteTheme.of(context);
-    final quizTone = _QuizCardTone.fromAttempt(attemptSummary);
+    final quizTone = _QuizCardTone.fromAttempt(attemptSummary, palette);
     final surfaceColor =
         quizTone?.background ??
         (completed
-            ? palette.completedSurface
+            ? Color.alphaBlend(palette.completedSurface, palette.cardSurface)
             : (selected
-                  ? palette.selectedSurface
+                  ? Color.alphaBlend(
+                      palette.selectedSurface,
+                      palette.cardSurface,
+                    )
                   : (forceOpaqueSurface
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.85))));
+                        ? palette.cardSurface
+                        : palette.cardSurface.withValues(alpha: 0.92))));
     final borderColor =
         quizTone?.border ??
         (completed
             ? palette.completedBorder
-            : (selected ? palette.selectedBorder : const Color(0xFFD9C9A2)));
+            : (selected ? palette.selectedBorder : palette.subtleBorder));
     return Material(
       color: surfaceColor,
       borderRadius: BorderRadius.circular(14),
@@ -340,9 +345,10 @@ class StoryEventThumbCard extends StatelessWidget {
           SizedBox(height: gapBeforeSummary),
           _ThumbSummary(summary: summary, maxLines: summaryMaxLines),
         ],
-        SizedBox(height: gapBeforePills),
-        if (event.characterCodes.isNotEmpty)
+        if (showCharacterPills && event.characterCodes.isNotEmpty) ...[
+          SizedBox(height: gapBeforePills),
           _buildCharacterPills(height: characterPillsHeight),
+        ],
       ],
     );
   }
@@ -405,12 +411,13 @@ class _CardThumbnailFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return ClipOval(
       child: SizedBox(
         width: size,
         height: size,
         child: ColoredBox(
-          color: const Color(0xFFF1E4C8),
+          color: palette.mutedSurface,
           child: _CardThumbnail(
             event: event,
             loader: loader,
@@ -437,6 +444,7 @@ class _ThumbTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Text(
       event.title,
       maxLines: maxLines,
@@ -444,6 +452,7 @@ class _ThumbTitle extends StatelessWidget {
       softWrap: true,
       textAlign: TextAlign.center,
       style: theme.textTheme.titleSmall?.copyWith(
+        color: palette.text,
         fontWeight: FontWeight.w700,
         fontSize: fontSize,
         height: maxLines == null ? 1.14 : 1.08,
@@ -460,6 +469,7 @@ class _ThumbMetaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final hasPlace = placeName != null && placeName!.isNotEmpty;
     if (!hasPlace && yearLabel == null) return const SizedBox.shrink();
     return SizedBox(
@@ -471,36 +481,36 @@ class _ThumbMetaRow extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (hasPlace) ...[
-              const Icon(Icons.location_on, size: 10, color: AppColors.ink500),
+              Icon(Icons.location_on, size: 10, color: palette.primary),
               const SizedBox(width: 1),
               Text(
                 placeName!,
                 maxLines: 1,
                 overflow: TextOverflow.visible,
                 softWrap: false,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.ink500,
+                  color: palette.mutedText,
                   height: 1.1,
                 ),
               ),
             ],
             if (hasPlace && yearLabel != null)
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3),
                 child: Text(
                   '·',
-                  style: TextStyle(fontSize: 10, color: AppColors.ink400),
+                  style: TextStyle(fontSize: 10, color: palette.mutedText),
                 ),
               ),
             if (yearLabel != null)
               Text(
                 yearLabel!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.ink500,
+                  color: palette.mutedText,
                   height: 1.1,
                 ),
               ),
@@ -519,17 +529,14 @@ class _ThumbSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Text(
       summary,
       maxLines: maxLines,
       overflow: maxLines == null ? TextOverflow.visible : TextOverflow.ellipsis,
       softWrap: true,
       textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontSize: 10,
-        height: 1.3,
-        color: AppColors.ink600,
-      ),
+      style: TextStyle(fontSize: 10, height: 1.3, color: palette.mutedText),
     );
   }
 }
@@ -647,25 +654,37 @@ class _QuizCardTone {
   final Color background;
   final Color border;
 
-  static _QuizCardTone? fromAttempt(QuizAttemptSummary? attempt) {
+  static _QuizCardTone? fromAttempt(
+    QuizAttemptSummary? attempt,
+    AppColorPalette palette,
+  ) {
     if (attempt == null || attempt.totalCount <= 0) {
       return null;
     }
     if (attempt.correctCount <= 0) {
-      return const _QuizCardTone(
-        background: Color(0xFFF7DAD2),
+      return _QuizCardTone(
+        background: Color.alphaBlend(
+          AppColors.dangerBot.withValues(alpha: 0.18),
+          palette.cardSurface,
+        ),
         border: AppColors.dangerBot,
       );
     }
     if (attempt.correctCount >= attempt.totalCount) {
-      return const _QuizCardTone(
-        background: AppColors.greenTint1,
-        border: AppColors.greenBorder,
+      return _QuizCardTone(
+        background: Color.alphaBlend(
+          palette.successBottom.withValues(alpha: 0.18),
+          palette.cardSurface,
+        ),
+        border: palette.successBottom,
       );
     }
-    return const _QuizCardTone(
-      background: Color(0xFFF6E7B8),
-      border: AppColors.goldDeep,
+    return _QuizCardTone(
+      background: Color.alphaBlend(
+        palette.currentAccent.withValues(alpha: 0.20),
+        palette.cardSurface,
+      ),
+      border: palette.currentAccentDeep,
     );
   }
 }
@@ -772,15 +791,21 @@ class _CharPillAvatar extends StatelessWidget {
     final defaultColor = palette.primary;
     final defaultText = palette.primaryDeep;
     final color = accentColor ?? defaultColor;
-    final textColor = accentColor != null
-        ? Color.alphaBlend(color.withValues(alpha: 0.85), Colors.black)
-        : defaultText;
+    final darkSurface =
+        ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
+        Brightness.dark;
+    final textColor = darkSurface
+        ? palette.text
+        : (accentColor != null
+              ? Color.alphaBlend(color.withValues(alpha: 0.85), Colors.black)
+              : defaultText);
+    final backgroundColor = color.withValues(alpha: darkSurface ? 0.34 : 0.20);
     final avatarCharacter =
         character ?? _localAvatarFallbackCharacter(code, name);
     return Container(
       padding: const EdgeInsets.fromLTRB(2, 2, 6, 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.20),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(10),
         border: accentColor != null
             ? Border.all(color: color.withValues(alpha: 0.55), width: 0.8)

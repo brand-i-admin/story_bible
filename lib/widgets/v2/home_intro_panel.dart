@@ -40,7 +40,7 @@ class HomeIntroPanel extends StatelessWidget {
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     // 시대를 골랐으면 1번 영역(헤더+칩)은 흐리게 처리해 시선을 2번으로 유도.
     // 다시 고르려면 패널 위 "시대 다시 선택" 또는 stepper 의 "시대/방법"을 사용한다.
-    final eraStepOpacity = canPickMode ? 0.55 : 1.0;
+    final eraStepOpacity = canPickMode ? 0.78 : 1.0;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
@@ -89,7 +89,7 @@ class HomeIntroPanel extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           AnimatedOpacity(
-            opacity: canPickMode ? 1.0 : 0.45,
+            opacity: canPickMode ? 1.0 : 0.62,
             duration: const Duration(milliseconds: 240),
             curve: Curves.easeOut,
             child: IgnorePointer(
@@ -144,23 +144,23 @@ class HomeIntroPanel extends StatelessWidget {
             padding: const EdgeInsets.only(right: _homeIntroHorizontalPadding),
             child: Center(
               child: largeText
-                  ? const Text(
+                  ? Text(
                       '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
                       textAlign: TextAlign.center,
                       softWrap: true,
                       style: TextStyle(
-                        color: AppColors.ink450,
+                        color: palette.mutedText,
                         fontSize: 11.5,
                         fontWeight: FontWeight.w700,
                       ),
                     )
-                  : const FittedBox(
+                  : FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
                         '💡  시대를 켜면 지도 위에 같은 색으로 영역이 표시됩니다.',
                         maxLines: 1,
                         style: TextStyle(
-                          color: AppColors.ink450,
+                          color: palette.mutedText,
                           fontSize: 11.5,
                           fontWeight: FontWeight.w700,
                         ),
@@ -196,13 +196,14 @@ class _StepHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final Color color;
     if (!enabled) {
-      color = AppColors.ink150;
+      color = palette.mutedText.withValues(alpha: 0.68);
     } else if (highlighted) {
-      color = AppColors.ink800;
+      color = palette.text;
     } else {
-      color = AppColors.ink450;
+      color = palette.mutedText;
     }
     return Row(
       children: [
@@ -250,6 +251,7 @@ class _ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final minHeight = 88.0 + ((textScale - 1) * 70).clamp(0.0, 34.0);
     return Material(
@@ -257,12 +259,12 @@ class _ModeCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadii.md),
-        splashColor: AppColors.oceanBot.withValues(alpha: 0.18),
-        highlightColor: AppColors.oceanBot.withValues(alpha: 0.10),
+        splashColor: accent.withValues(alpha: 0.18),
+        highlightColor: accent.withValues(alpha: 0.10),
         child: Container(
           constraints: BoxConstraints(minHeight: minHeight),
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-          decoration: softButtonDecoration(selected: false),
+          decoration: softButtonDecoration(selected: false, palette: palette),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -280,11 +282,11 @@ class _ModeCard extends StatelessWidget {
                       overflow: TextOverflow.visible,
                       softWrap: true,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11.2,
                         height: 1.12,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.ink800,
+                        color: palette.text,
                       ),
                     ),
                   ],
@@ -301,11 +303,11 @@ class _ModeCard extends StatelessWidget {
                     softWrap: false,
                     overflow: TextOverflow.visible,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 9.4,
                       height: 1.18,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.ink600,
+                      color: palette.mutedText,
                     ),
                   ),
                 ),

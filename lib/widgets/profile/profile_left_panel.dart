@@ -7,6 +7,26 @@ bool _profileUsesLargeTextLayout(BuildContext context) {
   return MediaQuery.textScalerOf(context).scale(1) >= 1.3;
 }
 
+DateTime _profileDateOnly(DateTime value) {
+  return DateTime(value.year, value.month, value.day);
+}
+
+bool _profileSameDate(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+DateTime _profileMarkKstDate(EventEmotionMark mark) {
+  final updatedAt = mark.updatedAt;
+  if (updatedAt == null) {
+    return _profileDateOnly(toKst(DateTime.now()));
+  }
+  return _profileDateOnly(kstDateForDisplay(updatedAt, now: DateTime.now()));
+}
+
+String _formatProfileDateLabel(DateTime date) {
+  return '${date.month}월 ${date.day}일';
+}
+
 BoxDecoration _profileTabRailDecoration(
   BuildContext context, {
   required Color accent,
@@ -164,100 +184,34 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     return (86 + visibleVerses * 52).clamp(154.0, 236.0).toDouble();
   }
 
-  Widget _buildProfileHeader({required AppUserProfile profile}) {
+  Widget _buildProfileHeader() {
     final palette = AppPaletteTheme.of(context);
-    final largeText = _profileUsesLargeTextLayout(context);
     return Padding(
       padding: const EdgeInsets.only(left: 56, right: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: Tooltip(
-              message: '프로필 수정',
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: _openProfileEditor,
-                  borderRadius: BorderRadius.circular(14),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 3,
-                    ),
-                    child: Row(
-                      children: [
-                        _buildCurrentUserAvatar(profile: profile, size: 56),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: '샬롬! 🙌 ',
-                                      style: TextStyle(
-                                        color: palette.mutedText,
-                                        fontSize: largeText ? 11.4 : 12.0,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: profile.nickname,
-                                      style: TextStyle(
-                                        color: palette.text,
-                                        fontSize: largeText ? 17.2 : 18.4,
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: '님',
-                                      style: TextStyle(
-                                        color: palette.mutedText,
-                                        fontSize: largeText ? 11.4 : 12.0,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                maxLines: largeText ? 2 : 1,
-                                overflow: largeText
-                                    ? TextOverflow.visible
-                                    : TextOverflow.ellipsis,
-                                softWrap: true,
-                              ),
-                              const SizedBox(height: 3),
-                              Text(
-                                '오늘도 말씀 안에서\n승리하는 하루 되세요!',
-                                maxLines: 2,
-                                overflow: largeText
-                                    ? TextOverflow.visible
-                                    : TextOverflow.ellipsis,
-                                softWrap: true,
-                                style: TextStyle(
-                                  color: palette.mutedText,
-                                  fontSize: largeText ? 11.0 : 11.6,
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.18,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+            child: Text(
+              '프로필',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.sectionTitle.copyWith(
+                color: palette.text,
+                fontSize: 21,
+                fontWeight: FontWeight.w900,
               ),
             ),
           ),
           _profileTinyIconButton(
-            tooltip: '프로필 수정',
-            onTap: _openProfileEditor,
-            icon: Icons.edit_rounded,
+            tooltip: '공지사항과 사용법',
+            onTap: widget.onOpenAppPublications,
+            icon: Icons.campaign_rounded,
+          ),
+          const SizedBox(width: 4),
+          NotificationBellButton(
+            onNavigate: widget.onNavigateNotification,
+            onOpenHistory: widget.onOpenNotificationHistory,
           ),
           const SizedBox(width: 4),
           _profileTinyIconButton(
@@ -266,6 +220,159 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
             icon: Icons.settings_outlined,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildProfileBodyShell({
+    required AppUserProfile profile,
+    required Widget child,
+  }) {
+    final palette = AppPaletteTheme.of(context);
+    final borderColor = palette.subtleBorder.withValues(alpha: 0.7);
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color.alphaBlend(
+              palette.primary.withValues(alpha: 0.04),
+              palette.softSurface,
+            ),
+            Color.alphaBlend(
+              palette.currentAccent.withValues(alpha: 0.05),
+              palette.cardSurface,
+            ),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: borderColor, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: palette.primaryDeep.withValues(alpha: 0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildProfileIdentityCard(profile: profile),
+            const SizedBox(height: 10),
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileIdentityCard({required AppUserProfile profile}) {
+    final palette = AppPaletteTheme.of(context);
+    final largeText = _profileUsesLargeTextLayout(context);
+    return Tooltip(
+      message: '프로필 수정',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _openProfileEditor,
+          borderRadius: BorderRadius.circular(18),
+          child: Ink(
+            padding: EdgeInsets.fromLTRB(
+              largeText ? 10 : 12,
+              largeText ? 9 : 10,
+              10,
+              largeText ? 9 : 10,
+            ),
+            decoration: BoxDecoration(
+              color: Color.alphaBlend(
+                palette.primary.withValues(alpha: 0.035),
+                palette.softSurface,
+              ),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: palette.subtleBorder.withValues(alpha: 0.75),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                _buildCurrentUserAvatar(
+                  profile: profile,
+                  size: largeText ? 58 : 64,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '샬롬! 🙌 ',
+                              style: TextStyle(
+                                color: palette.mutedText,
+                                fontSize: largeText ? 12.0 : 12.8,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            TextSpan(
+                              text: profile.nickname,
+                              style: TextStyle(
+                                color: palette.text,
+                                fontSize: largeText ? 17.8 : 19.0,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '님',
+                              style: TextStyle(
+                                color: palette.mutedText,
+                                fontSize: largeText ? 12.0 : 12.8,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                        maxLines: largeText ? 2 : 1,
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '오늘도 말씀 안에서\n승리하는 하루 되세요!',
+                        maxLines: 2,
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
+                        style: TextStyle(
+                          color: palette.mutedText,
+                          fontSize: largeText ? 11.4 : 12.0,
+                          fontWeight: FontWeight.w700,
+                          height: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: palette.mutedText,
+                  size: largeText ? 24 : 28,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -427,16 +534,6 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       events: orderedJourneyEvents,
       eras: state.eras,
     );
-    final recentJourneyIndex = lastEmotionEvent == null
-        ? -1
-        : journeyEntries.indexWhere(
-            (entry) => entry.event?.id == lastEmotionEvent.id,
-          );
-    final nextJourneyEventId =
-        recentJourneyIndex >= 0 &&
-            recentJourneyIndex + 1 < journeyEntries.length
-        ? journeyEntries[recentJourneyIndex + 1].event?.id
-        : null;
     final charactersByCode = <String, Character>{
       for (final character in _profileAllPeople) character.code: character,
       for (final character in state.characters) character.code: character,
@@ -450,21 +547,16 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       eventEmotionMarks: state.eventEmotionMarks,
       quizAttemptSummaries: state.quizAttemptSummaries,
       storyProgress: _profileStoryProgress(state),
+      explorationLogCount:
+          state.eventEmotionMarks.length + _profileCompanionDiaryEntries.length,
       savedStoryCount: state.savedEventIds.length,
       savedVerseCount: _profileSavedVersesCount,
       onExploreStoriesFromHome: widget.onExploreStoriesFromHome,
       onOpenStoryProgress: _openStoryProgressPage,
+      onOpenExplorationLog: _openExplorationLogPage,
       onOpenSavedStories: _openSavedStoriesOverview,
       onOpenSavedVerses: _openSavedVersesPage,
       onOpenStory: (target) {
-        final from = lastEmotionEvent;
-        final navigate = widget.onNavigateStory;
-        final isCanonicalNextStory =
-            nextJourneyEventId != null && target.id == nextJourneyEventId;
-        if (from != null && isCanonicalNextStory && navigate != null) {
-          unawaited(navigate(from: from, target: target));
-          return;
-        }
         widget.onOpenEventDetail(
           target,
           source: ProfileEventOpenSource.targetOnly,
@@ -798,71 +890,6 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
-  Widget _buildProfileReviewEventList({
-    required Set<String> eventIds,
-    required String emptyText,
-    ValueChanged<StoryEvent>? onOpenEventDetail,
-  }) {
-    if (eventIds.isEmpty) {
-      return _buildProfileTabMessage(emptyText);
-    }
-    return FutureBuilder<List<StoryEvent>>(
-      future: ref.read(storyRepositoryProvider).fetchEventsByIds(eventIds),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return _buildProfileTabMessage(
-            '복습할 이야기를 불러오지 못했습니다.\n${snapshot.error}',
-            textColor: const Color(0xFF7E3426),
-          );
-        }
-        final state = ref.read(storyControllerProvider);
-        final events = _sortEventsByEraThenIndex(
-          snapshot.data ?? const <StoryEvent>[],
-          state.eras,
-        );
-        if (events.isEmpty) {
-          return _buildProfileTabMessage(emptyText);
-        }
-        final charactersByCode = <String, Character>{
-          for (final character in _profileAllPeople) character.code: character,
-          for (final character in state.characters) character.code: character,
-        };
-        return ProfileEventReviewGrid(
-          events: events,
-          eras: state.eras,
-          charactersByCode: charactersByCode,
-          completedEventIds: state.completedEventIds,
-          eventEmotionMarks: state.eventEmotionMarks,
-          quizAttemptSummaries: state.quizAttemptSummaries,
-          emptyText: emptyText,
-          onOpenEventDetail: onOpenEventDetail ?? widget.onOpenEventDetail,
-        );
-      },
-    );
-  }
-
-  Future<void> _openProfileQuizReviewDialog({
-    required _ProfileQuizReviewFilter filter,
-    required Set<String> eventIds,
-  }) async {
-    final title = switch (filter) {
-      _ProfileQuizReviewFilter.wrong => '오답 이야기',
-      _ProfileQuizReviewFilter.confused => '헷갈려요 이야기',
-    };
-    final emptyText = switch (filter) {
-      _ProfileQuizReviewFilter.wrong => '틀린 이야기가 없습니다.',
-      _ProfileQuizReviewFilter.confused => '헷갈렸던 이야기가 없습니다.',
-    };
-    await _openProfileReviewDialog(
-      title: title,
-      eventIds: eventIds,
-      emptyText: emptyText,
-    );
-  }
-
   Future<void> _openStoryProgressPage() async {
     final state = ref.read(storyControllerProvider);
     final events = _profileAllEvents.isNotEmpty
@@ -877,7 +904,6 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       for (final character in _profileAllPeople) character.code: character,
       for (final character in state.characters) character.code: character,
     };
-    final quizStats = buildProfileQuizStats(state.quizAttemptSummaries);
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => _ProfileStoryProgressPage(
@@ -888,19 +914,36 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
           completedEventIds: state.completedEventIds,
           eventEmotionMarks: state.eventEmotionMarks,
           quizAttemptSummaries: state.quizAttemptSummaries,
+          onOpenEventDetail: widget.onOpenEventDetail,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openExplorationLogPage() async {
+    final state = ref.read(storyControllerProvider);
+    final events = _profileAllEvents.isNotEmpty
+        ? _profileAllEvents
+        : state.events;
+    final quizStats = buildProfileQuizStats(state.quizAttemptSummaries);
+
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => _ProfileExplorationLogPage(
+          events: events,
+          eras: state.eras,
+          charactersByCode: {
+            for (final character in _profileAllPeople)
+              character.code: character,
+            for (final character in state.characters) character.code: character,
+          },
+          completedEventIds: state.completedEventIds,
+          eventEmotionMarks: state.eventEmotionMarks,
+          quizAttemptSummaries: state.quizAttemptSummaries,
           quizStats: quizStats,
-          onTapWrong: () {
-            _openProfileQuizReviewDialog(
-              filter: _ProfileQuizReviewFilter.wrong,
-              eventIds: quizStats.wrongEventIds,
-            );
-          },
-          onTapConfused: () {
-            _openProfileQuizReviewDialog(
-              filter: _ProfileQuizReviewFilter.confused,
-              eventIds: quizStats.confusedEventIds,
-            );
-          },
+          companionDiaryEntries: _profileCompanionDiaryEntries,
+          companionDiaryLoading: _profileCompanionDiaryLoading,
+          companionDiaryError: _profileCompanionDiaryError,
           onOpenEventDetail: widget.onOpenEventDetail,
         ),
       ),
@@ -909,9 +952,11 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
   Future<void> _openBibleProgressDialog() async {
     final state = ref.read(storyControllerProvider);
-    final latestVerse = _profileSavedVersesPreview.firstOrNull;
+    final lastCompletedChapter = _profileLastCompletedBibleChapter(
+      state.completedBibleChapterKeys,
+    );
     var selectedBookNo =
-        latestVerse?.bookNo.clamp(1, bibleBooks.length).toInt() ??
+        lastCompletedChapter?.bookNo.clamp(1, bibleBooks.length).toInt() ??
         oldTestamentFirstBookNo;
     var selectedTestament = isNewTestamentBook(selectedBookNo) ? 'new' : 'old';
 
@@ -1054,9 +1099,12 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
-  Future<void> _openBibleReaderFromLatestSavedVerse() async {
-    final latestVerse = _profileSavedVersesPreview.firstOrNull;
-    if (latestVerse == null) {
+  Future<void> _openBibleReaderFromLastCompletedChapter() async {
+    final state = ref.read(storyControllerProvider);
+    final lastCompletedChapter = _profileLastCompletedBibleChapter(
+      state.completedBibleChapterKeys,
+    );
+    if (lastCompletedChapter == null) {
       await widget.onOpenBibleReader(
         initialBookNo: oldTestamentFirstBookNo,
         initialChapterNo: 1,
@@ -1064,7 +1112,10 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       return;
     }
 
-    final target = _nextBibleChapterAfter(latestVerse);
+    final target = _nextBibleChapterAfter(
+      bookNo: lastCompletedChapter.bookNo,
+      chapterNo: lastCompletedChapter.chapterNo,
+    );
     if (target == null) {
       if (!mounted) {
         return;
@@ -1080,92 +1131,40 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
-  ({int bookNo, int chapterNo})? _nextBibleChapterAfter(SavedBibleVerse verse) {
-    final bookNo = verse.bookNo.clamp(1, bibleBooks.length).toInt();
-    final maxChapter = bibleBooks[bookNo - 1].chapters;
-    final chapterNo = verse.chapterNo.clamp(1, maxChapter).toInt();
+  ({int bookNo, int chapterNo})? _nextBibleChapterAfter({
+    required int bookNo,
+    required int chapterNo,
+  }) {
+    final safeBookNo = bookNo.clamp(1, bibleBooks.length).toInt();
+    final maxChapter = bibleBooks[safeBookNo - 1].chapters;
+    final safeChapterNo = chapterNo.clamp(1, maxChapter).toInt();
 
-    if (chapterNo < maxChapter) {
-      return (bookNo: bookNo, chapterNo: chapterNo + 1);
+    if (safeChapterNo < maxChapter) {
+      return (bookNo: safeBookNo, chapterNo: safeChapterNo + 1);
     }
-    if (bookNo < bibleBooks.length) {
-      return (bookNo: bookNo + 1, chapterNo: 1);
+    if (safeBookNo < bibleBooks.length) {
+      return (bookNo: safeBookNo + 1, chapterNo: 1);
     }
     return null;
   }
 
-  Future<void> _openProfileReviewDialog({
-    required String title,
-    required Set<String> eventIds,
-    required String emptyText,
-  }) async {
-    await showGeneralDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'close',
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 260),
-      pageBuilder: (dialogContext, _, __) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: 820,
-              maxHeight: MediaQuery.of(dialogContext).size.height * 0.84,
-              minWidth: 320,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  clipBehavior: Clip.hardEdge,
-                  decoration: modalSurfaceDecoration(),
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              title,
-                              style: const TextStyle(
-                                color: AppColors.ink900,
-                                fontSize: 21,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Expanded(
-                              child: _buildProfileReviewEventList(
-                                eventIds: eventIds,
-                                emptyText: emptyText,
-                                onOpenEventDetail: (event) {
-                                  Navigator.of(dialogContext).pop();
-                                  widget.onOpenEventDetail(event);
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        right: 12,
-                        top: 12,
-                        child: modalCloseButton(
-                          onTap: () => Navigator.of(dialogContext).pop(),
-                          size: 32,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+  ({int bookNo, int chapterNo})? _profileLastCompletedBibleChapter(
+    Set<String> completedChapterKeys,
+  ) {
+    ({int bookNo, int chapterNo})? latest;
+    for (var bookNo = 1; bookNo <= bibleBooks.length; bookNo += 1) {
+      final maxChapter = bibleBooks[bookNo - 1].chapters;
+      for (var chapterNo = 1; chapterNo <= maxChapter; chapterNo += 1) {
+        final key = bibleChapterProgressKey(
+          bookNo: bookNo,
+          chapterNo: chapterNo,
         );
-      },
-    );
+        if (completedChapterKeys.contains(key)) {
+          latest = (bookNo: bookNo, chapterNo: chapterNo);
+        }
+      }
+    }
+    return latest;
   }
 
   Widget _buildSavedStoryCarousel(List<StoryEvent> events) {
@@ -1510,10 +1509,12 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
     required this.eventEmotionMarks,
     required this.quizAttemptSummaries,
     required this.storyProgress,
+    required this.explorationLogCount,
     required this.savedStoryCount,
     required this.savedVerseCount,
     required this.onExploreStoriesFromHome,
     required this.onOpenStoryProgress,
+    required this.onOpenExplorationLog,
     required this.onOpenSavedStories,
     required this.onOpenSavedVerses,
     required this.onOpenStory,
@@ -1526,10 +1527,12 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
   final Map<String, EventEmotionMark> eventEmotionMarks;
   final Map<String, QuizAttemptSummary> quizAttemptSummaries;
   final ({int completed, int total, double fraction}) storyProgress;
+  final int explorationLogCount;
   final int savedStoryCount;
   final int savedVerseCount;
   final VoidCallback? onExploreStoriesFromHome;
   final VoidCallback onOpenStoryProgress;
+  final VoidCallback onOpenExplorationLog;
   final VoidCallback onOpenSavedStories;
   final VoidCallback onOpenSavedVerses;
   final ValueChanged<StoryEvent> onOpenStory;
@@ -1547,12 +1550,12 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [
                 Color.alphaBlend(
-                  palette.regionAccent.withValues(alpha: 0.05),
-                  Colors.white,
+                  palette.regionAccent.withValues(alpha: 0.08),
+                  palette.softSurface,
                 ),
                 Color.alphaBlend(
-                  palette.currentAccent.withValues(alpha: 0.04),
-                  AppColors.parchmentCream.withValues(alpha: 0.92),
+                  palette.currentAccent.withValues(alpha: 0.07),
+                  palette.panelSurface,
                 ),
               ],
             ),
@@ -1574,9 +1577,11 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
             children: [
               _StoryExplorationSummarySection(
                 storyProgress: storyProgress,
+                explorationLogCount: explorationLogCount,
                 savedStoryCount: savedStoryCount,
                 savedVerseCount: savedVerseCount,
                 onOpenStoryProgress: onOpenStoryProgress,
+                onOpenExplorationLog: onOpenExplorationLog,
                 onOpenSavedStories: onOpenSavedStories,
                 onOpenSavedVerses: onOpenSavedVerses,
               ),
@@ -1591,6 +1596,8 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
                 onExploreStoriesFromHome: onExploreStoriesFromHome,
                 onOpenStory: onOpenStory,
               ),
+              const SizedBox(height: 7),
+              const _StoryJourneyGuideNote(),
             ],
           ),
         );
@@ -1602,17 +1609,21 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
 class _StoryExplorationSummarySection extends StatelessWidget {
   const _StoryExplorationSummarySection({
     required this.storyProgress,
+    required this.explorationLogCount,
     required this.savedStoryCount,
     required this.savedVerseCount,
     required this.onOpenStoryProgress,
+    required this.onOpenExplorationLog,
     required this.onOpenSavedStories,
     required this.onOpenSavedVerses,
   });
 
   final ({int completed, int total, double fraction}) storyProgress;
+  final int explorationLogCount;
   final int savedStoryCount;
   final int savedVerseCount;
   final VoidCallback onOpenStoryProgress;
+  final VoidCallback onOpenExplorationLog;
   final VoidCallback onOpenSavedStories;
   final VoidCallback onOpenSavedVerses;
 
@@ -1634,7 +1645,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
             Expanded(
               child: _StoryExplorationSummaryCard(
                 key: const ValueKey('profile-story-summary-explored'),
-                label: '탐험한 이야기',
+                label: '탐험한\n이야기',
                 icon: Icons.flag_rounded,
                 color: palette.regionAccent,
                 onTap: onOpenStoryProgress,
@@ -1646,7 +1657,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
                         text: '/$totalLabel',
                         style: TextStyle(
                           color: palette.mutedText,
-                          fontSize: 14,
+                          fontSize: 12.2,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -1655,22 +1666,33 @@ class _StoryExplorationSummarySection extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 7),
+            const SizedBox(width: 5),
+            Expanded(
+              child: _StoryExplorationSummaryCard(
+                key: const ValueKey('profile-story-summary-exploration-log'),
+                label: '탐험\n로그',
+                icon: Icons.history_rounded,
+                color: palette.currentAccentDeep,
+                onTap: onOpenExplorationLog,
+                value: Text('$explorationLogCount개'),
+              ),
+            ),
+            const SizedBox(width: 5),
             Expanded(
               child: _StoryExplorationSummaryCard(
                 key: const ValueKey('profile-story-summary-saved-stories'),
-                label: '저장 이야기 개수',
+                label: '저장\n이야기',
                 icon: Icons.bookmark_rounded,
                 color: palette.primary,
                 onTap: onOpenSavedStories,
                 value: Text('$savedStoryCount개'),
               ),
             ),
-            const SizedBox(width: 7),
+            const SizedBox(width: 5),
             Expanded(
               child: _StoryExplorationSummaryCard(
                 key: const ValueKey('profile-story-summary-saved-verses'),
-                label: '저장한 말씀',
+                label: '저장한\n말씀',
                 icon: Icons.menu_book_rounded,
                 color: palette.currentAccentDeep,
                 onTap: onOpenSavedVerses,
@@ -1704,63 +1726,163 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final largeText = _profileUsesLargeTextLayout(context);
+    final labelIconSize = largeText ? 15.2 : 17.0;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 74),
-          padding: EdgeInsets.fromLTRB(8, largeText ? 8 : 9, 8, 8),
+        child: Ink(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.96),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.alphaBlend(
+                  color.withValues(alpha: 0.11),
+                  palette.cardSurface,
+                ),
+                Color.alphaBlend(
+                  color.withValues(alpha: 0.045),
+                  palette.softSurface,
+                ),
+              ],
+            ),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: color.withValues(alpha: 0.24), width: 1),
-            boxShadow: const [
+            border: Border.all(
+              color: color.withValues(alpha: 0.42),
+              width: 1.1,
+            ),
+            boxShadow: [
               BoxShadow(
-                color: Color(0x0F000000),
-                blurRadius: 8,
-                offset: Offset(0, 3),
+                color: color.withValues(alpha: 0.12),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+              const BoxShadow(
+                color: Color(0x0A000000),
+                blurRadius: 4,
+                offset: Offset(0, 1),
               ),
             ],
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 80),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(8, largeText ? 8 : 9, 8, 8),
+              child: Stack(
                 children: [
-                  Icon(icon, size: 13.5, color: color),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: palette.mutedText,
-                        fontSize: largeText ? 10.2 : 11.2,
-                        fontWeight: FontWeight.w900,
-                        height: 1,
-                      ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Icon(
+                      Icons.north_east_rounded,
+                      size: largeText ? 10.5 : 11.5,
+                      color: color.withValues(alpha: 0.58),
                     ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(icon, size: labelIconSize, color: color),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              label,
+                              maxLines: 2,
+                              overflow: TextOverflow.visible,
+                              softWrap: true,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: palette.mutedText,
+                                fontSize: largeText ? 11.2 : 12.1,
+                                fontWeight: FontWeight.w900,
+                                height: 1.08,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 7),
+                      DefaultTextStyle(
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: palette.text,
+                          fontSize: largeText ? 14.8 : 16.2,
+                          fontWeight: FontWeight.w900,
+                          height: 1,
+                        ),
+                        child: FittedBox(fit: BoxFit.scaleDown, child: value),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 7),
-              DefaultTextStyle(
-                textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StoryJourneyGuideNote extends StatelessWidget {
+  const _StoryJourneyGuideNote();
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: Color.alphaBlend(
+            palette.currentAccent.withValues(alpha: 0.055),
+            palette.softSurface,
+          ),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: palette.currentAccentDeep.withValues(alpha: 0.22),
+            width: 0.9,
+          ),
+        ),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 6,
+          runSpacing: 3,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+              decoration: BoxDecoration(
+                color: palette.currentAccentDeep.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                '참고',
                 style: TextStyle(
-                  color: palette.text,
-                  fontSize: largeText ? 17.2 : 18.8,
+                  color: palette.currentAccentDeep,
+                  fontSize: 10.2,
                   fontWeight: FontWeight.w900,
                   height: 1,
                 ),
-                child: FittedBox(fit: BoxFit.scaleDown, child: value),
               ),
-            ],
-          ),
+            ),
+            Text(
+              '다음 이야기를 눌러 시작하세요! (완료 조건은 감정 새기기입니다)',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: palette.mutedText,
+                fontSize: 10.6,
+                fontWeight: FontWeight.w800,
+                height: 1.18,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -1776,9 +1898,6 @@ class _ProfileStoryProgressPage extends StatefulWidget {
     required this.completedEventIds,
     required this.eventEmotionMarks,
     required this.quizAttemptSummaries,
-    required this.quizStats,
-    required this.onTapWrong,
-    required this.onTapConfused,
     required this.onOpenEventDetail,
   });
 
@@ -1789,9 +1908,6 @@ class _ProfileStoryProgressPage extends StatefulWidget {
   final Set<String> completedEventIds;
   final Map<String, EventEmotionMark> eventEmotionMarks;
   final Map<String, QuizAttemptSummary> quizAttemptSummaries;
-  final ProfileQuizStats quizStats;
-  final VoidCallback onTapWrong;
-  final VoidCallback onTapConfused;
   final ProfileEventDetailCallback onOpenEventDetail;
 
   @override
@@ -1802,7 +1918,6 @@ class _ProfileStoryProgressPage extends StatefulWidget {
 class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
   String? _selectedEraId;
   _StoryProgressFilter _storyFilter = _StoryProgressFilter.all;
-  Set<String> _selectedEmotionKeys = <String>{};
 
   @override
   void initState() {
@@ -1821,27 +1936,6 @@ class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
 
   void _openEventDetail(StoryEvent event) {
     widget.onOpenEventDetail(event, source: ProfileEventOpenSource.detailOnly);
-  }
-
-  void _openEmotionMarksAllPage({
-    required List<EventEmotionMark> marks,
-    required Map<String, StoryEvent> eventById,
-    required String emptyMessage,
-  }) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (pageContext) => _ProfileEmotionMarksAllPage(
-          marks: marks,
-          eventById: eventById,
-          emptyMessage: emptyMessage,
-          onOpenEventDetail: (event) {
-            Navigator.of(pageContext).pop();
-            if (!mounted) return;
-            _openEventDetail(event);
-          },
-        ),
-      ),
-    );
   }
 
   @override
@@ -1879,30 +1973,6 @@ class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
       _StoryProgressFilter.completed => '완료한 이야기가 없습니다.',
       _StoryProgressFilter.incomplete => '미완료 이야기가 없습니다.',
     };
-    final eventById = {for (final event in widget.events) event.id: event};
-    final marks = widget.eventEmotionMarks.values.toList()
-      ..sort((a, b) {
-        final aTime = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final bTime = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final timeCompare = bTime.compareTo(aTime);
-        if (timeCompare != 0) {
-          return timeCompare;
-        }
-        return a.eventId.compareTo(b.eventId);
-      });
-    final filteredMarks = _selectedEmotionKeys.isEmpty
-        ? marks
-        : marks
-              .where((mark) => _selectedEmotionKeys.contains(mark.emotionKey))
-              .toList(growable: false);
-    final emptyEmotionText = _selectedEmotionKeys.isEmpty
-        ? '아직 새긴 감정이 없습니다.'
-        : '선택한 감정으로 새긴 이야기가 없습니다.';
-    final emotionCountsByKey = {
-      for (final option in EventEmotionOption.options)
-        option.key: marks.where((mark) => mark.emotionKey == option.key).length,
-    };
-
     return ParchmentListPageScaffold(
       title: '탐험한 이야기',
       child: SingleChildScrollView(
@@ -1917,47 +1987,6 @@ class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const _ProfileProgressPageSectionTitle(label: '내가 새긴 감정들'),
-              const SizedBox(height: 8),
-              _EmotionMarksPreviewPanel(
-                marks: filteredMarks,
-                allCount: marks.length,
-                countsByKey: emotionCountsByKey,
-                selectedKeys: _selectedEmotionKeys,
-                emptyMessage: emptyEmotionText,
-                eventById: eventById,
-                onToggleAll: () {
-                  setState(() => _selectedEmotionKeys = <String>{});
-                },
-                onToggleOption: (option) {
-                  setState(() {
-                    final next = {..._selectedEmotionKeys};
-                    if (next.contains(option.key)) {
-                      next.remove(option.key);
-                    } else {
-                      next.add(option.key);
-                    }
-                    _selectedEmotionKeys = next;
-                  });
-                },
-                onOpenAll: () {
-                  _openEmotionMarksAllPage(
-                    marks: filteredMarks,
-                    eventById: eventById,
-                    emptyMessage: emptyEmotionText,
-                  );
-                },
-                onOpenEventDetail: _openEventDetail,
-              ),
-              const _ProfileProgressPageDivider(),
-              const _ProfileProgressPageSectionTitle(label: '복습 항목'),
-              const SizedBox(height: 8),
-              _ProfileQuizStatsColumn(
-                stats: widget.quizStats,
-                onTapWrong: widget.onTapWrong,
-                onTapConfused: widget.onTapConfused,
-              ),
-              const _ProfileProgressPageDivider(),
               const _ProfileProgressPageSectionTitle(label: '이야기 진행률'),
               const SizedBox(height: 10),
               EraPickRows(
@@ -2008,78 +2037,467 @@ class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
   }
 }
 
-class _ProfileEmotionMarksAllPage extends StatelessWidget {
-  const _ProfileEmotionMarksAllPage({
-    required this.marks,
-    required this.eventById,
-    required this.emptyMessage,
+enum _ProfileInlineReviewFilter { correct, wrong, confused }
+
+class _ProfileExplorationLogPage extends StatefulWidget {
+  const _ProfileExplorationLogPage({
+    required this.events,
+    required this.eras,
+    required this.charactersByCode,
+    required this.completedEventIds,
+    required this.eventEmotionMarks,
+    required this.quizAttemptSummaries,
+    required this.quizStats,
+    required this.companionDiaryEntries,
+    required this.companionDiaryLoading,
+    required this.companionDiaryError,
     required this.onOpenEventDetail,
   });
 
-  final List<EventEmotionMark> marks;
-  final Map<String, StoryEvent> eventById;
-  final String emptyMessage;
-  final ValueChanged<StoryEvent> onOpenEventDetail;
+  final List<StoryEvent> events;
+  final List<Era> eras;
+  final Map<String, Character> charactersByCode;
+  final Set<String> completedEventIds;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+  final ProfileQuizStats quizStats;
+  final List<UserCompanionDiaryEntry> companionDiaryEntries;
+  final bool companionDiaryLoading;
+  final String? companionDiaryError;
+  final ProfileEventDetailCallback onOpenEventDetail;
+
+  @override
+  State<_ProfileExplorationLogPage> createState() =>
+      _ProfileExplorationLogPageState();
+}
+
+class _ProfileExplorationLogPageState
+    extends State<_ProfileExplorationLogPage> {
+  DateTime _selectedLogDate = _profileDateOnly(toKst(DateTime.now()));
+  _ProfileInlineReviewFilter? _selectedReviewFilter;
+
+  void _openEventDetail(StoryEvent event) {
+    widget.onOpenEventDetail(event, source: ProfileEventOpenSource.detailOnly);
+  }
+
+  void _openEmotionMarksPopup({
+    required String title,
+    required List<EventEmotionMark> marks,
+    required Map<String, StoryEvent> eventById,
+    required String emptyMessage,
+  }) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final palette = AppPaletteTheme.of(sheetContext);
+        final maxHeight = MediaQuery.sizeOf(sheetContext).height * 0.74;
+        return SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+            child: Container(
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+              decoration: BoxDecoration(
+                color: palette.cardSurface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: palette.subtleBorder, width: 1),
+                boxShadow: AppShadows.lg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.sectionTitle.copyWith(
+                            color: palette.text,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: '닫기',
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        icon: const Icon(Icons.close_rounded),
+                        color: palette.mutedText,
+                      ),
+                    ],
+                  ),
+                  Divider(height: 10, color: palette.subtleBorder),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      child: ProfileEmotionMarksList(
+                        key: const ValueKey('emotion-marks-category-list'),
+                        marks: marks,
+                        eventById: eventById,
+                        emptyMessage: emptyMessage,
+                        loading: false,
+                        hasError: false,
+                        showTimestamp: true,
+                        onOpenEventDetail: (event) {
+                          Navigator.of(sheetContext).pop();
+                          if (!mounted) return;
+                          _openEventDetail(event);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _openReviewEventsPopup({
+    required String title,
+    required List<StoryEvent> events,
+    required String emptyText,
+  }) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final palette = AppPaletteTheme.of(sheetContext);
+        final maxHeight = MediaQuery.sizeOf(sheetContext).height * 0.78;
+        return SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+            child: Container(
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+              decoration: BoxDecoration(
+                color: palette.cardSurface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: palette.subtleBorder, width: 1),
+                boxShadow: AppShadows.lg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.sectionTitle.copyWith(
+                            color: palette.text,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: '닫기',
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        icon: const Icon(Icons.close_rounded),
+                        color: palette.mutedText,
+                      ),
+                    ],
+                  ),
+                  Divider(height: 10, color: palette.subtleBorder),
+                  Expanded(
+                    child: ProfileEventReviewGrid(
+                      key: const ValueKey('exploration-log-review-all-grid'),
+                      events: events,
+                      eras: widget.eras,
+                      charactersByCode: widget.charactersByCode,
+                      completedEventIds: widget.completedEventIds,
+                      eventEmotionMarks: widget.eventEmotionMarks,
+                      quizAttemptSummaries: widget.quizAttemptSummaries,
+                      emptyText: emptyText,
+                      onOpenEventDetail: (event) {
+                        Navigator.of(sheetContext).pop();
+                        if (!mounted) return;
+                        _openEventDetail(event);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  List<StoryEvent> _reviewEventsForFilter(_ProfileInlineReviewFilter? filter) {
+    final selectedEventIds = switch (filter) {
+      _ProfileInlineReviewFilter.correct => widget.quizStats.correctEventIds,
+      _ProfileInlineReviewFilter.wrong => widget.quizStats.wrongEventIds,
+      _ProfileInlineReviewFilter.confused => widget.quizStats.confusedEventIds,
+      null => null,
+    };
+    if (selectedEventIds == null) {
+      return const <StoryEvent>[];
+    }
+    return widget.events
+        .where((event) => selectedEventIds.contains(event.id))
+        .toList(growable: false);
+  }
+
+  String _reviewTitleForFilter(_ProfileInlineReviewFilter filter) {
+    return switch (filter) {
+      _ProfileInlineReviewFilter.correct => '정답 이야기',
+      _ProfileInlineReviewFilter.wrong => '오답 이야기',
+      _ProfileInlineReviewFilter.confused => '헷갈려요 이야기',
+    };
+  }
+
+  String _emptyTextForReviewFilter(_ProfileInlineReviewFilter? filter) {
+    return switch (filter) {
+      _ProfileInlineReviewFilter.correct => '정답으로 기록된 이야기가 없습니다.',
+      _ProfileInlineReviewFilter.wrong => '오답으로 기록된 이야기가 없습니다.',
+      _ProfileInlineReviewFilter.confused => '헷갈려요로 기록된 이야기가 없습니다.',
+      null => '오답이나 헷갈려요를 누르면 이야기 카드가 나타납니다.',
+    };
+  }
+
+  List<EventEmotionMark> _marksForDate(
+    List<EventEmotionMark> marks,
+    DateTime date,
+  ) {
+    final targetDate = _profileDateOnly(date);
+    return marks
+        .where(
+          (mark) => _profileSameDate(_profileMarkKstDate(mark), targetDate),
+        )
+        .toList(growable: false);
+  }
+
+  UserCompanionDiaryEntry? _companionDiaryForDate(DateTime date) {
+    final targetDate = _profileDateOnly(date);
+    UserCompanionDiaryEntry? selected;
+    for (final entry in widget.companionDiaryEntries) {
+      if (!_profileSameDate(entry.entryDate, targetDate)) {
+        continue;
+      }
+      if (selected == null || entry.updatedAt.isAfter(selected.updatedAt)) {
+        selected = entry;
+      }
+    }
+    return selected;
+  }
+
+  void _toggleReviewFilter(_ProfileInlineReviewFilter filter) {
+    if (filter == _ProfileInlineReviewFilter.correct) {
+      return;
+    }
+    setState(() {
+      _selectedReviewFilter = _selectedReviewFilter == filter ? null : filter;
+    });
+  }
+
+  Widget _buildInlineReviewEvents() {
+    final palette = AppPaletteTheme.of(context);
+    final selectedFilter = _selectedReviewFilter;
+    final selectedEvents = _reviewEventsForFilter(selectedFilter);
+    final previewEvents = selectedEvents.take(9).toList(growable: false);
+    final hasMore = selectedEvents.length > previewEvents.length;
+    final emptyText = _emptyTextForReviewFilter(selectedFilter);
+    return selectedFilter == null
+        ? Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
+            child: Text(
+              emptyText,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: palette.mutedText,
+                fontSize: 12.6,
+                fontWeight: FontWeight.w800,
+                height: 1.45,
+              ),
+            ),
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ProfileEventReviewGrid(
+                key: ValueKey(
+                  'exploration-log-review-grid-${selectedFilter.name}',
+                ),
+                events: previewEvents,
+                eras: widget.eras,
+                charactersByCode: widget.charactersByCode,
+                completedEventIds: widget.completedEventIds,
+                eventEmotionMarks: widget.eventEmotionMarks,
+                quizAttemptSummaries: widget.quizAttemptSummaries,
+                emptyText: emptyText,
+                padding: EdgeInsets.zero,
+                scrollable: false,
+                onOpenEventDetail: _openEventDetail,
+              ),
+              if (hasMore) ...[
+                const SizedBox(height: 4),
+                Align(
+                  alignment: Alignment.center,
+                  child: TextButton(
+                    key: ValueKey(
+                      'exploration-log-review-open-all-${selectedFilter.name}',
+                    ),
+                    onPressed: () => _openReviewEventsPopup(
+                      title: _reviewTitleForFilter(selectedFilter),
+                      events: selectedEvents,
+                      emptyText: emptyText,
+                    ),
+                    style: TextButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 5,
+                      ),
+                      foregroundColor: palette.currentAccentDeep,
+                      textStyle: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    child: const Text('전체 보기'),
+                  ),
+                ),
+              ],
+            ],
+          );
+  }
+
+  Widget _buildReviewSection() {
+    final palette = AppPaletteTheme.of(context);
+    return Container(
+      key: const ValueKey('exploration-log-review-events'),
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 10),
+      decoration: BoxDecoration(
+        color: palette.softSurface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: palette.subtleBorder, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _ProfileQuizStatsColumn(
+            stats: widget.quizStats,
+            selectedFilter: _selectedReviewFilter,
+            onTapWrong: () =>
+                _toggleReviewFilter(_ProfileInlineReviewFilter.wrong),
+            onTapConfused: () =>
+                _toggleReviewFilter(_ProfileInlineReviewFilter.confused),
+          ),
+          Divider(height: 18, color: palette.subtleBorder),
+          _buildInlineReviewEvents(),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final eventById = {for (final event in widget.events) event.id: event};
+    final marks = widget.eventEmotionMarks.values.toList()
+      ..sort((a, b) {
+        final aTime = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bTime = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final timeCompare = bTime.compareTo(aTime);
+        if (timeCompare != 0) {
+          return timeCompare;
+        }
+        return a.eventId.compareTo(b.eventId);
+      });
+    final selectedDateMarks = _marksForDate(marks, _selectedLogDate);
+    final selectedDateDiary = _companionDiaryForDate(_selectedLogDate);
+    final emotionCountsByKey = {
+      for (final option in EventEmotionOption.options)
+        option.key: marks.where((mark) => mark.emotionKey == option.key).length,
+    };
+
     return ParchmentListPageScaffold(
-      title: '내가 새긴 감정들',
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-        decoration: BoxDecoration(
-          color: palette.cardSurface.withValues(alpha: 0.92),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: palette.subtleBorder, width: 1),
-        ),
-        child: ProfileEmotionMarksList(
-          key: const ValueKey('emotion-marks-all-list'),
-          marks: marks,
-          eventById: eventById,
-          emptyMessage: emptyMessage,
-          loading: false,
-          hasError: false,
-          showTimestamp: true,
-          onOpenEventDetail: onOpenEventDetail,
+      title: '탐험 로그',
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
+          decoration: BoxDecoration(
+            color: palette.cardSurface.withValues(alpha: 0.90),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: palette.subtleBorder, width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const _ProfileProgressPageSectionTitle(label: '복습 항목'),
+              const SizedBox(height: 8),
+              _buildReviewSection(),
+              const _ProfileProgressPageDivider(),
+              _ExplorationTracePanel(
+                categoryRow: _EmotionCategoryRow(
+                  countsByKey: emotionCountsByKey,
+                  onOpenCategory: (option) {
+                    final categoryMarks = marks
+                        .where((mark) => mark.emotionKey == option.key)
+                        .toList(growable: false);
+                    _openEmotionMarksPopup(
+                      title: '${option.emoji} ${option.label} 코멘트',
+                      marks: categoryMarks,
+                      eventById: eventById,
+                      emptyMessage: '${option.label}로 새긴 코멘트가 없습니다.',
+                    );
+                  },
+                ),
+                calendar: ProfileEmotionDiary(
+                  eventEmotionMarks: widget.eventEmotionMarks,
+                  companionDiaryEntries: widget.companionDiaryEntries,
+                  companionDiaryLoading: widget.companionDiaryLoading,
+                  companionDiaryError: widget.companionDiaryError,
+                  showFeatureCards: false,
+                  onSelectedDateChanged: (date) {
+                    setState(() => _selectedLogDate = _profileDateOnly(date));
+                  },
+                ),
+                previewPanel: _EmotionMarksPreviewPanel(
+                  selectedDate: _selectedLogDate,
+                  marks: selectedDateMarks,
+                  selectedDateDiary: selectedDateDiary,
+                  companionDiaryLoading: widget.companionDiaryLoading,
+                  companionDiaryError: widget.companionDiaryError,
+                  eventById: eventById,
+                  onOpenEventDetail: _openEventDetail,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _EmotionMarksPreviewPanel extends StatelessWidget {
-  const _EmotionMarksPreviewPanel({
-    required this.marks,
-    required this.allCount,
-    required this.countsByKey,
-    required this.selectedKeys,
-    required this.emptyMessage,
-    required this.eventById,
-    required this.onToggleAll,
-    required this.onToggleOption,
-    required this.onOpenAll,
-    required this.onOpenEventDetail,
+class _ExplorationTracePanel extends StatelessWidget {
+  const _ExplorationTracePanel({
+    required this.categoryRow,
+    required this.calendar,
+    required this.previewPanel,
   });
 
-  final List<EventEmotionMark> marks;
-  final int allCount;
-  final Map<String, int> countsByKey;
-  final Set<String> selectedKeys;
-  final String emptyMessage;
-  final Map<String, StoryEvent> eventById;
-  final VoidCallback onToggleAll;
-  final ValueChanged<EventEmotionOption> onToggleOption;
-  final VoidCallback onOpenAll;
-  final ValueChanged<StoryEvent> onOpenEventDetail;
+  final Widget categoryRow;
+  final Widget calendar;
+  final Widget previewPanel;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final previewMarks = marks.take(3).toList(growable: false);
-    final hasMore = marks.length > previewMarks.length;
     return Container(
-      key: const ValueKey('emotion-marks-review-list'),
       padding: const EdgeInsets.fromLTRB(9, 9, 9, 10),
       decoration: BoxDecoration(
         color: palette.softSurface,
@@ -2089,58 +2507,363 @@ class _EmotionMarksPreviewPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _EmotionFilterChips(
-            allCount: allCount,
-            countsByKey: countsByKey,
-            selectedKeys: selectedKeys,
-            onToggleAll: onToggleAll,
-            onToggleOption: onToggleOption,
-          ),
+          const _ProfileProgressPageSectionTitle(label: '탐험 달력과 흔적들'),
+          const SizedBox(height: 8),
+          categoryRow,
           Divider(height: 18, color: palette.subtleBorder),
+          calendar,
+          const SizedBox(height: 10),
+          previewPanel,
+        ],
+      ),
+    );
+  }
+}
+
+class _EmotionMarksPreviewPanel extends StatelessWidget {
+  const _EmotionMarksPreviewPanel({
+    required this.selectedDate,
+    required this.marks,
+    required this.selectedDateDiary,
+    required this.companionDiaryLoading,
+    required this.companionDiaryError,
+    required this.eventById,
+    required this.onOpenEventDetail,
+  });
+
+  final DateTime selectedDate;
+  final List<EventEmotionMark> marks;
+  final UserCompanionDiaryEntry? selectedDateDiary;
+  final bool companionDiaryLoading;
+  final String? companionDiaryError;
+  final Map<String, StoryEvent> eventById;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final dateLabel = _formatProfileDateLabel(selectedDate);
+    final hasEmotionMarks = marks.isNotEmpty;
+    final hasDiary = selectedDateDiary != null;
+    final hasDiaryMessage =
+        companionDiaryLoading || companionDiaryError != null || hasDiary;
+    return Column(
+      key: const ValueKey('emotion-marks-review-list'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          '$dateLabel 기록',
+          key: const ValueKey('emotion-marks-selected-date-label'),
+          style: TextStyle(
+            color: palette.text,
+            fontSize: 12.2,
+            fontWeight: FontWeight.w900,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (!hasEmotionMarks && !hasDiaryMessage)
+          const _ProfileLogEmptyMessage(
+            message: '선택한 날짜에 새긴 감정과 코멘트 혹은 신앙 다이어리가 없습니다',
+          )
+        else ...[
+          if (hasEmotionMarks)
+            _SelectedDateEmotionSummary(
+              marks: marks,
+              eventById: eventById,
+              onOpenEventDetail: onOpenEventDetail,
+            ),
+          if (hasEmotionMarks && hasDiaryMessage) const SizedBox(height: 8),
+          if (hasDiaryMessage)
+            _SelectedDateDiarySummary(
+              entry: selectedDateDiary,
+              loading: companionDiaryLoading,
+              error: companionDiaryError,
+            ),
+        ],
+      ],
+    );
+  }
+}
+
+class _SelectedDateEmotionSummary extends StatelessWidget {
+  const _SelectedDateEmotionSummary({
+    required this.marks,
+    required this.eventById,
+    required this.onOpenEventDetail,
+  });
+
+  final List<EventEmotionMark> marks;
+  final Map<String, StoryEvent> eventById;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Container(
+      key: const ValueKey('selected-date-emotion-comments'),
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      decoration: BoxDecoration(
+        color: palette.cardSurface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: palette.subtleBorder, width: 0.9),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            '감정과 코멘트',
+            style: TextStyle(
+              color: palette.currentAccentDeep,
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              height: 1.15,
+            ),
+          ),
+          const SizedBox(height: 7),
           ProfileEmotionMarksList(
-            marks: previewMarks,
+            marks: marks,
             eventById: eventById,
-            emptyMessage: emptyMessage,
+            emptyMessage: '선택한 날짜에 새긴 감정과 코멘트 혹은 신앙 다이어리가 없습니다',
             loading: false,
             hasError: false,
-            showTimestamp: true,
+            showTimestamp: false,
             onOpenEventDetail: onOpenEventDetail,
           ),
-          if (hasMore) ...[
-            const SizedBox(height: 6),
-            Text(
-              '...',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: palette.mutedText,
-                fontSize: 15,
-                fontWeight: FontWeight.w900,
-                height: 1,
+        ],
+      ),
+    );
+  }
+}
+
+class _EmotionCategoryRow extends StatelessWidget {
+  const _EmotionCategoryRow({
+    required this.countsByKey,
+    required this.onOpenCategory,
+  });
+
+  final Map<String, int> countsByKey;
+  final ValueChanged<EventEmotionOption> onOpenCategory;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        for (var index = 0; index < EventEmotionOption.options.length; index++)
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: index == 0 ? 0 : 2,
+                right: index == EventEmotionOption.options.length - 1 ? 0 : 2,
+              ),
+              child: _EmotionCategoryButton(
+                option: EventEmotionOption.options[index],
+                count: countsByKey[EventEmotionOption.options[index].key] ?? 0,
+                onTap: () => onOpenCategory(EventEmotionOption.options[index]),
               ),
             ),
-            Align(
-              alignment: Alignment.center,
-              child: TextButton(
-                key: const ValueKey('emotion-marks-open-all'),
-                onPressed: onOpenAll,
-                style: TextButton.styleFrom(
-                  visualDensity: VisualDensity.compact,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 5,
-                  ),
-                  foregroundColor: palette.currentAccentDeep,
-                  textStyle: const TextStyle(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w900,
+          ),
+      ],
+    );
+  }
+}
+
+class _EmotionCategoryButton extends StatelessWidget {
+  const _EmotionCategoryButton({
+    required this.option,
+    required this.count,
+    required this.onTap,
+  });
+
+  final EventEmotionOption option;
+  final int count;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Tooltip(
+      message: option.label,
+      child: Material(
+        color: Color.alphaBlend(
+          palette.currentAccent.withValues(alpha: 0.06),
+          palette.cardSurface,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          key: ValueKey('emotion-category-${option.key}'),
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 45),
+            padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: palette.subtleBorder, width: 0.8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    option.emoji,
+                    maxLines: 1,
+                    style: const TextStyle(fontSize: 17, height: 1),
                   ),
                 ),
-                child: const Text('전체보기'),
-              ),
+                const SizedBox(height: 4),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '${option.label} $count',
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: palette.currentAccentDeep,
+                      fontSize: 8.8,
+                      fontWeight: FontWeight.w900,
+                      height: 1,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SelectedDateDiarySummary extends StatelessWidget {
+  const _SelectedDateDiarySummary({
+    required this.entry,
+    required this.loading,
+    required this.error,
+  });
+
+  final UserCompanionDiaryEntry? entry;
+  final bool loading;
+  final String? error;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final currentEntry = entry;
+    if (loading && currentEntry == null) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        child: Center(child: CircularProgressIndicator(strokeWidth: 2.2)),
+      );
+    }
+    if (currentEntry == null) {
+      return _ProfileLogEmptyMessage(
+        message: error ?? '선택한 날짜에 남긴 신앙 다이어리가 없습니다.',
+      );
+    }
+    return Container(
+      key: const ValueKey('selected-date-companion-diary'),
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      decoration: BoxDecoration(
+        color: palette.cardSurface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: palette.subtleBorder, width: 0.9),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _SelectedDateDiaryBadge(),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '신앙 다이어리',
+                  style: TextStyle(
+                    color: palette.successBottom,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    height: 1.15,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  currentEntry.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: palette.text,
+                    fontSize: 13.2,
+                    fontWeight: FontWeight.w900,
+                    height: 1.24,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  currentEntry.body,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: palette.mutedText,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    height: 1.38,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _SelectedDateDiaryBadge extends StatelessWidget {
+  const _SelectedDateDiaryBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Container(
+      width: 30,
+      height: 30,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: palette.successFill,
+        border: Border.all(
+          color: palette.successBottom.withValues(alpha: 0.42),
+        ),
+      ),
+      child: const FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text('📝', style: TextStyle(fontSize: 17, height: 1)),
+      ),
+    );
+  }
+}
+
+class _ProfileLogEmptyMessage extends StatelessWidget {
+  const _ProfileLogEmptyMessage({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 13),
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: palette.mutedText,
+          fontSize: 12.4,
+          fontWeight: FontWeight.w700,
+          height: 1.42,
+        ),
       ),
     );
   }
@@ -2433,11 +3156,13 @@ class _ProfileStoryJourneyDeckState extends State<_ProfileStoryJourneyDeck> {
 
   @override
   Widget build(BuildContext context) {
-    const largeHeight = 136.0;
     const sideScale = 0.82;
     const farSideScale = 0.72;
     const sidePeekTop = 9.0;
     const farSidePeekTop = 14.0;
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final largeHeight =
+        178.0 + ((textScale - 1) * 130).clamp(0.0, 58.0).toDouble();
     final entries = widget.entries;
     final mainIndex = entries.isEmpty ? -1 : _mainIndex();
     final initialMainEventId = _resolvedInitialMainEventId();
@@ -2486,12 +3211,12 @@ class _ProfileStoryJourneyDeckState extends State<_ProfileStoryJourneyDeck> {
               final deckWidth = (maxWidth * 0.95).clamp(260.0, maxWidth);
               final deckLeft = (maxWidth - deckWidth) / 2;
               final deckRight = deckLeft + deckWidth;
-              final largeWidth = (deckWidth * 0.43).clamp(136.0, 226.0);
-              final sideWidth = (deckWidth * 0.34).clamp(112.0, 190.0);
+              final largeWidth = (deckWidth * 0.50).clamp(162.0, 250.0);
+              final sideWidth = (deckWidth * 0.35).clamp(116.0, 194.0);
               final farSideWidth = (deckWidth * 0.30).clamp(96.0, 170.0);
-              const sideHeight = largeHeight * sideScale;
-              const farSideHeight = largeHeight * farSideScale;
-              const deckHeight = largeHeight;
+              final sideHeight = largeHeight * sideScale;
+              final farSideHeight = largeHeight * farSideScale;
+              final deckHeight = largeHeight;
               final largeLeft = (deckLeft + deckWidth * 0.50 - largeWidth / 2)
                   .clamp(deckLeft, deckRight - largeWidth);
               final deckItems = _visibleDeckItems(mainIndex);
@@ -2635,7 +3360,8 @@ class _StoryJourneyCard extends StatelessWidget {
             emotionKey: eventEmotionMarks[event.id]?.emotionKey,
             attemptSummary: quizAttemptSummaries[event.id],
             orderNumber: event.storyIndex,
-            showSummary: false,
+            showSummary: !muted,
+            showCharacterPills: !muted,
             forceOpaqueSurface: !muted,
             expandSurface: true,
             loader: SceneAssetLoader(),
@@ -2705,33 +3431,14 @@ class _StoryJourneyNextGlow extends StatefulWidget {
 class _StoryJourneyNextGlowState extends State<_StoryJourneyNextGlow>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  var _remainingPulses = 4;
-  var _visible = true;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..addStatusListener(_handleStatus);
-    _controller.forward(from: 0);
-  }
-
-  void _handleStatus(AnimationStatus status) {
-    if (status != AnimationStatus.completed) {
-      return;
-    }
-    _remainingPulses -= 1;
-    if (_remainingPulses > 0) {
-      _controller.forward(from: 0);
-      return;
-    }
-    if (!mounted) {
-      _visible = false;
-      return;
-    }
-    setState(() => _visible = false);
+      duration: const Duration(milliseconds: 1800),
+    )..repeat();
   }
 
   @override
@@ -2742,29 +3449,138 @@ class _StoryJourneyNextGlowState extends State<_StoryJourneyNextGlow>
 
   @override
   Widget build(BuildContext context) {
-    if (!_visible) {
-      return widget.child;
-    }
     const glowColor = AppColors.gold;
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        final t = math.sin(_controller.value * math.pi);
+        final progress = _controller.value;
+        final t = math.sin(progress * math.pi);
         return Container(
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
           foregroundDecoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: glowColor.withValues(alpha: 0.025 + 0.055 * t),
+            color: glowColor.withValues(alpha: 0.018 + 0.03 * t),
             border: Border.all(
-              color: glowColor.withValues(alpha: 0.38 + 0.34 * t),
+              color: glowColor.withValues(alpha: 0.44 + 0.28 * t),
               width: 1.5,
             ),
           ),
-          child: child,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (child != null) child,
+              IgnorePointer(
+                child: ClipRect(
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: Transform.translate(
+                          offset: Offset(-180 + progress * 360, 0),
+                          child: Transform.rotate(
+                            angle: -0.42,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                width: 82,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      Colors.transparent,
+                                      glowColor.withValues(alpha: 0.16),
+                                      Colors.white.withValues(alpha: 0.22),
+                                      glowColor.withValues(alpha: 0.14),
+                                      Colors.transparent,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      _StoryJourneySparkleDot(
+                        left: 22,
+                        top: 22,
+                        size: 4.2,
+                        progress: progress,
+                        phase: 0.05,
+                      ),
+                      _StoryJourneySparkleDot(
+                        right: 26,
+                        top: 42,
+                        size: 3.4,
+                        progress: progress,
+                        phase: 0.38,
+                      ),
+                      _StoryJourneySparkleDot(
+                        left: 46,
+                        bottom: 28,
+                        size: 3.6,
+                        progress: progress,
+                        phase: 0.68,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
       child: widget.child,
+    );
+  }
+}
+
+class _StoryJourneySparkleDot extends StatelessWidget {
+  const _StoryJourneySparkleDot({
+    this.left,
+    this.top,
+    this.right,
+    this.bottom,
+    required this.size,
+    required this.progress,
+    required this.phase,
+  });
+
+  final double? left;
+  final double? top;
+  final double? right;
+  final double? bottom;
+  final double size;
+  final double progress;
+  final double phase;
+
+  @override
+  Widget build(BuildContext context) {
+    final wave = (math.sin((progress + phase) * math.pi * 2) + 1) / 2;
+    final opacity = (0.22 + 0.58 * wave).clamp(0.0, 1.0).toDouble();
+    return Positioned(
+      left: left,
+      top: top,
+      right: right,
+      bottom: bottom,
+      child: Opacity(
+        opacity: opacity,
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.86),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.gold.withValues(alpha: 0.58),
+                blurRadius: 6,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -2910,234 +3726,16 @@ class _EmptyStoryJourneyCard extends StatelessWidget {
   }
 }
 
-class _EmotionFilterChips extends StatelessWidget {
-  const _EmotionFilterChips({
-    required this.allCount,
-    required this.countsByKey,
-    required this.selectedKeys,
-    required this.onToggleAll,
-    required this.onToggleOption,
-  });
-
-  final int allCount;
-  final Map<String, int> countsByKey;
-  final Set<String> selectedKeys;
-  final VoidCallback onToggleAll;
-  final ValueChanged<EventEmotionOption> onToggleOption;
-
-  @override
-  Widget build(BuildContext context) {
-    final topOptions = EventEmotionOption.options.take(4).toList();
-    final bottomOptions = EventEmotionOption.options.skip(4).toList();
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              _EmotionFilterChip(
-                key: const ValueKey('emotion-filter-all'),
-                label: '전체',
-                count: allCount,
-                selected: selectedKeys.isEmpty,
-                onTap: onToggleAll,
-              ),
-              for (final option in topOptions) ...[
-                const SizedBox(width: 6),
-                _EmotionFilterChip(
-                  key: ValueKey('emotion-filter-${option.key}'),
-                  label: option.label,
-                  count: countsByKey[option.key] ?? 0,
-                  selected: selectedKeys.contains(option.key),
-                  emotionKey: option.key,
-                  onTap: () => onToggleOption(option),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 6),
-          Row(
-            children: [
-              for (var index = 0; index < bottomOptions.length; index++) ...[
-                if (index > 0) const SizedBox(width: 6),
-                _EmotionFilterChip(
-                  key: ValueKey('emotion-filter-${bottomOptions[index].key}'),
-                  label: bottomOptions[index].label,
-                  count: countsByKey[bottomOptions[index].key] ?? 0,
-                  selected: selectedKeys.contains(bottomOptions[index].key),
-                  emotionKey: bottomOptions[index].key,
-                  onTap: () => onToggleOption(bottomOptions[index]),
-                ),
-              ],
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmotionFilterChip extends StatelessWidget {
-  const _EmotionFilterChip({
-    super.key,
-    required this.label,
-    required this.count,
-    required this.selected,
-    required this.onTap,
-    this.emotionKey,
-  });
-
-  final String label;
-  final int count;
-  final bool selected;
-  final VoidCallback onTap;
-  final String? emotionKey;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    final accent = palette.currentAccentDeep;
-    return Material(
-      color: selected ? accent : Colors.white.withValues(alpha: 0.88),
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 38),
-          padding: const EdgeInsets.fromLTRB(9, 6, 10, 6),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: selected
-                  ? AppColors.fgOnDark.withValues(alpha: 0.22)
-                  : palette.subtleBorder,
-              width: 0.9,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _EmotionFilterBadge(
-                emotionKey: emotionKey,
-                count: count,
-                selected: selected,
-              ),
-              const SizedBox(width: 7),
-              Text(
-                label,
-                style: TextStyle(
-                  color: selected ? AppColors.fgOnDark : palette.text,
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _EmotionFilterBadge extends StatelessWidget {
-  const _EmotionFilterBadge({
-    required this.emotionKey,
-    required this.count,
-    required this.selected,
-  });
-
-  final String? emotionKey;
-  final int count;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return SizedBox(
-      width: 25,
-      height: 25,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: emotionKey == null
-                ? Container(
-                    width: 22,
-                    height: 22,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: selected
-                          ? AppColors.fgOnDark.withValues(alpha: 0.18)
-                          : palette.currentFill,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: selected
-                            ? AppColors.fgOnDark.withValues(alpha: 0.28)
-                            : palette.currentAccentDeep.withValues(alpha: 0.26),
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.apps_rounded,
-                      size: 12,
-                      color: selected
-                          ? AppColors.fgOnDark
-                          : palette.currentAccentDeep,
-                    ),
-                  )
-                : EmotionBadgeIcon(
-                    emotionKey: emotionKey!,
-                    size: 22,
-                    iconSize: 12.5,
-                    elevation: false,
-                  ),
-          ),
-          Positioned(
-            right: -3,
-            bottom: -3,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-              decoration: BoxDecoration(
-                color: selected
-                    ? AppColors.fgOnDark
-                    : palette.currentAccentDeep,
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color: selected ? palette.currentAccentDeep : Colors.white,
-                  width: 0.8,
-                ),
-              ),
-              child: Text(
-                '+$count',
-                style: TextStyle(
-                  color: selected
-                      ? palette.currentAccentDeep
-                      : AppColors.fgOnDark,
-                  fontSize: 7.6,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _ProfileQuizStatsColumn extends StatelessWidget {
   const _ProfileQuizStatsColumn({
     required this.stats,
+    required this.selectedFilter,
     required this.onTapWrong,
     required this.onTapConfused,
   });
 
   final ProfileQuizStats stats;
+  final _ProfileInlineReviewFilter? selectedFilter;
   final VoidCallback onTapWrong;
   final VoidCallback onTapConfused;
 
@@ -3152,6 +3750,7 @@ class _ProfileQuizStatsColumn extends StatelessWidget {
         storyCount: stats.correctEventCount,
         quizCount: stats.correct,
         color: palette.successBottom,
+        selected: false,
         onTap: null,
       ),
       _ProfileQuizStatItem(
@@ -3160,6 +3759,7 @@ class _ProfileQuizStatsColumn extends StatelessWidget {
         storyCount: stats.wrongEventCount,
         quizCount: stats.wrong,
         color: AppColors.dangerBot,
+        selected: selectedFilter == _ProfileInlineReviewFilter.wrong,
         onTap: onTapWrong,
       ),
       _ProfileQuizStatItem(
@@ -3168,24 +3768,17 @@ class _ProfileQuizStatsColumn extends StatelessWidget {
         storyCount: stats.confusedEventCount,
         quizCount: stats.confused,
         color: palette.currentAccentDeep,
+        selected: selectedFilter == _ProfileInlineReviewFilter.confused,
         onTap: onTapConfused,
       ),
     ];
-    return Container(
-      padding: EdgeInsets.all(largeText ? 7 : 8),
-      decoration: BoxDecoration(
-        color: palette.softSurface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: palette.subtleBorder, width: 1),
-      ),
-      child: Row(
-        children: [
-          for (var i = 0; i < items.length; i++) ...[
-            Expanded(child: items[i]),
-            if (i != items.length - 1) const SizedBox(width: 7),
-          ],
+    return Row(
+      children: [
+        for (var i = 0; i < items.length; i++) ...[
+          Expanded(child: items[i]),
+          if (i != items.length - 1) SizedBox(width: largeText ? 5 : 6),
         ],
-      ),
+      ],
     );
   }
 }
@@ -3694,6 +4287,7 @@ class _ProfileQuizStatItem extends StatelessWidget {
     required this.storyCount,
     required this.quizCount,
     required this.color,
+    required this.selected,
     required this.onTap,
   });
 
@@ -3702,6 +4296,7 @@ class _ProfileQuizStatItem extends StatelessWidget {
   final int storyCount;
   final int quizCount;
   final Color color;
+  final bool selected;
   final VoidCallback? onTap;
 
   @override
@@ -3709,84 +4304,107 @@ class _ProfileQuizStatItem extends StatelessWidget {
     final palette = AppPaletteTheme.of(context);
     final largeText = _profileUsesLargeTextLayout(context);
     final enabled = onTap != null;
+    final labelColor = color;
     final content = Container(
-      padding: EdgeInsets.fromLTRB(8, largeText ? 8 : 9, 8, 9),
+      padding: EdgeInsets.fromLTRB(7, largeText ? 6 : 7, 7, largeText ? 6 : 7),
       decoration: BoxDecoration(
-        color: enabled
+        color: selected
+            ? Color.alphaBlend(
+                color.withValues(alpha: 0.22),
+                palette.cardSurface,
+              )
+            : enabled
             ? Color.alphaBlend(
                 color.withValues(alpha: 0.07),
                 palette.cardSurface,
               )
-            : palette.cardSurface.withValues(alpha: 0.68),
+            : Color.alphaBlend(
+                color.withValues(alpha: 0.06),
+                palette.cardSurface,
+              ),
         borderRadius: BorderRadius.circular(13),
         border: Border.all(
-          color: color.withValues(alpha: enabled ? 0.36 : 0.20),
-          width: 1,
+          color: color.withValues(
+            alpha: selected
+                ? 0.72
+                : enabled
+                ? 0.36
+                : 0.20,
+          ),
+          width: selected ? 1.4 : 1,
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              Container(
-                width: largeText ? 24 : 27,
-                height: largeText ? 24 : 27,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: color.withValues(alpha: 0.09),
-                  border: Border.all(color: color.withValues(alpha: 0.46)),
-                ),
-                child: Icon(icon, size: largeText ? 14 : 16, color: color),
+          Container(
+            width: largeText ? 23 : 25,
+            height: largeText ? 23 : 25,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color.withValues(alpha: enabled ? 0.09 : 0.07),
+              border: Border.all(
+                color: color.withValues(alpha: enabled ? 0.46 : 0.30),
               ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
+            ),
+            child: Icon(icon, size: largeText ? 13 : 15, color: labelColor),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
                   label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
                   style: TextStyle(
-                    color: color,
+                    color: labelColor,
                     fontSize: largeText ? 10.2 : 11.2,
                     fontWeight: FontWeight.w900,
-                    height: 1,
+                    height: 1.05,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '$storyCount이야기',
-                      style: TextStyle(
-                        color: palette.text,
-                        fontSize: largeText ? 10.0 : 10.8,
-                        fontWeight: FontWeight.w900,
-                        height: 1,
+                const SizedBox(height: 3),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '$storyCount이야기',
+                            style: TextStyle(
+                              color: palette.text,
+                              fontSize: largeText ? 9.3 : 10.0,
+                              fontWeight: FontWeight.w900,
+                              height: 1,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' · $quizCount문항',
+                            style: TextStyle(
+                              color: palette.mutedText,
+                              fontSize: largeText ? 8.8 : 9.5,
+                              fontWeight: FontWeight.w800,
+                              height: 1,
+                            ),
+                          ),
+                        ],
                       ),
+                      maxLines: 1,
+                      textAlign: TextAlign.right,
                     ),
-                    TextSpan(
-                      text: ' · $quizCount문항',
-                      style: TextStyle(
-                        color: palette.mutedText,
-                        fontSize: largeText ? 9.2 : 10.0,
-                        fontWeight: FontWeight.w800,
-                        height: 1,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                maxLines: 1,
-                textAlign: TextAlign.center,
-              ),
+              ],
             ),
           ),
         ],
