@@ -40,7 +40,8 @@ void main() {
     expect(source, contains("text: '님'"));
     expect(source, contains('palette.primary.withValues(alpha: 0.04)'));
     expect(source, contains("'오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!'"));
-    expect(source, contains('maxLines: largeText ? 4 : 2'));
+    expect(source, contains('maxLines: 4'));
+    expect(source, isNot(contains('maxLines: largeText ? 4 : 2')));
     expect(source, contains('fontSize: largeText ? 16.8 : 18.0'));
     expect(source, contains('fontSize: largeText ? 12.4 : 13.4'));
     expect(source, isNot(contains('_buildProfileJourneyButton')));
@@ -51,8 +52,12 @@ void main() {
     expect(source, contains('_openTodayActionChecklistInfo'));
     expect(source, contains('오늘의 할일'));
     expect(source, contains('매일 이야기 탐험, 신앙 다이어리 작성, 통독 진행을 해봅시다!'));
-    expect(source, contains("'할일:'"));
-    expect(source, contains('alignment: WrapAlignment.center'));
+    expect(source, contains("'오늘 할 일:'"));
+    expect(source, contains('FittedBox('));
+    expect(source, contains('fit: BoxFit.scaleDown'));
+    expect(source, contains('mainAxisSize: MainAxisSize.min'));
+    expect(source, contains('softWrap: false'));
+    expect(source, contains('maxLines: 1'));
     expect(source, contains('borderRadius: BorderRadius.circular(4)'));
     expect(
       source,
@@ -274,7 +279,7 @@ void main() {
     expect(source, isNot(contains('Transform.translate')));
     expect(source, contains('_StoryJourneyGuideNote'));
     expect(source, contains("'참고'"));
-    expect(source, contains('다음 이야기를 눌러 시작하세요! (완료조건: 감정 새기기)'));
+    expect(source, contains('카드를 눌러 탐험하세요! (완료조건: 감정 새기기)'));
     expect(
       source,
       isNot(
@@ -363,7 +368,7 @@ void main() {
     expect(source, contains('fontSize: largeText ? 8.5 : 9.2'));
     expect(
       source,
-      contains('constraints: const BoxConstraints(minHeight: 72)'),
+      contains('constraints: const BoxConstraints(minHeight: 64)'),
     );
     expect(source, isNot(contains('progressFraction')));
     expect(source, isNot(contains('color.withValues(alpha: 0.14)')));
@@ -401,7 +406,7 @@ void main() {
     expect(source, contains('fontSize: largeText ? 14.8 : 16.2'));
     expect(
       source,
-      contains('constraints: const BoxConstraints(minHeight: 72)'),
+      contains('constraints: const BoxConstraints(minHeight: 64)'),
     );
     expect(source, contains('color: palette.primary'));
     expect(source, contains('color: palette.currentAccentDeep'));
@@ -584,6 +589,12 @@ void main() {
     final pageSource = File(
       'lib/widgets/profile_tab_page.dart',
     ).readAsStringSync();
+    final companionSource = File(
+      'lib/widgets/profile/profile_companion_diary.dart',
+    ).readAsStringSync();
+    final emotionSource = File(
+      'lib/widgets/profile/profile_emotion_diary.dart',
+    ).readAsStringSync();
 
     expect(source, contains('_buildProfileStoryExplorationDashboard'));
     expect(source, isNot(contains('_buildProfileStoryStatsDashboard')));
@@ -612,6 +623,29 @@ void main() {
     expect(pageSource, contains('scrollBody: false'));
     expect(source, isNot(contains('_ProfileTabContentConnector')));
     expect(source, isNot(contains('_profileProgressTabIndex()')));
+    expect(emotionSource, contains('LayoutBuilder'));
+    expect(
+      emotionSource,
+      contains('final cardWidth = (constraints.maxWidth - 10) / 2'),
+    );
+    expect(
+      emotionSource,
+      contains(
+        'final expandTextForNarrowLargeText = largeText && cardWidth < 176',
+      ),
+    );
+    expect(emotionSource, contains('const featureCardMinHeight = 158.0'));
+    expect(emotionSource, contains('minHeight: featureCardMinHeight'));
+    expect(companionSource, contains('maxLines: expandReadableText ? 2 : 1'));
+    expect(companionSource, contains('maxLines: expandReadableText ? 4 : 2'));
+    expect(companionSource, contains('TextOverflow.visible'));
+    expect(
+      companionSource,
+      contains('color: darkSurface ? AppColors.goldLight : AppColors.goldHi'),
+    );
+    expect(companionSource, isNot(contains('final pulseColor')));
+    expect(companionSource, isNot(contains('auraColor')));
+    expect(companionSource, isNot(contains('ringColor')));
   });
 
   test('기도 empty 상태의 추가 버튼은 동행 일지와 같은 초록 원형 톤을 사용한다', () {

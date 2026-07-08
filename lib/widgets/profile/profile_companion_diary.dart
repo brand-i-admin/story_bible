@@ -208,6 +208,8 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
     required this.error,
     required this.onSave,
     required this.onDelete,
+    this.minHeight = 158,
+    this.expandTextForNarrowLargeText = false,
   });
 
   final DateTime entryDate;
@@ -217,10 +219,14 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
   final String? error;
   final CompanionDiarySaveCallback? onSave;
   final CompanionDiaryDeleteCallback? onDelete;
+  final double minHeight;
+  final bool expandTextForNarrowLargeText;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final expandReadableText = largeText && expandTextForNarrowLargeText;
     final canWrite = onSave != null;
     final hasEntry = entry != null;
     final message = error ?? '오늘 하나님과 함께한 순간을 기록해 보세요!';
@@ -249,7 +255,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
         onTap: () => _openAllEntries(context),
         borderRadius: BorderRadius.circular(18),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 158),
+          constraints: BoxConstraints(minHeight: minHeight),
           padding: const EdgeInsets.fromLTRB(13, 12, 13, 12),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -292,8 +298,11 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           '신앙 다이어리',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: expandReadableText ? 2 : 1,
+                          overflow: expandReadableText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          softWrap: true,
                           style: AppTextStyles.sectionTitle.copyWith(
                             color: palette.text,
                           ),
@@ -313,8 +322,11 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                       children: [
                         Text(
                           diaryTitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: expandReadableText ? 2 : 1,
+                          overflow: expandReadableText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          softWrap: true,
                           style: TextStyle(
                             color: palette.text,
                             fontSize: 12.2,
@@ -342,8 +354,11 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                   else
                     Text(
                       message,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: expandReadableText ? 4 : 2,
+                      overflow: expandReadableText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      softWrap: true,
                       style: TextStyle(
                         color: error == null
                             ? palette.text
@@ -465,9 +480,9 @@ class _DiaryWriteButton extends StatelessWidget {
       child: PulseHighlight(
         active: true,
         pulseCount: null,
-        duration: const Duration(milliseconds: 2100),
+        duration: const Duration(milliseconds: 2200),
         borderRadius: BorderRadius.circular(999),
-        color: darkSurface ? palette.successTop : AppColors.greenRim,
+        color: darkSurface ? AppColors.goldLight : AppColors.goldHi,
         child: Material(
           key: const ValueKey('companion-diary-write-button-pill'),
           color: backgroundColor,

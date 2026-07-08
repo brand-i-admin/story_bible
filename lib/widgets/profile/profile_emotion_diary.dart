@@ -406,29 +406,41 @@ class ProfileDiaryFeatureCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final diaryCard = CompanionDiaryFeatureCard(
-      entryDate: today,
-      entry: todayCompanionDiary,
-      entries: companionDiaryEntries,
-      loading: companionDiaryLoading,
-      error: companionDiaryError,
-      onSave: onSaveCompanionDiary,
-      onDelete: onDeleteCompanionDiary,
-    );
-    final bibleCard = _BibleProgressFeatureCard(
-      summary: bibleProgress,
-      onTapCard: onOpenBibleProgress,
-      onContinue: onContinueBibleReading,
-    );
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(child: diaryCard),
-          const SizedBox(width: 10),
-          Expanded(child: bibleCard),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+        final cardWidth = (constraints.maxWidth - 10) / 2;
+        final expandTextForNarrowLargeText = largeText && cardWidth < 176;
+        const featureCardMinHeight = 158.0;
+        final diaryCard = CompanionDiaryFeatureCard(
+          entryDate: today,
+          entry: todayCompanionDiary,
+          entries: companionDiaryEntries,
+          loading: companionDiaryLoading,
+          error: companionDiaryError,
+          onSave: onSaveCompanionDiary,
+          onDelete: onDeleteCompanionDiary,
+          minHeight: featureCardMinHeight,
+          expandTextForNarrowLargeText: expandTextForNarrowLargeText,
+        );
+        final bibleCard = _BibleProgressFeatureCard(
+          summary: bibleProgress,
+          onTapCard: onOpenBibleProgress,
+          onContinue: onContinueBibleReading,
+          minHeight: featureCardMinHeight,
+          expandTextForNarrowLargeText: expandTextForNarrowLargeText,
+        );
+        return IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: diaryCard),
+              const SizedBox(width: 10),
+              Expanded(child: bibleCard),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -438,16 +450,21 @@ class _BibleProgressFeatureCard extends StatelessWidget {
     required this.summary,
     required this.onTapCard,
     required this.onContinue,
+    required this.minHeight,
+    required this.expandTextForNarrowLargeText,
   });
 
   final ProfileBibleProgressSummary? summary;
   final VoidCallback? onTapCard;
   final VoidCallback? onContinue;
+  final double minHeight;
+  final bool expandTextForNarrowLargeText;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final expandReadableText = largeText && expandTextForNarrowLargeText;
     final progress =
         summary ??
         const ProfileBibleProgressSummary(completed: 0, total: 0, fraction: 0);
@@ -472,7 +489,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
         onTap: onTapCard,
         borderRadius: BorderRadius.circular(18),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 138),
+          constraints: BoxConstraints(minHeight: minHeight),
           padding: const EdgeInsets.fromLTRB(13, 12, 13, 12),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -516,8 +533,11 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '통독 진행률',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: expandReadableText ? 2 : 1,
+                      overflow: expandReadableText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      softWrap: true,
                       style: AppTextStyles.sectionTitle.copyWith(
                         color: palette.text,
                       ),
@@ -548,8 +568,11 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                       children: [
                         Text(
                           '마지막 통독 장',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: expandReadableText ? 2 : 1,
+                          overflow: expandReadableText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          softWrap: true,
                           style: TextStyle(
                             color: palette.mutedText,
                             fontSize: AppFontSizes.xs,
@@ -663,6 +686,7 @@ class _BibleContinueButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final enabled = onTap != null;
     final backgroundColor = !enabled
         ? palette.mutedSurface
@@ -680,33 +704,35 @@ class _BibleContinueButton extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(999),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
-            child: SizedBox(
-              height: 15,
-              width: double.infinity,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '이어 읽기',
-                      style: TextStyle(
-                        color: foregroundColor,
-                        fontSize: 11.6,
-                        fontWeight: FontWeight.w900,
-                        height: 1,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      Icons.arrow_forward_rounded,
+            padding: EdgeInsets.symmetric(
+              horizontal: 6,
+              vertical: largeText ? 9 : 7,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    '이어 읽기',
+                    maxLines: 1,
+                    overflow: TextOverflow.visible,
+                    softWrap: false,
+                    style: TextStyle(
                       color: foregroundColor,
-                      size: 15,
+                      fontSize: 11.6,
+                      fontWeight: FontWeight.w900,
+                      height: 1,
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  color: foregroundColor,
+                  size: 15,
+                ),
+              ],
             ),
           ),
         ),

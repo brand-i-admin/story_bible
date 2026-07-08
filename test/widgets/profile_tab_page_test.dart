@@ -333,6 +333,56 @@ void main() {
     expect(find.byType(ProfileEditorDialog), findsNothing);
   });
 
+  testWidgets('아주크게에서도 오늘 할 일 row는 한 줄로 표시한다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      viewSize: const Size(360, 780),
+      textScale: 1.4,
+    );
+
+    final checklist = find.byKey(
+      const ValueKey('profile-today-action-checklist-info'),
+    );
+    final todayLabel = find.descendant(
+      of: checklist,
+      matching: find.text('오늘 할 일:'),
+    );
+    final storyLabel = find.descendant(
+      of: checklist,
+      matching: find.text('이야기 탐험'),
+    );
+    final diaryLabel = find.descendant(
+      of: checklist,
+      matching: find.text('신앙 다이어리'),
+    );
+    final bibleLabel = find.descendant(
+      of: checklist,
+      matching: find.text('통독'),
+    );
+
+    final todayText = tester.widget<Text>(todayLabel);
+    expect(todayText.maxLines, 1);
+    expect(todayText.softWrap, isFalse);
+    expect(todayText.overflow, TextOverflow.visible);
+    expect(
+      tester.getCenter(todayLabel).dy,
+      closeTo(tester.getCenter(storyLabel).dy, 2),
+    );
+    expect(
+      tester.getCenter(todayLabel).dy,
+      closeTo(tester.getCenter(diaryLabel).dy, 2),
+    );
+    expect(
+      tester.getCenter(todayLabel).dy,
+      closeTo(tester.getCenter(bibleLabel).dy, 2),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('좁은 프로필 화면은 아래로 당겨 새로고침할 수 있다', (tester) async {
     await _pumpProfileTab(
       tester,
@@ -516,10 +566,14 @@ void main() {
       find.text('오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!'),
       findsOneWidget,
     );
+    final journeyMessage = tester.widget<Text>(
+      find.text('오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!'),
+    );
+    expect(journeyMessage.maxLines, 4);
     expect(find.text('이야기 탐험'), findsWidgets);
     expect(find.text('신앙 다이어리'), findsWidgets);
     expect(find.text('통독'), findsOneWidget);
-    expect(find.text('할일:'), findsOneWidget);
+    expect(find.text('오늘 할 일:'), findsOneWidget);
 
     for (final id in ['story', 'diary', 'bible']) {
       expect(
@@ -619,6 +673,52 @@ void main() {
       tester.getBottomLeft(faithPrompt).dy,
       lessThanOrEqualTo(tester.view.physicalSize.height),
     );
+    final diaryCard = find.byKey(
+      const ValueKey('companion-diary-feature-card'),
+    );
+    final bibleCard = find.byKey(const ValueKey('bible-progress-feature-card'));
+    expect(tester.getSize(diaryCard).height, lessThan(204));
+    expect(
+      tester.getSize(diaryCard).height,
+      closeTo(tester.getSize(bibleCard).height, 0.1),
+    );
+  });
+
+  testWidgets('아주크게 작은 프로필 화면은 다이어리와 통독 카드를 필요한 만큼 확장한다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      viewSize: const Size(360, 780),
+      textScale: 1.4,
+    );
+
+    expect(tester.takeException(), isNull);
+    final diaryCardTitle = find.text('신앙 다이어리').last;
+    final diaryTitleWidget = tester.widget<Text>(diaryCardTitle);
+    expect(diaryTitleWidget.maxLines, 2);
+    expect(diaryTitleWidget.overflow, TextOverflow.visible);
+
+    final faithPrompt = find.text('오늘 하나님과 함께한 순간을 기록해 보세요!');
+    final faithPromptWidget = tester.widget<Text>(faithPrompt);
+    expect(faithPromptWidget.maxLines, 4);
+    expect(faithPromptWidget.overflow, TextOverflow.visible);
+
+    await tester.ensureVisible(faithPrompt);
+    await tester.pumpAndSettle();
+
+    final diaryCard = find.byKey(
+      const ValueKey('companion-diary-feature-card'),
+    );
+    final bibleCard = find.byKey(const ValueKey('bible-progress-feature-card'));
+    expect(tester.getSize(diaryCard).height, greaterThan(158));
+    expect(
+      tester.getSize(diaryCard).height,
+      closeTo(tester.getSize(bibleCard).height, 0.1),
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('아주크게에서 이야기 탐험 메인 카드 제목도 커진다', (tester) async {

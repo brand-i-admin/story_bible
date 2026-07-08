@@ -383,7 +383,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                           const SizedBox(height: 5),
                           Text(
                             '오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!',
-                            maxLines: largeText ? 4 : 2,
+                            maxLines: 4,
                             overflow: TextOverflow.visible,
                             softWrap: true,
                             style: TextStyle(
@@ -502,53 +502,60 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       key: const ValueKey('profile-today-action-checklist-info'),
       behavior: HitTestBehavior.opaque,
       onTap: _openTodayActionChecklistInfo,
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        runAlignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 8,
-        runSpacing: 6,
-        children: [
-          Text(
-            '할일:',
-            style: TextStyle(
-              color: palette.mutedText,
-              fontSize: 11.2,
-              fontWeight: FontWeight.w900,
-              height: 1,
-            ),
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '오늘 할 일:',
+                maxLines: 1,
+                overflow: TextOverflow.visible,
+                softWrap: false,
+                style: TextStyle(
+                  color: palette.mutedText,
+                  fontSize: 11.2,
+                  fontWeight: FontWeight.w900,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(width: 8),
+              _todayActionButton(
+                id: 'story',
+                label: '이야기 탐험',
+                accent: _todayActionAccent(
+                  palette: palette,
+                  completed: actions.storyExploration,
+                  fallback: palette.currentAccentDeep,
+                ),
+                completed: actions.storyExploration,
+              ),
+              const SizedBox(width: 8),
+              _todayActionButton(
+                id: 'diary',
+                label: '신앙 다이어리',
+                accent: _todayActionAccent(
+                  palette: palette,
+                  completed: actions.companionDiary,
+                  fallback: palette.successBottom,
+                ),
+                completed: actions.companionDiary,
+              ),
+              const SizedBox(width: 8),
+              _todayActionButton(
+                id: 'bible',
+                label: '통독',
+                accent: _todayActionAccent(
+                  palette: palette,
+                  completed: actions.bibleReading,
+                  fallback: palette.currentAccentDeep,
+                ),
+                completed: actions.bibleReading,
+              ),
+            ],
           ),
-          _todayActionButton(
-            id: 'story',
-            label: '이야기 탐험',
-            accent: _todayActionAccent(
-              palette: palette,
-              completed: actions.storyExploration,
-              fallback: palette.currentAccentDeep,
-            ),
-            completed: actions.storyExploration,
-          ),
-          _todayActionButton(
-            id: 'diary',
-            label: '신앙 다이어리',
-            accent: _todayActionAccent(
-              palette: palette,
-              completed: actions.companionDiary,
-              fallback: palette.successBottom,
-            ),
-            completed: actions.companionDiary,
-          ),
-          _todayActionButton(
-            id: 'bible',
-            label: '통독',
-            accent: _todayActionAccent(
-              palette: palette,
-              completed: actions.bibleReading,
-              fallback: palette.currentAccentDeep,
-            ),
-            completed: actions.bibleReading,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -1960,7 +1967,7 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
             ),
           ),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 72),
+            constraints: const BoxConstraints(minHeight: 64),
             child: Padding(
               padding: EdgeInsets.fromLTRB(8, largeText ? 7 : 8, 8, 7),
               child: Column(
@@ -2049,7 +2056,7 @@ class _StoryJourneyGuideNote extends StatelessWidget {
               ),
             ),
             Text(
-              '다음 이야기를 눌러 시작하세요! (완료조건: 감정 새기기)',
+              '카드를 눌러 탐험하세요! (완료조건: 감정 새기기)',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: palette.mutedText,

@@ -14,10 +14,12 @@ import 'package:story_bible/models/user_companion_diary_entry.dart';
 import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/theme/app_color_palette.dart';
 import 'package:story_bible/theme/app_theme.dart';
+import 'package:story_bible/theme/tokens.dart';
 import 'package:story_bible/widgets/emotion_badge_icon.dart';
 import 'package:story_bible/widgets/parchment_page_scaffold.dart';
 import 'package:story_bible/widgets/profile/companion_diary_entry_card.dart';
 import 'package:story_bible/widgets/profile/profile_emotion_diary.dart';
+import 'package:story_bible/widgets/pulse_highlight.dart';
 
 class _MockStoryRepository extends Mock implements StoryRepository {}
 
@@ -232,12 +234,19 @@ void _companionDiaryWidgetTests() {
     final writePill = tester.widget<Material>(
       find.byKey(const ValueKey('companion-diary-write-button-pill')),
     );
+    final writePulse = tester.widget<PulseHighlight>(
+      find.ancestor(
+        of: find.byKey(const ValueKey('companion-diary-write-button-pill')),
+        matching: find.byType(PulseHighlight),
+      ),
+    );
     final writeLabel = tester.widget<Text>(find.text('기록하기'));
     final donut = tester.widget<CircularProgressIndicator>(
       find.byKey(const ValueKey('bible-progress-donut-indicator')),
     );
 
     expect(writePill.color, isNot(AppColorPalette.atlasNavy.cardSurface));
+    expect(writePulse.color, AppColors.goldHi);
     expect(writeLabel.style?.color, AppColorPalette.atlasNavy.successBottom);
     expect(donut.backgroundColor, isNot(AppColorPalette.atlasNavy.cardSurface));
     expect(donut.color, isNot(AppColorPalette.atlasNavy.cardSurface));
@@ -641,20 +650,23 @@ void main() {
     expect(companionSource, contains("import '../pulse_highlight.dart';"));
     expect(
       companionSource,
-      contains('duration: const Duration(milliseconds: 2100)'),
+      contains('duration: const Duration(milliseconds: 2200)'),
     );
     expect(companionSource, contains('clipBehavior: Clip.none'));
     expect(companionSource, contains('EdgeInsets.fromLTRB(8, 7, 8, 9)'));
     expect(
       companionSource,
-      contains('color: darkSurface ? palette.successTop : AppColors.greenRim'),
+      contains('color: darkSurface ? AppColors.goldLight : AppColors.goldHi'),
     );
+    expect(companionSource, isNot(contains('final pulseColor')));
+    expect(companionSource, isNot(contains('auraColor')));
+    expect(companionSource, isNot(contains('ringColor')));
     expect(companionSource, contains('AppColors.greenTint1'));
     expect(companionSource, contains('diaryTitle'));
     expect(companionSource, contains('diaryBody'));
     expect(
       companionSource,
-      contains('constraints: const BoxConstraints(minHeight: 158)'),
+      contains('constraints: BoxConstraints(minHeight: minHeight)'),
     );
     expect(companionSource, contains('maxLines: 3'));
     expect(companionSource, isNot(contains('오늘 적은 다이어리')));
