@@ -269,9 +269,11 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
       gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: darkPanel
-            ? const [Color(0xFF05070B), Color(0xFF060A12), Color(0xFF05070B)]
-            : [palette.softSurface, palette.panelSurface, palette.mutedSurface],
+        colors: [
+          palette.softSurface,
+          palette.panelSurface,
+          palette.mutedSurface,
+        ],
       ),
       borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
       border: Border.fromBorderSide(

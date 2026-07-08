@@ -1478,6 +1478,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 );
               },
           onExploreStoriesFromHome: _returnProfileToHomeIntroGuide,
+          onBackToHome: _resetProfileRouteToHomeIntroGuide,
           onOpenAppPublications: _openAppPublications,
           onNavigateNotification: _handleNotificationTap,
           onOpenNotificationHistory: _openNotificationHistory,
@@ -1494,6 +1495,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (navigator.canPop()) {
       navigator.pop();
     }
+    _resetProfileRouteToHomeIntroGuide();
+  }
+
+  void _resetProfileRouteToHomeIntroGuide() {
+    if (!mounted) {
+      return;
+    }
+    _completeMapCelebration();
     final ctl = ref.read(storyControllerProvider.notifier);
     unawaited(ctl.setSelectedEra(null));
     ctl.clearSelectionMode();
@@ -2921,7 +2930,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                                     ),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                          MainAxisAlignment.start,
                                       children: [
                                         // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
                                         // 항상 일부 보이므로 별도 토글 불필요.
@@ -3069,26 +3078,27 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   // 지역 모드 (RegionPickPanel + RegionEventList) 한 화면에서 swap.
   // ===========================================================================
 
-  /// V1 StorySelectionPanel 과 동일한 양피지 양식 (그라데이션 + 갈색 외곽선).
-  /// HomeIntroPanel / RegionPickPanel / RegionEventList 모두 같은 wrapper 안.
-  BoxDecoration _parchmentPanelDecoration() {
-    return const BoxDecoration(
+  /// HomeIntroPanel / RegionPickPanel / RegionEventList 공용 wrapper.
+  /// blackMap 에서는 양피지 표면 대신 어두운 지도 패널 표면을 사용한다.
+  BoxDecoration _selectionSheetPanelDecoration(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          AppColors.dialogTopHighlight,
-          AppColors.parchmentLight,
-          AppColors.parchmentMid,
+          palette.softSurface,
+          palette.panelSurface,
+          palette.mutedSurface,
         ],
       ),
-      borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
       border: Border(
-        top: BorderSide(color: AppColors.borderFloating, width: 1.15),
-        left: BorderSide(color: AppColors.borderFloating, width: 1.15),
-        right: BorderSide(color: AppColors.borderFloating, width: 1.15),
+        top: BorderSide(color: palette.panelBorder, width: 1.15),
+        left: BorderSide(color: palette.panelBorder, width: 1.15),
+        right: BorderSide(color: palette.panelBorder, width: 1.15),
       ),
-      boxShadow: [
+      boxShadow: const [
         BoxShadow(
           color: Color(0x38000000),
           blurRadius: 16,
@@ -3110,6 +3120,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final isExpanded = stage == StorySelectionPanelStage.expanded;
     return LayoutBuilder(
       builder: (context, constraints) {
+        final palette = AppPaletteTheme.of(context);
         const horizontalPadding = 16.0;
         final innerWidth = math.max(
           0.0,
@@ -3137,10 +3148,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 decoration: BoxDecoration(
                   // stepper 의 활성 초록(_activeColor 0xFF2E8B57) 의 옅은
                   // tint 로 panel toggle 임을 색으로 시그널링.
-                  color: const Color(0xFF2E8B57).withValues(alpha: 0.16),
+                  color: Color.alphaBlend(
+                    const Color(0xFF2E8B57).withValues(alpha: 0.18),
+                    palette.cardSurface,
+                  ),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: const Color(0xFF2E8B57).withValues(alpha: 0.45),
+                    color: const Color(0xFF2E8B57).withValues(alpha: 0.55),
                     width: 1,
                   ),
                 ),
@@ -3150,7 +3164,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       ? Icons.keyboard_arrow_down
                       : Icons.keyboard_arrow_up,
                   size: 22,
-                  color: const Color(0xFF2E8B57),
+                  color: palette.successBottom,
                   semanticLabel: isExpanded ? '아래로 접기' : '위로 펼치기',
                 ),
               ),
@@ -3187,7 +3201,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Widget _buildHomeIntroPanel(StoryState state, double bottomInset) {
     return Container(
-      decoration: _parchmentPanelDecoration(),
+      decoration: _selectionSheetPanelDecoration(context),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
@@ -3202,7 +3216,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Widget _buildTimelineUnitPanel(StoryState state, double bottomInset) {
     return Container(
-      decoration: _parchmentPanelDecoration(),
+      decoration: _selectionSheetPanelDecoration(context),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
@@ -3356,7 +3370,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final selected = state.landmarkById(state.selectedLandmarkId);
 
     return Container(
-      decoration: _parchmentPanelDecoration(),
+      decoration: _selectionSheetPanelDecoration(context),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [

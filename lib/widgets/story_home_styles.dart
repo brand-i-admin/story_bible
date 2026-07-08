@@ -33,10 +33,15 @@ BoxDecoration modalSurfaceDecoration({AppColorPalette? palette}) {
 }
 
 BoxDecoration floatingPanelDecoration({
-  Color color = AppColors.floatingSurfaceDefault,
+  Color? color,
+  AppColorPalette? palette,
   double shadowOpacity = 0.12,
 }) {
-  return AppSurfaces.floating(color: color, shadowOpacity: shadowOpacity);
+  return AppSurfaces.floating(
+    color: color ?? palette?.panelSurface ?? AppColors.floatingSurfaceDefault,
+    borderColor: palette?.panelBorder ?? AppColors.borderFloating,
+    shadowOpacity: shadowOpacity,
+  );
 }
 
 BoxDecoration interactiveCardDecoration({
@@ -110,7 +115,14 @@ BoxDecoration interactiveCardDecoration({
   );
 }
 
-BoxDecoration headerChipDecoration() {
+BoxDecoration headerChipDecoration({AppColorPalette? palette}) {
+  if (palette != null) {
+    return BoxDecoration(
+      color: palette.cardSurface,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: palette.panelBorder, width: 1),
+    );
+  }
   return BoxDecoration(
     color: AppColors.parchmentMid.withValues(alpha: 0.94),
     borderRadius: BorderRadius.circular(16),
@@ -281,33 +293,38 @@ Widget filledActionButton({
 }
 
 Widget modalCloseButton({required VoidCallback onTap, double size = 34}) {
-  return Material(
-    color: Colors.transparent,
-    child: InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(size * 0.38),
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: AppColors.parchmentCream.withValues(alpha: 0.94),
+  return Builder(
+    builder: (context) {
+      final palette = AppPaletteTheme.of(context);
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(size * 0.38),
-          border: Border.all(color: AppColors.borderFloating, width: 1.0),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x22000000),
-              blurRadius: 10,
-              offset: Offset(0, 4),
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: palette.softSurface,
+              borderRadius: BorderRadius.circular(size * 0.38),
+              border: Border.all(color: palette.subtleBorder, width: 1.0),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x22000000),
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
-          ],
+            child: Icon(
+              Icons.close_rounded,
+              size: size * 0.52,
+              color: palette.mutedText,
+            ),
+          ),
         ),
-        child: Icon(
-          Icons.close_rounded,
-          size: size * 0.52,
-          color: AppColors.ink400,
-        ),
-      ),
-    ),
+      );
+    },
   );
 }
 
@@ -772,8 +789,13 @@ Widget storySection({
 Widget storySceneRow(
   List<String> sceneAssets, {
   List<String> sceneCaptions = const [],
+  AppColorPalette? palette,
 }) {
-  return StorySceneRow(sceneAssets: sceneAssets, sceneCaptions: sceneCaptions);
+  return StorySceneRow(
+    sceneAssets: sceneAssets,
+    sceneCaptions: sceneCaptions,
+    palette: palette,
+  );
 }
 
 /// 장면 이미지 가로 스크롤 row. 한 화면에 ~2.3 타일 노출이라 3장 이상이면
@@ -784,10 +806,12 @@ class StorySceneRow extends StatefulWidget {
     super.key,
     required this.sceneAssets,
     this.sceneCaptions = const [],
+    this.palette,
   });
 
   final List<String> sceneAssets;
   final List<String> sceneCaptions;
+  final AppColorPalette? palette;
 
   @override
   State<StorySceneRow> createState() => _StorySceneRowState();
@@ -863,12 +887,19 @@ class _StorySceneRowState extends State<StorySceneRow> {
       return const SizedBox.shrink();
     }
 
+    final palette = widget.palette ?? AppPaletteTheme.of(context);
+    final surfaceColor = palette == AppColorPalette.blackMap
+        ? palette.mutedSurface
+        : AppColors.parchmentCard.withValues(alpha: 0.96);
+    final borderColor = palette == AppColorPalette.blackMap
+        ? palette.subtleBorder
+        : AppColors.borderCard;
     const tileGap = 8.0;
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.borderCard, width: 1.2),
+        border: Border.all(color: borderColor, width: 1.2),
         borderRadius: BorderRadius.circular(AppRadii.md),
-        color: AppColors.parchmentCard.withValues(alpha: 0.96),
+        color: surfaceColor,
       ),
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
       child: LayoutBuilder(

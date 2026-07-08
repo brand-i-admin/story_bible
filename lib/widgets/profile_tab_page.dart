@@ -84,6 +84,7 @@ const Map<String, int> _profileStoryEraCodeOrder = {
 /// - [onOpenEventDetail]: 이벤트 상세 페이지 열기
 /// - [onOpenBibleReader]: 저장 구절 이동 시 성경 리더 열기
 /// - [onOpenAppPublications]: 공지사항과 사용법 페이지 열기
+/// - [onBackToHome]: 프로필 뒤로가기 시 홈 초기 화면으로 복귀
 class ProfileTabPage extends ConsumerStatefulWidget {
   const ProfileTabPage({
     super.key,
@@ -94,6 +95,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
     required this.onNavigateNotification,
     required this.onOpenNotificationHistory,
     this.onExploreStoriesFromHome,
+    this.onBackToHome,
   });
 
   final void Function(String eventId) onStartQuiz;
@@ -108,6 +110,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
   final void Function(AppNotification notification) onNavigateNotification;
   final VoidCallback onOpenNotificationHistory;
   final VoidCallback? onExploreStoriesFromHome;
+  final VoidCallback? onBackToHome;
 
   @override
   ConsumerState<ProfileTabPage> createState() => ProfileTabPageState();
@@ -212,6 +215,14 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       return;
     }
     await _refreshProfileTabPreviews(showLoading: showLoading);
+  }
+
+  Future<void> _refreshProfilePage() async {
+    if (!mounted) {
+      return;
+    }
+    await ref.read(storyControllerProvider.notifier).refreshCompletedEventIds();
+    await _loadProfilePeople(forceRefresh: true);
   }
 
   void _selectProfileContentTab(_ProfileContentTab tab) {
@@ -764,30 +775,35 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           isAuthenticated: isAuthenticated,
         );
         if (isNarrow) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildProfileHeader(),
-                const SizedBox(height: 6),
-                _buildProfileProgressSection(
-                  profile: profile,
-                  scrollBody: false,
-                ),
-                if (showPrayerActivitySection) ...[
-                  const SizedBox(height: 8),
-                  _profileSectionsFrame(
-                    child: SizedBox(
-                      height: activitySectionHeight,
-                      child: _buildProfileActivitySection(
-                        profile: profile,
-                        isAuthenticated: isAuthenticated,
+          return RefreshIndicator(
+            color: AppPaletteTheme.of(context).primary,
+            onRefresh: _refreshProfilePage,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildProfileHeader(),
+                  const SizedBox(height: 6),
+                  _buildProfileProgressSection(
+                    profile: profile,
+                    scrollBody: false,
+                  ),
+                  if (showPrayerActivitySection) ...[
+                    const SizedBox(height: 8),
+                    _profileSectionsFrame(
+                      child: SizedBox(
+                        height: activitySectionHeight,
+                        child: _buildProfileActivitySection(
+                          profile: profile,
+                          isAuthenticated: isAuthenticated,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
           );
         }
@@ -1064,6 +1080,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     return SubPageScaffold(
       title: '프로필',
       compactBackOnly: true,
+      onBack: widget.onBackToHome,
       child: Stack(
         children: [
           Positioned.fill(

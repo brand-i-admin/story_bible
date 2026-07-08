@@ -70,6 +70,7 @@ class FontScaleBottomSheet extends ConsumerWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: _PaletteChoiceButton(
                             palette: palette,
+                            surfacePalette: currentPalette,
                             selected: palette == currentPalette,
                             onTap: () => ref
                                 .read(colorPaletteProvider.notifier)
@@ -144,17 +145,30 @@ class FontScaleBottomSheet extends ConsumerWidget {
 class _PaletteChoiceButton extends StatelessWidget {
   const _PaletteChoiceButton({
     required this.palette,
+    required this.surfacePalette,
     required this.selected,
     required this.onTap,
   });
 
   final AppColorPalette palette;
+  final AppColorPalette surfacePalette;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final labelColor = selected ? palette.text : AppColors.ink700;
+    final darkSurface = surfacePalette == AppColorPalette.blackMap;
+    final labelColor = selected
+        ? surfacePalette.text
+        : (darkSurface ? surfacePalette.mutedText : AppColors.ink700);
+    final backgroundColor = selected
+        ? palette.selectedSurface
+        : (darkSurface
+              ? surfacePalette.cardSurface
+              : AppColors.parchmentCard.withValues(alpha: 0.92));
+    final borderColor = selected
+        ? palette.selectedBorder
+        : (darkSurface ? surfacePalette.subtleBorder : AppColors.borderCard);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -165,13 +179,8 @@ class _PaletteChoiceButton extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 78),
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 9),
           decoration: BoxDecoration(
-            color: selected
-                ? palette.selectedSurface
-                : AppColors.parchmentCard.withValues(alpha: 0.92),
-            border: Border.all(
-              color: selected ? palette.selectedBorder : AppColors.borderCard,
-              width: selected ? 1.6 : 1,
-            ),
+            color: backgroundColor,
+            border: Border.all(color: borderColor, width: selected ? 1.6 : 1),
             borderRadius: BorderRadius.circular(14),
           ),
           child: Stack(
@@ -204,7 +213,11 @@ class _PaletteChoiceButton extends StatelessWidget {
                 selected
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_unchecked_rounded,
-                color: selected ? palette.currentAccentDeep : AppColors.ink300,
+                color: selected
+                    ? palette.currentAccentDeep
+                    : (darkSurface
+                          ? surfacePalette.mutedText
+                          : AppColors.ink300),
                 size: 18,
               ),
             ],
@@ -314,6 +327,17 @@ class _FontScaleChoiceButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final darkSurface = palette == AppColorPalette.blackMap;
+    final backgroundColor = selected
+        ? palette.selectedSurface
+        : (darkSurface
+              ? palette.cardSurface
+              : AppColors.parchmentCard.withValues(alpha: 0.82));
+    final borderColor = selected
+        ? palette.selectedBorder
+        : (darkSurface ? palette.subtleBorder : AppColors.borderCard);
+    final labelColor = darkSurface ? palette.text : AppColors.ink900;
+    final checkColor = darkSurface ? palette.primaryDeep : AppColors.ink700;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -324,13 +348,8 @@ class _FontScaleChoiceButton extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 56),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
           decoration: BoxDecoration(
-            color: selected
-                ? palette.selectedSurface
-                : AppColors.parchmentCard.withValues(alpha: 0.82),
-            border: Border.all(
-              color: selected ? palette.selectedBorder : AppColors.borderCard,
-              width: selected ? 1.6 : 1,
-            ),
+            color: backgroundColor,
+            border: Border.all(color: borderColor, width: selected ? 1.6 : 1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -339,7 +358,7 @@ class _FontScaleChoiceButton extends StatelessWidget {
               SizedBox(
                 height: 18,
                 child: selected
-                    ? const Icon(Icons.check, size: 18, color: AppColors.ink700)
+                    ? Icon(Icons.check, size: 18, color: checkColor)
                     : null,
               ),
               Text(
@@ -350,10 +369,10 @@ class _FontScaleChoiceButton extends StatelessWidget {
                     ? TextOverflow.visible
                     : TextOverflow.ellipsis,
                 softWrap: true,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.ink900,
+                  color: labelColor,
                 ),
               ),
               Text(

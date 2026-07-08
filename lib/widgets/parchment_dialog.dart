@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../theme/app_color_palette.dart';
+import '../theme/surfaces.dart';
 import '../theme/tokens.dart';
 
 enum ParchmentDialogActionStyle { primary, secondary, danger }
@@ -30,13 +31,14 @@ class ParchmentDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth),
         child: Container(
-          decoration: _surfaceDecoration(),
+          decoration: _surfaceDecoration(context),
           padding: padding,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -63,8 +65,8 @@ class ParchmentDialog extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: const TextStyle(
-                            color: AppColors.ink700,
+                          style: TextStyle(
+                            color: palette.text,
                             fontSize: 18.5,
                             fontWeight: FontWeight.w900,
                             height: 1.15,
@@ -75,8 +77,8 @@ class ParchmentDialog extends StatelessWidget {
                           const SizedBox(height: 5),
                           Text(
                             subtitle!.trim(),
-                            style: const TextStyle(
-                              color: AppColors.ink200,
+                            style: TextStyle(
+                              color: palette.mutedText,
                               fontSize: 11.2,
                               fontWeight: FontWeight.w700,
                               height: 1.4,
@@ -135,15 +137,15 @@ class ParchmentDialogActionButton extends StatelessWidget {
         ? [palette.actionTop, palette.actionBottom]
         : isDanger
         ? const [AppColors.dangerTop, AppColors.dangerBot]
-        : const [AppColors.parchmentLight, AppColors.parchmentMid];
+        : [palette.softSurface, palette.cardSurface];
     final borderColor = isPrimary
         ? palette.actionBorder
         : isDanger
         ? AppColors.dangerRim
-        : AppColors.borderFloating;
+        : palette.subtleBorder;
     final foreground = isPrimary || isDanger
         ? AppColors.parchmentCream
-        : AppColors.ink350;
+        : palette.text;
 
     return Material(
       color: Colors.transparent,
@@ -228,6 +230,7 @@ class ParchmentDialogTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return TextField(
       controller: controller,
       focusNode: focusNode,
@@ -239,46 +242,40 @@ class ParchmentDialogTextField extends StatelessWidget {
       textInputAction: textInputAction,
       textCapitalization: textCapitalization,
       inputFormatters: inputFormatters,
-      style: const TextStyle(
-        color: AppColors.ink600,
+      style: TextStyle(
+        color: palette.text,
         fontSize: 14.5,
         fontWeight: FontWeight.w800,
       ),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(
-          color: AppColors.ink150,
+        hintStyle: TextStyle(
+          color: palette.mutedText,
           fontSize: 13.6,
           fontWeight: FontWeight.w600,
         ),
-        counterStyle: const TextStyle(
-          color: AppColors.ink150,
+        counterStyle: TextStyle(
+          color: palette.mutedText,
           fontSize: 10.4,
           fontWeight: FontWeight.w700,
         ),
         filled: true,
-        fillColor: AppColors.parchmentCream,
+        fillColor: palette.cardSurface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 15,
           vertical: 13,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(
-            color: AppColors.borderFloating,
-            width: 1.1,
-          ),
+          borderSide: BorderSide(color: palette.subtleBorder, width: 1.1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(
-            color: AppColors.borderFloating,
-            width: 1.1,
-          ),
+          borderSide: BorderSide(color: palette.subtleBorder, width: 1.1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: AppColors.oceanDeep, width: 1.5),
+          borderSide: BorderSide(color: palette.primaryDeep, width: 1.5),
         ),
       ),
       onChanged: onChanged,
@@ -294,6 +291,7 @@ class _ParchmentDialogCloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -303,36 +301,17 @@ class _ParchmentDialogCloseButton extends StatelessWidget {
           width: 34,
           height: 34,
           decoration: BoxDecoration(
-            color: const Color(0x90FFFFFF),
+            color: palette.softSurface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderFloating, width: 1),
+            border: Border.all(color: palette.subtleBorder, width: 1),
           ),
-          child: const Icon(
-            Icons.close_rounded,
-            color: AppColors.ink300,
-            size: 19,
-          ),
+          child: Icon(Icons.close_rounded, color: palette.mutedText, size: 19),
         ),
       ),
     );
   }
 }
 
-BoxDecoration _surfaceDecoration() {
-  return BoxDecoration(
-    gradient: const LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [AppColors.dialogTopHighlight, AppColors.parchmentMid],
-    ),
-    borderRadius: BorderRadius.circular(24),
-    border: Border.all(color: AppColors.borderModalDialog, width: 1.2),
-    boxShadow: const [
-      BoxShadow(
-        color: Color(0x26000000),
-        blurRadius: 24,
-        offset: Offset(0, 14),
-      ),
-    ],
-  );
+BoxDecoration _surfaceDecoration(BuildContext context) {
+  return AppSurfaces.modal(palette: AppPaletteTheme.of(context));
 }

@@ -453,6 +453,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
           child: storySceneRow(
             sceneAssets,
             sceneCaptions: widget.event.sceneCaptions,
+            palette: AppPaletteTheme.of(context),
           ),
         );
       },
@@ -1347,14 +1348,15 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
   }
 
   Widget _buildEmotionStep(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Column(
       key: const ValueKey('emotion-step'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
+        Text(
           '이 이야기에서 마음에 남은 감정을 하나 골라 주세요.',
           style: TextStyle(
-            color: AppColors.ink600,
+            color: palette.primaryDeep,
             fontSize: 13,
             fontWeight: FontWeight.w800,
             height: 1.35,
@@ -1382,6 +1384,7 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
   }
 
   Widget _buildNoteStep(BuildContext context, EventEmotionOption? selected) {
+    final palette = AppPaletteTheme.of(context);
     final option = selected ?? EventEmotionOption.options.last;
     return Column(
       key: const ValueKey('note-step'),
@@ -1389,8 +1392,8 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
       children: [
         RichText(
           text: TextSpan(
-            style: const TextStyle(
-              color: AppColors.ink900,
+            style: TextStyle(
+              color: palette.text,
               fontSize: 14,
               fontWeight: FontWeight.w800,
               height: 1.45,
@@ -1410,7 +1413,7 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
               ),
               TextSpan(
                 text: option.label,
-                style: const TextStyle(color: AppColors.oceanBot),
+                style: TextStyle(color: palette.primaryDeep),
               ),
               const TextSpan(text: '이 남았다.'),
             ],
@@ -1467,6 +1470,14 @@ class _EmotionChoiceChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final palette = AppPaletteTheme.of(context);
+    final selectedBackground = Color.alphaBlend(
+      palette.primary.withValues(alpha: 0.16),
+      palette.cardSurface,
+    );
+    final background = selected ? selectedBackground : palette.cardSurface;
+    final borderColor = selected ? palette.primaryDeep : palette.subtleBorder;
+    final textColor = selected ? palette.primaryDeep : palette.text;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1475,12 +1486,9 @@ class _EmotionChoiceChip extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 7),
           decoration: BoxDecoration(
-            color: selected ? AppColors.greenTint1 : AppColors.parchmentCard,
+            color: background,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: selected ? AppColors.oceanBot : AppColors.borderCard,
-              width: selected ? 1.4 : 1.0,
-            ),
+            border: Border.all(color: borderColor, width: selected ? 1.4 : 1.0),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -1500,7 +1508,7 @@ class _EmotionChoiceChip extends StatelessWidget {
                       : TextOverflow.ellipsis,
                   softWrap: true,
                   style: TextStyle(
-                    color: selected ? AppColors.oceanBot : AppColors.ink600,
+                    color: textColor,
                     fontSize: 11.2,
                     fontWeight: FontWeight.w900,
                     height: 1.0,

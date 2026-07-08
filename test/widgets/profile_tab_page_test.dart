@@ -294,6 +294,19 @@ void main() {
     expect(find.byType(ProfileEditorDialog), findsNothing);
   });
 
+  testWidgets('좁은 프로필 화면은 아래로 당겨 새로고침할 수 있다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      viewSize: const Size(390, 800),
+    );
+
+    expect(find.byType(RefreshIndicator), findsOneWidget);
+  });
+
   testWidgets('기도 기능은 pending 상태로 코드만 보존하고 화면에는 표시하지 않는다', (tester) async {
     await _pumpProfileTab(
       tester,
@@ -1073,7 +1086,7 @@ void main() {
     expect(progressGridTitle('미완료 이야기'), findsOneWidget);
   });
 
-  testWidgets('탐험 로그 페이지는 복습 항목을 제한된 인라인 카드와 팝업으로 보여준다', (tester) async {
+  testWidgets('기록 페이지는 복습 항목을 제한된 인라인 카드와 팝업으로 보여준다', (tester) async {
     final wrongEvents = [
       for (var index = 1; index <= 10; index++)
         _profileEvent(
@@ -1206,7 +1219,7 @@ void main() {
     expect(reviewPanelTitle('헷갈려요로 복습할 이야기'), findsOneWidget);
   });
 
-  testWidgets('탐험 로그 페이지는 선택 날짜 기록과 감정 카테고리 팝업을 보여준다', (tester) async {
+  testWidgets('기록 페이지는 선택 날짜 기록과 감정 카테고리 팝업을 보여준다', (tester) async {
     final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
     final selectedDate = DateTime(nowKst.year, nowKst.month, nowKst.day);
     final selectedDateLabel = '${selectedDate.month}월 ${selectedDate.day}일 기록';
@@ -1340,7 +1353,7 @@ void main() {
       return find.descendant(of: emotionList, matching: find.text(title));
     }
 
-    expect(find.text('탐험 로그'), findsOneWidget);
+    expect(find.text('기록'), findsOneWidget);
     expect(find.text('내가 새긴 감정들과 코멘트'), findsNothing);
     expect(find.text('복습 항목'), findsOneWidget);
     expect(find.text('탐험 달력과 흔적들'), findsOneWidget);

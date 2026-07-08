@@ -5,7 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/models/app_publication.dart';
 import 'package:story_bible/screens/app_publications_screen.dart';
+import 'package:story_bible/screens/legal_documents_screen.dart';
 import 'package:story_bible/state/app_publication_providers.dart';
+import 'package:story_bible/theme/app_color_palette.dart';
+import 'package:story_bible/theme/app_theme.dart';
 
 AppPublication _publication() {
   return AppPublication(
@@ -23,14 +26,20 @@ AppPublication _publication() {
   );
 }
 
-Widget _wrap(List<AppPublication> publications) {
+Widget _wrap(
+  List<AppPublication> publications, {
+  AppColorPalette palette = AppColorPalette.classic,
+}) {
   return ProviderScope(
     overrides: [
       publishedAppPublicationsProvider.overrideWith((ref) async {
         return publications;
       }),
     ],
-    child: const MaterialApp(home: AppPublicationsScreen()),
+    child: MaterialApp(
+      theme: AppTheme.light(palette: palette),
+      home: const AppPublicationsScreen(),
+    ),
   );
 }
 
@@ -65,5 +74,46 @@ void main() {
       find.byKey(const ValueKey('app-publication-link-url')),
       findsOneWidget,
     );
+  });
+
+  testWidgets('블랙 팔레트에서는 공지 리스트 카드가 어두운 표면을 사용한다', (tester) async {
+    await tester.pumpWidget(
+      _wrap([_publication()], palette: AppColorPalette.blackMap),
+    );
+    await tester.pump();
+
+    final cardInk = tester.widget<Ink>(
+      find
+          .ancestor(of: find.text('가이드 및 튜토리얼'), matching: find.byType(Ink))
+          .first,
+    );
+    final decoration = cardInk.decoration as BoxDecoration;
+    final title = tester.widget<Text>(find.text('가이드 및 튜토리얼'));
+
+    expect(decoration.color, AppColorPalette.blackMap.cardSurface);
+    expect(title.style?.color, AppColorPalette.blackMap.text);
+  });
+
+  testWidgets('블랙 팔레트에서는 법적 안내 화면도 어두운 표면을 사용한다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(palette: AppColorPalette.blackMap),
+        home: const LegalDocumentsScreen(),
+      ),
+    );
+    await tester.pump();
+
+    final scaffold = tester.widget<Scaffold>(find.byType(Scaffold).first);
+    final title = tester.widget<Text>(find.text('법적 안내'));
+    final cardInk = tester.widget<Ink>(
+      find
+          .ancestor(of: find.text('서비스 이용약관'), matching: find.byType(Ink))
+          .first,
+    );
+    final decoration = cardInk.decoration as BoxDecoration;
+
+    expect(scaffold.backgroundColor, AppColorPalette.blackMap.pageBottom);
+    expect(title.style?.color, AppColorPalette.blackMap.text);
+    expect(decoration.color, AppColorPalette.blackMap.cardSurface);
   });
 }

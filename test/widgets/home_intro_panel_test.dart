@@ -436,13 +436,13 @@ void main() {
     expect(source, contains('max: 0.38'));
   });
 
-  test('홈 상단 유틸리티 버튼 row는 가운데 정렬한다', () {
+  test('홈 상단 유틸리티 버튼 row는 좌측 정렬한다', () {
     final source = File(
       'lib/screens/story_home_screen_state.dart',
     ).readAsStringSync();
 
     expect(source, contains('constraints.maxWidth - 24'));
-    expect(source, contains('MainAxisAlignment.center'));
+    expect(source, contains('MainAxisAlignment.start'));
     expect(source, contains('topUtilityBarHeightFor(context)'));
   });
 

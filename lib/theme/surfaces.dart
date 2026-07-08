@@ -63,6 +63,7 @@ class AppSurfaces {
 
   static BoxDecoration floating({
     Color color = AppColors.floatingSurfaceDefault,
+    Color borderColor = AppColors.borderFloating,
     double shadowOpacity = 0.12,
   }) {
     return BoxDecoration(
@@ -72,7 +73,7 @@ class AppSurfaces {
         colors: [Color.alphaBlend(AppColors.overlayWhiteSoft, color), color],
       ),
       borderRadius: BorderRadius.circular(AppRadii.xxl),
-      border: Border.all(color: AppColors.borderFloating, width: 1.0),
+      border: Border.all(color: borderColor, width: 1.0),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withValues(alpha: shadowOpacity),

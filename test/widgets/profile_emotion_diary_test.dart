@@ -602,6 +602,11 @@ void main() {
     expect(companionSource, contains('AppColors.greenTint1'));
     expect(companionSource, contains('diaryTitle'));
     expect(companionSource, contains('diaryBody'));
+    expect(
+      companionSource,
+      contains('constraints: const BoxConstraints(minHeight: 158)'),
+    );
+    expect(companionSource, contains('maxLines: 3'));
     expect(companionSource, isNot(contains('오늘 적은 다이어리')));
     expect(source, isNot(contains('_DiaryLinkedTabSection')));
     expect(source, isNot(contains('_DiaryContentTab')));

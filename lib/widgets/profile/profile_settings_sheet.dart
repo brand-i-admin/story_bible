@@ -16,110 +16,113 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (sheetCtx) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        child: SafeArea(
-          top: false,
-          child: Container(
-            clipBehavior: Clip.hardEdge,
-            decoration: modalSurfaceDecoration(),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    '설정',
-                    style: TextStyle(
-                      color: AppColors.ink900,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 18,
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  _settingsRow(
-                    icon: Icons.policy_outlined,
-                    label: '개인정보 보호',
-                    onTap: () {
-                      Navigator.of(
-                        sheetCtx,
-                      ).pop(_ProfileSettingsAction.privacy);
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  _settingsRow(
-                    icon: Icons.info_outline_rounded,
-                    label: '지도 설명',
-                    onTap: () {
-                      Navigator.of(
-                        sheetCtx,
-                      ).pop(_ProfileSettingsAction.mapAttribution);
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  _settingsRow(
-                    icon: Icons.logout_rounded,
-                    label: '로그아웃',
-                    danger: true,
-                    onTap: () {
-                      Navigator.of(
-                        sheetCtx,
-                      ).pop(_ProfileSettingsAction.signOut);
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  _settingsRow(
-                    icon: Icons.delete_forever_rounded,
-                    label: '계정 삭제',
-                    danger: true,
-                    onTap: () {
-                      Navigator.of(
-                        sheetCtx,
-                      ).pop(_ProfileSettingsAction.deleteAccount);
-                    },
-                  ),
-                  const SizedBox(height: 14),
-                  Container(height: 1, color: AppColors.borderCard),
-                  const SizedBox(height: 10),
-                  // 관리자 문의 이메일 — 안내성 푸터.
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.mail_outline_rounded,
-                        size: 14,
-                        color: AppColors.ink500,
+      builder: (sheetCtx) {
+        final palette = AppPaletteTheme.of(sheetCtx);
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          child: SafeArea(
+            top: false,
+            child: Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: modalSurfaceDecoration(palette: palette),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      '설정',
+                      style: TextStyle(
+                        color: palette.text,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
                       ),
-                      SizedBox(width: 6),
-                      Text(
-                        'admin@brand-i.net',
+                    ),
+                    const SizedBox(height: 14),
+                    _settingsRow(
+                      icon: Icons.policy_outlined,
+                      label: '개인정보 보호',
+                      onTap: () {
+                        Navigator.of(
+                          sheetCtx,
+                        ).pop(_ProfileSettingsAction.privacy);
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    _settingsRow(
+                      icon: Icons.info_outline_rounded,
+                      label: '지도 설명',
+                      onTap: () {
+                        Navigator.of(
+                          sheetCtx,
+                        ).pop(_ProfileSettingsAction.mapAttribution);
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    _settingsRow(
+                      icon: Icons.logout_rounded,
+                      label: '로그아웃',
+                      danger: true,
+                      onTap: () {
+                        Navigator.of(
+                          sheetCtx,
+                        ).pop(_ProfileSettingsAction.signOut);
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    _settingsRow(
+                      icon: Icons.delete_forever_rounded,
+                      label: '계정 삭제',
+                      danger: true,
+                      onTap: () {
+                        Navigator.of(
+                          sheetCtx,
+                        ).pop(_ProfileSettingsAction.deleteAccount);
+                      },
+                    ),
+                    const SizedBox(height: 14),
+                    Container(height: 1, color: palette.subtleBorder),
+                    const SizedBox(height: 10),
+                    // 관리자 문의 이메일 — 안내성 푸터.
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.mail_outline_rounded,
+                          size: 14,
+                          color: palette.mutedText,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'admin@brand-i.net',
+                          style: TextStyle(
+                            color: palette.text,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12.5,
+                            letterSpacing: 0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Center(
+                      child: Text(
+                        '관리자 문의',
                         style: TextStyle(
-                          color: AppColors.ink700,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 12.5,
-                          letterSpacing: 0,
+                          color: palette.mutedText,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 10.5,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  const Center(
-                    child: Text(
-                      '관리자 문의',
-                      style: TextStyle(
-                        color: AppColors.ink400,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 10.5,
-                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
 
     if (!mounted || action == null) {
@@ -185,7 +188,8 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
     required VoidCallback onTap,
     bool danger = false,
   }) {
-    final fg = danger ? AppColors.dangerBot : AppColors.ink800;
+    final palette = AppPaletteTheme.of(context);
+    final fg = danger ? AppColors.dangerBot : palette.text;
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
@@ -196,9 +200,9 @@ extension ProfileSettingsSheetExt on ProfileTabPageState {
           constraints: BoxConstraints(minHeight: largeText ? 62 : 50),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: AppColors.floatingSurfaceDefault,
+            color: palette.cardSurface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderCard, width: 0.8),
+            border: Border.all(color: palette.subtleBorder, width: 0.8),
           ),
           child: Row(
             children: [
@@ -297,6 +301,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return PopScope(
       canPop: !_submitting,
       child: Dialog(
@@ -305,26 +310,26 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 430),
           child: Container(
-            decoration: modalSurfaceDecoration(),
+            decoration: modalSurfaceDecoration(palette: palette),
             padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Row(
+                  Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.warning_amber_rounded,
                         color: Color(0xFF9C3F2E),
                         size: 22,
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           '계정 삭제',
                           style: TextStyle(
-                            color: Color(0xFF3A2B15),
+                            color: palette.text,
                             fontWeight: FontWeight.w900,
                             fontSize: 18,
                           ),
@@ -333,10 +338,10 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     '계정을 삭제하면 프로필과 학습 기록이 복구할 수 없게 삭제됩니다.',
                     style: TextStyle(
-                      color: AppColors.ink800,
+                      color: palette.text,
                       fontWeight: FontWeight.w800,
                       fontSize: 13,
                       height: 1.45,
@@ -347,8 +352,8 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                     profilePrayerFeaturePending
                         ? '삭제되는 정보: 프로필, 프로필 이미지, 저장한 이야기와 말씀, 본문 읽기/퀴즈/감정 기록, 동행 일지, 알림과 푸시 토큰, 제안 작성 중 올린 이미지'
                         : '삭제되는 정보: 프로필, 프로필 이미지, 저장한 이야기와 말씀, 본문 읽기/퀴즈/감정 기록, 동행 일지, 기도 연결, 알림과 푸시 토큰, 제안 작성 중 올린 이미지',
-                    style: const TextStyle(
-                      color: AppColors.ink600,
+                    style: TextStyle(
+                      color: palette.mutedText,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
                       height: 1.42,
@@ -358,17 +363,17 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.parchmentCream.withValues(alpha: 0.78),
+                      color: palette.cardSurface,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.borderCard),
+                      border: Border.all(color: palette.subtleBorder),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           '삭제하려면 아래 입력란에 이 아이디를 그대로 입력해 주세요.',
                           style: TextStyle(
-                            color: AppColors.ink700,
+                            color: palette.text,
                             fontWeight: FontWeight.w800,
                             fontSize: 12,
                             height: 1.35,
@@ -377,8 +382,8 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                         const SizedBox(height: 8),
                         SelectableText(
                           widget.expectedId,
-                          style: const TextStyle(
-                            color: AppColors.ink700,
+                          style: TextStyle(
+                            color: palette.text,
                             fontWeight: FontWeight.w900,
                             fontSize: 14,
                           ),
@@ -403,11 +408,21 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                       hintText: widget.expectedId,
                       isDense: true,
                       filled: true,
-                      fillColor: const Color(0xBBFFF8EA),
+                      fillColor: palette.cardSurface,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: palette.subtleBorder),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: palette.subtleBorder),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: palette.primaryDeep),
                       ),
                     ),
+                    style: TextStyle(color: palette.text),
                   ),
                   if (_errorText != null) ...[
                     const SizedBox(height: 10),

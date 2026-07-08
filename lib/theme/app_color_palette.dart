@@ -38,7 +38,7 @@ enum AppColorPalette {
   ),
   atlasNavy(
     storageKey: 'atlasNavy',
-    label: '남색 지도',
+    label: '네이비',
     description: '또렷한 남색과 부드러운 청록',
     seedColor: AppColors.seed,
     primary: AppColors.oceanBot,
@@ -71,7 +71,7 @@ enum AppColorPalette {
   ),
   colorfulMap(
     storageKey: 'colorfulMap',
-    label: '알록 지도',
+    label: '파스텔',
     description: '파스텔 보라, 청록, 오렌지, 핑크 조합',
     seedColor: Color(0xFFAA96F2),
     primary: Color(0xFFAA96F2),
@@ -104,7 +104,7 @@ enum AppColorPalette {
   ),
   blackMap(
     storageKey: 'blackMap',
-    label: '블랙 지도',
+    label: '다크',
     description: '검은 지도 톤과 금빛 포인트',
     seedColor: Color(0xFF111827),
     primary: Color(0xFF38BDF8),

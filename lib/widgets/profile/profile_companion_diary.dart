@@ -249,7 +249,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
         onTap: () => _openAllEntries(context),
         borderRadius: BorderRadius.circular(18),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 138),
+          constraints: const BoxConstraints(minHeight: 158),
           padding: const EdgeInsets.fromLTRB(13, 12, 13, 12),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -323,15 +323,18 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          diaryBody,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: palette.mutedText,
-                            fontSize: 11.6,
-                            fontWeight: FontWeight.w800,
-                            height: 1.25,
+                        Padding(
+                          padding: const EdgeInsets.only(right: 58),
+                          child: Text(
+                            diaryBody,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: palette.mutedText,
+                              fontSize: 11.6,
+                              fontWeight: FontWeight.w800,
+                              height: 1.3,
+                            ),
                           ),
                         ),
                       ],

@@ -270,12 +270,16 @@ class _SelectionStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final darkPanel = palette == AppColorPalette.blackMap;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xF2FFFBEF),
+        color: darkPanel ? palette.cardSurface : const Color(0xF2FFFBEF),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.borderCard, width: 0.9),
+        border: Border.all(
+          color: darkPanel ? palette.subtleBorder : AppColors.borderCard,
+          width: 0.9,
+        ),
         boxShadow: const [
           BoxShadow(
             color: Color(0x33000000),
@@ -292,6 +296,7 @@ class _SelectionStepper extends StatelessWidget {
               label: _labelFor(i),
               icon: _iconFor(i),
               color: _colorFor(i, palette),
+              palette: palette,
               enabled: i <= currentStep,
               onTap: () => onStepTap(i),
               tooltip: switch (i) {
@@ -311,7 +316,9 @@ class _SelectionStepper extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 1),
                 color: i < currentStep
                     ? palette.stepSelect
-                    : palette.mutedText.withValues(alpha: 0.58),
+                    : (darkPanel
+                          ? palette.subtleBorder
+                          : palette.mutedText.withValues(alpha: 0.58)),
               ),
           ],
         ],
@@ -325,6 +332,7 @@ class _StepPill extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.color,
+    required this.palette,
     required this.enabled,
     required this.onTap,
     this.tooltip,
@@ -333,12 +341,23 @@ class _StepPill extends StatelessWidget {
   final String label;
   final IconData? icon;
   final Color color;
+  final AppColorPalette palette;
   final bool enabled;
   final VoidCallback onTap;
   final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
+    final darkPanel = palette == AppColorPalette.blackMap;
+    final backgroundColor = enabled
+        ? color
+        : (darkPanel ? palette.mutedSurface : color.withValues(alpha: 0.55));
+    final foregroundColor = enabled
+        ? AppColors.fgOnDark
+        : (darkPanel ? palette.mutedText : AppColors.fgOnDark);
+    final borderColor = enabled
+        ? (darkPanel ? color.withValues(alpha: 0.82) : Colors.white)
+        : (darkPanel ? palette.subtleBorder : Colors.white);
     final dot = MouseRegion(
       cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
       child: GestureDetector(
@@ -347,9 +366,9 @@ class _StepPill extends StatelessWidget {
           height: 22,
           padding: const EdgeInsets.symmetric(horizontal: 6),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: enabled ? 1.0 : 0.55),
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white, width: 1.2),
+            border: Border.all(color: borderColor, width: 1.2),
             boxShadow: enabled
                 ? [
                     BoxShadow(
@@ -365,13 +384,13 @@ class _StepPill extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 11, color: Colors.white),
+                Icon(icon, size: 11, color: foregroundColor),
                 const SizedBox(width: 2),
               ],
               Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: foregroundColor,
                   fontSize: 9.8,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0,

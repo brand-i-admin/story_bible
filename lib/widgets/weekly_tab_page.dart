@@ -12,6 +12,7 @@ import '../models/story_event.dart';
 import '../models/weekly_study_data.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import '../utils/region_membership.dart';
 import '../utils/weekly_selection.dart';
@@ -388,6 +389,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        final palette = AppPaletteTheme.of(context);
         final w = constraints.maxWidth;
         final h = constraints.maxHeight;
         final contentGap = (w * 0.011).clamp(8.0, 14.0).toDouble();
@@ -443,6 +445,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                 progress: weeklyProgress,
               ),
             ),
+            SizedBox(height: contentGap),
             // 헤더 — 모드별 타이틀.
             _weeklyHeaderBadge(weekly),
             SizedBox(height: contentGap),
@@ -459,7 +462,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                     // 카드 자연 높이(~210) + 패딩 + ‘현재 이야기' 라벨 overflow
                     // 여유를 위해 250 이상 — 아주큰 글자에서는 조금 더 확보.
                     height: eventTimelineRowHeightFor(context, base: 250),
-                    decoration: floatingPanelDecoration(),
+                    decoration: floatingPanelDecoration(palette: palette),
                     child: EventTimelineRow(
                       events: weekly.events,
                       allEras: state.eras,
@@ -495,6 +498,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
   /// 모드별 헤더 — 인물 모드는 아바타 + "금주 인물: xxx", 지역 모드는 깃발
   /// 아이콘 + "금주 지역: 시대명 · 지역명".
   Widget _weeklyHeaderBadge(WeeklyStudyData weekly) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     if (weekly.mode == WeeklyMode.character && weekly.character != null) {
       return _weeklyCharacterTitleBadge(
@@ -507,7 +511,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         weekly.region != null) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-        decoration: headerChipDecoration(),
+        decoration: headerChipDecoration(palette: palette),
         child: Row(
           children: [
             Container(
@@ -534,10 +538,10 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                     ? TextOverflow.visible
                     : TextOverflow.ellipsis,
                 softWrap: true,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16.2,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.ink500,
+                  color: palette.text,
                 ),
               ),
             ),
@@ -555,7 +559,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-      decoration: headerChipDecoration(),
+      decoration: headerChipDecoration(palette: AppPaletteTheme.of(context)),
       child: Row(
         children: [
           _weeklyCharacterAvatar(character: character, size: 34),
@@ -568,10 +572,10 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                   ? TextOverflow.visible
                   : TextOverflow.ellipsis,
               softWrap: true,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16.2,
                 fontWeight: FontWeight.w800,
-                color: AppColors.ink500,
+                color: AppPaletteTheme.of(context).text,
               ),
             ),
           ),

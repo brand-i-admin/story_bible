@@ -558,24 +558,27 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   Future<void> _openTodayActionChecklistInfo() async {
     await showDialog<void>(
       context: context,
-      builder: (dialogContext) => ParchmentDialog(
-        title: '오늘의 할일',
-        actions: [
-          ParchmentDialogActionButton(
-            label: '확인',
-            onTap: () => Navigator.of(dialogContext).pop(),
+      builder: (dialogContext) {
+        final palette = AppPaletteTheme.of(dialogContext);
+        return ParchmentDialog(
+          title: '오늘의 할일',
+          actions: [
+            ParchmentDialogActionButton(
+              label: '확인',
+              onTap: () => Navigator.of(dialogContext).pop(),
+            ),
+          ],
+          child: Text(
+            '매일 이야기 탐험, 신앙 다이어리 작성, 통독 진행을 해봅시다!\n(완료 시 자동으로 체크 돼요)',
+            style: TextStyle(
+              color: palette.text,
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              height: 1.45,
+            ),
           ),
-        ],
-        child: const Text(
-          '매일 이야기 탐험, 신앙 다이어리 작성, 통독 진행을 해봅시다!\n(완료 시 자동으로 체크 돼요)',
-          style: TextStyle(
-            color: AppColors.ink500,
-            fontSize: 14,
-            fontWeight: FontWeight.w800,
-            height: 1.45,
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -1213,7 +1216,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                     color: Colors.transparent,
                     child: Container(
                       clipBehavior: Clip.hardEdge,
-                      decoration: modalSurfaceDecoration(),
+                      decoration: modalSurfaceDecoration(palette: palette),
                       child: Stack(
                         children: [
                           Padding(
@@ -2043,7 +2046,7 @@ class _StoryJourneyGuideNote extends StatelessWidget {
               ),
             ),
             Text(
-              '다음 이야기를 눌러 시작하세요! (완료 조건은 감정 새기기입니다)',
+              '다음 이야기를 눌러 시작하세요! (완료조건: 감정 새기기)',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: palette.mutedText,
@@ -2556,6 +2559,8 @@ class _ProfileExplorationLogPageState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const _ProfileProgressPageSectionTitle(label: '복습 항목'),
+          const SizedBox(height: 10),
           _ProfileQuizStatsColumn(
             stats: widget.quizStats,
             selectedFilter: _selectedReviewFilter,
@@ -2593,7 +2598,7 @@ class _ProfileExplorationLogPageState
     };
 
     return ParchmentListPageScaffold(
-      title: '탐험 로그',
+      title: '기록',
       child: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
         child: Container(
@@ -2606,8 +2611,6 @@ class _ProfileExplorationLogPageState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const _ProfileProgressPageSectionTitle(label: '복습 항목'),
-              const SizedBox(height: 8),
               _buildReviewSection(),
               const _ProfileProgressPageDivider(),
               _ExplorationTracePanel(
@@ -3847,7 +3850,7 @@ class _ProfileQuizStatsColumn extends StatelessWidget {
     final largeText = _profileUsesLargeTextLayout(context);
     final items = [
       _ProfileQuizStatItem(
-        icon: Icons.check_rounded,
+        emoji: '✅',
         label: '정답',
         storyCount: stats.correctEventCount,
         quizCount: stats.correct,
@@ -3856,7 +3859,7 @@ class _ProfileQuizStatsColumn extends StatelessWidget {
         onTap: null,
       ),
       _ProfileQuizStatItem(
-        icon: Icons.close_rounded,
+        emoji: '❌',
         label: '오답',
         storyCount: stats.wrongEventCount,
         quizCount: stats.wrong,
@@ -3865,7 +3868,7 @@ class _ProfileQuizStatsColumn extends StatelessWidget {
         onTap: onTapWrong,
       ),
       _ProfileQuizStatItem(
-        icon: Icons.question_mark_rounded,
+        emoji: '❔',
         label: '헷갈려요',
         storyCount: stats.confusedEventCount,
         quizCount: stats.confused,
@@ -4354,13 +4357,11 @@ class _BibleChapterHorizontalDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       height: 7,
       alignment: Alignment.center,
-      child: Container(
-        height: 1,
-        color: AppColors.borderCard.withValues(alpha: 0.42),
-      ),
+      child: Container(height: 1, color: palette.subtleBorder),
     );
   }
 }
@@ -4370,13 +4371,14 @@ class _BibleChapterVerticalDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       width: 5,
       alignment: Alignment.center,
       child: Container(
         width: 1,
         margin: const EdgeInsets.symmetric(vertical: 5),
-        color: AppColors.borderCard.withValues(alpha: 0.42),
+        color: palette.subtleBorder,
       ),
     );
   }
@@ -4384,7 +4386,7 @@ class _BibleChapterVerticalDivider extends StatelessWidget {
 
 class _ProfileQuizStatItem extends StatelessWidget {
   const _ProfileQuizStatItem({
-    required this.icon,
+    required this.emoji,
     required this.label,
     required this.storyCount,
     required this.quizCount,
@@ -4393,7 +4395,7 @@ class _ProfileQuizStatItem extends StatelessWidget {
     required this.onTap,
   });
 
-  final IconData icon;
+  final String emoji;
   final String label;
   final int storyCount;
   final int quizCount;
@@ -4408,7 +4410,8 @@ class _ProfileQuizStatItem extends StatelessWidget {
     final enabled = onTap != null;
     final labelColor = color;
     final content = Container(
-      padding: EdgeInsets.fromLTRB(7, largeText ? 6 : 7, 7, largeText ? 6 : 7),
+      constraints: const BoxConstraints(minHeight: 60),
+      padding: EdgeInsets.fromLTRB(7, largeText ? 7 : 8, 7, largeText ? 7 : 8),
       decoration: BoxDecoration(
         color: selected
             ? Color.alphaBlend(
@@ -4436,31 +4439,23 @@ class _ProfileQuizStatItem extends StatelessWidget {
           width: selected ? 1.4 : 1,
         ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: largeText ? 23 : 25,
-            height: largeText ? 23 : 25,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: color.withValues(alpha: enabled ? 0.09 : 0.07),
-              border: Border.all(
-                color: color.withValues(alpha: enabled ? 0.46 : 0.30),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                emoji,
+                maxLines: 1,
+                style: TextStyle(fontSize: largeText ? 14.4 : 16.2, height: 1),
               ),
-            ),
-            child: Icon(icon, size: largeText ? 13 : 15, color: labelColor),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
                   label,
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.center,
                   maxLines: largeText ? 2 : 1,
                   overflow: largeText
                       ? TextOverflow.visible
@@ -4468,45 +4463,42 @@ class _ProfileQuizStatItem extends StatelessWidget {
                   softWrap: true,
                   style: TextStyle(
                     color: labelColor,
-                    fontSize: largeText ? 10.2 : 11.2,
+                    fontSize: largeText ? 10.4 : 11.4,
                     fontWeight: FontWeight.w900,
-                    height: 1.05,
+                    height: 1.1,
                   ),
                 ),
-                const SizedBox(height: 3),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '$storyCount이야기',
-                            style: TextStyle(
-                              color: palette.text,
-                              fontSize: largeText ? 9.3 : 10.0,
-                              fontWeight: FontWeight.w900,
-                              height: 1,
-                            ),
-                          ),
-                          TextSpan(
-                            text: ' · $quizCount문항',
-                            style: TextStyle(
-                              color: palette.mutedText,
-                              fontSize: largeText ? 8.8 : 9.5,
-                              fontWeight: FontWeight.w800,
-                              height: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      maxLines: 1,
-                      textAlign: TextAlign.right,
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: '$storyCount 이야기',
+                    style: TextStyle(
+                      color: palette.text,
+                      fontSize: largeText ? 9.1 : 9.8,
+                      fontWeight: FontWeight.w900,
+                      height: 1,
                     ),
                   ),
-                ),
-              ],
+                  TextSpan(
+                    text: ' $quizCount 문항',
+                    style: TextStyle(
+                      color: palette.mutedText,
+                      fontSize: largeText ? 8.5 : 9.2,
+                      fontWeight: FontWeight.w800,
+                      height: 1,
+                    ),
+                  ),
+                ],
+              ),
+              maxLines: 1,
+              textAlign: TextAlign.center,
             ),
           ),
         ],

@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/app_publication.dart';
 import '../state/app_publication_providers.dart';
-import '../theme/tokens.dart';
+import '../theme/app_color_palette.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/parchment_page_scaffold.dart';
 
@@ -14,6 +14,7 @@ class AppPublicationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPaletteTheme.of(context);
     final publicationsAsync = ref.watch(publishedAppPublicationsProvider);
     return ParchmentListPageScaffold(
       title: '공지사항과 사용법',
@@ -31,8 +32,8 @@ class AppPublicationsScreen extends ConsumerWidget {
               children: [
                 Text(
                   '공지사항을 불러오지 못했어요.\n$error',
-                  style: const TextStyle(
-                    color: AppColors.oceanDeep,
+                  style: TextStyle(
+                    color: palette.text,
                     fontSize: 13.2,
                     fontWeight: FontWeight.w800,
                     height: 1.45,
@@ -47,18 +48,18 @@ class AppPublicationsScreen extends ConsumerWidget {
                     horizontal: 18,
                     vertical: 60,
                   ),
-                  children: const [
+                  children: [
                     Icon(
                       Icons.campaign_outlined,
                       size: 42,
-                      color: AppColors.ink300,
+                      color: palette.mutedText,
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Text(
                       '아직 게시된 공지사항이 없습니다.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: AppColors.ink300,
+                        color: palette.mutedText,
                         fontSize: 13.2,
                         fontWeight: FontWeight.w800,
                         height: 1.5,
@@ -71,7 +72,7 @@ class AppPublicationsScreen extends ConsumerWidget {
                 padding: EdgeInsets.zero,
                 itemCount: items.length,
                 separatorBuilder: (_, __) =>
-                    const Divider(height: 14, color: Color(0x44BCA47A)),
+                    Divider(height: 14, color: palette.subtleBorder),
                 itemBuilder: (context, index) {
                   final publication = items[index];
                   return AppPublicationPreviewCard(
@@ -103,6 +104,7 @@ class AppPublicationPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
@@ -112,9 +114,9 @@ class AppPublicationPreviewCard extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
           decoration: BoxDecoration(
-            color: AppColors.parchmentCream.withValues(alpha: 0.74),
+            color: palette.cardSurface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0x66BCA47A), width: 0.8),
+            border: Border.all(color: palette.subtleBorder, width: 0.8),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,8 +129,8 @@ class AppPublicationPreviewCard extends StatelessWidget {
                     ? TextOverflow.visible
                     : TextOverflow.ellipsis,
                 softWrap: true,
-                style: const TextStyle(
-                  color: AppColors.greenBot,
+                style: TextStyle(
+                  color: palette.successBottom,
                   fontSize: 11.6,
                   fontWeight: FontWeight.w900,
                   height: 1.25,
@@ -148,8 +150,8 @@ class AppPublicationPreviewCard extends StatelessWidget {
                           ? TextOverflow.visible
                           : TextOverflow.ellipsis,
                       softWrap: true,
-                      style: const TextStyle(
-                        color: AppColors.ink800,
+                      style: TextStyle(
+                        color: palette.text,
                         fontSize: 15.2,
                         fontWeight: FontWeight.w900,
                         height: 1.22,
@@ -167,8 +169,8 @@ class AppPublicationPreviewCard extends StatelessWidget {
                     ? TextOverflow.visible
                     : TextOverflow.ellipsis,
                 softWrap: true,
-                style: const TextStyle(
-                  color: AppColors.ink350,
+                style: TextStyle(
+                  color: palette.mutedText,
                   fontSize: 12.4,
                   fontWeight: FontWeight.w700,
                   height: 1.42,
@@ -187,18 +189,19 @@ class AppPublicationBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       width: 30,
       height: 30,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.greenTint1,
-        border: Border.all(color: AppColors.greenBot.withAlpha(0x55)),
+        color: palette.successFill,
+        border: Border.all(color: palette.successBottom.withAlpha(0x55)),
       ),
-      child: const Icon(
+      child: Icon(
         Icons.campaign_rounded,
-        color: AppColors.greenBot,
+        color: palette.successBottom,
         size: 18,
       ),
     );
@@ -222,6 +225,7 @@ class AppPublicationDetailDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return ParchmentDialog(
       title: '공지사항 상세',
       subtitle:
@@ -244,8 +248,8 @@ class AppPublicationDetailDialog extends StatelessWidget {
                   Expanded(
                     child: Text(
                       publication.title,
-                      style: const TextStyle(
-                        color: AppColors.ink800,
+                      style: TextStyle(
+                        color: palette.text,
                         fontSize: 17,
                         fontWeight: FontWeight.w900,
                         height: 1.25,
@@ -279,20 +283,21 @@ class AppPublicationBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final lines = _displayLines();
     return Column(
       key: ValueKey('app-publication-detail-body-${publication.id}'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var i = 0; i < lines.length; i++) ...[
-          _bodyLine(lines[i]),
+          _bodyLine(lines[i], palette),
           if (i < lines.length - 1) const SizedBox(height: 8),
         ],
       ],
     );
   }
 
-  Widget _bodyLine(String rawLine) {
+  Widget _bodyLine(String rawLine, AppColorPalette palette) {
     final line = rawLine.trimRight();
     final linkUrl = publication.linkUrl;
     final isLinkLine =
@@ -304,8 +309,8 @@ class AppPublicationBody extends StatelessWidget {
     }
     return Text(
       line,
-      style: const TextStyle(
-        color: AppColors.ink500,
+      style: TextStyle(
+        color: palette.text,
         fontSize: 13.4,
         fontWeight: FontWeight.w700,
         height: 1.55,
@@ -331,6 +336,7 @@ class AppPublicationLinkLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -342,17 +348,17 @@ class AppPublicationLinkLine extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.open_in_new_rounded,
-                color: AppColors.greenBot,
+                color: palette.successBottom,
                 size: 15,
               ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   url,
-                  style: const TextStyle(
-                    color: AppColors.greenBot,
+                  style: TextStyle(
+                    color: palette.successBottom,
                     fontSize: 12.4,
                     fontWeight: FontWeight.w900,
                     height: 1.35,

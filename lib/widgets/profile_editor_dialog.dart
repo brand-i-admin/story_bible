@@ -240,15 +240,37 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
     );
   }
 
+  BoxDecoration _editorCardDecoration({
+    required Color color,
+    required double shadowOpacity,
+  }) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color.alphaBlend(AppColors.overlayWhiteSoft, color), color],
+      ),
+      borderRadius: BorderRadius.circular(AppRadii.xxl),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: shadowOpacity),
+          blurRadius: 18,
+          offset: const Offset(0, 8),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 600),
         child: Container(
-          decoration: modalSurfaceDecoration(),
+          decoration: modalSurfaceDecoration(palette: palette),
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
           child: SingleChildScrollView(
             child: LayoutBuilder(
@@ -346,7 +368,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
   Widget _buildPhotoCard() {
     final palette = AppPaletteTheme.of(context);
     return Container(
-      decoration: floatingPanelDecoration(
+      decoration: _editorCardDecoration(
         color: Color.alphaBlend(
           palette.currentAccentDeep.withValues(alpha: 0.10),
           palette.cardSurface,
@@ -401,7 +423,7 @@ class _ProfileEditorDialogState extends ConsumerState<ProfileEditorDialog> {
   Widget _buildFormCard() {
     final palette = AppPaletteTheme.of(context);
     return Container(
-      decoration: floatingPanelDecoration(
+      decoration: _editorCardDecoration(
         color: Color.alphaBlend(
           palette.primary.withValues(alpha: 0.07),
           palette.cardSurface,

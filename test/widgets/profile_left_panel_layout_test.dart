@@ -70,6 +70,82 @@ void main() {
     expect(homeSource, isNot(contains('NotificationBellButton(')));
   });
 
+  test('프로필 수정 팝업은 사진과 닉네임 섹션 외곽선을 숨긴다', () {
+    final source = File(
+      'lib/widgets/profile_editor_dialog.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('_editorCardDecoration'));
+    expect(source, contains('decoration: _editorCardDecoration('));
+    expect(source, contains('modalSurfaceDecoration(palette: palette)'));
+    expect(source, isNot(contains('decoration: floatingPanelDecoration(')));
+  });
+
+  test('프로필 다크 모드 보조 팝업과 당겨 새로고침은 팔레트를 따른다', () {
+    final profileSource = File(
+      'lib/widgets/profile_tab_page.dart',
+    ).readAsStringSync();
+    final leftPanelSource = File(
+      'lib/widgets/profile/profile_left_panel.dart',
+    ).readAsStringSync();
+    final mapDialogSource = File(
+      'lib/widgets/map/map_attribution_dialog.dart',
+    ).readAsStringSync();
+    final legalSource = File(
+      'lib/screens/legal_documents_screen.dart',
+    ).readAsStringSync();
+
+    expect(profileSource, contains('Future<void> _refreshProfilePage()'));
+    expect(profileSource, contains('RefreshIndicator('));
+    expect(profileSource, contains('onRefresh: _refreshProfilePage'));
+    expect(profileSource, contains('AlwaysScrollableScrollPhysics'));
+    expect(profileSource, contains('final VoidCallback? onBackToHome;'));
+    expect(profileSource, contains('onBack: widget.onBackToHome'));
+    expect(
+      leftPanelSource,
+      contains('final palette = AppPaletteTheme.of(dialogContext);'),
+    );
+    expect(leftPanelSource, contains('color: palette.text'));
+    expect(
+      mapDialogSource,
+      contains('final palette = AppPaletteTheme.of(context);'),
+    );
+    expect(mapDialogSource, contains('color: palette.text'));
+    expect(mapDialogSource, contains('color: palette.primaryDeep'));
+    expect(legalSource, contains('backgroundColor: palette.pageBottom'));
+    expect(legalSource, contains('colors: palette.pageGradient'));
+    expect(
+      legalSource,
+      contains('BoxDecoration _panelDecoration(AppColorPalette palette)'),
+    );
+    expect(
+      legalSource,
+      contains('BoxDecoration _cardDecoration(AppColorPalette palette)'),
+    );
+  });
+
+  test('프로필 뒤로가기는 홈 인트로 상태를 강제로 복구한다', () {
+    final homeSource = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+
+    expect(
+      homeSource,
+      contains('onBackToHome: _resetProfileRouteToHomeIntroGuide'),
+    );
+    expect(homeSource, contains('void _resetProfileRouteToHomeIntroGuide()'));
+    expect(homeSource, contains('_completeMapCelebration();'));
+    expect(homeSource, contains('unawaited(ctl.setSelectedEra(null));'));
+    expect(homeSource, contains('ctl.clearSelectionMode();'));
+    expect(homeSource, contains('_selectionStep = 1;'));
+    expect(
+      homeSource,
+      contains(
+        '_animateSelectionPanelToStage(StorySelectionPanelStage.expanded)',
+      ),
+    );
+  });
+
   test('프로필 활동 탭은 밝은 레일과 선택색 본문 표면을 연결한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
@@ -197,7 +273,7 @@ void main() {
     expect(source, isNot(contains('Transform.translate')));
     expect(source, contains('_StoryJourneyGuideNote'));
     expect(source, contains("'참고'"));
-    expect(source, contains('다음 이야기를 눌러 시작하세요! (완료 조건은 감정 새기기입니다)'));
+    expect(source, contains('다음 이야기를 눌러 시작하세요! (완료조건: 감정 새기기)'));
     expect(
       source,
       isNot(
@@ -240,7 +316,7 @@ void main() {
     expect(pageSource, contains('_sortEventsByEraThenIndex('));
     expect(source, contains("const _ProfileProgressPageSectionTitle("));
     expect(source, contains("title: '탐험한 이야기'"));
-    expect(source, contains("title: '탐험 로그'"));
+    expect(source, contains("title: '기록'"));
     expect(source, contains("'복습 항목'"));
     expect(source, contains("label: '탐험 달력과 흔적들'"));
     expect(source, isNot(contains("label: '내가 새긴 감정들과 코멘트'")));
@@ -274,11 +350,16 @@ void main() {
       source,
       contains('constraints: const BoxConstraints(minHeight: 45)'),
     );
-    expect(source, contains('fontSize: largeText ? 10.2 : 11.2'));
-    expect(source, contains('fontSize: largeText ? 9.3 : 10.0'));
-    expect(source, contains('textAlign: TextAlign.right'));
-    expect(source, contains('fontSize: largeText ? 8.8 : 9.5'));
-    expect(source, contains('labelIconSize = largeText ? 15.6 : 17.4'));
+    expect(source, contains('emoji: \'✅\''));
+    expect(source, contains('emoji: \'❌\''));
+    expect(source, contains('emoji: \'❔\''));
+    expect(source, contains('fontSize: largeText ? 14.4 : 16.2'));
+    expect(source, contains('fontSize: largeText ? 10.4 : 11.4'));
+    expect(source, contains("text: '\$storyCount 이야기'"));
+    expect(source, contains("text: ' \$quizCount 문항'"));
+    expect(source, contains('fontSize: largeText ? 9.1 : 9.8'));
+    expect(source, contains('textAlign: TextAlign.center'));
+    expect(source, contains('fontSize: largeText ? 8.5 : 9.2'));
     expect(
       source,
       contains('constraints: const BoxConstraints(minHeight: 72)'),
@@ -364,6 +445,30 @@ void main() {
     final stylesSource = File(
       'lib/widgets/story_home_styles.dart',
     ).readAsStringSync();
+    final homeSource = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+    final homeWidgetsSource = File(
+      'lib/screens/story_home_screen_widgets.dart',
+    ).readAsStringSync();
+    final quizDialogSource = File(
+      'lib/widgets/event_quiz_dialog.dart',
+    ).readAsStringSync();
+    final profileEditorSource = File(
+      'lib/widgets/profile_editor_dialog.dart',
+    ).readAsStringSync();
+    final fontScaleSource = File(
+      'lib/widgets/font_scale_bottom_sheet.dart',
+    ).readAsStringSync();
+    final weeklySource = File(
+      'lib/widgets/weekly_tab_page.dart',
+    ).readAsStringSync();
+    final settingsSource = File(
+      'lib/widgets/profile/profile_settings_sheet.dart',
+    ).readAsStringSync();
+    final publicationsSource = File(
+      'lib/screens/app_publications_screen.dart',
+    ).readAsStringSync();
 
     expect(
       profileSource,
@@ -387,7 +492,9 @@ void main() {
     expect(eventCardSource, contains('palette.cardSurface'));
     expect(profileSource, contains('_profileBodyShellSurface'));
     expect(profileSource, contains('_profileOpaqueStoryCardSurface'));
-    expect(selectionPanelSource, contains('const [Color(0xFF05070B)'));
+    expect(selectionPanelSource, contains('palette.softSurface'));
+    expect(selectionPanelSource, contains('palette.panelSurface'));
+    expect(selectionPanelSource, contains('palette.mutedSurface'));
     expect(dailyMissionSource, contains('_dailyMissionSurface'));
     expect(dailyMissionSource, contains('_dailyMissionCardSurface'));
     expect(
@@ -399,8 +506,37 @@ void main() {
       contains('modalSurfaceDecoration({AppColorPalette? palette})'),
     );
     expect(stylesSource, contains('bool includeShadow = true'));
+    expect(
+      homeSource,
+      contains('_selectionSheetPanelDecoration(BuildContext context)'),
+    );
+    expect(homeSource, contains('palette.softSurface'));
+    expect(homeSource, contains('palette.panelSurface'));
+    expect(homeSource, contains('palette.mutedSurface'));
+    expect(homeWidgetsSource, contains('palette.cardSurface'));
+    expect(homeWidgetsSource, contains('palette.mutedSurface'));
+    expect(homeWidgetsSource, contains('palette.subtleBorder'));
+    expect(homeSource, isNot(contains('_parchmentPanelDecoration()')));
+    expect(weeklySource, contains('floatingPanelDecoration(palette: palette)'));
+    expect(weeklySource, contains('headerChipDecoration(palette: palette)'));
+    expect(
+      settingsSource,
+      contains('modalSurfaceDecoration(palette: palette)'),
+    );
+    expect(settingsSource, contains('color: palette.cardSurface'));
+    expect(profileSource, contains('modalSurfaceDecoration(palette: palette)'));
+    expect(
+      profileEditorSource,
+      contains('modalSurfaceDecoration(palette: palette)'),
+    );
+    expect(publicationsSource, contains('color: palette.cardSurface'));
     expect(eraRowsSource, contains('includeShadow: false'));
     expect(eraRowsSource, isNot(contains('boxShadow: [')));
+    expect(quizDialogSource, contains('palette.cardSurface'));
+    expect(quizDialogSource, contains('palette.currentAccentDeep'));
+    expect(stylesSource, contains('palette.mutedSurface'));
+    expect(fontScaleSource, contains('surfacePalette.cardSurface'));
+    expect(fontScaleSource, contains('palette.cardSurface'));
   });
 
   test('탐험한 이야기 페이지는 전체/완료/미완료 필터를 제공한다', () {

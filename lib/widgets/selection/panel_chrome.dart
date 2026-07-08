@@ -161,7 +161,13 @@ class _SelectionSheetTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final accentColor = _stageAccentColor(context, stage);
-    final containerColor = Color.lerp(palette.softSurface, accentColor, 0.18)!;
+    final containerBase = palette == AppColorPalette.blackMap
+        ? palette.panelSurface
+        : palette.softSurface;
+    final containerColor = Color.alphaBlend(
+      accentColor.withValues(alpha: 0.18),
+      containerBase,
+    );
     final canStepDown = stage != StorySelectionPanelStage.collapsed;
     final canStepUp = stage == StorySelectionPanelStage.collapsed;
 
@@ -254,8 +260,11 @@ class _SheetStepButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final baseSurface = palette == AppColorPalette.blackMap
+        ? palette.cardSurface
+        : palette.softSurface;
     final backgroundColor = enabled
-        ? Color.lerp(palette.softSurface, accentColor, 0.20)!
+        ? Color.alphaBlend(accentColor.withValues(alpha: 0.20), baseSurface)
         : palette.mutedSurface;
     final foregroundColor = enabled ? palette.text : palette.mutedText;
 
@@ -276,7 +285,7 @@ class _SheetStepButton extends StatelessWidget {
               shape: BoxShape.circle,
               color: backgroundColor,
               border: Border.all(
-                color: enabled ? accentColor : const Color(0xFFCABAA3),
+                color: enabled ? accentColor : palette.subtleBorder,
                 width: 0.9,
               ),
             ),

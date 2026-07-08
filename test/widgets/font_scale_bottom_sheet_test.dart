@@ -42,11 +42,13 @@ void main() {
       expect(find.text('색 조합'), findsOneWidget);
       expect(find.text('글자 크기'), findsOneWidget);
       expect(find.text('클래식'), findsOneWidget);
-      expect(find.text('남색 지도'), findsOneWidget);
+      expect(find.text('네이비'), findsOneWidget);
       expect(find.text('지도 남색'), findsNothing);
       expect(find.text('밝은 해안'), findsNothing);
-      expect(find.text('알록 지도'), findsOneWidget);
-      expect(find.text('블랙 지도'), findsOneWidget);
+      expect(find.text('알록 지도'), findsNothing);
+      expect(find.text('블랙 지도'), findsNothing);
+      expect(find.text('파스텔'), findsOneWidget);
+      expect(find.text('다크'), findsOneWidget);
     });
 
     testWidgets('색 조합 버튼 4개를 한 줄에 배치한다', (tester) async {
@@ -144,7 +146,7 @@ void main() {
       expect(container.read(colorPaletteProvider), AppColorPalette.colorfulMap);
     });
 
-    testWidgets('블랙 지도 버튼 탭 시 colorPaletteProvider.set이 호출된다', (tester) async {
+    testWidgets('다크 버튼 탭 시 colorPaletteProvider.set이 호출된다', (tester) async {
       final container = await _pumpSheet(tester);
 
       await tester.tap(
@@ -153,6 +155,28 @@ void main() {
       await tester.pump();
 
       expect(container.read(colorPaletteProvider), AppColorPalette.blackMap);
+    });
+
+    testWidgets('다크 색 조합에서는 선택 카드들이 어두운 표면을 사용한다', (tester) async {
+      await _pumpSheet(tester, initialPalette: AppColorPalette.blackMap);
+
+      final source = find.byKey(const ValueKey('color-palette-button-classic'));
+      final paletteButton = tester.widget<Container>(
+        find.descendant(of: source, matching: find.byType(Container)).first,
+      );
+      final paletteDecoration = paletteButton.decoration! as BoxDecoration;
+      expect(paletteDecoration.color, AppColorPalette.blackMap.cardSurface);
+
+      final fontScaleSource = find.byKey(
+        const ValueKey('font-scale-button-large'),
+      );
+      final fontScaleButton = tester.widget<Container>(
+        find
+            .descendant(of: fontScaleSource, matching: find.byType(Container))
+            .first,
+      );
+      final fontScaleDecoration = fontScaleButton.decoration! as BoxDecoration;
+      expect(fontScaleDecoration.color, AppColorPalette.blackMap.cardSurface);
     });
 
     testWidgets('동일한 단계 탭은 state를 변경하지 않는다', (tester) async {
