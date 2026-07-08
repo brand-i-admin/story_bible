@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/app_notification.dart';
 import '../../state/notification_providers.dart';
+import '../../theme/app_color_palette.dart';
 import '../story_home_styles.dart';
 import 'notification_list_tile.dart';
 
@@ -26,11 +27,15 @@ class NotificationDropdown extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPaletteTheme.of(context);
     final unreadAsync = ref.watch(unreadNotificationsProvider);
     return Container(
       width: 340,
       constraints: const BoxConstraints(maxHeight: 460),
-      decoration: floatingPanelDecoration(shadowOpacity: 0.22),
+      decoration: floatingPanelDecoration(
+        color: palette.panelSurface,
+        shadowOpacity: 0.22,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -45,22 +50,25 @@ class NotificationDropdown extends ConsumerWidget {
                 padding: const EdgeInsets.all(20),
                 child: Text(
                   '알림을 불러오지 못했어요\n$err',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: Color(0xFF8B5A24),
+                    color: palette.currentAccentDeep,
                   ),
                 ),
               ),
               data: (items) {
                 if (items.isEmpty) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 28, horizontal: 18),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 28,
+                      horizontal: 18,
+                    ),
                     child: Text(
                       '새로운 알림이 없어요',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Color(0xFF7A6244),
+                        color: palette.mutedText,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -75,7 +83,7 @@ class NotificationDropdown extends ConsumerWidget {
                     thickness: 1,
                     indent: 14,
                     endIndent: 14,
-                    color: const Color(0xFF8E6F48).withValues(alpha: 0.18),
+                    color: palette.subtleBorder,
                   ),
                   itemBuilder: (_, index) {
                     final n = items[index];
@@ -93,6 +101,7 @@ class NotificationDropdown extends ConsumerWidget {
             onMarkAllRead: () async {
               final repo = ref.read(notificationRepositoryProvider);
               await repo.markAllRead();
+              ref.invalidate(unreadNotificationCountProvider);
               ref.invalidate(unreadNotificationsProvider);
               ref.invalidate(notificationHistoryProvider);
             },
@@ -110,17 +119,18 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 10, 10),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
               '알림',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w900,
-                color: Color(0xFF4D381F),
+                color: palette.text,
               ),
             ),
           ),
@@ -129,10 +139,10 @@ class _Header extends StatelessWidget {
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
             onPressed: onClose,
-            icon: const Icon(
+            icon: Icon(
               Icons.close_rounded,
               size: 20,
-              color: Color(0xFF5C4326),
+              color: palette.primaryDeep,
             ),
           ),
         ],
@@ -148,14 +158,10 @@ class _Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: const Color(0xFF8E6F48).withValues(alpha: 0.25),
-            width: 1,
-          ),
-        ),
+        border: Border(top: BorderSide(color: palette.subtleBorder, width: 1)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       child: Row(
@@ -163,7 +169,7 @@ class _Footer extends StatelessWidget {
           TextButton(
             onPressed: onMarkAllRead,
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF6B4A22),
+              foregroundColor: palette.primaryDeep,
               textStyle: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
@@ -175,7 +181,7 @@ class _Footer extends StatelessWidget {
           TextButton(
             onPressed: onOpenHistory,
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF6B4A22),
+              foregroundColor: palette.primaryDeep,
               textStyle: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w800,

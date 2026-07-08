@@ -9,6 +9,7 @@ import '../models/event_emotion_mark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
 import '../state/story_controller.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
 import '../widgets/parchment_texture_layer.dart';
@@ -22,7 +23,6 @@ const int _oldTestamentLastBookNo = 39;
 const int _newTestamentFirstBookNo = 40;
 const double _verseSearchResultsHeight = 300;
 const int _newTestamentLastBookNo = 66;
-const Color _verseGridLineColor = Color(0x228E6F48);
 const double _bibleBookDropdownWidth = 124;
 
 class BibleVerseSearchScreen extends ConsumerStatefulWidget {
@@ -190,6 +190,7 @@ class _BibleVerseSearchScreenState
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final state = ref.watch(storyControllerProvider);
     final controller = ref.read(storyControllerProvider.notifier);
     final charactersByCode = {for (final c in state.characters) c.code: c};
@@ -197,26 +198,22 @@ class _BibleVerseSearchScreenState
     return Scaffold(
       body: Stack(
         children: [
-          const Positioned.fill(
+          Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.parchmentLight,
-                    AppColors.parchmentMid,
-                    AppColors.parchmentWarm,
-                  ],
+                  colors: palette.pageGradient,
                 ),
               ),
             ),
           ),
-          const Positioned.fill(
+          Positioned.fill(
             child: IgnorePointer(
               child: ParchmentTextureLayer(
                 opacity: 0.08,
-                tint: AppColors.brownWarm2,
+                tint: palette.primaryDeep,
               ),
             ),
           ),
@@ -441,14 +438,15 @@ class _VerseSearchMapPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final eventById = {for (final event in events) event.id: event};
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadii.xl),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.ink900.withValues(alpha: 0.08),
+          color: palette.primaryDeep.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(AppRadii.xl),
-          border: Border.all(color: AppColors.borderCard, width: 1),
+          border: Border.all(color: palette.subtleBorder, width: 1),
         ),
         child: StoryMapPanel(
           events: events,
@@ -488,6 +486,7 @@ class _SearchHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: largeText ? 58 : 44),
@@ -508,8 +507,8 @@ class _SearchHeader extends StatelessWidget {
                   ? TextOverflow.visible
                   : TextOverflow.ellipsis,
               softWrap: true,
-              style: const TextStyle(
-                color: AppColors.ink800,
+              style: TextStyle(
+                color: palette.text,
                 fontSize: 18,
                 fontWeight: FontWeight.w900,
                 height: 1.12,
@@ -628,6 +627,7 @@ class _VerseButtonGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final numbers = verseNumbers.isEmpty ? const [1] : verseNumbers;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -644,9 +644,9 @@ class _VerseButtonGrid extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppRadii.lg),
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: AppColors.parchmentCream.withValues(alpha: 0.54),
+                  color: palette.softSurface,
                   borderRadius: BorderRadius.circular(AppRadii.lg),
-                  border: Border.all(color: _verseGridLineColor),
+                  border: Border.all(color: palette.subtleBorder),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -655,24 +655,32 @@ class _VerseButtonGrid extends StatelessWidget {
                       if (rowIndex > 0) const _VerseGridHorizontalDivider(),
                       SizedBox(
                         height: 42,
-                        child: Row(
+                        child: Stack(
                           children: [
-                            for (
-                              var colIndex = 0;
-                              colIndex < columns;
-                              colIndex++
-                            ) ...[
-                              Expanded(
-                                child: _verseAt(
-                                  numbers,
-                                  columns,
-                                  rowIndex,
-                                  colIndex,
+                            Row(
+                              children: [
+                                for (
+                                  var colIndex = 0;
+                                  colIndex < columns;
+                                  colIndex++
+                                )
+                                  Expanded(
+                                    child: _verseAt(
+                                      numbers,
+                                      columns,
+                                      rowIndex,
+                                      colIndex,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: _VerseGridVerticalDividers(
+                                  columns: columns,
                                 ),
                               ),
-                              if (colIndex < columns - 1)
-                                const _VerseGridVerticalDivider(),
-                            ],
+                            ),
                           ],
                         ),
                       ),
@@ -687,10 +695,10 @@ class _VerseButtonGrid extends StatelessWidget {
           const SizedBox(height: AppSpacing.x3),
           ClipRRect(
             borderRadius: BorderRadius.circular(AppRadii.pill),
-            child: const LinearProgressIndicator(
+            child: LinearProgressIndicator(
               minHeight: 2,
               backgroundColor: Colors.transparent,
-              color: AppColors.greenBorder,
+              color: palette.primary,
             ),
           ),
         ],
@@ -698,8 +706,8 @@ class _VerseButtonGrid extends StatelessWidget {
           const SizedBox(height: AppSpacing.x3),
           Text(
             verseNumberError!,
-            style: const TextStyle(
-              color: AppColors.ink300,
+            style: TextStyle(
+              color: palette.mutedText,
               fontSize: AppFontSizes.sm,
               fontWeight: FontWeight.w700,
               height: AppLineHeights.normal,
@@ -741,6 +749,7 @@ class _SelectedVersePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final reference = '${_shortBibleBookName(bookNo)} $chapterNo:$verseNo';
     final verseText = verse?.verseText.trim();
@@ -756,9 +765,9 @@ class _SelectedVersePreview extends StatelessWidget {
           key: ValueKey('$reference-$body'),
           padding: const EdgeInsets.fromLTRB(12, 10, 12, 11),
           decoration: BoxDecoration(
-            color: AppColors.floatingSurfaceDefault.withValues(alpha: 0.82),
+            color: palette.panelSurface.withValues(alpha: 0.88),
             borderRadius: BorderRadius.circular(AppRadii.lg),
-            border: Border.all(color: AppColors.borderCard, width: 1),
+            border: Border.all(color: palette.subtleBorder, width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.045),
@@ -773,9 +782,9 @@ class _SelectedVersePreview extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                 decoration: BoxDecoration(
-                  color: AppColors.greenTint1.withValues(alpha: 0.78),
+                  color: palette.selectionFill,
                   borderRadius: BorderRadius.circular(AppRadii.pill),
-                  border: Border.all(color: AppColors.greenBorder, width: 0.9),
+                  border: Border.all(color: palette.selectedBorder, width: 0.9),
                 ),
                 child: Text(
                   reference,
@@ -784,8 +793,8 @@ class _SelectedVersePreview extends StatelessWidget {
                       ? TextOverflow.visible
                       : TextOverflow.ellipsis,
                   softWrap: true,
-                  style: const TextStyle(
-                    color: AppColors.greenBot,
+                  style: TextStyle(
+                    color: palette.primaryDeep,
                     fontSize: AppFontSizes.sm,
                     fontWeight: FontWeight.w900,
                     height: 1.1,
@@ -798,8 +807,8 @@ class _SelectedVersePreview extends StatelessWidget {
                   body,
                   style: TextStyle(
                     color: verseText == null || verseText.isEmpty
-                        ? AppColors.ink300
-                        : AppColors.ink600,
+                        ? palette.mutedText
+                        : palette.text,
                     fontSize: AppFontSizes.sm,
                     fontWeight: FontWeight.w800,
                     height: AppLineHeights.normal,
@@ -827,6 +836,7 @@ class _VerseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Semantics(
       button: true,
       selected: selected,
@@ -838,16 +848,14 @@ class _VerseButton extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 140),
             alignment: Alignment.center,
-            color: selected
-                ? AppColors.greenTint1.withValues(alpha: 0.86)
-                : Colors.transparent,
+            color: selected ? palette.selectionFill : Colors.transparent,
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
                 '$verseNo',
                 maxLines: 1,
                 style: TextStyle(
-                  color: selected ? AppColors.greenBot : AppColors.ink500,
+                  color: selected ? palette.primaryDeep : palette.mutedText,
                   fontSize: AppFontSizes.body,
                   fontWeight: selected ? FontWeight.w900 : FontWeight.w800,
                   height: 1,
@@ -866,27 +874,42 @@ class _VerseGridHorizontalDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       height: 7,
       alignment: Alignment.center,
-      child: Container(height: 1, color: _verseGridLineColor),
+      child: Container(height: 1, color: palette.subtleBorder),
     );
   }
 }
 
-class _VerseGridVerticalDivider extends StatelessWidget {
-  const _VerseGridVerticalDivider();
+class _VerseGridVerticalDividers extends StatelessWidget {
+  const _VerseGridVerticalDividers({required this.columns});
+
+  final int columns;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 5,
-      alignment: Alignment.center,
-      child: Container(
-        width: 1,
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        color: _verseGridLineColor,
-      ),
+    final palette = AppPaletteTheme.of(context);
+    if (columns <= 1) {
+      return const SizedBox.shrink();
+    }
+    return Row(
+      children: [
+        for (var colIndex = 0; colIndex < columns; colIndex++)
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: colIndex < columns - 1
+                  ? Container(
+                      width: 1,
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      color: palette.subtleBorder,
+                    )
+                  : const SizedBox.shrink(),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -931,12 +954,13 @@ class _ResultStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 320),
         padding: const EdgeInsets.all(AppSpacing.x8),
         decoration: floatingPanelDecoration(
-          color: AppColors.floatingSurfaceDefault,
+          color: palette.panelSurface,
           shadowOpacity: 0.06,
         ),
         child: Column(
@@ -953,8 +977,8 @@ class _ResultStatus extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.ink400,
+              style: TextStyle(
+                color: palette.mutedText,
                 fontSize: AppFontSizes.body,
                 fontWeight: FontWeight.w800,
                 height: AppLineHeights.normal,

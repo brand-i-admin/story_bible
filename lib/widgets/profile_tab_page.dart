@@ -9,11 +9,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/auth_repository.dart';
+import '../models/app_notification.dart';
 import '../models/app_user_profile.dart';
 import '../models/character.dart';
-import '../models/character_study_progress.dart';
 import '../models/era.dart';
+import '../models/event_emotion_mark.dart';
 import '../models/intercessory_prayer_item.dart';
+import '../models/quiz_attempt_summary.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
 import '../models/user_companion_diary_entry.dart';
@@ -22,18 +24,22 @@ import '../screens/saved_verses_screen.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
+import '../theme/typography.dart';
 import '../utils/bible_book_meta.dart';
+import '../utils/kst_date.dart';
 import '../utils/scene_asset_loader.dart';
-import 'avatar_progress_ring.dart';
-import 'character_avatar.dart';
 import 'inline_login_prompt_card.dart';
 import 'map/map_attribution_dialog.dart';
+import 'notification/notification_bell_button.dart';
 import 'parchment_dialog.dart';
+import 'parchment_page_scaffold.dart';
+import 'profile/companion_diary_entry_card.dart';
+import 'profile/glowing_add_button.dart';
 import 'profile/profile_emotion_diary.dart';
-import 'profile/profile_emotion_stats.dart';
 import 'profile/profile_event_review_grid.dart';
-import 'profile/profile_mini_map.dart';
+import 'profile/profile_feature_flags.dart';
 import 'profile/profile_quiz_stats.dart';
 import 'profile_editor_dialog.dart';
 import 'saved_verse_row.dart';
@@ -48,32 +54,49 @@ import 'v2/region_event_list.dart' show StoryEventThumbCard;
 part 'profile/profile_helpers.dart';
 part 'profile/profile_intercessory_prayer.dart';
 part 'profile/profile_left_panel.dart';
-part 'profile/profile_character_overview.dart';
 part 'profile/profile_progress_section.dart';
 part 'profile/profile_right_panel.dart';
 part 'profile/profile_settings_sheet.dart';
 
-enum ProfileEventOpenSource { general, place, character, detailOnly }
+enum ProfileEventOpenSource { general, targetOnly, detailOnly }
 
 typedef ProfileEventDetailCallback =
-    void Function(
-      StoryEvent event, {
-      ProfileEventOpenSource? source,
-      String? sourceId,
-    });
+    void Function(StoryEvent event, {ProfileEventOpenSource? source});
 
-/// 프로필 탭 페이지 (프로필 정보 + 인물 진행도 + 기록/기도/저장/말씀).
+const Map<String, int> _profileStoryEraCodeOrder = {
+  'era_primeval': 0,
+  'era_patriarch': 1,
+  'era_exodus': 2,
+  'era_judges': 3,
+  'era_monarchy': 4,
+  'era_divided_kingdom': 5,
+  'era_exile_return': 6,
+  'era_nt_public_ministry': 7,
+  'era_nt_apostolic': 8,
+  'era_nt_post_apostolic': 9,
+};
+
+/// 프로필 탭 페이지 (프로필 정보 + 이야기 탐험/진행 대시보드).
+///
+/// 기도 기능은 pending 상태로 코드/DB 배관만 보존하고 현재 화면에는 노출하지 않는다.
 ///
 /// 외부 콜백:
 /// - [onStartQuiz]: 인물 상세에서 이벤트 퀴즈 시작
 /// - [onOpenEventDetail]: 이벤트 상세 페이지 열기
 /// - [onOpenBibleReader]: 저장 구절 이동 시 성경 리더 열기
+/// - [onOpenAppPublications]: 공지사항과 사용법 페이지 열기
+/// - [onBackToHome]: 프로필 뒤로가기 시 홈 초기 화면으로 복귀
 class ProfileTabPage extends ConsumerStatefulWidget {
   const ProfileTabPage({
     super.key,
     required this.onStartQuiz,
     required this.onOpenEventDetail,
     required this.onOpenBibleReader,
+    required this.onOpenAppPublications,
+    required this.onNavigateNotification,
+    required this.onOpenNotificationHistory,
+    this.onExploreStoriesFromHome,
+    this.onBackToHome,
   });
 
   final void Function(String eventId) onStartQuiz;
@@ -84,18 +107,19 @@ class ProfileTabPage extends ConsumerStatefulWidget {
     int? initialVerseNo,
   })
   onOpenBibleReader;
+  final VoidCallback onOpenAppPublications;
+  final void Function(AppNotification notification) onNavigateNotification;
+  final VoidCallback onOpenNotificationHistory;
+  final VoidCallback? onExploreStoriesFromHome;
+  final VoidCallback? onBackToHome;
 
   @override
   ConsumerState<ProfileTabPage> createState() => ProfileTabPageState();
 }
 
-enum _ProfileContentTab { records, prayer, saved, verses }
+enum _ProfileContentTab { prayer, saved, verses }
 
-enum _ProfileQuizReviewFilter { wrong, confused }
-
-/// "진행률 표시" 섹션의 탭. `life` = 나의 다이어리,
-/// `place` = 장소로 시작 (지도+region), `walk` = 인물과 걷기.
-enum _ProfileProgressTab { life, place, walk }
+enum _StoryProgressFilter { all, completed, incomplete }
 
 class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   static const int _intercessoryPrayerPageSize = 12;
@@ -106,15 +130,12 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
 
   List<Character> _profileAllPeople = const [];
   List<StoryEvent> _profileAllEvents = const [];
-  Map<String, String> _profileCharacterTestamentByCode = const {};
   AppUserProfile? _profileUser;
-  Map<String, CharacterStudyProgress> _profileStudyProgressByCharacterCode =
-      const {};
-  Map<String, int> _profileCharacterTimelineOrderByCode = const {};
-  _ProfileContentTab _profileContentTab = _ProfileContentTab.records;
+  _ProfileContentTab _profileContentTab = _ProfileContentTab.prayer;
   List<StoryEvent> _profileSavedEventsPreview = const [];
   List<SavedBibleVerse> _profileSavedVersesPreview = const [];
   List<UserCompanionDiaryEntry> _profileCompanionDiaryEntries = const [];
+  int _profileSavedVersesCount = 0;
   bool _profileSavedEventsLoading = false;
   bool _profileSavedVersesLoading = false;
   bool _profileCompanionDiaryLoading = false;
@@ -127,21 +148,11 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   bool _intercessoryPrayerHasNextPage = false;
   String? _intercessoryPrayerError;
   int _intercessoryPrayerPageIndex = 0;
-  String _profileSelectedTestament = 'old';
-  // 진행률 섹션 — 기본 탭은 나의 다이어리 (감정 새김 기반 첫인상 강조).
-  _ProfileProgressTab _profileProgressTab = _ProfileProgressTab.life;
-  // "장소로 시작" 탭에서 사용자가 선택한 era id (null = 미선택, 안내 메시지).
-  String? _profileProgressSelectedEraId;
   bool _profileLoading = false;
   String? _profileError;
   bool _signingOut = false;
   bool _deletingAccount = false;
-
-  Set<String> _profileExploredEventIds(StoryState state) => {
-    ...state.completedEventIds,
-    ...state.quizCompletedEventIds,
-    ...state.eventEmotionMarks.keys,
-  };
+  Timer? _profileKstMidnightTimer;
 
   @override
   void initState() {
@@ -149,26 +160,42 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     _intercessoryPrayerScrollController.addListener(
       _handleIntercessoryPrayerScroll,
     );
+    _scheduleProfileKstMidnightRefresh();
     Future.microtask(() => _loadProfilePeople(forceRefresh: true));
   }
 
   @override
   void dispose() {
+    _profileKstMidnightTimer?.cancel();
     _intercessoryPrayerScrollController
       ..removeListener(_handleIntercessoryPrayerScroll)
       ..dispose();
     super.dispose();
   }
 
-  String _eraTestament(Era era) {
-    final raw = era.testament.toString().trim().toLowerCase();
-    if (raw == 'new' || raw == 'nt' || raw == 'new_testament') {
-      return 'new';
+  void _scheduleProfileKstMidnightRefresh() {
+    _profileKstMidnightTimer?.cancel();
+    final delay =
+        durationUntilNextKstMidnight(DateTime.now()) +
+        const Duration(seconds: 1);
+    _profileKstMidnightTimer = Timer(delay, _handleProfileKstDateChanged);
+  }
+
+  void _handleProfileKstDateChanged() {
+    if (!mounted) {
+      return;
     }
-    if (era.code.toString().startsWith('era_nt_')) {
-      return 'new';
-    }
-    return 'old';
+    setState(() {});
+    unawaited(
+      ref.read(storyControllerProvider.notifier).refreshEventEmotionMarks(),
+    );
+    unawaited(
+      ref
+          .read(storyControllerProvider.notifier)
+          .refreshCompletedBibleChapterKeys(),
+    );
+    unawaited(_loadProfileCompanionDiaryEntries(showLoading: false));
+    _scheduleProfileKstMidnightRefresh();
   }
 
   /// 외부에서 퀴즈 완료 후 프로필 진행도를 다시 불러올 때 호출한다.
@@ -190,6 +217,14 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     await _refreshProfileTabPreviews(showLoading: showLoading);
   }
 
+  Future<void> _refreshProfilePage() async {
+    if (!mounted) {
+      return;
+    }
+    await ref.read(storyControllerProvider.notifier).refreshCompletedEventIds();
+    await _loadProfilePeople(forceRefresh: true);
+  }
+
   void _selectProfileContentTab(_ProfileContentTab tab) {
     setState(() => _profileContentTab = tab);
     switch (tab) {
@@ -197,7 +232,6 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         unawaited(_loadProfileSavedEventsPreview(showLoading: true));
       case _ProfileContentTab.verses:
         unawaited(_loadProfileSavedVersesPreview(showLoading: true));
-      case _ProfileContentTab.records:
       case _ProfileContentTab.prayer:
         break;
     }
@@ -362,6 +396,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       }
       setState(() {
         _profileSavedVersesPreview = const [];
+        _profileSavedVersesCount = 0;
         _profileSavedVersesLoading = false;
         _profileSavedVersesError = null;
       });
@@ -385,11 +420,15 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             pageIndex: 0,
             pageSize: _profilePreviewPageSize,
           );
+      final totalCount = await ref
+          .read(userRepositoryProvider)
+          .countSavedVerses(userId: user.id);
       if (!mounted) {
         return;
       }
       setState(() {
         _profileSavedVersesPreview = result.items;
+        _profileSavedVersesCount = totalCount;
         _profileSavedVersesLoading = false;
       });
     } catch (error) {
@@ -530,57 +569,35 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       final user = ref.read(signedInUserProvider);
       final repo = ref.read(storyRepositoryProvider);
       final userRepo = ref.read(userRepositoryProvider);
-      final peopleByEra = await Future.wait(
-        state.eras.map((era) => repo.fetchCharactersByEra(era.id)),
-      );
-      final eventsByEra = await Future.wait(
-        state.eras.map((era) => repo.fetchEventsByEra(era.id)),
-      );
-      final characterTimelineOrderByCode = await repo
-          .fetchCharacterTimelineOrder();
+      final peopleByEra = <List<Character>>[];
+      final eventsByEra = <List<StoryEvent>>[];
+      for (final era in state.eras) {
+        peopleByEra.add(await repo.fetchCharactersByEra(era.id));
+        eventsByEra.add(await repo.fetchEventsByEra(era.id));
+      }
 
       final characterByCode = <String, Character>{};
-      final testamentByCharacterCode = <String, String>{};
       for (var i = 0; i < state.eras.length; i++) {
-        final era = state.eras[i];
         final eraPeople = peopleByEra[i];
-        final testament = _eraTestament(era);
         for (final character in eraPeople) {
           characterByCode.putIfAbsent(character.code, () => character);
-          testamentByCharacterCode.putIfAbsent(character.code, () => testament);
         }
       }
 
       final allPeople = characterByCode.values.toList()
-        ..sort(
-          (a, b) => _compareProfilePeople(
-            a,
-            b,
-            timelineOrderByCode: characterTimelineOrderByCode,
-          ),
-        );
-      final allEvents = eventsByEra.expand((events) => events).toList()
-        ..sort((a, b) {
-          final rank = a.globalRank.compareTo(b.globalRank);
-          if (rank != 0) {
-            return rank;
-          }
-          return a.id.compareTo(b.id);
-        });
+        ..sort(_compareProfilePeople);
+      final allEvents = _sortEventsByEraThenIndex(
+        eventsByEra.expand((events) => events).toList(),
+        state.eras,
+      );
 
       AppUserProfile? profile;
-      Map<String, CharacterStudyProgress> progressByCharacterCode = const {};
 
       if (user != null) {
         profile = await userRepo.ensureSignedInUser(user);
-        final studyProgress = await userRepo.fetchCharacterStudyProgress(
-          userId: user.id,
-          people: allPeople,
-        );
-        progressByCharacterCode = {
-          for (final progress in studyProgress)
-            progress.character.code: progress,
-        };
+        await ref
+            .read(storyControllerProvider.notifier)
+            .refreshCompletedEventIds();
         await ref
             .read(storyControllerProvider.notifier)
             .refreshQuizAttemptSummaries();
@@ -596,10 +613,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       setState(() {
         _profileAllPeople = allPeople;
         _profileAllEvents = allEvents;
-        _profileCharacterTestamentByCode = testamentByCharacterCode;
         _profileUser = profile;
-        _profileStudyProgressByCharacterCode = progressByCharacterCode;
-        _profileCharacterTimelineOrderByCode = characterTimelineOrderByCode;
         if (user == null) {
           _intercessoryPrayerItems = const [];
           _intercessoryPrayerHasNextPage = false;
@@ -614,7 +628,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       });
       if (user != null) {
         await Future.wait([
-          _loadIntercessoryPrayerPage(),
+          if (!profilePrayerFeaturePending) _loadIntercessoryPrayerPage(),
           _refreshProfileTabPreviews(),
         ]);
       }
@@ -629,65 +643,23 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     }
   }
 
-  List<Character> _profilePeople(StoryState state) {
-    final timelineOrderByCode = _effectiveProfileTimelineOrder(state);
-    final people =
-        [
-            ...(_profileAllPeople.isNotEmpty
-                ? _profileAllPeople
-                : state.characters),
-          ]
-          ..retainWhere((character) {
-            final testament =
-                _profileCharacterTestamentByCode[character.code] ?? 'old';
-            return testament == _profileSelectedTestament;
-          })
-          ..sort(
-            (a, b) => _compareProfilePeople(
-              a,
-              b,
-              timelineOrderByCode: timelineOrderByCode,
-            ),
-          );
-    return people;
-  }
-
-  Map<String, int> _effectiveProfileTimelineOrder(StoryState state) {
-    final orderByCode = _timelineOrderFromEvents(state.events);
-    orderByCode.addAll(_profileCharacterTimelineOrderByCode);
-    return orderByCode;
-  }
-
-  Map<String, int> _timelineOrderFromEvents(Iterable<StoryEvent> events) {
-    final sortedEvents = [...events]
-      ..sort((a, b) {
-        final rank = a.globalRank.compareTo(b.globalRank);
-        if (rank != 0) {
-          return rank;
-        }
-        return a.id.compareTo(b.id);
-      });
-    final orderByCode = <String, int>{};
-    for (final event in sortedEvents) {
-      for (final code in event.characterCodes) {
-        orderByCode.putIfAbsent(code, () => event.globalRank);
-      }
-    }
-    return orderByCode;
-  }
-
   List<StoryEvent> _sortEventsByEraThenIndex(
     List<StoryEvent> events,
     List<Era> eras,
   ) {
-    final orderByEraId = <String, int>{
-      for (final era in eras) era.id: era.displayOrder,
-    };
-    final sorted = [...events];
+    final eraById = <String, Era>{for (final era in eras) era.id: era};
+    final sorted = events.where((event) {
+      final era = eraById[event.eraId];
+      if (era == null || isHiddenEraCode(era.code)) {
+        return false;
+      }
+      return _profileStoryEraCodeOrder.containsKey(era.code);
+    }).toList();
     sorted.sort((a, b) {
-      final eraOrder = (orderByEraId[a.eraId] ?? 1 << 30).compareTo(
-        orderByEraId[b.eraId] ?? 1 << 30,
-      );
+      final aEra = eraById[a.eraId];
+      final bEra = eraById[b.eraId];
+      final eraOrder = (_profileStoryEraCodeOrder[aEra?.code] ?? 1 << 30)
+          .compareTo(_profileStoryEraCodeOrder[bEra?.code] ?? 1 << 30);
       if (eraOrder != 0) {
         return eraOrder;
       }
@@ -695,27 +667,16 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       if (storyOrder != 0) {
         return storyOrder;
       }
+      final rankInEraOrder = a.rankInEra.compareTo(b.rankInEra);
+      if (rankInEraOrder != 0) {
+        return rankInEraOrder;
+      }
       return a.globalRank.compareTo(b.globalRank);
     });
     return sorted;
   }
 
-  int _compareProfilePeople(
-    Character a,
-    Character b, {
-    required Map<String, int> timelineOrderByCode,
-  }) {
-    final aTimeline = timelineOrderByCode[a.code];
-    final bTimeline = timelineOrderByCode[b.code];
-    if (aTimeline != null || bTimeline != null) {
-      final timelineOrder = (aTimeline ?? 1 << 30).compareTo(
-        bTimeline ?? 1 << 30,
-      );
-      if (timelineOrder != 0) {
-        return timelineOrder;
-      }
-    }
-
+  int _compareProfilePeople(Character a, Character b) {
     final displayOrder = a.displayOrder.compareTo(b.displayOrder);
     if (displayOrder != 0) {
       return displayOrder;
@@ -785,9 +746,8 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     required StoryState state,
     required bool isAuthenticated,
   }) {
-    final people = _profilePeople(state);
     final profile = _profileUser ?? _guestPreviewProfile();
-    if (_profileLoading && people.isEmpty) {
+    if (_profileLoading && _profileAllPeople.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
     if (_profileError != null && isAuthenticated && _profileUser == null) {
@@ -813,41 +773,40 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         // 있어서 부모 Column 에서 unbounded height 가 되면 안 되므로 각각 고정
         // 높이로 감싼다.
         final isNarrow = constraints.maxWidth < 720;
+        final showPrayerActivitySection = !profilePrayerFeaturePending;
+        final activitySectionHeight = _profileLeftCardHeight(
+          isAuthenticated: isAuthenticated,
+        );
         if (isNarrow) {
-          final totalHeight = constraints.maxHeight;
-          // 프로필(좌측) 패널은 선택 탭과 콘텐츠 양에 맞춰 필요한 만큼만
-          // 차지한다. 내부 리스트는 남은 높이에 맞춰 스크롤된다.
-          final leftPanelHeight = _profileLeftPanelHeight(
-            totalHeight,
-            isAuthenticated: isAuthenticated,
-          );
-          final rightPanelHeight = (totalHeight * 0.65).clamp(420.0, 720.0);
-          return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: leftPanelHeight.toDouble(),
-                  child: _buildProfileLeftPanel(
+          return RefreshIndicator(
+            color: AppPaletteTheme.of(context).primary,
+            onRefresh: _refreshProfilePage,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildProfileHeader(),
+                  const SizedBox(height: 6),
+                  _buildProfileProgressSection(
                     profile: profile,
-                    isAuthenticated: isAuthenticated,
+                    scrollBody: false,
                   ),
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: rightPanelHeight.toDouble(),
-                  child: _buildProfileProgressSection(
-                    people: people,
-                    completedEventIds: _profileExploredEventIds(state),
-                    selectedTestament: _profileSelectedTestament,
-                    onSelectTestament: (testament) {
-                      setState(() {
-                        _profileSelectedTestament = testament;
-                      });
-                    },
-                  ),
-                ),
-              ],
+                  if (showPrayerActivitySection) ...[
+                    const SizedBox(height: 8),
+                    _profileSectionsFrame(
+                      child: SizedBox(
+                        height: activitySectionHeight,
+                        child: _buildProfileActivitySection(
+                          profile: profile,
+                          isAuthenticated: isAuthenticated,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
           );
         }
@@ -858,28 +817,37 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
-                width: leftWidth,
-                child: _buildProfileLeftPanel(
-                  profile: profile,
-                  isAuthenticated: isAuthenticated,
-                ),
-              ),
-              SizedBox(width: gap),
+              _buildProfileHeader(),
+              const SizedBox(height: 6),
               Expanded(
-                child: _buildProfileProgressSection(
-                  people: people,
-                  completedEventIds: _profileExploredEventIds(state),
-                  selectedTestament: _profileSelectedTestament,
-                  onSelectTestament: (testament) {
-                    setState(() {
-                      _profileSelectedTestament = testament;
-                    });
-                  },
-                ),
+                child: showPrayerActivitySection
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: _buildProfileProgressSection(
+                              profile: profile,
+                            ),
+                          ),
+                          SizedBox(width: gap),
+                          SizedBox(
+                            width: leftWidth,
+                            child: _profileSectionsFrame(
+                              child: SizedBox(
+                                height: activitySectionHeight,
+                                child: _buildProfileActivitySection(
+                                  profile: profile,
+                                  isAuthenticated: isAuthenticated,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : _buildProfileProgressSection(profile: profile),
               ),
             ],
           ),
@@ -888,15 +856,13 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     );
   }
 
-  double _profileLeftPanelHeight(
-    double totalHeight, {
-    required bool isAuthenticated,
-  }) {
-    final desiredHeight = _profileLeftPanelDesiredHeight(
-      isAuthenticated: isAuthenticated,
+  Widget _profileSectionsFrame({required Widget child}) {
+    final palette = AppPaletteTheme.of(context);
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: floatingPanelDecoration(color: palette.panelSurface),
+      child: Padding(padding: const EdgeInsets.all(8), child: child),
     );
-    final maxHeight = math.max(260.0, totalHeight * 0.62);
-    return math.min(desiredHeight, maxHeight);
   }
 
   Future<void> _openProfileEditor() async {
@@ -1117,6 +1083,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     return SubPageScaffold(
       title: '프로필',
       compactBackOnly: true,
+      onBack: widget.onBackToHome,
       child: Stack(
         children: [
           Positioned.fill(

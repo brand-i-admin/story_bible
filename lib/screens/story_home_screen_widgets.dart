@@ -129,22 +129,21 @@ class _PanelFloatingActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final isNext = action.tone == _PanelFloatingActionTone.next;
     final gradient = isNext
-        ? const LinearGradient(
+        ? LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.greenBtnTop, AppColors.greenBtnBot],
+            colors: [palette.successTop, palette.successBottom],
           )
-        : const LinearGradient(
+        : LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF7A4B23), Color(0xFF5C3518)],
+            colors: [palette.actionTop, palette.actionBottom],
           );
-    final borderColor = isNext
-        ? const Color(0xFFE6F4CA)
-        : const Color(0xFFE8A33D);
+    final borderColor = isNext ? AppColors.greenRim : palette.actionBorder;
     return Tooltip(
       message: action.tooltip,
       child: Semantics(
@@ -218,9 +217,9 @@ class _PanelFloatingActionButton extends StatelessWidget {
 }
 
 /// 선택 진행 단계 stepper — 헤더 우측 라벨형 단계 pill.
-/// - 활성(=현재 진행 중): 초록
-/// - 완료(=이전 단계, 클릭 시 그 단계로 돌아가며 reset): 노랑
-/// - 미진입(=미래 단계, 클릭 비활성): 갈색
+/// - 활성(=현재 진행 중): 청록
+/// - 완료(=이전 단계, 클릭 시 그 단계로 돌아가며 reset): 오렌지
+/// - 미진입(=미래 단계, 클릭 비활성): 네이비 그레이
 /// 같은 step 을 다시 누르면 그 단계 진행 내역만 초기화.
 class _SelectionStepper extends StatelessWidget {
   const _SelectionStepper({
@@ -233,14 +232,14 @@ class _SelectionStepper extends StatelessWidget {
   final _SelectionMode? mode;
   final ValueChanged<int> onStepTap;
 
-  static const Color _activeColor = homeStepperActiveColor; // 초록
-  static const Color _doneColor = homeStepperDoneColor; // 노랑
-  static const Color _futureColor = Color(0xFF8C6743); // 갈색
-
-  Color _colorFor(int step) {
-    if (step == currentStep) return _activeColor;
-    if (step < currentStep) return _doneColor;
-    return _futureColor;
+  Color _colorFor(int step, AppColorPalette palette) {
+    final stepColor = switch (step) {
+      1 => palette.stepStart,
+      2 => palette.stepSelect,
+      _ => palette.stepStory,
+    };
+    if (step <= currentStep) return stepColor;
+    return palette.mutedText;
   }
 
   String _labelFor(int step) {
@@ -270,12 +269,17 @@ class _SelectionStepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final darkPanel = palette == AppColorPalette.blackMap;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xF2FFFBEF),
+        color: darkPanel ? palette.cardSurface : const Color(0xF2FFFBEF),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFB89A66), width: 0.9),
+        border: Border.all(
+          color: darkPanel ? palette.subtleBorder : AppColors.borderCard,
+          width: 0.9,
+        ),
         boxShadow: const [
           BoxShadow(
             color: Color(0x33000000),
@@ -291,7 +295,8 @@ class _SelectionStepper extends StatelessWidget {
             _StepPill(
               label: _labelFor(i),
               icon: _iconFor(i),
-              color: _colorFor(i),
+              color: _colorFor(i, palette),
+              palette: palette,
               enabled: i <= currentStep,
               onTap: () => onStepTap(i),
               tooltip: switch (i) {
@@ -309,7 +314,11 @@ class _SelectionStepper extends StatelessWidget {
                 width: 7,
                 height: 1.4,
                 margin: const EdgeInsets.symmetric(horizontal: 1),
-                color: i < currentStep ? _doneColor : _futureColor,
+                color: i < currentStep
+                    ? palette.stepSelect
+                    : (darkPanel
+                          ? palette.subtleBorder
+                          : palette.mutedText.withValues(alpha: 0.58)),
               ),
           ],
         ],
@@ -323,6 +332,7 @@ class _StepPill extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.color,
+    required this.palette,
     required this.enabled,
     required this.onTap,
     this.tooltip,
@@ -331,12 +341,23 @@ class _StepPill extends StatelessWidget {
   final String label;
   final IconData? icon;
   final Color color;
+  final AppColorPalette palette;
   final bool enabled;
   final VoidCallback onTap;
   final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
+    final darkPanel = palette == AppColorPalette.blackMap;
+    final backgroundColor = enabled
+        ? color
+        : (darkPanel ? palette.mutedSurface : color.withValues(alpha: 0.55));
+    final foregroundColor = enabled
+        ? AppColors.fgOnDark
+        : (darkPanel ? palette.mutedText : AppColors.fgOnDark);
+    final borderColor = enabled
+        ? (darkPanel ? color.withValues(alpha: 0.82) : Colors.white)
+        : (darkPanel ? palette.subtleBorder : Colors.white);
     final dot = MouseRegion(
       cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
       child: GestureDetector(
@@ -345,9 +366,9 @@ class _StepPill extends StatelessWidget {
           height: 22,
           padding: const EdgeInsets.symmetric(horizontal: 6),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: enabled ? 1.0 : 0.55),
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white, width: 1.2),
+            border: Border.all(color: borderColor, width: 1.2),
             boxShadow: enabled
                 ? [
                     BoxShadow(
@@ -363,13 +384,13 @@ class _StepPill extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 11, color: Colors.white),
+                Icon(icon, size: 11, color: foregroundColor),
                 const SizedBox(width: 2),
               ],
               Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: foregroundColor,
                   fontSize: 9.8,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0,

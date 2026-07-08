@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/app_notification.dart';
+import '../../theme/app_color_palette.dart';
 
 /// 알림 드롭다운 / 전체보기 히스토리 모두에서 공통으로 쓰는 행 위젯.
 /// 타입별 아이콘 + 제목(굵게) + 본문(1줄 생략) + 상대시간 + 미독 점.
@@ -20,20 +21,19 @@ class NotificationListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final iconData = _iconFor(notification.type);
-    final iconColor = _iconColorFor(notification.type);
+    final iconColor = _iconColorFor(notification.type, palette);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final titleStyle = TextStyle(
       fontSize: compact ? 13 : 14,
       fontWeight: notification.isRead ? FontWeight.w600 : FontWeight.w800,
-      color: const Color(0xFF3B2A17),
+      color: palette.text,
       height: 1.25,
     );
     final bodyStyle = TextStyle(
       fontSize: compact ? 11.5 : 12.5,
-      color: notification.isRead
-          ? const Color(0xFF7C6847)
-          : const Color(0xFF4D381F),
+      color: notification.isRead ? palette.mutedText : palette.text,
       height: 1.35,
     );
     return Material(
@@ -86,7 +86,7 @@ class NotificationListTile extends StatelessWidget {
                           _relativeTime(notification.createdAt),
                           style: TextStyle(
                             fontSize: compact ? 10.5 : 11,
-                            color: const Color(0xFF8B7354),
+                            color: palette.mutedText,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -157,11 +157,14 @@ class NotificationListTile extends StatelessWidget {
     }
   }
 
-  static Color _iconColorFor(AppNotificationType type) {
+  static Color _iconColorFor(
+    AppNotificationType type,
+    AppColorPalette palette,
+  ) {
     switch (type) {
       case AppNotificationType.proposalApproved:
       case AppNotificationType.quizCompleted:
-        return const Color(0xFF2D7B4D);
+        return palette.successBottom;
       case AppNotificationType.proposalRejected:
         return const Color(0xFFB00020);
       case AppNotificationType.newEvent:
@@ -170,9 +173,9 @@ class NotificationListTile extends StatelessWidget {
       case AppNotificationType.dailyExploration:
       case AppNotificationType.weeklyProgressCheck:
       case AppNotificationType.weeklyDiaryReflection:
-        return const Color(0xFF7A4B21);
+        return palette.currentAccentDeep;
       default:
-        return const Color(0xFFA85B25);
+        return palette.primary;
     }
   }
 

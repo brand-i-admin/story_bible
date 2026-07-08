@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../theme/app_color_palette.dart';
 import '../theme/surfaces.dart';
 import '../theme/tokens.dart';
 
@@ -27,15 +28,20 @@ double topUtilityBarHeightFor(BuildContext context) {
   return topUtilityButtonHeightFor(context) + 2;
 }
 
-BoxDecoration modalSurfaceDecoration() {
-  return AppSurfaces.modal();
+BoxDecoration modalSurfaceDecoration({AppColorPalette? palette}) {
+  return AppSurfaces.modal(palette: palette);
 }
 
 BoxDecoration floatingPanelDecoration({
-  Color color = AppColors.floatingSurfaceDefault,
+  Color? color,
+  AppColorPalette? palette,
   double shadowOpacity = 0.12,
 }) {
-  return AppSurfaces.floating(color: color, shadowOpacity: shadowOpacity);
+  return AppSurfaces.floating(
+    color: color ?? palette?.panelSurface ?? AppColors.floatingSurfaceDefault,
+    borderColor: palette?.panelBorder ?? AppColors.borderFloating,
+    shadowOpacity: shadowOpacity,
+  );
 }
 
 BoxDecoration interactiveCardDecoration({
@@ -62,16 +68,22 @@ BoxDecoration interactiveCardDecoration({
   }
   if (selected) {
     return BoxDecoration(
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [AppColors.brownWarm, AppColors.brownWarm2],
+        colors: [
+          AppColors.ink700.withValues(alpha: 0.88),
+          AppColors.ink900.withValues(alpha: 0.78),
+        ],
       ),
       borderRadius: BorderRadius.circular(AppRadii.xl),
-      border: Border.all(color: AppColors.brownRim, width: 1.2),
+      border: Border.all(
+        color: AppColors.borderHairlineDark.withValues(alpha: 0.92),
+        width: 1.2,
+      ),
       boxShadow: const [
         BoxShadow(
-          color: Color(0x26A35B22),
+          color: Color(0x26073D5A),
           blurRadius: 14,
           offset: Offset(0, 7),
         ),
@@ -103,7 +115,14 @@ BoxDecoration interactiveCardDecoration({
   );
 }
 
-BoxDecoration headerChipDecoration() {
+BoxDecoration headerChipDecoration({AppColorPalette? palette}) {
+  if (palette != null) {
+    return BoxDecoration(
+      color: palette.cardSurface,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: palette.panelBorder, width: 1),
+    );
+  }
   return BoxDecoration(
     color: AppColors.parchmentMid.withValues(alpha: 0.94),
     borderRadius: BorderRadius.circular(16),
@@ -111,13 +130,47 @@ BoxDecoration headerChipDecoration() {
   );
 }
 
-BoxDecoration softButtonDecoration({required bool selected}) {
+BoxDecoration softButtonDecoration({
+  required bool selected,
+  AppColorPalette? palette,
+  bool includeShadow = true,
+}) {
+  if (palette != null) {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: selected
+            ? [palette.cardSelectedTop, palette.cardSelectedBottom]
+            : [palette.cardUnselectedTop, palette.cardUnselectedBottom],
+      ),
+      borderRadius: BorderRadius.circular(AppRadii.lg),
+      border: Border.all(
+        color: selected ? palette.actionBorder : palette.subtleBorder,
+        width: 1.0,
+      ),
+      boxShadow: !includeShadow
+          ? null
+          : selected
+          ? [
+              BoxShadow(
+                color: palette.actionBottom.withValues(alpha: 0.18),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ]
+          : AppShadows.sm,
+    );
+  }
   return BoxDecoration(
     gradient: selected
-        ? const LinearGradient(
+        ? LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [AppColors.brownWarm, AppColors.brownWarm2],
+            colors: [
+              AppColors.ink700.withValues(alpha: 0.88),
+              AppColors.ink900.withValues(alpha: 0.78),
+            ],
           )
         : const LinearGradient(
             begin: Alignment.topLeft,
@@ -126,10 +179,14 @@ BoxDecoration softButtonDecoration({required bool selected}) {
           ),
     borderRadius: BorderRadius.circular(AppRadii.lg),
     border: Border.all(
-      color: selected ? AppColors.brownRim : AppColors.borderFloating,
+      color: selected
+          ? AppColors.borderHairlineDark.withValues(alpha: 0.92)
+          : AppColors.borderFloating,
       width: 1.0,
     ),
-    boxShadow: selected
+    boxShadow: !includeShadow
+        ? null
+        : selected
         ? const [
             BoxShadow(
               color: Color(0x26A35B22),
@@ -157,6 +214,7 @@ Widget filledActionButton({
 }) {
   return Builder(
     builder: (context) {
+      final palette = AppPaletteTheme.of(context);
       final textScale = _textScaleOf(context);
       final largeText = textScale >= 1.3;
       final baseHeight = minHeight ?? (compact ? 34.0 : 42.0);
@@ -189,14 +247,16 @@ Widget filledActionButton({
                 colors:
                     gradientColors ??
                     (completed
-                        ? const [AppColors.greenBtnTop, AppColors.greenBtnBot]
-                        : const [AppColors.goldLight, AppColors.goldDeep]),
+                        ? [palette.successTop, palette.successBottom]
+                        : [palette.actionTop, palette.actionBottom]),
               ),
               borderRadius: BorderRadius.circular(resolvedRadius),
               border: Border.all(
                 color:
                     borderColor ??
-                    (completed ? AppColors.greenRim : AppColors.goldHi),
+                    (completed
+                        ? palette.completedBorder
+                        : palette.actionBorder),
                 width: 1.1,
               ),
               boxShadow: [
@@ -205,7 +265,7 @@ Widget filledActionButton({
                       shadowColor ??
                       (completed
                           ? const Color(0x223D8758)
-                          : const Color(0x26A35B22)),
+                          : palette.actionBottom.withValues(alpha: 0.18)),
                   blurRadius: 10,
                   offset: const Offset(0, 5),
                 ),
@@ -233,33 +293,38 @@ Widget filledActionButton({
 }
 
 Widget modalCloseButton({required VoidCallback onTap, double size = 34}) {
-  return Material(
-    color: Colors.transparent,
-    child: InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(size * 0.38),
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: const Color(0xECF7EBD7),
+  return Builder(
+    builder: (context) {
+      final palette = AppPaletteTheme.of(context);
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(size * 0.38),
-          border: Border.all(color: AppColors.borderFloating, width: 1.0),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x22000000),
-              blurRadius: 10,
-              offset: Offset(0, 4),
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: palette.softSurface,
+              borderRadius: BorderRadius.circular(size * 0.38),
+              border: Border.all(color: palette.subtleBorder, width: 1.0),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x22000000),
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
-          ],
+            child: Icon(
+              Icons.close_rounded,
+              size: size * 0.52,
+              color: palette.mutedText,
+            ),
+          ),
         ),
-        child: Icon(
-          Icons.close_rounded,
-          size: size * 0.52,
-          color: AppColors.ink400,
-        ),
-      ),
-    ),
+      );
+    },
   );
 }
 
@@ -405,12 +470,13 @@ class _TopMissionButtonBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final waiting = !dailyStatusKnown;
     final backgroundColor = dailyCompleted
-        ? homeStepperActiveColor
+        ? palette.successBottom
         : waiting
-        ? AppColors.ink900.withValues(alpha: 0.76)
-        : homeStepperDoneColor;
+        ? palette.utilityBackground
+        : palette.currentAccent;
     final borderColor = dailyCompleted
         ? Colors.white
         : waiting
@@ -429,14 +495,14 @@ class _TopMissionButtonBody extends StatelessWidget {
         ? null
         : [
             BoxShadow(
-              color: homeStepperDoneColor.withValues(
+              color: palette.currentAccent.withValues(
                 alpha: 0.24 + pulse * 0.22,
               ),
               blurRadius: 8 + pulse * 8,
               offset: const Offset(0, 3),
             ),
             BoxShadow(
-              color: homeStepperDoneColor.withValues(
+              color: palette.currentAccent.withValues(
                 alpha: 0.18 + pulse * 0.24,
               ),
               blurRadius: 14 + pulse * 10,
@@ -496,20 +562,29 @@ Widget topUtilityButton({
   Color? foregroundColor,
   List<BoxShadow>? boxShadow,
 }) {
-  final resolvedBackgroundColor =
-      backgroundColor ??
-      (selected
-          ? AppColors.brownWarm2.withValues(alpha: 0.92)
-          : AppColors.ink900.withValues(alpha: 0.76));
-  final resolvedBorderColor =
-      borderColor ??
-      (selected ? AppColors.brownRim : AppColors.borderHairlineDark);
-  final resolvedForegroundColor = foregroundColor ?? AppColors.fgOnDark;
-  final resolvedBoxShadow =
-      boxShadow ?? (selected ? AppShadows.goldGlow : null);
-
   return Builder(
     builder: (context) {
+      final palette = AppPaletteTheme.of(context);
+      final resolvedBackgroundColor =
+          backgroundColor ??
+          (selected
+              ? palette.utilitySelectedBackground
+              : palette.utilityBackground);
+      final resolvedBorderColor =
+          borderColor ??
+          (selected ? palette.actionBorder : palette.utilityBorder);
+      final resolvedForegroundColor = foregroundColor ?? AppColors.fgOnDark;
+      final resolvedBoxShadow =
+          boxShadow ??
+          (selected
+              ? [
+                  BoxShadow(
+                    color: palette.currentAccent.withValues(alpha: 0.24),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null);
       final largeText = _usesLargeTextLayout(context);
       final height = topUtilityButtonHeightFor(context);
       return Opacity(
@@ -567,45 +642,59 @@ Widget topUtilityIconButton({
   Color? foregroundColor,
   List<BoxShadow>? boxShadow,
 }) {
-  final resolvedBackgroundColor =
-      backgroundColor ??
-      (selected
-          ? AppColors.brownWarm2.withValues(alpha: 0.92)
-          : AppColors.ink900.withValues(alpha: 0.76));
-  final resolvedBorderColor =
-      borderColor ??
-      (selected ? AppColors.brownRim : AppColors.borderHairlineDark);
-  final resolvedForegroundColor = foregroundColor ?? AppColors.fgOnDark;
-  final resolvedBoxShadow =
-      boxShadow ?? (selected ? AppShadows.goldGlow : null);
+  return Builder(
+    builder: (context) {
+      final palette = AppPaletteTheme.of(context);
+      final resolvedBackgroundColor =
+          backgroundColor ??
+          (selected
+              ? palette.utilitySelectedBackground
+              : palette.utilityBackground);
+      final resolvedBorderColor =
+          borderColor ??
+          (selected ? palette.actionBorder : palette.utilityBorder);
+      final resolvedForegroundColor = foregroundColor ?? AppColors.fgOnDark;
+      final resolvedBoxShadow =
+          boxShadow ??
+          (selected
+              ? [
+                  BoxShadow(
+                    color: palette.currentAccent.withValues(alpha: 0.24),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null);
 
-  return Opacity(
-    opacity: enabled ? 1 : 0.42,
-    child: Tooltip(
-      message: tooltip,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: enabled ? onTap : null,
-          borderRadius: BorderRadius.circular(14),
-          child: Container(
-            width: _topUtilityIconButtonWidth,
-            height: _topUtilityIconButtonHeight,
-            decoration: BoxDecoration(
-              color: resolvedBackgroundColor,
+      return Opacity(
+        opacity: enabled ? 1 : 0.42,
+        child: Tooltip(
+          message: tooltip,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: enabled ? onTap : null,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: resolvedBorderColor,
-                width: selected ? 1.2 : 0.9,
+              child: Container(
+                width: _topUtilityIconButtonWidth,
+                height: _topUtilityIconButtonHeight,
+                decoration: BoxDecoration(
+                  color: resolvedBackgroundColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: resolvedBorderColor,
+                    width: selected ? 1.2 : 0.9,
+                  ),
+                  boxShadow: resolvedBoxShadow,
+                ),
+                alignment: Alignment.center,
+                child: Icon(icon, color: resolvedForegroundColor, size: 18),
               ),
-              boxShadow: resolvedBoxShadow,
             ),
-            alignment: Alignment.center,
-            child: Icon(icon, color: resolvedForegroundColor, size: 18),
           ),
         ),
-      ),
-    ),
+      );
+    },
   );
 }
 
@@ -615,14 +704,27 @@ Widget storySection({
   Widget? action,
   Widget? footer,
   bool inlineTitle = false,
+  AppColorPalette? palette,
 }) {
+  final surfaceColor = palette == null
+      ? AppColors.parchmentCard.withValues(alpha: 0.96)
+      : (palette == AppColorPalette.blackMap
+            ? palette.cardSurface
+            : palette.softSurface);
+  final borderColor = palette?.subtleBorder ?? AppColors.borderCard;
+  final bodyColor = palette?.text ?? AppColors.ink800;
+  final titleColor = palette == null
+      ? AppColors.ink450
+      : (palette == AppColorPalette.blackMap
+            ? palette.primaryDeep
+            : palette.mutedText);
   return SizedBox(
     width: double.infinity,
     child: Container(
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.borderCard, width: 1.2),
+        border: Border.all(color: borderColor, width: 1.2),
         borderRadius: BorderRadius.circular(AppRadii.md),
-        color: AppColors.parchmentCard.withValues(alpha: 0.96),
+        color: surfaceColor,
       ),
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -634,14 +736,13 @@ Widget storySection({
                 style: const TextStyle(
                   fontSize: AppFontSizes.body,
                   height: AppLineHeights.body,
-                  color: AppColors.ink800,
-                ),
+                ).copyWith(color: bodyColor),
                 children: [
                   TextSpan(
                     text: title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w800,
-                      color: AppColors.ink450,
+                      color: titleColor,
                     ),
                   ),
                   TextSpan(text: content),
@@ -655,10 +756,10 @@ Widget storySection({
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: AppFontSizes.body,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.ink450,
+                      color: titleColor,
                     ),
                   ),
                 ),
@@ -668,10 +769,10 @@ Widget storySection({
             const SizedBox(height: 6),
             Text(
               content,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppFontSizes.body,
                 height: AppLineHeights.body,
-                color: AppColors.ink800,
+                color: bodyColor,
               ),
             ),
           ],
@@ -688,8 +789,13 @@ Widget storySection({
 Widget storySceneRow(
   List<String> sceneAssets, {
   List<String> sceneCaptions = const [],
+  AppColorPalette? palette,
 }) {
-  return StorySceneRow(sceneAssets: sceneAssets, sceneCaptions: sceneCaptions);
+  return StorySceneRow(
+    sceneAssets: sceneAssets,
+    sceneCaptions: sceneCaptions,
+    palette: palette,
+  );
 }
 
 /// 장면 이미지 가로 스크롤 row. 한 화면에 ~2.3 타일 노출이라 3장 이상이면
@@ -700,10 +806,12 @@ class StorySceneRow extends StatefulWidget {
     super.key,
     required this.sceneAssets,
     this.sceneCaptions = const [],
+    this.palette,
   });
 
   final List<String> sceneAssets;
   final List<String> sceneCaptions;
+  final AppColorPalette? palette;
 
   @override
   State<StorySceneRow> createState() => _StorySceneRowState();
@@ -779,12 +887,19 @@ class _StorySceneRowState extends State<StorySceneRow> {
       return const SizedBox.shrink();
     }
 
+    final palette = widget.palette ?? AppPaletteTheme.of(context);
+    final surfaceColor = palette == AppColorPalette.blackMap
+        ? palette.mutedSurface
+        : AppColors.parchmentCard.withValues(alpha: 0.96);
+    final borderColor = palette == AppColorPalette.blackMap
+        ? palette.subtleBorder
+        : AppColors.borderCard;
     const tileGap = 8.0;
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.borderCard, width: 1.2),
+        border: Border.all(color: borderColor, width: 1.2),
         borderRadius: BorderRadius.circular(AppRadii.md),
-        color: AppColors.parchmentCard.withValues(alpha: 0.96),
+        color: surfaceColor,
       ),
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
       child: LayoutBuilder(
@@ -1097,11 +1212,16 @@ Widget bibleDropdownFrame<T>({
 }) {
   return Builder(
     builder: (context) {
+      final palette = AppPaletteTheme.of(context);
       final largeText = _usesLargeTextLayout(context);
       return ConstrainedBox(
         constraints: BoxConstraints(minHeight: largeText ? 48 : 38),
         child: DecoratedBox(
-          decoration: softButtonDecoration(selected: false),
+          decoration: BoxDecoration(
+            color: palette.cardSurface,
+            borderRadius: BorderRadius.circular(AppRadii.lg),
+            border: Border.all(color: palette.subtleBorder, width: 1.0),
+          ),
           child: Padding(
             padding: EdgeInsets.symmetric(
               horizontal: 10,
@@ -1114,10 +1234,10 @@ Widget bibleDropdownFrame<T>({
                 isExpanded: true,
                 iconSize: 12,
                 borderRadius: BorderRadius.circular(AppRadii.sm),
-                dropdownColor: const Color(0xFFF3E4CC),
-                iconEnabledColor: const Color(0xFF5B4327),
-                style: const TextStyle(
-                  color: AppColors.ink500,
+                dropdownColor: palette.cardSurface,
+                iconEnabledColor: palette.primaryDeep,
+                style: TextStyle(
+                  color: palette.text,
                   fontWeight: FontWeight.w900,
                   fontSize: AppFontSizes.base,
                 ),
@@ -1136,11 +1256,12 @@ Widget bibleDropdownFrame<T>({
 Widget topFontScaleButton({required VoidCallback onTap}) {
   return Builder(
     builder: (context) {
+      final palette = AppPaletteTheme.of(context);
       final largeText = _usesLargeTextLayout(context);
       final height = topUtilityButtonHeightFor(context);
       return Semantics(
         button: true,
-        label: '글자 크기 변경',
+        label: '색 조합과 글자 크기 변경',
         child: Material(
           color: Colors.transparent,
           child: InkWell(
@@ -1148,22 +1269,19 @@ Widget topFontScaleButton({required VoidCallback onTap}) {
             onTap: onTap,
             borderRadius: BorderRadius.circular(14),
             child: Container(
-              constraints: BoxConstraints(minWidth: 42, minHeight: height),
+              constraints: BoxConstraints(minWidth: 58, minHeight: height),
               padding: EdgeInsets.symmetric(
-                horizontal: 10,
+                horizontal: 9,
                 vertical: largeText ? 7 : 4,
               ),
               decoration: BoxDecoration(
-                color: AppColors.ink900.withValues(alpha: 0.76),
+                color: palette.utilityBackground,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: AppColors.borderHairlineDark,
-                  width: 0.9,
-                ),
+                border: Border.all(color: palette.utilityBorder, width: 0.9),
               ),
               alignment: Alignment.center,
               child: Text(
-                '글자',
+                '색/글자',
                 maxLines: 2,
                 overflow: TextOverflow.visible,
                 softWrap: true,

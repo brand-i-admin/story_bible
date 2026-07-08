@@ -11,6 +11,7 @@ import 'package:latlong2/latlong.dart';
 import '../models/event_emotion_mark.dart';
 import '../models/landmark.dart';
 import '../models/story_event.dart';
+import '../theme/tokens.dart';
 import '../utils/map_math.dart' as map_math;
 import 'map/map_tile_style.dart';
 import 'map/story_terrain_3d_map.dart';
@@ -173,6 +174,12 @@ class StoryMapPanelController {
 
   void clearMapTapSuppression() => _state?._clearMapTapSuppression();
 
+  void suspendMapGestures([
+    Duration duration = const Duration(milliseconds: 220),
+  ]) => _state?._suspendMapGestures(duration);
+
+  void clearMapGestureSuspension() => _state?._clearMapGestureSuspension();
+
   void skipAnimation() => _state?.skipAnimation();
 
   /// "다음" 버튼처럼 외부 트리거로 핀 reveal 애니메이션을 다시 재생한다.
@@ -199,8 +206,14 @@ class StoryMapPanelController {
   Future<void> playEventTransition({
     required StoryEvent from,
     required StoryEvent to,
+    Duration duration = const Duration(seconds: 2),
   }) {
-    return _state?._playEventTransition(from: from, to: to) ?? Future.value();
+    return _state?._playEventTransition(
+          from: from,
+          to: to,
+          duration: duration,
+        ) ??
+        Future.value();
   }
 
   /// 감정 새김 직후 지도 위 해당 사건 핀에 감정 도장을 1회 재생한다.

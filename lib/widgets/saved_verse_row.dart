@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/saved_bible_verse.dart';
-import '../theme/tokens.dart';
+import '../theme/app_color_palette.dart';
 import '../utils/bible_book_meta.dart';
 
 class SavedVerseRow extends StatelessWidget {
@@ -20,6 +20,7 @@ class SavedVerseRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final badgeSize = compact ? 28.0 : 32.0;
     final comment = verse.comment.trim();
     final showComment = verse.isSaved;
@@ -39,9 +40,9 @@ class SavedVerseRow extends StatelessWidget {
             compact ? 8 : 10,
           ),
           decoration: BoxDecoration(
-            color: _savedVerseRowBackground(verse),
+            color: _savedVerseRowBackground(verse, palette),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.borderHairlineDark, width: 1),
+            border: Border.all(color: palette.subtleBorder, width: 1),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +64,7 @@ class SavedVerseRow extends StatelessWidget {
                           child: Text(
                             verse.verseText,
                             style: TextStyle(
-                              color: AppColors.ink800,
+                              color: palette.text,
                               fontSize: compact ? 12.1 : 13.4,
                               height: 1.42,
                               fontWeight: FontWeight.w700,
@@ -77,15 +78,15 @@ class SavedVerseRow extends StatelessWidget {
                       Divider(
                         height: 1,
                         thickness: 1,
-                        color: AppColors.borderHairlineDark.withAlpha(110),
+                        color: palette.subtleBorder,
                       ),
                       SizedBox(height: compact ? 7 : 8),
                       Text(
                         comment.isEmpty ? '남긴 코멘트가 없습니다.' : comment,
                         style: TextStyle(
                           color: comment.isEmpty
-                              ? AppColors.ink150
-                              : AppColors.ink500,
+                              ? palette.mutedText.withValues(alpha: 0.52)
+                              : palette.mutedText,
                           fontSize: compact ? 11.5 : 12.7,
                           height: 1.42,
                           fontWeight: comment.isEmpty
@@ -105,7 +106,7 @@ class SavedVerseRow extends StatelessWidget {
                     tooltip: verse.isSaved ? '저장 취소' : '하이라이트 삭제',
                     onPressed: onDelete,
                     icon: const Icon(Icons.delete_outline_rounded),
-                    color: AppColors.seed,
+                    color: palette.primary,
                     splashRadius: 18,
                     visualDensity: VisualDensity.compact,
                   ),
@@ -119,11 +120,11 @@ class SavedVerseRow extends StatelessWidget {
   }
 }
 
-Color _savedVerseRowBackground(SavedBibleVerse verse) {
+Color _savedVerseRowBackground(SavedBibleVerse verse, AppColorPalette palette) {
   return switch (verse.highlightColor) {
     SavedBibleVerse.highlightBlue => const Color(0x6639C6E8),
     SavedBibleVerse.highlightYellow => const Color(0x66FFF176),
-    _ => AppColors.gold.withAlpha(34),
+    _ => palette.currentAccent.withValues(alpha: 0.14),
   };
 }
 
@@ -135,6 +136,7 @@ class _SavedVerseReferenceBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final alias = bibleBookNoToAlias[verse.bookNo] ?? verse.bookName;
 
     return Container(
@@ -144,12 +146,12 @@ class _SavedVerseReferenceBadge extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.greenTop, AppColors.greenBot],
+          colors: [palette.primary, palette.primaryDeep],
         ),
-        border: Border.all(color: const Color(0xFFF6EEDC), width: 1.7),
+        border: Border.all(color: palette.utilityBorder, width: 1.7),
         boxShadow: const [
           BoxShadow(
             color: Color(0x24000000),

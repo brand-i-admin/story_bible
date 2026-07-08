@@ -4,8 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/app_user_profile.dart';
 import '../models/bible_verse.dart';
-import '../models/character.dart';
-import '../models/character_study_progress.dart';
 import '../models/intercessory_prayer_item.dart';
 import '../models/paged_result.dart';
 import '../models/saved_bible_verse.dart';
@@ -138,6 +136,13 @@ class UserRepository {
       pageSize: pageSize,
       hasNextPage: hasNextPage,
     );
+  }
+
+  Future<int> countSavedVerses({required String userId}) async {
+    return _client
+        .from('user_saved_verses')
+        .count(CountOption.exact)
+        .eq('user_id', userId);
   }
 
   Future<Map<String, SavedBibleVerse>> fetchSavedVerseMap(String userId) async {
@@ -397,66 +402,6 @@ class UserRepository {
         .from('user_intercessory_prayers')
         .delete()
         .eq('id', prayerLinkId);
-  }
-
-  Future<List<CharacterStudyProgress>> fetchCharacterStudyProgress({
-    required String userId,
-    required List<Character> people,
-  }) async {
-    final progressRows = await _client
-        .from('user_event_progress')
-        .select('event_id, is_bible_read, is_quiz_completed, is_completed')
-        .eq('user_id', userId);
-    final emotionRows = await _client
-        .from('user_event_emotion_marks')
-        .select('event_id')
-        .eq('user_id', userId);
-    final emotionIdSet = emotionRows
-        .map((row) => row['event_id'] as String)
-        .toSet();
-    final completedIdSet = progressRows
-        .where(
-          (row) =>
-              ((row['is_completed'] as bool?) ?? false) ||
-              ((row['is_quiz_completed'] as bool?) ?? false),
-        )
-        .map((row) => row['event_id'] as String)
-        .toSet();
-    completedIdSet.addAll(emotionIdSet);
-
-    final rows = await _client
-        .from('events_ordered')
-        .select('id, character_codes')
-        .order('global_rank', ascending: true);
-
-    final totalByCharacterCode = <String, Set<String>>{};
-    final completedByCharacterCode = <String, Set<String>>{};
-    for (final row in rows) {
-      final eventId = row['id'] as String;
-      final codes = row['character_codes'];
-      if (codes is! List) {
-        continue;
-      }
-      for (final code in codes.whereType<String>()) {
-        totalByCharacterCode.putIfAbsent(code, () => <String>{}).add(eventId);
-        if (completedIdSet.contains(eventId)) {
-          completedByCharacterCode
-              .putIfAbsent(code, () => <String>{})
-              .add(eventId);
-        }
-      }
-    }
-
-    return people
-        .map(
-          (character) => CharacterStudyProgress(
-            character: character,
-            completedCount:
-                completedByCharacterCode[character.code]?.length ?? 0,
-            totalCount: totalByCharacterCode[character.code]?.length ?? 0,
-          ),
-        )
-        .toList(growable: false);
   }
 
   Future<AppUserProfile?> _fetchProfileOrNull(String userId) async {

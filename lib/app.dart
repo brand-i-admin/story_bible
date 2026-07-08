@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'screens/story_home_screen.dart';
+import 'state/color_palette_providers.dart';
 import 'state/font_scale_providers.dart';
 import 'theme/app_theme.dart';
 import 'utils/system_insets.dart';
@@ -25,15 +26,16 @@ Widget fontScaleBuilder(BuildContext context, Widget? child) {
   );
 }
 
-class StoryBibleApp extends StatelessWidget {
+class StoryBibleApp extends ConsumerWidget {
   const StoryBibleApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorPalette = ref.watch(colorPaletteProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Story Bible',
-      theme: AppTheme.light(),
+      theme: AppTheme.light(palette: colorPalette),
       builder: fontScaleBuilder,
       // 모든 흐름을 StoryHomeScreen 한 화면에 통합. 시대 선택 단계가
       // 시대 멀티 + [지역/인물] 분기 카드 (HomeIntroPanel) 로 구성되고,

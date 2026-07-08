@@ -267,7 +267,7 @@ is_active boolean DEFAULT true
 
 ### 2.2c App publications — 공지사항과 사용법
 
-홈 좌상단 메가폰 버튼에서 보여 줄 개발자 게시 콘텐츠다. bell 알림과 달리 읽음
+프로필 헤더의 메가폰 버튼에서 보여 줄 개발자 게시 콘텐츠다. bell 알림과 달리 읽음
 상태나 30일 보관 정책에 묶이지 않고, `is_published`와 `published_at`으로 노출을
 제어한다.
 
@@ -419,7 +419,7 @@ highlight_color text CHECK (highlight_color IS NULL OR highlight_color IN ('blue
 created_at timestamptz, updated_at timestamptz
 ```
 - 성경 리더에서 구절을 눌러 저장 버튼을 누르면 optional 묵상 코멘트를 함께 저장한다. 빈 코멘트도 저장 가능한 정상 상태다.
-- 파랑/노랑 하이라이트는 같은 row의 `highlight_color`에 저장한다. 하이라이트만 지정한 row는 `is_saved=false`로 프로필 말씀 탭에 표시되며, 저장 버튼을 누르면 같은 row가 `is_saved=true`로 갱신된다. 같은 색을 다시 눌러 해제할 때 `is_saved=false` row는 삭제하고, `is_saved=true` row는 `highlight_color`만 null로 되돌린다.
+- 파랑/노랑 하이라이트는 같은 row의 `highlight_color`에 저장한다. 하이라이트만 지정한 row는 `is_saved=false`로 저장한 성경 구절 전체보기 화면에 표시되며, 저장 버튼을 누르면 같은 row가 `is_saved=true`로 갱신된다. 같은 색을 다시 눌러 해제할 때 `is_saved=false` row는 삭제하고, `is_saved=true` row는 `highlight_color`만 null로 되돌린다.
 
 #### `user_saved_events` (2026-05-26)
 ```sql
@@ -478,7 +478,7 @@ explanation text, display_order int
 | eras, bible_verses, quiz_questions | 공개 (anon) | — |
 | persons | 공개, **`is_active = true`만 노출** (admin은 전체) | admin만 |
 | events | 공개, **`status = 'published'`만 노출** (admin은 전체) | admin만 |
-| events_ordered, character_eras (view) | 공개 | — (view, underlying RLS 따름) |
+| events_ordered, character_eras (view) | 공개, `security_invoker=true` 로 하위 테이블 RLS 적용 | — |
 | user_profiles | 본인만 | 본인만 |
 | user_event_progress | 본인만 | 본인만 |
 | user_quiz_attempts | 본인만 | 본인만 |
@@ -517,7 +517,6 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `fetchEventsByEra(eraId)` | `events_ordered` view WHERE era_id ORDER BY rank_in_era → 숨김 era 제외 | `List<StoryEvent>` |
 | `fetchEventsForCharacter(personCode)` | `events_ordered` WHERE character_codes @> ARRAY[code] ORDER BY global_rank → 숨김 era 제외 | `List<StoryEvent>` |
 | `fetchEventsByIds(eventIds)` | `events_ordered` WHERE id IN (...) ORDER BY global_rank → 숨김 era 제외 | `List<StoryEvent>` |
-| `fetchCharacterTimelineOrder()` | `events_ordered` → 숨김 era 제외 → personCode별 첫 등장 global_rank | `Map<String, int>` |
 | `searchEventsByText(query)` | 전체 `events_ordered` + persons name lookup → 숨김 era 제외 → 클라이언트 가중치 검색 | `List<StoryEvent>` (상위 20) |
 | `fetchQuizQuestions(eventId)` | `quiz_questions` WHERE event_id | `List<QuizQuestion>` |
 | `fetchBibleVersesByChapter(...)` | `bible_verses` WHERE book_no, chapter_no | `List<BibleVerse>` |
@@ -543,6 +542,7 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `updateUserProfile(...)` | user_profiles UPDATE | `AppUserProfile` |
 | `uploadProfileImage(...)` | Storage uploadBinary | `String` (public URL) |
 | `fetchSavedVersesPage(...)` | user_saved_verses SELECT + 페이지네이션 | `PagedResult<SavedBibleVerse>` |
+| `countSavedVerses(userId)` | user_saved_verses exact count | `int` |
 | `fetchSavedVerseMap(userId)` | user_saved_verses SELECT 본인 전체 | `Map<verseKey, SavedBibleVerse>` |
 | `saveBibleVerse(...)` | user_saved_verses INSERT/UPDATE (comment 포함, `is_saved=true`) | `SavedBibleVerse` |
 | `setBibleVerseHighlight(...)` | user_saved_verses INSERT/UPDATE (`highlight_color`) | `SavedBibleVerse` |
@@ -553,7 +553,6 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `deleteCompanionDiaryEntry(...)` | DELETE `user_companion_diary_entries` WHERE user_id AND entry_date | void |
 | `fetchIntercessoryPrayerPage(...)` | RPC list_intercessory_prayer_requests | `PagedResult<IntercessoryPrayerItem>` |
 | `addIntercessoryPrayerByShareId(shareId)` | RPC add_intercessory_prayer_by_share_id | `IntercessoryPrayerItem` |
-| `fetchCharacterStudyProgress(...)` | user_event_progress + events_ordered.character_codes (배열 매치) | `List<CharacterStudyProgress>` |
 
 ### 5.x NotificationRepository (`lib/data/notification_repository.dart`, 2026-04-22)
 

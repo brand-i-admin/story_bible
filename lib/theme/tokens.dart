@@ -2,64 +2,69 @@ import 'package:flutter/material.dart';
 
 // Story Bible 디자인 시스템 토큰 — 단일 진실 소스(single source of truth).
 //
-// 3D 지형 지도(OpenFreeMap Liberty + DEM)의 밝은 석회 베이지, 세이지 그린,
-// 올리브 브라운, 옅은 수계 블루와 맞도록 전역 톤을 맞춘다.
+// 3D 지형 지도(OpenFreeMap Liberty + DEM)는 유지하고, 앱 chrome/버튼/카드는
+// 홍보 이미지의 밝은 지도 종이, 네이비 잉크, 청록 수계 톤과 맞춘다.
 // 위젯/화면에서 hex 코드를 직접 쓰지 말고 여기 토큰만 참조한다.
 
 class AppColors {
   AppColors._();
 
-  // BASE PALETTE — terrain limestone & sage parchment
-  static const parchmentBg = Color(0xFFE8E6D8);
-  static const parchmentLight = Color(0xFFF8F4E7);
-  static const parchmentMid = Color(0xFFEDE7D6);
-  static const parchmentWarm = Color(0xFFE6D9BF);
-  static const parchmentCream = Color(0xFFFCF8EC);
-  static const parchmentCard = Color(0xFFF2EAD8);
-  static const parchmentCardAlt = Color(0xFFE4DEC8);
-  static const parchmentDim = Color(0xFFEAE4D3);
+  // BASE PALETTE — bright map paper
+  static const parchmentBg = Color(0xFFF2EFE3);
+  static const parchmentLight = Color(0xFFFFFCF3);
+  static const parchmentMid = Color(0xFFF4ECDD);
+  static const parchmentWarm = Color(0xFFEDE1CD);
+  static const parchmentCream = Color(0xFFFFFFF7);
+  static const parchmentCard = Color(0xFFFFF9EC);
+  static const parchmentCardAlt = Color(0xFFEEF4E6);
+  static const parchmentDim = Color(0xFFEFE7D8);
 
-  // OLIVE INK — text / borders
-  static const ink900 = Color(0xFF22271D);
-  static const ink800 = Color(0xFF2D3022);
-  static const ink700 = Color(0xFF33331F);
-  static const ink600 = Color(0xFF3B3926);
-  static const ink500 = Color(0xFF47442D);
-  static const ink450 = Color(0xFF4F4D34);
-  static const ink400 = Color(0xFF5B563B);
-  static const ink350 = Color(0xFF665F43);
-  static const ink300 = Color(0xFF70684B);
-  static const ink200 = Color(0xFF82785A);
-  static const ink150 = Color(0xFF998F70);
-  static const ink100 = Color(0xFF8A7E5E);
+  // NAVY INK — text / chrome
+  static const ink900 = Color(0xFF09264A);
+  static const ink800 = Color(0xFF0C315E);
+  static const ink700 = Color(0xFF153E67);
+  static const ink600 = Color(0xFF264E74);
+  static const ink500 = Color(0xFF365F80);
+  static const ink450 = Color(0xFF436C86);
+  static const ink400 = Color(0xFF50758C);
+  static const ink350 = Color(0xFF5A7A8E);
+  static const ink300 = Color(0xFF6A8492);
+  static const ink200 = Color(0xFF7E908F);
+  static const ink150 = Color(0xFF909B91);
+  static const ink100 = Color(0xFFA3AA99);
 
   // BRAND ACCENTS
-  static const seed = Color(0xFF5F7040);
-  static const gold = Color(0xFFC69B3F);
-  static const goldDeep = Color(0xFFA2702C);
-  static const goldLight = Color(0xFFD2AD61);
-  static const goldHi = Color(0xFFE7D8A2);
-  static const goldRim = Color(0xFFE6D18B);
-  static const brownWarm = Color(0xFF7B9155);
-  static const brownWarm2 = Color(0xFF526F3F);
-  static const brownRim = Color(0xFFDDE8BD);
-  static const brownEdge = Color(0xFF7B7656);
-  static const brownEdge2 = Color(0xFF85805D);
+  static const seed = Color(0xFF087986);
+  static const oceanTop = Color(0xFF0FA7AC);
+  static const oceanBot = Color(0xFF087986);
+  static const oceanDeep = Color(0xFF073D5A);
+  static const oceanRim = Color(0xFFB8E7E4);
+  static const gold = Color(0xFFF2A738);
+  static const goldDeep = Color(0xFFD77C1E);
+  static const goldLight = Color(0xFFF7B957);
+  static const goldHi = Color(0xFFFFE0A3);
+  static const goldRim = Color(0xFFFFE7B8);
+  // Legacy names retained for existing widgets: selected UI now uses ocean/navy.
+  static const brownWarm = oceanBot;
+  static const brownWarm2 = oceanDeep;
+  static const brownRim = oceanRim;
+  static const brownEdge = Color(0xFF60908C);
+  static const brownEdge2 = Color(0xFF739F9A);
 
   // Success
-  static const greenTop = Color(0xFF6FA76D);
-  static const greenBot = Color(0xFF477D52);
-  static const greenRim = Color(0xFFDCECC7);
-  static const greenTint1 = Color(0xFFE7F0DB);
-  static const greenTint2 = Color(0xFFD9E8C7);
-  static const greenBorder = Color(0xFF8EAD72);
-  static const greenBtnTop = Color(0xFF77A963);
-  static const greenBtnBot = Color(0xFF4E7E50);
+  static const greenTop = Color(0xFF68C48C);
+  static const greenBot = Color(0xFF2B8A62);
+  static const greenRim = Color(0xFFD7F1DC);
+  static const greenTint1 = Color(0xFFEAF7EC);
+  static const greenTint2 = Color(0xFFD9F0DF);
+  static const greenBorder = Color(0xFF8DCA9C);
+  static const greenBtnTop = Color(0xFF66C18A);
+  static const greenBtnBot = Color(0xFF2D8E63);
 
   // Danger
-  static const dangerTop = Color(0xFFD97C60);
-  static const dangerBot = Color(0xFFB4583B);
-  static const dangerRim = Color(0xFFF2C2B3);
+  static const dangerTop = Color(0xFFE27B68);
+  static const dangerBot = Color(0xFFB84F3F);
+  static const dangerRim = Color(0xFFF7C5BA);
 
   // REGION HIGHLIGHT — 지도 era 폴리곤 영역 표시 (story_map_panel + era_polygon_glow_layer).
   // 후보 = 밝은 옐로우 골드, 선택 = 밝은 sage green. ancient atlas 양피지 위에서
@@ -76,22 +81,23 @@ class AppColors {
   static const regionParchmentWash = Color(0xFFF8F3E4);
 
   // Semantic
-  static const fgOnDark = Color(0xFFF8F3E4);
+  static const fgOnDark = Color(0xFFFFFCF3);
   static const fgOnGold = parchmentCream;
-  static const borderHairlineDark = Color(0xFFD7C8A6);
+  static const borderHairlineDark = Color(0xFFB8D8D6);
 
-  // Alpha 적용 보더(브라운 계열) — surfaces 팩토리에서 사용
-  static const borderModalDialog = Color(0xC285805D); // brownEdge2 @ 0.76
-  static const borderFloating = Color(0xB88A7E5E); // ink100 @ 0.72
-  static const borderCard = Color(0xB58A7E5E); // ink100 @ 0.71
+  // Alpha 적용 보더(청록 해안선 계열) — surfaces 팩토리에서 사용
+  static const borderModalDialog = Color(0xCC5D8F8B);
+  static const borderFloating = Color(0xC06D9D9A);
+
+  static const borderCard = Color(0xAA6D9D9A);
 
   // 표면 기본/오버레이
-  static const floatingSurfaceDefault = Color(0xF5F3EBD9);
-  static const dialogTopHighlight = Color(0xFFFBF7EA);
+  static const floatingSurfaceDefault = Color(0xFAFCF9EF);
+  static const dialogTopHighlight = Color(0xFFFFFFF8);
   static const overlayWhiteSoft = Color(0x14FFFFFF); // 8% white, alpha-blend용
 
   // 인물 색상 fallback — selectedCharacterColors에 매핑이 없을 때
-  static const characterFallback = Color(0xFF7E7A63);
+  static const characterFallback = Color(0xFF5A7F8A);
 
   // CHARACTER PALETTE — 8색 순환 (i % 8)
   static const characters = <Color>[
@@ -155,13 +161,13 @@ class AppShadows {
     BoxShadow(color: Color(0x33000000), blurRadius: 30, offset: Offset(0, 18)),
   ];
   static const gold = <BoxShadow>[
-    BoxShadow(color: Color(0x26A35B22), blurRadius: 10, offset: Offset(0, 5)),
+    BoxShadow(color: Color(0x26F2A738), blurRadius: 10, offset: Offset(0, 5)),
   ];
   static const green = <BoxShadow>[
-    BoxShadow(color: Color(0x213D8758), blurRadius: 10, offset: Offset(0, 5)),
+    BoxShadow(color: Color(0x212B8A62), blurRadius: 10, offset: Offset(0, 5)),
   ];
   static const goldGlow = <BoxShadow>[
-    BoxShadow(color: Color(0x45F0C36B), blurRadius: 8, offset: Offset(0, 2)),
+    BoxShadow(color: Color(0x45F7B957), blurRadius: 8, offset: Offset(0, 2)),
   ];
 }
 

@@ -164,32 +164,6 @@ class StoryRepository {
     return true;
   }
 
-  /// 인물별 첫 등장 시점을 [StoryEvent.globalRank] 기준으로 반환한다.
-  /// 키는 `characters.code` (어드민/외부 기여 모두 코드 기반).
-  Future<Map<String, int>> fetchCharacterTimelineOrder() async {
-    final rows = await _client
-        .from('events_ordered')
-        .select('era_id, global_rank, character_codes')
-        .order('global_rank', ascending: true);
-
-    final hiddenEraIds = await _fetchHiddenEraIds();
-    final firstAppearanceByCode = <String, int>{};
-    for (final row in rows) {
-      if (hiddenEraIds.contains(row['era_id'] as String?)) {
-        continue;
-      }
-      final globalRank = (row['global_rank'] as num?)?.toInt() ?? 0;
-      final codes = row['character_codes'];
-      if (codes is! List) {
-        continue;
-      }
-      for (final code in codes.whereType<String>()) {
-        firstAppearanceByCode.putIfAbsent(code, () => globalRank);
-      }
-    }
-    return firstAppearanceByCode;
-  }
-
   Future<List<StoryEvent>> searchEventsByText(String query) async {
     final normalized = query.trim().toLowerCase();
     if (normalized.isEmpty) {
@@ -365,6 +339,27 @@ class StoryRepository {
     };
   }
 
+  Future<Map<String, DateTime?>> fetchCompletedBibleChapterReadAts(
+    String userId, {
+    String translation = 'KRV',
+  }) async {
+    final rows = await _client
+        .from('user_bible_chapter_progress')
+        .select('book_no, chapter_no, read_at, updated_at')
+        .eq('user_id', userId)
+        .eq('translation', translation);
+
+    return {
+      for (final row in rows)
+        bibleChapterProgressKey(
+          bookNo: (row['book_no'] as num).toInt(),
+          chapterNo: (row['chapter_no'] as num).toInt(),
+        ): _parseNullableDateTime(
+          row['read_at'] ?? row['updated_at'],
+        ),
+    };
+  }
+
   Future<void> setBibleChapterRead({
     required String userId,
     required int bookNo,
@@ -376,13 +371,14 @@ class StoryRepository {
     final maxChapter = bibleBooks[safeBookNo - 1].chapters;
     final safeChapterNo = chapterNo.clamp(1, maxChapter).toInt();
     if (isRead) {
+      final timestamp = DateTime.now().toIso8601String();
       await _client.from('user_bible_chapter_progress').upsert({
         'user_id': userId,
         'translation': translation,
         'book_no': safeBookNo,
         'chapter_no': safeChapterNo,
-        'read_at': DateTime.now().toIso8601String(),
-        'updated_at': DateTime.now().toIso8601String(),
+        'read_at': timestamp,
+        'updated_at': timestamp,
       }, onConflict: 'user_id,translation,book_no,chapter_no');
       return;
     }
@@ -394,6 +390,16 @@ class StoryRepository {
         .eq('translation', translation)
         .eq('book_no', safeBookNo)
         .eq('chapter_no', safeChapterNo);
+  }
+
+  DateTime? _parseNullableDateTime(dynamic value) {
+    if (value is DateTime) {
+      return value;
+    }
+    if (value is String) {
+      return DateTime.tryParse(value);
+    }
+    return null;
   }
 
   Future<Set<String>> fetchCompletedEventIds(String userId) async {

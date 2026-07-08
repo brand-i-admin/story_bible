@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/story_event.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 
 double timelineUnitPickPanelSheetHeightFor(BuildContext context) {
@@ -30,16 +31,20 @@ class TimelineUnitPickPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = AppPaletteTheme.of(context);
     final units = _timelineUnits(events);
     if (units.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
-          child: Text(
-            '선택한 시대에 표시할 구간이 없습니다.',
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+      return _TimelineUnitPanelSurface(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
+            child: Text(
+              '선택한 시대에 표시할 구간이 없습니다.',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: palette.mutedText,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
         ),
@@ -61,91 +66,119 @@ class TimelineUnitPickPanel extends StatelessWidget {
                     visibleCards)
                 .clamp(86.0, 124.0)
                 .toDouble();
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                horizontalPadding,
-                6,
-                horizontalPadding,
-                0,
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    '구간 선택',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: AppColors.ink700,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w900,
-                      height: 1.1,
-                    ),
-                  ),
-                  const Spacer(),
-                  TextButton(
-                    key: const ValueKey('timeline-unit-toggle-all'),
-                    onPressed: allSelected ? onClearAll : onSelectAll,
-                    style: TextButton.styleFrom(
-                      minimumSize: const Size(0, 30),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      foregroundColor: allSelected
-                          ? AppColors.greenBot
-                          : AppColors.ink600,
-                      backgroundColor: allSelected
-                          ? AppColors.greenTint2
-                          : AppColors.parchmentCream,
-                      side: BorderSide(
-                        color: allSelected
-                            ? AppColors.greenBot
-                            : AppColors.borderCard,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      textStyle: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    child: Text(allSelected ? '전체 해제' : '전체 선택'),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(
+        return _TimelineUnitPanelSurface(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
                   horizontalPadding,
-                  8,
+                  6,
                   horizontalPadding,
-                  12 + bottomInset,
+                  0,
                 ),
-                itemCount: units.length,
-                separatorBuilder: (_, _) => const SizedBox(width: cardGap),
-                itemBuilder: (context, index) {
-                  final unit = units[index];
-                  return Align(
-                    alignment: Alignment.topLeft,
-                    child: _TimelineUnitCard(
-                      key: ValueKey('timeline-unit-card-${unit.code}'),
-                      unit: unit,
-                      selected: selectedUnitCodes.contains(unit.code),
-                      width: cardWidth,
-                      onTap: () => onToggleUnit(unit.code),
+                child: Row(
+                  children: [
+                    Text(
+                      '구간 선택',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: palette.text,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                        height: 1.1,
+                      ),
                     ),
-                  );
-                },
+                    const Spacer(),
+                    TextButton(
+                      key: const ValueKey('timeline-unit-toggle-all'),
+                      onPressed: allSelected ? onClearAll : onSelectAll,
+                      style: TextButton.styleFrom(
+                        minimumSize: const Size(0, 30),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        foregroundColor: allSelected
+                            ? palette.successBottom
+                            : palette.text,
+                        backgroundColor: allSelected
+                            ? palette.successFill
+                            : palette.cardSurface,
+                        side: BorderSide(
+                          color: allSelected
+                              ? palette.successBottom
+                              : palette.subtleBorder,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      child: Text(allSelected ? '전체 해제' : '전체 선택'),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(
+                    horizontalPadding,
+                    8,
+                    horizontalPadding,
+                    12 + bottomInset,
+                  ),
+                  itemCount: units.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: cardGap),
+                  itemBuilder: (context, index) {
+                    final unit = units[index];
+                    return Align(
+                      alignment: Alignment.topLeft,
+                      child: _TimelineUnitCard(
+                        key: ValueKey('timeline-unit-card-${unit.code}'),
+                        unit: unit,
+                        selected: selectedUnitCodes.contains(unit.code),
+                        width: cardWidth,
+                        onTap: () => onToggleUnit(unit.code),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         );
       },
+    );
+  }
+}
+
+class _TimelineUnitPanelSurface extends StatelessWidget {
+  const _TimelineUnitPanelSurface({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return DecoratedBox(
+      key: const ValueKey('timeline-unit-panel-surface'),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            palette.softSurface,
+            palette.panelSurface,
+            palette.mutedSurface,
+          ],
+        ),
+      ),
+      child: child,
     );
   }
 }
@@ -312,17 +345,30 @@ class _TimelineUnitCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = AppPaletteTheme.of(context);
     final cardHeight = _cardHeightFor(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
-    const selectedColor = AppColors.greenBot;
-    final bodyColor = selected ? AppColors.ink600 : AppColors.ink350;
+    final selectedColor = palette.stepSelect;
+    final bodyColor = selected ? palette.text : palette.mutedText;
+    final cardTop = selected
+        ? Color.alphaBlend(
+            selectedColor.withValues(alpha: 0.16),
+            palette.cardSurface,
+          )
+        : palette.cardUnselectedTop;
+    final cardBottom = selected
+        ? Color.alphaBlend(
+            selectedColor.withValues(alpha: 0.10),
+            palette.mutedSurface,
+          )
+        : palette.cardUnselectedBottom;
     final titleText = Text(
       unit.numberedTitle,
       maxLines: largeText ? null : 3,
       overflow: largeText ? TextOverflow.visible : TextOverflow.clip,
       softWrap: true,
       style: theme.textTheme.labelLarge?.copyWith(
-        color: AppColors.ink800,
+        color: palette.text,
         fontSize: 11.2,
         fontWeight: FontWeight.w800,
         height: 1.12,
@@ -370,13 +416,25 @@ class _TimelineUnitCard extends StatelessWidget {
           child: Ink(
             padding: const EdgeInsets.all(AppSpacing.x4),
             decoration: BoxDecoration(
-              color: selected ? AppColors.greenTint2 : AppColors.parchmentCard,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [cardTop, cardBottom],
+              ),
               borderRadius: BorderRadius.circular(AppRadii.lg),
               border: Border.all(
-                color: selected ? selectedColor : AppColors.borderCard,
+                color: selected ? selectedColor : palette.subtleBorder,
                 width: selected ? 1.8 : 1,
               ),
-              boxShadow: selected ? AppShadows.green : AppShadows.sm,
+              boxShadow: selected
+                  ? [
+                      BoxShadow(
+                        color: selectedColor.withValues(alpha: 0.22),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ]
+                  : AppShadows.sm,
             ),
             child: largeText ? SingleChildScrollView(child: content) : content,
           ),

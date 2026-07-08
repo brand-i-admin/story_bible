@@ -17,6 +17,13 @@ import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
 import 'story_state.dart';
 
+typedef _EventProgressMap =
+    Map<String, ({bool bibleRead, bool quizCompleted, bool completed})>;
+typedef _BibleChapterProgress = ({
+  Set<String> keys,
+  Map<String, DateTime?> readAts,
+});
+
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
   return Supabase.instance.client;
 });
@@ -41,17 +48,40 @@ class StoryController extends Notifier<StoryState> {
     try {
       state = state.copyWith(loading: true, clearError: true);
       final eras = await _repo.fetchEras();
-      final eventProgress = await _fetchEventProgressForCurrentUser();
-      final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
-      final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
-      final completedBibleChapterKeys =
-          await _fetchCompletedBibleChapterKeysForCurrentUser();
+      final eventProgress = await _safeUserFetch<_EventProgressMap>(
+        'fetchEventProgress',
+        _fetchEventProgressForCurrentUser,
+        const <
+          String,
+          ({bool bibleRead, bool quizCompleted, bool completed})
+        >{},
+      );
+      final eventEmotionMarks =
+          await _safeUserFetch<Map<String, EventEmotionMark>>(
+            'fetchEventEmotionMarks',
+            _fetchEventEmotionMarksForCurrentUser,
+            const <String, EventEmotionMark>{},
+          );
+      final savedEventIds = await _safeUserFetch<Set<String>>(
+        'fetchSavedEventIds',
+        _fetchSavedEventIdsForCurrentUser,
+        const <String>{},
+      );
+      final bibleChapterProgress = await _safeUserFetch<_BibleChapterProgress>(
+        'fetchCompletedBibleChapterProgress',
+        _fetchCompletedBibleChapterProgressForCurrentUser,
+        (keys: const <String>{}, readAts: const <String, DateTime?>{}),
+      );
       final completedEventIds = _completedIdsFromProgress(
         eventProgress,
         eventEmotionMarks,
       );
       final quizAttemptSummaries =
-          await _fetchQuizAttemptSummariesForCurrentUser();
+          await _safeUserFetch<Map<String, QuizAttemptSummary>>(
+            'fetchQuizAttemptSummaries',
+            _fetchQuizAttemptSummariesForCurrentUser,
+            const <String, QuizAttemptSummary>{},
+          );
       if (eras.isEmpty) {
         state = state.copyWith(
           loading: false,
@@ -89,7 +119,8 @@ class StoryController extends Notifier<StoryState> {
         quizAttemptSummaries: quizAttemptSummaries,
         eventEmotionMarks: eventEmotionMarks,
         savedEventIds: savedEventIds,
-        completedBibleChapterKeys: completedBibleChapterKeys,
+        completedBibleChapterKeys: bibleChapterProgress.keys,
+        completedBibleChapterReadAts: bibleChapterProgress.readAts,
         selectedEraId: null,
         selectedCharacterCodes: const {},
         selectedCharacterColors: const {},
@@ -244,17 +275,40 @@ class StoryController extends Notifier<StoryState> {
         characters,
         const {},
       );
-      final eventProgress = await _fetchEventProgressForCurrentUser();
-      final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
-      final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
-      final completedBibleChapterKeys =
-          await _fetchCompletedBibleChapterKeysForCurrentUser();
+      final eventProgress = await _safeUserFetch<_EventProgressMap>(
+        'fetchEventProgress',
+        _fetchEventProgressForCurrentUser,
+        const <
+          String,
+          ({bool bibleRead, bool quizCompleted, bool completed})
+        >{},
+      );
+      final eventEmotionMarks =
+          await _safeUserFetch<Map<String, EventEmotionMark>>(
+            'fetchEventEmotionMarks',
+            _fetchEventEmotionMarksForCurrentUser,
+            const <String, EventEmotionMark>{},
+          );
+      final savedEventIds = await _safeUserFetch<Set<String>>(
+        'fetchSavedEventIds',
+        _fetchSavedEventIdsForCurrentUser,
+        const <String>{},
+      );
+      final bibleChapterProgress = await _safeUserFetch<_BibleChapterProgress>(
+        'fetchCompletedBibleChapterProgress',
+        _fetchCompletedBibleChapterProgressForCurrentUser,
+        (keys: const <String>{}, readAts: const <String, DateTime?>{}),
+      );
       final completedEventIds = _completedIdsFromProgress(
         eventProgress,
         eventEmotionMarks,
       );
       final quizAttemptSummaries =
-          await _fetchQuizAttemptSummariesForCurrentUser();
+          await _safeUserFetch<Map<String, QuizAttemptSummary>>(
+            'fetchQuizAttemptSummaries',
+            _fetchQuizAttemptSummariesForCurrentUser,
+            const <String, QuizAttemptSummary>{},
+          );
       state = state.copyWith(
         loading: false,
         characters: characters,
@@ -266,7 +320,8 @@ class StoryController extends Notifier<StoryState> {
         quizAttemptSummaries: quizAttemptSummaries,
         eventEmotionMarks: eventEmotionMarks,
         savedEventIds: savedEventIds,
-        completedBibleChapterKeys: completedBibleChapterKeys,
+        completedBibleChapterKeys: bibleChapterProgress.keys,
+        completedBibleChapterReadAts: bibleChapterProgress.readAts,
         selectedCharacterCodes: selectedCharacterCodes,
         selectedCharacterColors: _assignSelectedColors(selectedCharacterCodes),
         selectedTimelineUnitCodes: const {},
@@ -404,50 +459,74 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Future<void> refreshCompletedEventIds() async {
-    final eventProgress = await _fetchEventProgressForCurrentUser();
-    final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
-    state = state.copyWith(
-      completedEventIds: _completedIdsFromProgress(
-        eventProgress,
-        eventEmotionMarks,
-      ),
-      bibleReadEventIds: _bibleReadIdsFromProgress(eventProgress),
-      quizCompletedEventIds: _quizCompletedIdsFromProgress(eventProgress),
-      eventEmotionMarks: eventEmotionMarks,
-    );
+    try {
+      final eventProgress = await _fetchEventProgressForCurrentUser();
+      final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
+      state = state.copyWith(
+        completedEventIds: _completedIdsFromProgress(
+          eventProgress,
+          eventEmotionMarks,
+        ),
+        bibleReadEventIds: _bibleReadIdsFromProgress(eventProgress),
+        quizCompletedEventIds: _quizCompletedIdsFromProgress(eventProgress),
+        eventEmotionMarks: eventEmotionMarks,
+      );
+    } catch (error) {
+      _logUserFetchFailure('refreshCompletedEventIds', error);
+    }
   }
 
   Future<void> refreshQuizAttemptSummaries() async {
-    final summaries = await _fetchQuizAttemptSummariesForCurrentUser();
-    state = state.copyWith(
-      quizAttemptSummaries: summaries,
-      lastQuizScores: _scoresFromAttempts(summaries),
-    );
+    try {
+      final summaries = await _fetchQuizAttemptSummariesForCurrentUser();
+      state = state.copyWith(
+        quizAttemptSummaries: summaries,
+        lastQuizScores: _scoresFromAttempts(summaries),
+      );
+    } catch (error) {
+      _logUserFetchFailure('refreshQuizAttemptSummaries', error);
+    }
   }
 
   Future<void> refreshEventEmotionMarks() async {
-    final eventProgress = await _fetchEventProgressForCurrentUser();
-    final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
-    state = state.copyWith(
-      eventEmotionMarks: eventEmotionMarks,
-      completedEventIds: _completedIdsFromProgress(
-        eventProgress,
-        eventEmotionMarks,
-      ),
-    );
+    try {
+      final eventProgress = await _fetchEventProgressForCurrentUser();
+      final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
+      state = state.copyWith(
+        eventEmotionMarks: eventEmotionMarks,
+        completedEventIds: _completedIdsFromProgress(
+          eventProgress,
+          eventEmotionMarks,
+        ),
+      );
+    } catch (error) {
+      _logUserFetchFailure('refreshEventEmotionMarks', error);
+    }
   }
 
   Future<void> refreshSavedEventIds() async {
-    final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
-    if (_characterSetsEqual(savedEventIds, state.savedEventIds)) {
-      return;
+    try {
+      final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
+      if (_characterSetsEqual(savedEventIds, state.savedEventIds)) {
+        return;
+      }
+      state = state.copyWith(savedEventIds: savedEventIds);
+    } catch (error) {
+      _logUserFetchFailure('refreshSavedEventIds', error);
     }
-    state = state.copyWith(savedEventIds: savedEventIds);
   }
 
   Future<void> refreshCompletedBibleChapterKeys() async {
-    final keys = await _fetchCompletedBibleChapterKeysForCurrentUser();
-    state = state.copyWith(completedBibleChapterKeys: keys);
+    try {
+      final progress =
+          await _fetchCompletedBibleChapterProgressForCurrentUser();
+      state = state.copyWith(
+        completedBibleChapterKeys: progress.keys,
+        completedBibleChapterReadAts: progress.readAts,
+      );
+    } catch (error) {
+      _logUserFetchFailure('refreshCompletedBibleChapterKeys', error);
+    }
   }
 
   Future<void> setBibleChapterRead({
@@ -467,13 +546,20 @@ class StoryController extends Notifier<StoryState> {
       chapterNo: safeChapterNo,
     );
     final previous = state.completedBibleChapterKeys;
+    final previousReadAts = state.completedBibleChapterReadAts;
     final next = {...previous};
+    final nextReadAts = {...previousReadAts};
     if (isRead) {
       next.add(key);
+      nextReadAts[key] = DateTime.now();
     } else {
       next.remove(key);
+      nextReadAts.remove(key);
     }
-    state = state.copyWith(completedBibleChapterKeys: next);
+    state = state.copyWith(
+      completedBibleChapterKeys: next,
+      completedBibleChapterReadAts: nextReadAts,
+    );
     try {
       await _repo.setBibleChapterRead(
         userId: user.id,
@@ -482,7 +568,10 @@ class StoryController extends Notifier<StoryState> {
         isRead: isRead,
       );
     } catch (_) {
-      state = state.copyWith(completedBibleChapterKeys: previous);
+      state = state.copyWith(
+        completedBibleChapterKeys: previous,
+        completedBibleChapterReadAts: previousReadAts,
+      );
       rethrow;
     }
   }
@@ -725,6 +814,23 @@ class StoryController extends Notifier<StoryState> {
     }
   }
 
+  Future<T> _safeUserFetch<T>(
+    String label,
+    Future<T> Function() fetch,
+    T fallback,
+  ) async {
+    try {
+      return await fetch();
+    } catch (error) {
+      _logUserFetchFailure(label, error);
+      return fallback;
+    }
+  }
+
+  void _logUserFetchFailure(String label, Object error) {
+    debugPrint('[StoryController] $label failed: $error');
+  }
+
   Future<Map<String, ({bool bibleRead, bool quizCompleted, bool completed})>>
   _fetchEventProgressForCurrentUser() async {
     final user = ref.read(supabaseClientProvider).auth.currentUser;
@@ -763,18 +869,26 @@ class StoryController extends Notifier<StoryState> {
     return _repo.fetchSavedEventIds(user.id);
   }
 
-  Future<Set<String>> _fetchCompletedBibleChapterKeysForCurrentUser() async {
+  Future<_BibleChapterProgress>
+  _fetchCompletedBibleChapterProgressForCurrentUser() async {
     final user = ref.read(supabaseClientProvider).auth.currentUser;
     if (user == null) {
-      return const <String>{};
+      return (keys: const <String>{}, readAts: const <String, DateTime?>{});
     }
     try {
-      return await _repo.fetchCompletedBibleChapterKeys(user.id);
+      final readAts = await _repo.fetchCompletedBibleChapterReadAts(user.id);
+      return (keys: readAts.keys.toSet(), readAts: readAts);
+    } catch (_) {
+      // Older mocks or deployments can fall back to the key-only query.
+    }
+    try {
+      final keys = await _repo.fetchCompletedBibleChapterKeys(user.id);
+      return (keys: keys, readAts: {for (final key in keys) key: null});
     } catch (error) {
       debugPrint(
         '[StoryController] fetch bible chapter progress failed: $error',
       );
-      return const <String>{};
+      return (keys: const <String>{}, readAts: const <String, DateTime?>{});
     }
   }
 

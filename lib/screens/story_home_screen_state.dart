@@ -20,6 +20,36 @@ class _HomeMapFilterSnapshot {
   final Set<String> draftDisplayedEventIds;
 }
 
+class _StoryDetailBackContext {
+  const _StoryDetailBackContext({
+    this.history = const <StoryEvent>[],
+    this.returnToProfileOnRoot = false,
+  });
+
+  final List<StoryEvent> history;
+  final bool returnToProfileOnRoot;
+
+  bool get needsCustomBack => history.isNotEmpty || returnToProfileOnRoot;
+  StoryEvent? get previousEvent => history.isEmpty ? null : history.last;
+
+  _StoryDetailBackContext push(StoryEvent event) {
+    return _StoryDetailBackContext(
+      history: [...history, event],
+      returnToProfileOnRoot: returnToProfileOnRoot,
+    );
+  }
+
+  _StoryDetailBackContext popPrevious() {
+    if (history.isEmpty) {
+      return this;
+    }
+    return _StoryDetailBackContext(
+      history: history.sublist(0, history.length - 1),
+      returnToProfileOnRoot: returnToProfileOnRoot,
+    );
+  }
+}
+
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   static const double _selectionSheetCollapsedSize = 0.16;
   static const double _selectionSheetExpandedSize = 0.60;
@@ -460,7 +490,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  double _sheetCollapsedPeekSizeFor(Size size) => _selectionSheetCollapsedSize;
+  double _sheetCollapsedPeekSizeFor(Size size) {
+    return _sheetFractionForHeight(
+      size,
+      64.0,
+      min: 0.07,
+      max: _selectionSheetCollapsedSize,
+    );
+  }
 
   double _sheetSizeForStage(Size size, StorySelectionPanelStage stage) {
     return switch (stage) {
@@ -642,6 +679,29 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     _mapPanelController.suppressMapTaps(duration);
   }
 
+  void _suspendMapGestures([
+    Duration duration = const Duration(milliseconds: 220),
+  ]) {
+    _mapPanelController.suspendMapGestures(duration);
+  }
+
+  void _clearMapGestureSuspension() {
+    _mapPanelController.clearMapGestureSuspension();
+  }
+
+  Future<void> _openFontScaleSheet() async {
+    _handleMapInteraction();
+    const modalInputLockDuration = Duration(hours: 1);
+    _suppressMapTaps(modalInputLockDuration);
+    _suspendMapGestures(modalInputLockDuration);
+    try {
+      await showFontScaleSheet(context);
+    } finally {
+      _mapPanelController.clearMapTapSuppression();
+      _mapPanelController.clearMapGestureSuspension();
+    }
+  }
+
   /// 새 단계로 들어갔거나 mode 가 바뀌었을 때 hint 를 다시 보여 줄 수 있도록
   /// dismiss flag 를 reset. setState 안에서 호출해야 build 에 반영된다.
   void _resetMapHint() {
@@ -668,7 +728,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final viewportSize = MediaQuery.sizeOf(context);
     final maxExtent = _sheetMaxSizeFor(viewportSize);
     final targetExtent = stage == StorySelectionPanelStage.collapsed
-        ? _selectionSheetCollapsedSize
+        ? _sheetCollapsedPeekSizeFor(viewportSize)
         : maxExtent;
     setState(() {
       _selectionPanelStage = stage;
@@ -681,6 +741,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _awaitingRevealComplete = false;
       }
     });
+    if (stage == StorySelectionPanelStage.collapsed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _mapPanelController.clearMapTapSuppression();
+        _mapPanelController.clearMapGestureSuspension();
+      });
+    }
   }
 
   /// MapPanel 이 마지막 핀을 노출 완료했을 때 1회 호출. await 중이었다면
@@ -1066,9 +1132,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final regionEvents = _eventsAtLandmark(state, lm)
       ..sort((a, b) => a.globalRank.compareTo(b.globalRank));
     ctl.setDisplayedEvents(regionEvents.map((e) => e.id).toSet());
+    final collapsedExtent = _sheetCollapsedPeekSizeFor(
+      MediaQuery.sizeOf(context),
+    );
     setState(() {
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = _selectionSheetCollapsedSize;
+      _selectionSheetExtent = collapsedExtent;
       _awaitingRevealComplete = true;
       _revealInstantly = false;
       // region 선택 완료 — hint overlay 사라짐.
@@ -1146,13 +1215,16 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
     final displayed = timeline.map((event) => event.id).toSet();
     ctl.setDisplayedEvents(displayed);
+    final collapsedExtent = _sheetCollapsedPeekSizeFor(
+      MediaQuery.sizeOf(context),
+    );
     setState(() {
       _mode = _SelectionMode.timeline;
       _selectionStep = 3;
       _draftSelectedCharacterCodes = const <String>{};
       _draftDisplayedEventIds = displayed;
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = _selectionSheetCollapsedSize;
+      _selectionSheetExtent = collapsedExtent;
       _awaitingRevealComplete = true;
       _revealInstantly = false;
       _mapHintDismissed = true;
@@ -1174,6 +1246,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     // set. 지도 핀이 0.3초 간격 reveal (StoryMapPanel 의 _eventRevealTimer).
     final timeline = _timelineForSelectedCharacters(state, sanitizedDraft);
     ctl.setDisplayedEvents(timeline.map((e) => e.id).toSet());
+    final collapsedExtent = _sheetCollapsedPeekSizeFor(
+      MediaQuery.sizeOf(context),
+    );
     setState(() {
       _draftSelectedCharacterCodes = sanitizedDraft;
       _draftDisplayedEventIds = timeline.map((e) => e.id).toSet();
@@ -1181,7 +1256,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       // panel 을 collapsed 로 내려 사용자가 핀이 박히는 걸 한눈에 보게 한다.
       // 마지막 핀 reveal 완료 시 onRevealComplete 가 panel 을 다시 expand.
       _selectionPanelStage = StorySelectionPanelStage.collapsed;
-      _selectionSheetExtent = _selectionSheetCollapsedSize;
+      _selectionSheetExtent = collapsedExtent;
       _awaitingRevealComplete = true;
       _revealInstantly = false;
       // character step 3 진입 — 인물 선택 안내 hint 사라짐.
@@ -1382,12 +1457,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         builder: (_) => ProfileTabPage(
           key: _profileTabKey,
           onStartQuiz: _startQuiz,
-          onOpenEventDetail: (event, {source, sourceId}) {
+          onOpenEventDetail: (event, {source}) {
             unawaited(
               _openProfileEventDetailPage(
                 event,
                 source: source ?? ProfileEventOpenSource.general,
-                sourceId: sourceId,
               ),
             );
           },
@@ -1403,35 +1477,104 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   initialVerseNo: initialVerseNo,
                 );
               },
+          onExploreStoriesFromHome: _returnProfileToHomeIntroGuide,
+          onBackToHome: _resetProfileRouteToHomeIntroGuide,
+          onOpenAppPublications: _openAppPublications,
+          onNavigateNotification: _handleNotificationTap,
+          onOpenNotificationHistory: _openNotificationHistory,
         ),
       ),
     );
   }
 
+  void _returnProfileToHomeIntroGuide() {
+    if (!mounted) {
+      return;
+    }
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+    }
+    _resetProfileRouteToHomeIntroGuide();
+  }
+
+  void _resetProfileRouteToHomeIntroGuide() {
+    if (!mounted) {
+      return;
+    }
+    _completeMapCelebration();
+    final ctl = ref.read(storyControllerProvider.notifier);
+    unawaited(ctl.setSelectedEra(null));
+    ctl.clearSelectionMode();
+    ctl.selectLandmark(null);
+    ctl.setSelectedTimelineUnits(const <String>{});
+    ctl.setDisplayedEvents(const <String>{});
+    setState(() {
+      _mode = null;
+      _selectionStep = 1;
+      _draftSelectedCharacterCodes = const <String>{};
+      _draftDisplayedEventIds = const <String>{};
+      _awaitingRevealComplete = false;
+      _revealInstantly = false;
+      _mapAnimationInputLocked = false;
+      _resetMapHint();
+    });
+    _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
+    _scheduleHomeIntroMapAffordance();
+  }
+
   Future<void> _openProfileEventDetailPage(
     StoryEvent event, {
     ProfileEventOpenSource source = ProfileEventOpenSource.general,
-    String? sourceId,
   }) async {
     if (source == ProfileEventOpenSource.detailOnly) {
       await _openEventDetailPage(event);
       return;
     }
-    await _prepareHomeMapForProfileEvent(
-      event,
-      source: source,
-      sourceId: sourceId,
-    );
+    await _prepareHomeMapForProfileEvent(event, source: source);
     if (!mounted) {
       return;
     }
-    await _openEventDetailPage(event, revealHomeBeforeMapAnimation: true);
+    if (source == ProfileEventOpenSource.targetOnly) {
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.popUntil((route) => route.isFirst);
+        await Future<void>.delayed(const Duration(milliseconds: 220));
+      }
+      if (!mounted) {
+        return;
+      }
+      await WidgetsBinding.instance.endOfFrame;
+      _mapPanelController.focusSelectedEvent(force: true);
+      final state = ref.read(storyControllerProvider);
+      final previewEvent =
+          state.events.where((entry) => entry.id == event.id).firstOrNull ??
+          event;
+      await Future<void>.delayed(const Duration(milliseconds: 120));
+      if (!mounted) {
+        return;
+      }
+      await _mapPanelController.playEventTransition(
+        from: previewEvent,
+        to: previewEvent,
+        duration: const Duration(seconds: 1),
+      );
+      if (!mounted) {
+        return;
+      }
+    }
+    await _openEventDetailPage(
+      event,
+      revealHomeBeforeMapAnimation: true,
+      backContext: source == ProfileEventOpenSource.targetOnly
+          ? const _StoryDetailBackContext(returnToProfileOnRoot: true)
+          : const _StoryDetailBackContext(),
+    );
   }
 
   Future<void> _prepareHomeMapForProfileEvent(
     StoryEvent event, {
     required ProfileEventOpenSource source,
-    String? sourceId,
   }) async {
     final notifier = ref.read(storyControllerProvider.notifier);
     var state = ref.read(storyControllerProvider);
@@ -1453,45 +1596,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       StorySelectionPanelStage.collapsed,
     );
 
-    if (source == ProfileEventOpenSource.character) {
-      final characterCode =
-          sourceId != null && homeEvent.characterCodes.contains(sourceId)
-          ? sourceId
-          : homeEvent.characterCodes.firstOrNull;
-      if (characterCode != null) {
-        final selectedCodes = {characterCode};
-        notifier.setSelectionMode(SelectionMode.character);
-        notifier.setSelectedCharacters(selectedCodes);
-        state = ref.read(storyControllerProvider);
-        final timeline = _timelineForSelectedCharacters(state, selectedCodes);
-        final displayed = timeline.isEmpty
-            ? {homeEvent.id}
-            : timeline.map((entry) => entry.id).toSet();
-        notifier.setDisplayedEvents(displayed);
-        notifier.selectEvent(homeEvent.id);
-        setState(() {
-          _mode = _SelectionMode.character;
-          _selectionStep = 3;
-          _draftSelectedCharacterCodes = selectedCodes;
-          _draftDisplayedEventIds = displayed;
-          _selectionPanelStage = StorySelectionPanelStage.collapsed;
-          _selectionSheetExtent = collapsedExtent;
-          _awaitingRevealComplete = false;
-          _revealInstantly = true;
-          _mapHintDismissed = true;
-        });
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) _mapPanelController.focusSelectedEvent(force: true);
-        });
-        return;
-      }
-    }
-
-    final regionId = source == ProfileEventOpenSource.place
-        ? sourceId ?? _regionLandmarkIdForEvent(state, homeEvent)
-        : _regionLandmarkIdForEvent(state, homeEvent);
+    final regionId = _regionLandmarkIdForEvent(state, homeEvent);
     final region = regionId == null ? null : state.landmarkById(regionId);
-    if (region != null && region.isRegion) {
+    if (source != ProfileEventOpenSource.targetOnly &&
+        region != null &&
+        region.isRegion) {
       notifier.setSelectionMode(SelectionMode.region);
       notifier.selectLandmark(region.id);
       state = ref.read(storyControllerProvider);
@@ -1823,6 +1932,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _openEventDetailPage(
     StoryEvent event, {
     bool revealHomeBeforeMapAnimation = false,
+    _StoryDetailBackContext backContext = const _StoryDetailBackContext(),
   }) async {
     // 하이브리드 로딩: 로컬 assets 가 있으면 그걸로, 없으면
     // events.scene_image_paths 를 Supabase Storage public URL 로 변환해 반환.
@@ -1874,15 +1984,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             event: event,
             option: option,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+            backContext: backContext,
           ),
           prevEvent: prev,
           nextEvent: next,
+          onBack: backContext.needsCustomBack
+              ? () => _handleEventDetailBack(backContext)
+              : null,
           onNavigateToEvent: (target) {
             unawaited(
               _navigateDetailThroughMap(
                 from: event,
                 target: target,
                 revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+                backContext: backContext.push(event),
               ),
             );
           },
@@ -1919,10 +2034,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return all;
   }
 
-  /// pushReplacement 시 동일 detail page 빌드 — 새 prev/next 도 다시 계산.
+  /// 지도 전환 후 열 detail page 빌드 — 새 prev/next 와 back context 를 다시 계산.
   Widget _buildDetailPageForEvent(
     StoryEvent event, {
     bool revealHomeBeforeMapAnimation = false,
+    _StoryDetailBackContext backContext = const _StoryDetailBackContext(),
   }) {
     final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(
       event,
@@ -1962,25 +2078,68 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         event: event,
         option: option,
         revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+        backContext: backContext,
       ),
       prevEvent: prev,
       nextEvent: next,
+      onBack: backContext.needsCustomBack
+          ? () => _handleEventDetailBack(backContext)
+          : null,
       onNavigateToEvent: (target) {
         unawaited(
           _navigateDetailThroughMap(
             from: event,
             target: target,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+            backContext: backContext.push(event),
           ),
         );
       },
     );
   }
 
+  void _handleEventDetailBack(_StoryDetailBackContext backContext) {
+    if (_mapAnimationInputLocked) {
+      return;
+    }
+    unawaited(_handleEventDetailBackAsync(backContext));
+  }
+
+  Future<void> _handleEventDetailBackAsync(
+    _StoryDetailBackContext backContext,
+  ) async {
+    if (!mounted || _mapAnimationInputLocked) {
+      return;
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 180));
+    if (!mounted) {
+      return;
+    }
+
+    final previousEvent = backContext.previousEvent;
+    if (previousEvent != null) {
+      await _openEventDetailPage(
+        previousEvent,
+        revealHomeBeforeMapAnimation: backContext.returnToProfileOnRoot,
+        backContext: backContext.popPrevious(),
+      );
+      return;
+    }
+
+    if (backContext.returnToProfileOnRoot) {
+      await Future<void>.delayed(const Duration(milliseconds: 80));
+      if (!mounted) {
+        return;
+      }
+      await _openProfileTab();
+    }
+  }
+
   Future<void> _showEmotionCelebrationOnMap({
     required StoryEvent event,
     required EventEmotionOption option,
     bool revealHomeBeforeMapAnimation = false,
+    _StoryDetailBackContext backContext = const _StoryDetailBackContext(),
   }) async {
     if (!mounted || _mapAnimationInputLocked) return;
     final filterSnapshot = _captureHomeMapFilterSnapshot(event);
@@ -2069,6 +2228,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           builder: (_) => _buildDetailPageForEvent(
             event,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+            backContext: backContext,
           ),
         ),
       );
@@ -2081,6 +2241,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required StoryEvent from,
     required StoryEvent target,
     bool revealHomeBeforeMapAnimation = false,
+    _StoryDetailBackContext backContext = const _StoryDetailBackContext(),
   }) async {
     if (!mounted || _mapAnimationInputLocked) return;
     _setMapAnimationInputLocked(true);
@@ -2133,6 +2294,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           builder: (_) => _buildDetailPageForEvent(
             target,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+            backContext: backContext,
           ),
         ),
       );
@@ -2178,6 +2340,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     } catch (_) {
       // 읽음 실패는 무시 (다음 refresh 에 반영됨)
     }
+    ref.invalidate(unreadNotificationCountProvider);
     ref.invalidate(unreadNotificationsProvider);
     ref.invalidate(notificationHistoryProvider);
 
@@ -2573,16 +2736,24 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                             _suppressMapTaps(
                               const Duration(milliseconds: 1200),
                             );
+                            _suspendMapGestures();
                           },
-                          onPointerMove: (_) => _suppressMapTaps(
-                            const Duration(milliseconds: 350),
-                          ),
-                          onPointerUp: (_) => _suppressMapTaps(
-                            const Duration(milliseconds: 1200),
-                          ),
-                          onPointerCancel: (_) => _suppressMapTaps(
-                            const Duration(milliseconds: 1200),
-                          ),
+                          onPointerMove: (_) {
+                            _suppressMapTaps(const Duration(milliseconds: 350));
+                            _suspendMapGestures();
+                          },
+                          onPointerUp: (_) {
+                            _suppressMapTaps(
+                              const Duration(milliseconds: 1200),
+                            );
+                            _clearMapGestureSuspension();
+                          },
+                          onPointerCancel: (_) {
+                            _suppressMapTaps(
+                              const Duration(milliseconds: 1200),
+                            );
+                            _clearMapGestureSuspension();
+                          },
                           onPointerSignal: (_) => _suppressMapTaps(
                             const Duration(milliseconds: 1200),
                           ),
@@ -2725,7 +2896,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           ),
                         ),
                       ),
-                    // 세로 모드: 핵심 버튼 + 글자 크기/알림/이야기등록을
+                    // 세로 모드: 핵심 버튼 + 글자 크기/이야기등록을
                     // 좌우 끝까지 가득 펼치고 horizontal scroll 로 추가 노출.
                     Positioned(
                       left: 0,
@@ -2743,60 +2914,65 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           onPointerSignal: (_) => _suppressMapTaps(),
                           child: SizedBox(
                             height: topUtilityBarHeightFor(context),
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: Row(
-                                children: [
-                                  topUtilityIconButton(
-                                    icon: Icons.campaign_rounded,
-                                    tooltip: '공지사항과 사용법',
-                                    onTap: _openAppPublications,
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
                                   ),
-                                  const SizedBox(width: 4),
-                                  // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
-                                  // 항상 일부 보이므로 별도 토글 불필요.
-                                  topUtilityIconButton(
-                                    icon: Icons.search_rounded,
-                                    tooltip: '성경 구절로 이야기 찾기',
-                                    onTap: _openBibleVerseSearch,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  topUtilityButton(
-                                    label: '성경',
-                                    onTap: _openBibleReaderPopup,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  topMissionButton(
-                                    onTap: _openQuizTab,
-                                    dailyCompleted: dailyMissionCompleted,
-                                    dailyStatusKnown: dailyMissionStatusKnown,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  topUtilityButton(
-                                    label: '프로필',
-                                    onTap: _openProfileTab,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  topFontScaleButton(
-                                    onTap: () => showFontScaleSheet(context),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  NotificationBellButton(
-                                    onNavigate: _handleNotificationTap,
-                                    onOpenHistory: _openNotificationHistory,
-                                  ),
-                                  if (kIsWeb) ...[
-                                    const SizedBox(width: 4),
-                                    topUtilityButton(
-                                      label: '이야기 등록',
-                                      onTap: _openProposalBoardOrGate,
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minWidth: math.max(
+                                        0,
+                                        constraints.maxWidth - 24,
+                                      ),
                                     ),
-                                  ],
-                                ],
-                              ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
+                                        // 항상 일부 보이므로 별도 토글 불필요.
+                                        topUtilityIconButton(
+                                          icon: Icons.search_rounded,
+                                          tooltip: '성경 구절로 이야기 찾기',
+                                          onTap: _openBibleVerseSearch,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        topUtilityButton(
+                                          label: '성경',
+                                          onTap: _openBibleReaderPopup,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        topMissionButton(
+                                          onTap: _openQuizTab,
+                                          dailyCompleted: dailyMissionCompleted,
+                                          dailyStatusKnown:
+                                              dailyMissionStatusKnown,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        topUtilityButton(
+                                          label: '프로필',
+                                          onTap: _openProfileTab,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        topFontScaleButton(
+                                          onTap: () =>
+                                              unawaited(_openFontScaleSheet()),
+                                        ),
+                                        if (kIsWeb) ...[
+                                          const SizedBox(width: 4),
+                                          topUtilityButton(
+                                            label: '이야기 등록',
+                                            onTap: _openProposalBoardOrGate,
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -2902,26 +3078,27 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   // 지역 모드 (RegionPickPanel + RegionEventList) 한 화면에서 swap.
   // ===========================================================================
 
-  /// V1 StorySelectionPanel 과 동일한 양피지 양식 (그라데이션 + 갈색 외곽선).
-  /// HomeIntroPanel / RegionPickPanel / RegionEventList 모두 같은 wrapper 안.
-  BoxDecoration _parchmentPanelDecoration() {
-    return const BoxDecoration(
+  /// HomeIntroPanel / RegionPickPanel / RegionEventList 공용 wrapper.
+  /// blackMap 에서는 양피지 표면 대신 어두운 지도 패널 표면을 사용한다.
+  BoxDecoration _selectionSheetPanelDecoration(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          AppColors.dialogTopHighlight,
-          AppColors.parchmentLight,
-          AppColors.parchmentMid,
+          palette.softSurface,
+          palette.panelSurface,
+          palette.mutedSurface,
         ],
       ),
-      borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
       border: Border(
-        top: BorderSide(color: AppColors.brownEdge, width: 1.15),
-        left: BorderSide(color: AppColors.brownEdge, width: 1.15),
-        right: BorderSide(color: AppColors.brownEdge, width: 1.15),
+        top: BorderSide(color: palette.panelBorder, width: 1.15),
+        left: BorderSide(color: palette.panelBorder, width: 1.15),
+        right: BorderSide(color: palette.panelBorder, width: 1.15),
       ),
-      boxShadow: [
+      boxShadow: const [
         BoxShadow(
           color: Color(0x38000000),
           blurRadius: 16,
@@ -2943,6 +3120,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final isExpanded = stage == StorySelectionPanelStage.expanded;
     return LayoutBuilder(
       builder: (context, constraints) {
+        final palette = AppPaletteTheme.of(context);
         const horizontalPadding = 16.0;
         final innerWidth = math.max(
           0.0,
@@ -2970,10 +3148,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 decoration: BoxDecoration(
                   // stepper 의 활성 초록(_activeColor 0xFF2E8B57) 의 옅은
                   // tint 로 panel toggle 임을 색으로 시그널링.
-                  color: const Color(0xFF2E8B57).withValues(alpha: 0.16),
+                  color: Color.alphaBlend(
+                    const Color(0xFF2E8B57).withValues(alpha: 0.18),
+                    palette.cardSurface,
+                  ),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: const Color(0xFF2E8B57).withValues(alpha: 0.45),
+                    color: const Color(0xFF2E8B57).withValues(alpha: 0.55),
                     width: 1,
                   ),
                 ),
@@ -2983,7 +3164,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                       ? Icons.keyboard_arrow_down
                       : Icons.keyboard_arrow_up,
                   size: 22,
-                  color: const Color(0xFF2E8B57),
+                  color: palette.successBottom,
                   semanticLabel: isExpanded ? '아래로 접기' : '위로 펼치기',
                 ),
               ),
@@ -3020,7 +3201,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Widget _buildHomeIntroPanel(StoryState state, double bottomInset) {
     return Container(
-      decoration: _parchmentPanelDecoration(),
+      decoration: _selectionSheetPanelDecoration(context),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
@@ -3035,7 +3216,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   Widget _buildTimelineUnitPanel(StoryState state, double bottomInset) {
     return Container(
-      decoration: _parchmentPanelDecoration(),
+      decoration: _selectionSheetPanelDecoration(context),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
@@ -3189,7 +3370,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final selected = state.landmarkById(state.selectedLandmarkId);
 
     return Container(
-      decoration: _parchmentPanelDecoration(),
+      decoration: _selectionSheetPanelDecoration(context),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [

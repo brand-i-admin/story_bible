@@ -368,7 +368,8 @@ create index if not exists idx_events_landmark on events (landmark_id);
 -- Era 내 story_index 정렬 결과를 1..N rank 로 노출.
 -- 어드민/외부 기여로 새 이야기가 끼어들어도 view 가 자동으로 재계산된다.
 -- deleted_at IS NULL 필터를 걸어 soft-deleted 이야기는 앱 전체에서 제외된다.
-create view events_ordered as
+create view events_ordered
+with (security_invoker = true) as
   select
     e.id, e.era_id, e.title, e.summary, e.background_context,
     e.story_scenes, e.scene_captions, e.scene_characters, e.character_codes,
@@ -395,7 +396,8 @@ create view events_ordered as
 -- 기준으로 era 안의 인물 순서를 동적 계산.
 -- is_active = false 인 인물은 노출 대상에서 제외된다.
 -- Soft-deleted 이벤트(deleted_at IS NOT NULL)는 인물 첫 등장 계산에서도 제외.
-create view character_eras as
+create view character_eras
+with (security_invoker = true) as
   with character_occurrences as (
     select
       p.id as character_id,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/models/event_emotion_mark.dart';
@@ -41,5 +43,20 @@ void main() {
       expect(stats.countFor('unknown'), 1);
       expect(stats.eventIdsFor('unknown'), {'event-1'});
     });
+  });
+
+  test('감정 통계 UI는 스크롤 없이 8개를 한 줄에 배치한다', () {
+    final source = File(
+      'lib/widgets/profile/profile_emotion_stats.dart',
+    ).readAsStringSync();
+
+    expect(
+      source,
+      contains("key: const ValueKey('profile-emotion-stats-row')"),
+    );
+    expect(source, contains('Expanded('));
+    expect(source, isNot(contains("'오늘의 내 감정은?'")));
+    expect(source, isNot(contains('SingleChildScrollView')));
+    expect(source, isNot(contains('scrollDirection: Axis.horizontal')));
   });
 }

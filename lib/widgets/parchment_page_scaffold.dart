@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 
 class ParchmentPageScaffold extends StatelessWidget {
@@ -22,27 +23,24 @@ class ParchmentPageScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Scaffold(
       floatingActionButton: floatingActionButton,
       body: Stack(
         children: [
-          const Positioned.fill(
+          Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.parchmentLight,
-                    AppColors.parchmentMid,
-                    AppColors.parchmentWarm,
-                  ],
+                  colors: palette.pageGradient,
                 ),
               ),
             ),
           ),
-          const Positioned.fill(
+          Positioned.fill(
             child: IgnorePointer(
               child: Opacity(
                 opacity: 0.08,
@@ -53,8 +51,8 @@ class ParchmentPageScaffold extends StatelessWidget {
                       end: Alignment.bottomRight,
                       colors: [
                         Colors.white,
-                        Color(0x00FFFFFF),
-                        Color(0x337B9155),
+                        Colors.white.withValues(alpha: 0),
+                        palette.primary.withValues(alpha: 0.20),
                       ],
                     ),
                   ),
@@ -109,10 +107,10 @@ class ParchmentPageScaffold extends StatelessWidget {
                                   vertical: largeText ? 8 : 0,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.floatingSurfaceDefault,
+                                  color: palette.panelSurface,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: AppColors.borderFloating,
+                                    color: palette.panelBorder,
                                     width: 1.15,
                                   ),
                                   boxShadow: const [
@@ -130,8 +128,8 @@ class ParchmentPageScaffold extends StatelessWidget {
                                       ? TextOverflow.visible
                                       : TextOverflow.ellipsis,
                                   softWrap: true,
-                                  style: const TextStyle(
-                                    color: AppColors.ink500,
+                                  style: TextStyle(
+                                    color: palette.text,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w900,
                                   ),
@@ -169,12 +167,16 @@ class ParchmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final resolvedColor = color == AppColors.floatingSurfaceDefault
+        ? palette.panelSurface
+        : color;
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-        color: color,
+        color: resolvedColor,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.borderFloating, width: 1.15),
+        border: Border.all(color: palette.panelBorder, width: 1.15),
         boxShadow: const [
           BoxShadow(
             color: Color(0x18000000),
@@ -206,26 +208,23 @@ class ParchmentListPageScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const Positioned.fill(
+          Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.parchmentLight,
-                    AppColors.parchmentMid,
-                    AppColors.parchmentWarm,
-                  ],
+                  colors: palette.pageGradient,
                 ),
               ),
             ),
           ),
-          const Positioned.fill(
+          Positioned.fill(
             child: IgnorePointer(
               child: Opacity(
                 opacity: 0.08,
@@ -236,8 +235,8 @@ class ParchmentListPageScaffold extends StatelessWidget {
                       end: Alignment.bottomRight,
                       colors: [
                         Colors.white,
-                        Color(0x00FFFFFF),
-                        Color(0x337B9155),
+                        Colors.white.withValues(alpha: 0),
+                        palette.primary.withValues(alpha: 0.20),
                       ],
                     ),
                   ),
@@ -275,6 +274,7 @@ class ParchmentListPageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Row(
       children: [
@@ -288,8 +288,8 @@ class ParchmentListPageHeader extends StatelessWidget {
             maxLines: largeText ? 2 : 1,
             overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
             softWrap: true,
-            style: const TextStyle(
-              color: AppColors.ink800,
+            style: TextStyle(
+              color: palette.text,
               fontSize: 18,
               fontWeight: FontWeight.w900,
               height: 1.15,
@@ -308,6 +308,7 @@ class ParchmentIconBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -318,9 +319,9 @@ class ParchmentIconBackButton extends StatelessWidget {
           height: 42,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: const Color(0xD06A401E),
+            color: palette.utilityBackground,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.goldRim, width: 1.4),
+            border: Border.all(color: palette.utilityBorder, width: 1.4),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x24000000),
@@ -353,6 +354,7 @@ class _HeaderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -363,10 +365,10 @@ class _HeaderButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? AppColors.brownWarm2 : AppColors.ink800,
+            color: selected ? palette.utilityBackground : palette.primaryDeep,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: selected ? AppColors.goldRim : const Color(0xBFD8BF99),
+              color: selected ? palette.utilityBorder : palette.subtleBorder,
               width: selected ? 1.4 : 1,
             ),
           ),
@@ -391,6 +393,7 @@ class _CompactBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -401,9 +404,9 @@ class _CompactBackButton extends StatelessWidget {
           height: 38,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: const Color(0xD06A401E),
+            color: palette.utilityBackground,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.goldRim, width: 1.4),
+            border: Border.all(color: palette.utilityBorder, width: 1.4),
           ),
           child: const Icon(
             Icons.arrow_back_ios_new_rounded,

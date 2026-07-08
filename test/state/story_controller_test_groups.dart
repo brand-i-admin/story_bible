@@ -84,6 +84,41 @@ void main() {
       final state = container.read(storyControllerProvider);
       expect(state.selectedTestament, 'new');
     });
+
+    test('사용자 진행률 조회가 실패해도 기본 이야기 데이터는 표시한다', () async {
+      final user = _user(id: 'u1');
+      final eras = [_era(id: 'era1', code: 'era_primeval')];
+      when(() => mockAuth.currentUser).thenReturn(user);
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
+      when(
+        () => mockRepo.fetchEventProgress(user.id),
+      ).thenThrow(Exception('Failed host lookup'));
+      when(
+        () => mockRepo.fetchEventEmotionMarks(user.id),
+      ).thenThrow(Exception('Failed host lookup'));
+      when(
+        () => mockRepo.fetchSavedEventIds(user.id),
+      ).thenThrow(Exception('Failed host lookup'));
+      when(
+        () => mockRepo.fetchCompletedBibleChapterReadAts(user.id),
+      ).thenThrow(Exception('Failed host lookup'));
+      when(
+        () => mockRepo.fetchCompletedBibleChapterKeys(user.id),
+      ).thenThrow(Exception('Failed host lookup'));
+      when(
+        () => mockRepo.fetchQuizAttemptSummaries(user.id),
+      ).thenThrow(Exception('Failed host lookup'));
+
+      final container = buildContainer();
+      await container.read(storyControllerProvider.notifier).initialize();
+
+      final state = container.read(storyControllerProvider);
+      expect(state.loading, isFalse);
+      expect(state.error, isNull);
+      expect(state.eras, eras);
+      expect(state.completedEventIds, isEmpty);
+      expect(state.quizAttemptSummaries, isEmpty);
+    });
   });
 
   group('StoryController.selectEra', () {
@@ -209,13 +244,13 @@ void main() {
       expect(c1, isNot(equals(const Color(0x00000000))));
     });
 
-    test('빈 코드면 fallback 올리브 브라운 반환', () async {
+    test('빈 코드면 characterFallback 토큰을 반환', () async {
       when(() => mockRepo.fetchEras()).thenAnswer((_) async => []);
       final container = buildContainer();
       final controller = container.read(storyControllerProvider.notifier);
       await controller.initialize();
 
-      expect(controller.colorForCharacter(''), const Color(0xFF7E7A63));
+      expect(controller.colorForCharacter(''), AppColors.characterFallback);
     });
   });
 

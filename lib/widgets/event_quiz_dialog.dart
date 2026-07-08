@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../models/quiz_question.dart';
+import '../theme/app_color_palette.dart';
+import '../theme/tokens.dart';
 
 class EventQuizResult {
   const EventQuizResult({
@@ -88,6 +90,7 @@ class _EventQuizDialogState extends State<EventQuizDialog> {
   Widget build(BuildContext context) {
     final result = _buildResult();
     final didPass = result.score == widget.questions.length;
+    final palette = AppPaletteTheme.of(context);
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -99,9 +102,15 @@ class _EventQuizDialogState extends State<EventQuizDialog> {
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFF6EAD8),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: palette == AppColorPalette.blackMap
+                  ? [palette.softSurface, palette.cardSurface]
+                  : [palette.softSurface, palette.panelSurface],
+            ),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFFB58A47), width: 1.5),
+            border: Border.all(color: palette.panelBorder, width: 1.5),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x33000000),
@@ -181,6 +190,7 @@ class _QuizQuestionPane extends StatelessWidget {
     final progress = (questionIndex + 1) / totalCount;
     final primaryLabel = submitted ? (isLast ? '결과 보기' : '다음') : '정답 확인';
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final palette = AppPaletteTheme.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -196,10 +206,10 @@ class _QuizQuestionPane extends StatelessWidget {
                     ? TextOverflow.visible
                     : TextOverflow.ellipsis,
                 softWrap: true,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
-                  color: Color(0xFF5A4326),
+                  color: palette.text,
                 ),
               ),
             ),
@@ -207,31 +217,31 @@ class _QuizQuestionPane extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFFE5D2A8),
+                color: palette.currentFill,
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
                 '${questionIndex + 1} / $totalCount',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF5A4326),
+                  color: palette.text,
                 ),
               ),
             ),
             const SizedBox(width: 6),
             Material(
-              color: const Color(0xFFEBD9B2),
+              color: palette.softSurface,
               borderRadius: BorderRadius.circular(999),
               child: InkWell(
                 onTap: onClose,
                 borderRadius: BorderRadius.circular(999),
-                child: const SizedBox(
+                child: SizedBox(
                   width: 32,
                   height: 32,
                   child: Icon(
                     Icons.close_rounded,
-                    color: Color(0xFF6A4A25),
+                    color: palette.mutedText,
                     size: 20,
                   ),
                 ),
@@ -245,8 +255,10 @@ class _QuizQuestionPane extends StatelessWidget {
           child: LinearProgressIndicator(
             value: progress,
             minHeight: 6,
-            backgroundColor: const Color(0xFFE5D2A8),
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFB58A47)),
+            backgroundColor: palette.mutedSurface,
+            valueColor: AlwaysStoppedAnimation<Color>(
+              palette.currentAccentDeep,
+            ),
           ),
         ),
         const SizedBox(height: 14),
@@ -261,16 +273,16 @@ class _QuizQuestionPane extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFAF1DD),
+                    color: palette.cardSurface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFD9C18B)),
+                    border: Border.all(color: palette.subtleBorder),
                   ),
                   child: Text(
                     question.question,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 15,
-                      color: Color(0xFF332A1D),
+                      color: palette.text,
                       height: 1.45,
                     ),
                   ),
@@ -303,7 +315,7 @@ class _QuizQuestionPane extends StatelessWidget {
             TextButton(
               onPressed: onPrevious,
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF7A6748),
+                foregroundColor: palette.mutedText,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
                   vertical: 10,
@@ -318,8 +330,8 @@ class _QuizQuestionPane extends StatelessWidget {
             FilledButton(
               onPressed: onPrimary,
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFFB58A47),
-                foregroundColor: Colors.white,
+                backgroundColor: palette.currentAccentDeep,
+                foregroundColor: AppColors.fgOnDark,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 22,
                   vertical: 12,
@@ -354,6 +366,7 @@ class _QuestionFeedbackBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCorrect = selectedAnswer == question.answerIndex;
     final isConfused = question.isConfusedChoiceIndex(selectedAnswer);
+    final palette = AppPaletteTheme.of(context);
     final accent = isCorrect
         ? const Color(0xFF1F7A3A)
         : isConfused
@@ -399,8 +412,8 @@ class _QuestionFeedbackBlock extends StatelessWidget {
           const SizedBox(height: 7),
           Text(
             '정답: ${question.answerIndex + 1}번 $correctChoice',
-            style: const TextStyle(
-              color: Color(0xFF332A1D),
+            style: TextStyle(
+              color: palette.text,
               fontWeight: FontWeight.w800,
               fontSize: 12.8,
               height: 1.4,
@@ -408,10 +421,10 @@ class _QuestionFeedbackBlock extends StatelessWidget {
           ),
           if (explanation.isNotEmpty) ...[
             const SizedBox(height: 7),
-            const Text(
+            Text(
               '해설',
               style: TextStyle(
-                color: Color(0xFF5A4326),
+                color: palette.mutedText,
                 fontWeight: FontWeight.w900,
                 fontSize: 12,
               ),
@@ -419,8 +432,8 @@ class _QuestionFeedbackBlock extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               explanation,
-              style: const TextStyle(
-                color: Color(0xFF5A4326),
+              style: TextStyle(
+                color: palette.mutedText,
                 fontWeight: FontWeight.w600,
                 fontSize: 12.2,
                 height: 1.45,
@@ -451,6 +464,7 @@ class _QuizReviewPane extends StatelessWidget {
     final headerColor = didPass
         ? const Color(0xFF1F7A3A)
         : const Color(0xFFB58A47);
+    final palette = AppPaletteTheme.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -480,17 +494,17 @@ class _QuizReviewPane extends StatelessWidget {
         Container(
           padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
           decoration: BoxDecoration(
-            color: const Color(0xFFFAF1DD),
+            color: palette.cardSurface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFD9C18B)),
+            border: Border.all(color: palette.subtleBorder),
           ),
           child: Row(
             children: [
               RichText(
                 text: TextSpan(
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w900,
-                    color: Color(0xFF5A4326),
+                    color: palette.text,
                   ),
                   children: [
                     TextSpan(
@@ -555,8 +569,8 @@ class _QuizReviewPane extends StatelessWidget {
           child: FilledButton(
             onPressed: () => Navigator.of(context).pop(result),
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFB58A47),
-              foregroundColor: Colors.white,
+              backgroundColor: palette.currentAccentDeep,
+              foregroundColor: AppColors.fgOnDark,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -592,7 +606,7 @@ class _QuizChoiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _choiceColors();
+    final colors = _choiceColors(AppPaletteTheme.of(context));
     final icon = _trailingIcon();
 
     return Padding(
@@ -656,49 +670,60 @@ class _QuizChoiceCard extends StatelessWidget {
     );
   }
 
-  _ChoiceColors _choiceColors() {
+  _ChoiceColors _choiceColors(AppColorPalette palette) {
+    _ChoiceColors semanticColors({
+      required Color accent,
+      required Color text,
+      double alpha = 0.16,
+    }) {
+      return _ChoiceColors(
+        background: Color.alphaBlend(
+          accent.withValues(alpha: alpha),
+          palette.cardSurface,
+        ),
+        border: accent,
+        badgeBackground: accent,
+        badgeForeground: AppColors.fgOnDark,
+        text: text,
+      );
+    }
+
     if (submitted && isCorrect) {
-      return const _ChoiceColors(
-        background: Color(0xFFE2F1E5),
-        border: Color(0xFF1F7A3A),
-        badgeBackground: Color(0xFF1F7A3A),
-        badgeForeground: Colors.white,
-        text: Color(0xFF1F4F2D),
+      return semanticColors(
+        accent: const Color(0xFF1F7A3A),
+        text: palette.text,
+        alpha: palette == AppColorPalette.blackMap ? 0.28 : 0.16,
       );
     }
     if (submitted && selected && isConfusedChoice) {
-      return const _ChoiceColors(
-        background: Color(0xFFF3E4BE),
-        border: Color(0xFFB58A47),
-        badgeBackground: Color(0xFFB58A47),
-        badgeForeground: Colors.white,
-        text: Color(0xFF5A4326),
+      return semanticColors(
+        accent: const Color(0xFFB58A47),
+        text: palette.text,
+        alpha: palette == AppColorPalette.blackMap ? 0.28 : 0.18,
       );
     }
     if (submitted && selected) {
-      return const _ChoiceColors(
-        background: Color(0xFFF4D9D6),
-        border: Color(0xFFB0392F),
-        badgeBackground: Color(0xFFB0392F),
-        badgeForeground: Colors.white,
-        text: Color(0xFF6C241F),
+      return semanticColors(
+        accent: const Color(0xFFB0392F),
+        text: palette.text,
+        alpha: palette == AppColorPalette.blackMap ? 0.28 : 0.18,
       );
     }
     if (selected) {
-      return const _ChoiceColors(
-        background: Color(0xFFEFD9A2),
-        border: Color(0xFFB58A47),
-        badgeBackground: Color(0xFFB58A47),
-        badgeForeground: Colors.white,
-        text: Color(0xFF332A1D),
+      return _ChoiceColors(
+        background: palette.currentFill,
+        border: palette.currentAccentDeep,
+        badgeBackground: palette.currentAccentDeep,
+        badgeForeground: AppColors.fgOnDark,
+        text: palette.text,
       );
     }
-    return const _ChoiceColors(
-      background: Color(0xFFFAF1DD),
-      border: Color(0xFFD9C18B),
-      badgeBackground: Color(0xFFE5D2A8),
-      badgeForeground: Color(0xFF5A4326),
-      text: Color(0xFF332A1D),
+    return _ChoiceColors(
+      background: palette.cardSurface,
+      border: palette.subtleBorder,
+      badgeBackground: palette.mutedSurface,
+      badgeForeground: palette.text,
+      text: palette.text,
     );
   }
 
@@ -782,6 +807,7 @@ class _QuizReviewItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCorrect = userAnswer == question.answerIndex;
     final isConfused = question.isConfusedChoiceIndex(userAnswer);
+    final palette = AppPaletteTheme.of(context);
     final accent = isCorrect
         ? const Color(0xFF1F7A3A)
         : isConfused
@@ -793,9 +819,9 @@ class _QuizReviewItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFAF1DD),
+        color: palette.cardSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFD9C18B)),
+        border: Border.all(color: palette.subtleBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -819,10 +845,10 @@ class _QuizReviewItem extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'Q${index + 1}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w900,
                   fontSize: 13,
-                  color: Color(0xFF5A4326),
+                  color: palette.text,
                 ),
               ),
               const SizedBox(width: 8),
@@ -843,10 +869,10 @@ class _QuizReviewItem extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             question.question,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 13.5,
-              color: Color(0xFF332A1D),
+              color: palette.text,
               height: 1.4,
             ),
           ),
@@ -864,19 +890,17 @@ class _QuizReviewItem extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
               decoration: BoxDecoration(
-                color: const Color(0xFFEFE0C5),
+                color: palette.mutedSurface,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: const Color(0xFFCBB58A).withValues(alpha: 0.6),
-                ),
+                border: Border.all(color: palette.subtleBorder),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     '해설',
                     style: TextStyle(
-                      color: Color(0xFF5A4326),
+                      color: palette.mutedText,
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
                     ),
@@ -884,8 +908,8 @@ class _QuizReviewItem extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     explanation,
-                    style: const TextStyle(
-                      color: Color(0xFF5A4326),
+                    style: TextStyle(
+                      color: palette.mutedText,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       height: 1.4,
@@ -919,6 +943,7 @@ class _ReviewChoiceRow extends StatelessWidget {
     Color textColor;
     Widget marker;
     FontWeight weight;
+    final palette = AppPaletteTheme.of(context);
     if (isCorrect) {
       textColor = const Color(0xFF1F7A3A);
       marker = const Icon(
@@ -932,11 +957,11 @@ class _ReviewChoiceRow extends StatelessWidget {
       marker = const Icon(Icons.cancel, size: 16, color: Color(0xFFB0392F));
       weight = FontWeight.w700;
     } else {
-      textColor = const Color(0xFF7A6748);
-      marker = const Icon(
+      textColor = palette.mutedText;
+      marker = Icon(
         Icons.radio_button_unchecked,
         size: 16,
-        color: Color(0xFFB89F75),
+        color: palette.mutedText.withValues(alpha: 0.72),
       );
       weight = FontWeight.w500;
     }

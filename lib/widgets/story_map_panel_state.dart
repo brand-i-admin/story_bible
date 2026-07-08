@@ -284,14 +284,22 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
               alignment: Alignment.bottomCenter,
               child: Listener(
                 behavior: HitTestBehavior.translucent,
-                onPointerDown: (_) =>
-                    _suppressMapTaps(const Duration(milliseconds: 1200)),
-                onPointerMove: (_) =>
-                    _suppressMapTaps(const Duration(milliseconds: 350)),
-                onPointerUp: (_) =>
-                    _suppressMapTaps(const Duration(milliseconds: 1200)),
-                onPointerCancel: (_) =>
-                    _suppressMapTaps(const Duration(milliseconds: 1200)),
+                onPointerDown: (_) {
+                  _suppressMapTaps(const Duration(milliseconds: 1200));
+                  _suspendMapGestures();
+                },
+                onPointerMove: (_) {
+                  _suppressMapTaps(const Duration(milliseconds: 350));
+                  _suspendMapGestures();
+                },
+                onPointerUp: (_) {
+                  _suppressMapTaps(const Duration(milliseconds: 1200));
+                  _clearMapGestureSuspension();
+                },
+                onPointerCancel: (_) {
+                  _suppressMapTaps(const Duration(milliseconds: 1200));
+                  _clearMapGestureSuspension();
+                },
                 onPointerSignal: (_) =>
                     _suppressMapTaps(const Duration(milliseconds: 1200)),
                 child: WebPointerInterceptor(child: widget.bottomOverlay!),
@@ -348,6 +356,16 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
 
   void _clearMapTapSuppression() {
     _terrain3dController.clearTapSuppression();
+  }
+
+  void _suspendMapGestures([
+    Duration duration = const Duration(milliseconds: 220),
+  ]) {
+    _terrain3dController.suspendGesturesFor(duration);
+  }
+
+  void _clearMapGestureSuspension() {
+    _terrain3dController.clearGestureSuspension();
   }
 
   /// 랜드마크 탭 처리. onLandmarkTap 콜백 (popup) 호출.
@@ -830,19 +848,38 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
   Future<void> _playEventTransition({
     required StoryEvent from,
     required StoryEvent to,
+    Duration duration = const Duration(seconds: 2),
   }) async {
     if (!_mapReady || !from.hasCoordinate || !to.hasCoordinate) {
       return;
     }
-    if (from.id == to.id) {
-      return;
-    }
-
     final visiblePoints = _numberedEventPointMap(includeHidden: false);
     final finalPoints = _numberedEventPointMap(includeHidden: true);
     final fromPoint =
         visiblePoints[from.id] ?? finalPoints[from.id] ?? from.latLng;
     final toPoint = visiblePoints[to.id] ?? finalPoints[to.id] ?? to.latLng;
+
+    if (from.id == to.id) {
+      _focusToPoint(
+        fromPoint,
+        (widget.selectedFocusZoom ?? widget.initialZoom ?? 7.2)
+            .clamp(3.0, _eventTransitionMaxZoom)
+            .toDouble(),
+        duration: const Duration(milliseconds: 360),
+      );
+      return _terrain3dController.playEventTransition(
+        fromEventId: from.id,
+        fromPoint: fromPoint,
+        toEventId: to.id,
+        toPoint: toPoint,
+        duration: duration,
+      );
+    }
+
+    if (toPoint == fromPoint) {
+      return;
+    }
+
     final bounds = LatLngBounds.fromPoints([fromPoint, toPoint]);
     final targetZoom =
         (_computeRevealZoom([fromPoint, toPoint]) - _eventTransitionZoomOut)
@@ -873,6 +910,7 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       fromPoint: fromPoint,
       toEventId: to.id,
       toPoint: toPoint,
+      duration: duration,
     );
   }
 

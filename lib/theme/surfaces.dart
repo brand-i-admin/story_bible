@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'app_color_palette.dart';
 import 'tokens.dart';
 
 // .sb-surface-* CSS 클래스의 Flutter 대응. 모달/다이얼로그/플로팅/카드 표면.
@@ -9,7 +10,32 @@ import 'tokens.dart';
 class AppSurfaces {
   AppSurfaces._();
 
-  static BoxDecoration modal() {
+  static BoxDecoration modal({AppColorPalette? palette}) {
+    if (palette != null) {
+      final darkPalette = palette == AppColorPalette.blackMap;
+      final colors = darkPalette
+          ? [palette.softSurface, palette.cardSurface]
+          : [
+              Color.alphaBlend(
+                palette.primary.withValues(alpha: 0.035),
+                AppColors.parchmentLight,
+              ),
+              Color.alphaBlend(
+                palette.currentAccent.withValues(alpha: 0.045),
+                AppColors.parchmentWarm,
+              ),
+            ];
+      return BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: colors,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.x4l),
+        border: Border.all(color: palette.subtleBorder, width: 1.2),
+        boxShadow: AppShadows.xl,
+      );
+    }
     return BoxDecoration(
       gradient: const LinearGradient(
         begin: Alignment.topLeft,
@@ -37,6 +63,7 @@ class AppSurfaces {
 
   static BoxDecoration floating({
     Color color = AppColors.floatingSurfaceDefault,
+    Color borderColor = AppColors.borderFloating,
     double shadowOpacity = 0.12,
   }) {
     return BoxDecoration(
@@ -46,7 +73,7 @@ class AppSurfaces {
         colors: [Color.alphaBlend(AppColors.overlayWhiteSoft, color), color],
       ),
       borderRadius: BorderRadius.circular(AppRadii.xxl),
-      border: Border.all(color: AppColors.borderFloating, width: 1.0),
+      border: Border.all(color: borderColor, width: 1.0),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withValues(alpha: shadowOpacity),

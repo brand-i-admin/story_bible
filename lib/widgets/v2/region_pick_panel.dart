@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/era.dart';
 import '../../models/landmark.dart';
+import '../../theme/app_color_palette.dart';
 
 /// 지역 모드 1단계 — 선택된 시대(들)에 해당하는 region 후보를 시트 안에서도
 /// 고를 수 있게 표시. 사용자는 지도에서 마커를 누르거나 여기서 카드를 누르거나
@@ -25,6 +26,7 @@ class RegionPickPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = AppPaletteTheme.of(context);
     final selectedEraCodes = allEras
         .where((e) => selectedEraIds.contains(e.id))
         .map((e) => e.code)
@@ -86,7 +88,7 @@ class RegionPickPanel extends StatelessWidget {
                   width: 4,
                   height: 14,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary,
+                    color: palette.primary,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -94,6 +96,7 @@ class RegionPickPanel extends StatelessWidget {
                 Text(
                   entry.key.name,
                   style: theme.textTheme.titleSmall?.copyWith(
+                    color: palette.text,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -101,7 +104,7 @@ class RegionPickPanel extends StatelessWidget {
                 Text(
                   '${entry.value.length}곳',
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.outline,
+                    color: palette.mutedText,
                   ),
                 ),
               ],
@@ -169,11 +172,16 @@ class _RegionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final surface = selected
+        ? Color.alphaBlend(
+            palette.regionAccent.withValues(alpha: 0.20),
+            palette.cardSurface,
+          )
+        : palette.cardSurface;
     return Material(
-      color: selected
-          ? theme.colorScheme.primary.withValues(alpha: 0.10)
-          : theme.colorScheme.surfaceContainerLow,
+      color: surface,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
@@ -181,11 +189,10 @@ class _RegionCard extends StatelessWidget {
         child: Container(
           width: width,
           decoration: BoxDecoration(
+            color: surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: selected
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.outlineVariant,
+              color: selected ? palette.regionAccent : palette.subtleBorder,
               width: selected ? 2 : 1,
             ),
           ),
@@ -207,6 +214,7 @@ class _RegionCard extends StatelessWidget {
                           : TextOverflow.ellipsis,
                       softWrap: true,
                       style: theme.textTheme.labelLarge?.copyWith(
+                        color: palette.text,
                         fontWeight: FontWeight.w700,
                         fontSize: 12,
                       ),
@@ -220,7 +228,7 @@ class _RegionCard extends StatelessWidget {
                             : TextOverflow.ellipsis,
                         softWrap: true,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                          color: palette.mutedText,
                           fontSize: 10,
                           height: 1.25,
                         ),
@@ -229,11 +237,7 @@ class _RegionCard extends StatelessWidget {
                 ),
               ),
               if (selected)
-                Icon(
-                  Icons.check_circle,
-                  color: theme.colorScheme.primary,
-                  size: 14,
-                ),
+                Icon(Icons.check_circle, color: palette.regionAccent, size: 14),
             ],
           ),
         ),

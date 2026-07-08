@@ -17,6 +17,7 @@ class _CardShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -26,21 +27,25 @@ class _CardShell extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
           decoration: BoxDecoration(
             gradient: selected
-                ? const LinearGradient(
+                ? LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Color(0xFFAE6D37), Color(0xFF87502A)],
+                    colors: [
+                      palette.cardSelectedTop,
+                      palette.cardSelectedBottom,
+                    ],
                   )
-                : const LinearGradient(
+                : LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Color(0xFFE7D2B2), Color(0xFFDDC29E)],
+                    colors: [
+                      palette.cardUnselectedTop,
+                      palette.cardUnselectedBottom,
+                    ],
                   ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: selected
-                  ? const Color(0xFFF4D58A)
-                  : const Color(0xFFB78A63),
+              color: selected ? palette.actionBorder : palette.subtleBorder,
             ),
             boxShadow: [
               BoxShadow(
@@ -74,6 +79,7 @@ class _EraCompactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return _CardShell(
       selected: selected,
@@ -96,9 +102,7 @@ class _EraCompactCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13.8,
                       fontWeight: FontWeight.w800,
-                      color: selected
-                          ? AppColors.parchmentCream
-                          : const Color(0xFF5C3A20),
+                      color: selected ? AppColors.fgOnDark : palette.text,
                     ),
                   ),
                   if (dateLabel != null)
@@ -108,8 +112,8 @@ class _EraCompactCard extends StatelessWidget {
                         fontSize: 11.6,
                         fontWeight: FontWeight.w600,
                         color: selected
-                            ? const Color(0xFFF4E6CD)
-                            : const Color(0xFF75563C),
+                            ? AppColors.fgOnDark.withValues(alpha: 0.84)
+                            : palette.mutedText,
                       ),
                     ),
                 ],
@@ -139,6 +143,7 @@ class _CharacterCompactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final identityLabel = _identityLabelFor(character);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return _CardShell(
@@ -164,7 +169,7 @@ class _CharacterCompactCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: accentColor,
-                    border: Border.all(color: const Color(0xFFF6E8CB)),
+                    border: Border.all(color: AppColors.parchmentCream),
                   ),
                 ),
               ),
@@ -174,14 +179,14 @@ class _CharacterCompactCard extends StatelessWidget {
                 child: _EventCountBadge(count: eventCount, selected: selected),
               ),
               if (selected)
-                const Positioned(
+                Positioned(
                   right: -4,
                   bottom: -2,
                   child: Icon(
                     Icons.check_circle_rounded,
-                    color: Color(0xFFF7D881),
+                    color: palette.actionBorder,
                     size: 14,
-                    shadows: [Shadow(color: Color(0xFF3A2308), blurRadius: 2)],
+                    shadows: [Shadow(color: palette.text, blurRadius: 2)],
                   ),
                 ),
             ],
@@ -196,9 +201,7 @@ class _CharacterCompactCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w800,
-              color: selected
-                  ? AppColors.parchmentCream
-                  : const Color(0xFF5C3A20),
+              color: selected ? AppColors.fgOnDark : palette.text,
             ),
           ),
           const SizedBox(height: 1),
@@ -213,8 +216,8 @@ class _CharacterCompactCard extends StatelessWidget {
               height: 1.08,
               fontWeight: FontWeight.w700,
               color: selected
-                  ? const Color(0xFFF4E6CD)
-                  : const Color(0xFF75563C),
+                  ? AppColors.fgOnDark.withValues(alpha: 0.84)
+                  : palette.mutedText,
             ),
           ),
         ],
@@ -273,14 +276,15 @@ class _EventCountBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       constraints: const BoxConstraints(minWidth: 24),
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        color: selected ? const Color(0xFFF7D881) : const Color(0xFF7A5F35),
+        color: selected ? palette.currentAccent : palette.primaryDeep,
         borderRadius: BorderRadius.circular(999),
         border: Border.all(
-          color: selected ? const Color(0xFF5A3519) : const Color(0xFFF6E8CB),
+          color: selected ? palette.currentAccentDeep : palette.actionBorder,
           width: 1,
         ),
         boxShadow: const [
@@ -298,7 +302,7 @@ class _EventCountBadge extends StatelessWidget {
           fontSize: 9.4,
           height: 1,
           fontWeight: FontWeight.w900,
-          color: selected ? const Color(0xFF5A3519) : AppColors.parchmentCream,
+          color: selected ? palette.text : AppColors.fgOnDark,
         ),
       ),
     );
@@ -312,21 +316,22 @@ class _IndexBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       width: 24,
       height: 24,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: const Color(0xFFF4DA91),
-        border: Border.all(color: const Color(0xFF7A4B21)),
+        color: palette.currentFill,
+        border: Border.all(color: palette.currentAccentDeep),
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 10.5,
           fontWeight: FontWeight.w900,
-          color: Color(0xFF5A3519),
+          color: palette.text,
         ),
       ),
     );
@@ -369,6 +374,7 @@ class _PortraitAvatarBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final palette = AppPaletteTheme.of(context);
     final avatarPath = character.avatarAssetPath.trim();
     final storagePath = character.avatarStoragePath?.trim();
     final fallbackText = character.name.trim().isEmpty
@@ -431,7 +437,7 @@ class _PortraitAvatarBody extends ConsumerWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: selected ? const Color(0xFF8D4E05) : const Color(0xFFC9A06B),
+          color: selected ? palette.actionBorder : palette.subtleBorder,
           width: selected ? 2 : 1.2,
         ),
         boxShadow: [
@@ -469,7 +475,7 @@ class _StorageAvatar extends StatelessWidget {
           },
           loadingBuilder: (_, child, progress) => progress == null
               ? child
-              : const ColoredBox(color: Color(0xFFE7D2B2)),
+              : const ColoredBox(color: AppColors.parchmentMid),
         ),
       ),
     );
@@ -484,8 +490,9 @@ class _AvatarFallback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
-      color: selected ? const Color(0xFF8C6337) : const Color(0xFFA98657),
+      color: selected ? palette.primaryDeep : palette.primary,
       alignment: Alignment.center,
       child: Text(
         name,

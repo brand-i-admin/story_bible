@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/saved_bible_verse.dart';
 import '../state/auth_providers.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import '../widgets/parchment_page_scaffold.dart';
 import '../widgets/saved_verse_actions.dart';
@@ -152,6 +153,7 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
   }
 
   Widget _buildBody() {
+    final palette = AppPaletteTheme.of(context);
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -161,7 +163,7 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
           _error!,
           textAlign: TextAlign.center,
           style: const TextStyle(
-            color: Color(0xFFA63F2D),
+            color: AppColors.dangerBot,
             fontWeight: FontWeight.w800,
             height: 1.5,
           ),
@@ -169,12 +171,12 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
       );
     }
     if (_verses.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           '아직 저장한 말씀이 없습니다.\n성경 화면에서 구절을 눌러 저장해 보세요.',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Color(0xFF6D5231),
+            color: palette.mutedText,
             fontWeight: FontWeight.w700,
             height: 1.6,
           ),
@@ -197,6 +199,7 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
   }
 
   Widget _buildPagination() {
+    final palette = AppPaletteTheme.of(context);
     final visiblePages = List<int>.generate(
       _pageIndex + (_hasNextPage ? 2 : 1),
       (index) => index,
@@ -237,21 +240,17 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: selected
-                      ? const Color(0xFFE0B25B)
-                      : Colors.transparent,
+                  color: selected ? palette.currentFill : Colors.transparent,
                   border: Border.all(
                     color: selected
-                        ? const Color(0xFFB7742B)
-                        : const Color(0x558E6F48),
+                        ? palette.currentAccentDeep
+                        : palette.subtleBorder,
                   ),
                 ),
                 child: Text(
                   '${page + 1}',
                   style: TextStyle(
-                    color: selected
-                        ? AppColors.ink500
-                        : const Color(0xFF7B603D),
+                    color: selected ? palette.text : palette.mutedText,
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
                   ),
@@ -285,6 +284,7 @@ class _PageArrowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final enabled = onPressed != null;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
@@ -296,13 +296,17 @@ class _PageArrowButton extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: enabled ? const Color(0xAA8E6F48) : const Color(0x338E6F48),
+            color: enabled
+                ? palette.panelBorder
+                : palette.subtleBorder.withValues(alpha: 0.42),
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: enabled ? AppColors.ink500 : const Color(0x557B603D),
+            color: enabled
+                ? palette.text
+                : palette.mutedText.withValues(alpha: 0.55),
             fontSize: 12,
             fontWeight: FontWeight.w900,
           ),

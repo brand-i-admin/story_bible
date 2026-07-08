@@ -7,6 +7,7 @@ import '../../models/event_emotion_mark.dart';
 import '../../models/landmark.dart';
 import '../../models/quiz_attempt_summary.dart';
 import '../../models/story_event.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/scene_asset_loader.dart';
 import '../character_avatar.dart';
@@ -177,6 +178,10 @@ class StoryEventThumbCard extends StatelessWidget {
     this.attemptSummary,
     this.orderNumber,
     this.showSummary = true,
+    this.showCharacterPills = true,
+    this.forceOpaqueSurface = false,
+    this.expandSurface = false,
+    this.surfaceColorOverride,
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
     this.publicUrlForStoragePath,
@@ -192,6 +197,10 @@ class StoryEventThumbCard extends StatelessWidget {
   final QuizAttemptSummary? attemptSummary;
   final int? orderNumber;
   final bool showSummary;
+  final bool showCharacterPills;
+  final bool forceOpaqueSurface;
+  final bool expandSurface;
+  final Color? surfaceColorOverride;
   final SceneAssetLoader loader;
   final VoidCallback onTap;
   final String Function(String storagePath)? publicUrlForStoragePath;
@@ -228,6 +237,7 @@ class StoryEventThumbCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Stack(
       clipBehavior: Clip.none,
+      fit: expandSurface ? StackFit.expand : StackFit.loose,
       children: [
         _buildCardSurface(context, theme),
         if (orderNumber != null ||
@@ -239,19 +249,26 @@ class StoryEventThumbCard extends StatelessWidget {
   }
 
   Widget _buildCardSurface(BuildContext context, ThemeData theme) {
-    final quizTone = _QuizCardTone.fromAttempt(attemptSummary);
+    final palette = AppPaletteTheme.of(context);
+    final quizTone = _QuizCardTone.fromAttempt(attemptSummary, palette);
     final surfaceColor =
+        surfaceColorOverride ??
         quizTone?.background ??
         (completed
-            ? AppColors.greenTint1
+            ? Color.alphaBlend(palette.completedSurface, palette.cardSurface)
             : (selected
-                  ? theme.colorScheme.primary.withValues(alpha: 0.10)
-                  : Colors.white.withValues(alpha: 0.85)));
+                  ? Color.alphaBlend(
+                      palette.selectedSurface,
+                      palette.cardSurface,
+                    )
+                  : (forceOpaqueSurface
+                        ? palette.cardSurface
+                        : palette.cardSurface.withValues(alpha: 0.92))));
     final borderColor =
         quizTone?.border ??
         (completed
-            ? AppColors.greenBorder
-            : (selected ? theme.colorScheme.primary : const Color(0xFFD9C9A2)));
+            ? palette.completedBorder
+            : (selected ? palette.selectedBorder : palette.subtleBorder));
     return Material(
       color: surfaceColor,
       borderRadius: BorderRadius.circular(14),
@@ -263,7 +280,9 @@ class StoryEventThumbCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: borderColor, width: selected ? 2 : 1.6),
           ),
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
+          padding: expandSurface
+              ? const EdgeInsets.fromLTRB(8, 10, 8, 7)
+              : const EdgeInsets.fromLTRB(10, 10, 10, 8),
           child: LayoutBuilder(
             builder: (context, constraints) {
               final body = _buildCardBody(context, theme);
@@ -291,14 +310,21 @@ class StoryEventThumbCard extends StatelessWidget {
     final summary = (event.summary ?? '').trim();
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final compactLargeText = textScale >= 1.3;
-    final thumbnailSize = compactLargeText ? 44.0 : 64.0;
-    final characterPillsHeight = compactLargeText ? 24.0 : 18.0;
-    final titleMaxLines = compactLargeText ? null : 2;
+    final deckCompact = expandSurface && !showSummary;
+    final thumbnailSize = deckCompact
+        ? (compactLargeText ? 38.0 : 48.0)
+        : (compactLargeText ? 44.0 : 64.0);
+    final characterPillsHeight = deckCompact
+        ? (compactLargeText ? 21.0 : 18.0)
+        : (compactLargeText ? 24.0 : 18.0);
+    final titleMaxLines = deckCompact ? 2 : (compactLargeText ? null : 2);
     final summaryMaxLines = compactLargeText ? null : 2;
-    final gapAfterThumbnail = compactLargeText ? 3.0 : 6.0;
-    final gapAfterTitle = compactLargeText ? 2.0 : 4.0;
+    final gapAfterThumbnail = deckCompact
+        ? (compactLargeText ? 2.0 : 4.0)
+        : (compactLargeText ? 3.0 : 6.0);
+    final gapAfterTitle = deckCompact ? 2.0 : (compactLargeText ? 2.0 : 4.0);
     final gapBeforeSummary = compactLargeText ? 3.0 : 6.0;
-    final gapBeforePills = compactLargeText ? 4.0 : 6.0;
+    final gapBeforePills = deckCompact ? 4.0 : (compactLargeText ? 4.0 : 6.0);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -310,16 +336,22 @@ class StoryEventThumbCard extends StatelessWidget {
           publicUrlForStoragePath: publicUrlForStoragePath,
         ),
         SizedBox(height: gapAfterThumbnail),
-        _ThumbTitle(event: event, theme: theme, maxLines: titleMaxLines),
+        _ThumbTitle(
+          event: event,
+          theme: theme,
+          maxLines: titleMaxLines,
+          fontSize: deckCompact ? 11.2 : 12,
+        ),
         SizedBox(height: gapAfterTitle),
         _ThumbMetaRow(placeName: event.placeName, yearLabel: _yearLabel()),
         if (showSummary && summary.isNotEmpty) ...[
           SizedBox(height: gapBeforeSummary),
           _ThumbSummary(summary: summary, maxLines: summaryMaxLines),
         ],
-        SizedBox(height: gapBeforePills),
-        if (event.characterCodes.isNotEmpty)
+        if (showCharacterPills && event.characterCodes.isNotEmpty) ...[
+          SizedBox(height: gapBeforePills),
           _buildCharacterPills(height: characterPillsHeight),
+        ],
       ],
     );
   }
@@ -382,12 +414,13 @@ class _CardThumbnailFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return ClipOval(
       child: SizedBox(
         width: size,
         height: size,
         child: ColoredBox(
-          color: const Color(0xFFF1E4C8),
+          color: palette.mutedSurface,
           child: _CardThumbnail(
             event: event,
             loader: loader,
@@ -404,14 +437,17 @@ class _ThumbTitle extends StatelessWidget {
     required this.event,
     required this.theme,
     required this.maxLines,
+    required this.fontSize,
   });
 
   final StoryEvent event;
   final ThemeData theme;
   final int? maxLines;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Text(
       event.title,
       maxLines: maxLines,
@@ -419,8 +455,9 @@ class _ThumbTitle extends StatelessWidget {
       softWrap: true,
       textAlign: TextAlign.center,
       style: theme.textTheme.titleSmall?.copyWith(
+        color: palette.text,
         fontWeight: FontWeight.w700,
-        fontSize: 12,
+        fontSize: fontSize,
         height: maxLines == null ? 1.14 : 1.08,
       ),
     );
@@ -435,6 +472,7 @@ class _ThumbMetaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final hasPlace = placeName != null && placeName!.isNotEmpty;
     if (!hasPlace && yearLabel == null) return const SizedBox.shrink();
     return SizedBox(
@@ -446,36 +484,36 @@ class _ThumbMetaRow extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (hasPlace) ...[
-              const Icon(Icons.location_on, size: 10, color: Color(0xFF8C6743)),
+              Icon(Icons.location_on, size: 10, color: palette.primary),
               const SizedBox(width: 1),
               Text(
                 placeName!,
                 maxLines: 1,
                 overflow: TextOverflow.visible,
                 softWrap: false,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF8C6743),
+                  color: palette.mutedText,
                   height: 1.1,
                 ),
               ),
             ],
             if (hasPlace && yearLabel != null)
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3),
                 child: Text(
                   '·',
-                  style: TextStyle(fontSize: 10, color: Color(0xFF8C6743)),
+                  style: TextStyle(fontSize: 10, color: palette.mutedText),
                 ),
               ),
             if (yearLabel != null)
               Text(
                 yearLabel!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF8C6743),
+                  color: palette.mutedText,
                   height: 1.1,
                 ),
               ),
@@ -494,17 +532,14 @@ class _ThumbSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Text(
       summary,
       maxLines: maxLines,
       overflow: maxLines == null ? TextOverflow.visible : TextOverflow.ellipsis,
       softWrap: true,
       textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontSize: 10,
-        height: 1.3,
-        color: Color(0xFF6B5430),
-      ),
+      style: TextStyle(fontSize: 10, height: 1.3, color: palette.mutedText),
     );
   }
 }
@@ -517,6 +552,7 @@ class _OrderBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final hasEmotion = emotionKey != null && emotionKey!.isNotEmpty;
     return Positioned(
       left: -4,
@@ -540,7 +576,7 @@ class _OrderBadge extends StatelessWidget {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6B4A2A),
+                  color: palette.primaryDeep,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 1.5),
                   boxShadow: const [
@@ -621,25 +657,37 @@ class _QuizCardTone {
   final Color background;
   final Color border;
 
-  static _QuizCardTone? fromAttempt(QuizAttemptSummary? attempt) {
+  static _QuizCardTone? fromAttempt(
+    QuizAttemptSummary? attempt,
+    AppColorPalette palette,
+  ) {
     if (attempt == null || attempt.totalCount <= 0) {
       return null;
     }
     if (attempt.correctCount <= 0) {
-      return const _QuizCardTone(
-        background: Color(0xFFF7DAD2),
+      return _QuizCardTone(
+        background: Color.alphaBlend(
+          AppColors.dangerBot.withValues(alpha: 0.18),
+          palette.cardSurface,
+        ),
         border: AppColors.dangerBot,
       );
     }
     if (attempt.correctCount >= attempt.totalCount) {
-      return const _QuizCardTone(
-        background: AppColors.greenTint1,
-        border: AppColors.greenBorder,
+      return _QuizCardTone(
+        background: Color.alphaBlend(
+          palette.successBottom.withValues(alpha: 0.18),
+          palette.cardSurface,
+        ),
+        border: palette.successBottom,
       );
     }
-    return const _QuizCardTone(
-      background: Color(0xFFF6E7B8),
-      border: AppColors.goldDeep,
+    return _QuizCardTone(
+      background: Color.alphaBlend(
+        palette.currentAccent.withValues(alpha: 0.20),
+        palette.cardSurface,
+      ),
+      border: palette.currentAccentDeep,
     );
   }
 }
@@ -649,6 +697,7 @@ class _CurrentStoryBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Positioned(
       top: -10,
       left: 28,
@@ -657,9 +706,9 @@ class _CurrentStoryBadge extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-            color: const Color(0xFFE8A33D),
+            color: palette.currentAccent,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFF8C5A2E), width: 1),
+            border: Border.all(color: palette.currentAccentDeep, width: 1),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x33000000),
@@ -675,7 +724,7 @@ class _CurrentStoryBadge extends StatelessWidget {
               style: TextStyle(
                 fontSize: 9.5,
                 fontWeight: FontWeight.w900,
-                color: Color(0xFF3D2A14),
+                color: AppColors.ink900,
                 height: 1.0,
               ),
             ),
@@ -697,11 +746,12 @@ class _CardThumbnail extends StatelessWidget {
   final String Function(String storagePath)? publicUrlForStoragePath;
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return FutureBuilder<List<String>>(
       future: loader.loadForEvent(event, publicUrlFor: publicUrlForStoragePath),
       builder: (_, snap) {
-        const placeholder = Center(
-          child: Icon(Icons.menu_book, color: Color(0xFF8C6743), size: 28),
+        final placeholder = Center(
+          child: Icon(Icons.menu_book, color: palette.primary, size: 28),
         );
         if (!snap.hasData || snap.data!.isEmpty) return placeholder;
         final path = snap.data!.first;
@@ -740,18 +790,25 @@ class _CharPillAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const defaultColor = Color(0xFF3F8FB6);
-    const defaultText = Color(0xFF2A6F92);
+    final palette = AppPaletteTheme.of(context);
+    final defaultColor = palette.primary;
+    final defaultText = palette.primaryDeep;
     final color = accentColor ?? defaultColor;
-    final textColor = accentColor != null
-        ? Color.alphaBlend(color.withValues(alpha: 0.85), Colors.black)
-        : defaultText;
+    final darkSurface =
+        ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
+        Brightness.dark;
+    final textColor = darkSurface
+        ? palette.text
+        : (accentColor != null
+              ? Color.alphaBlend(color.withValues(alpha: 0.85), Colors.black)
+              : defaultText);
+    final backgroundColor = color.withValues(alpha: darkSurface ? 0.34 : 0.20);
     final avatarCharacter =
         character ?? _localAvatarFallbackCharacter(code, name);
     return Container(
       padding: const EdgeInsets.fromLTRB(2, 2, 6, 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.20),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(10),
         border: accentColor != null
             ? Border.all(color: color.withValues(alpha: 0.55), width: 0.8)

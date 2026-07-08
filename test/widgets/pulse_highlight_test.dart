@@ -28,6 +28,32 @@ void main() {
       expect(_glowContainerFinder(), findsNothing);
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('pulseCount가 null이면 active=true 동안 glow를 계속 유지한다', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: PulseHighlight(
+              active: true,
+              pulseCount: null,
+              duration: Duration(milliseconds: 600),
+              child: SizedBox(width: 100, height: 100),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      expect(_glowContainerFinder(), findsOneWidget);
+
+      await tester.pump(const Duration(milliseconds: 2100));
+      await tester.pump();
+
+      expect(_glowContainerFinder(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   });
 
   group('PulseHighlight dispose', () {

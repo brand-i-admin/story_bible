@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/tokens.dart';
+import '../theme/app_color_palette.dart';
 
 class LegalDocumentsScreen extends StatelessWidget {
   const LegalDocumentsScreen({super.key});
@@ -11,10 +11,12 @@ class LegalDocumentsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Scaffold(
+      backgroundColor: palette.pageBottom,
       body: Stack(
         children: [
-          const Positioned.fill(child: _LegalBackground()),
+          Positioned.fill(child: _LegalBackground(palette: palette)),
           SafeArea(
             child: Stack(
               children: [
@@ -22,23 +24,23 @@ class LegalDocumentsScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(48, 18, 20, 18),
                     child: Container(
-                      decoration: _panelDecoration(),
+                      decoration: _panelDecoration(palette),
                       padding: const EdgeInsets.fromLTRB(24, 22, 24, 22),
                       child: ListView(
                         children: [
-                          const Text(
+                          Text(
                             '법적 안내',
                             style: TextStyle(
-                              color: Color(0xFF3F2A17),
+                              color: palette.text,
                               fontSize: 20,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
                           const SizedBox(height: 6),
-                          const Text(
+                          Text(
                             '앱 안에서는 아래에서 바로 확인할 수 있고, 공개용 웹 문서는 https://brand-i-admin.github.io/story-bible-pages/ 에서 확인할 수 있습니다.',
                             style: TextStyle(
-                              color: Color(0xFF7B603D),
+                              color: palette.mutedText,
                               fontSize: 11.5,
                               fontWeight: FontWeight.w700,
                               height: 1.45,
@@ -135,10 +137,12 @@ class _LegalDocumentDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Scaffold(
+      backgroundColor: palette.pageBottom,
       body: Stack(
         children: [
-          const Positioned.fill(child: _LegalBackground()),
+          Positioned.fill(child: _LegalBackground(palette: palette)),
           SafeArea(
             child: Stack(
               children: [
@@ -146,15 +150,15 @@ class _LegalDocumentDetailScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(48, 18, 20, 18),
                     child: Container(
-                      decoration: _panelDecoration(),
+                      decoration: _panelDecoration(palette),
                       padding: const EdgeInsets.fromLTRB(24, 22, 24, 22),
                       child: SelectionArea(
                         child: ListView(
                           children: [
                             Text(
                               document.title,
-                              style: const TextStyle(
-                                color: Color(0xFF3F2A17),
+                              style: TextStyle(
+                                color: palette.text,
                                 fontSize: 24,
                                 fontWeight: FontWeight.w900,
                               ),
@@ -162,8 +166,8 @@ class _LegalDocumentDetailScreen extends StatelessWidget {
                             const SizedBox(height: 8),
                             Text(
                               document.summary,
-                              style: const TextStyle(
-                                color: Color(0xFF7B603D),
+                              style: TextStyle(
+                                color: palette.mutedText,
                                 fontSize: 13.6,
                                 fontWeight: FontWeight.w700,
                                 height: 1.5,
@@ -188,7 +192,7 @@ class _LegalDocumentDetailScreen extends StatelessWidget {
                               (section) => Padding(
                                 padding: const EdgeInsets.only(bottom: 12),
                                 child: Container(
-                                  decoration: _cardDecoration(),
+                                  decoration: _cardDecoration(palette),
                                   padding: const EdgeInsets.fromLTRB(
                                     16,
                                     15,
@@ -201,8 +205,8 @@ class _LegalDocumentDetailScreen extends StatelessWidget {
                                     children: [
                                       Text(
                                         section.title,
-                                        style: const TextStyle(
-                                          color: AppColors.ink500,
+                                        style: TextStyle(
+                                          color: palette.primaryDeep,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w900,
                                         ),
@@ -215,8 +219,8 @@ class _LegalDocumentDetailScreen extends StatelessWidget {
                                           ),
                                           child: Text(
                                             paragraph,
-                                            style: const TextStyle(
-                                              color: AppColors.ink350,
+                                            style: TextStyle(
+                                              color: palette.mutedText,
                                               fontSize: 13,
                                               fontWeight: FontWeight.w700,
                                               height: 1.6,
@@ -268,13 +272,14 @@ class _LegalDocCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(22),
         child: Ink(
-          decoration: _cardDecoration(),
+          decoration: _cardDecoration(palette),
           padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
           child: Row(
             children: [
@@ -283,13 +288,13 @@ class _LegalDocCard extends StatelessWidget {
                 height: 48,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(14),
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Color(0xFFDFA85A), Color(0xFF7EA45B)],
+                    colors: [palette.currentAccent, palette.primary],
                   ),
                 ),
-                child: Icon(icon, color: AppColors.parchmentCream, size: 24),
+                child: Icon(icon, color: palette.activeTextOnAccent, size: 24),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -298,8 +303,8 @@ class _LegalDocCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        color: Color(0xFF432D1A),
+                      style: TextStyle(
+                        color: palette.text,
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
                       ),
@@ -307,8 +312,8 @@ class _LegalDocCard extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       subtitle,
-                      style: const TextStyle(
-                        color: Color(0xFF785D39),
+                      style: TextStyle(
+                        color: palette.mutedText,
                         fontSize: 11.2,
                         fontWeight: FontWeight.w700,
                         height: 1.4,
@@ -317,8 +322,8 @@ class _LegalDocCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       filePath,
-                      style: const TextStyle(
-                        color: AppColors.ink150,
+                      style: TextStyle(
+                        color: palette.primaryDeep,
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                       ),
@@ -327,9 +332,9 @@ class _LegalDocCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(
+              Icon(
                 Icons.chevron_right_rounded,
-                color: Color(0xFF7E6847),
+                color: palette.mutedText,
                 size: 28,
               ),
             ],
@@ -348,16 +353,17 @@ class _LegalMetaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
-      decoration: _cardDecoration(),
+      decoration: _cardDecoration(palette),
       padding: const EdgeInsets.fromLTRB(11, 10, 11, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: Color(0xFF8E7150),
+            style: TextStyle(
+              color: palette.mutedText,
               fontSize: 10,
               fontWeight: FontWeight.w800,
             ),
@@ -365,8 +371,8 @@ class _LegalMetaCard extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             value,
-            style: const TextStyle(
-              color: Color(0xFF432D1A),
+            style: TextStyle(
+              color: palette.text,
               fontSize: 11,
               fontWeight: FontWeight.w900,
             ),
@@ -384,17 +390,18 @@ class _MetaPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xE6F7EEDC),
+        color: palette.mutedSurface,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xAA96B070), width: 1),
+        border: Border.all(color: palette.subtleBorder, width: 1),
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          color: Color(0xFF5A472B),
+        style: TextStyle(
+          color: palette.mutedText,
           fontSize: 11.4,
           fontWeight: FontWeight.w800,
         ),
@@ -410,6 +417,7 @@ class _CompactBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -419,17 +427,17 @@ class _CompactBackButton extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF8F6436), Color(0xFF6F4C28)],
+              colors: [palette.actionTop, palette.actionBottom],
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFF0D7A7), width: 1.1),
+            border: Border.all(color: palette.actionBorder, width: 1.1),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.chevron_left_rounded,
-            color: AppColors.parchmentCream,
+            color: palette.activeTextOnAccent,
             size: 26,
           ),
         ),
@@ -439,27 +447,32 @@ class _CompactBackButton extends StatelessWidget {
 }
 
 class _LegalBackground extends StatelessWidget {
-  const _LegalBackground();
+  const _LegalBackground({required this.palette});
+
+  final AppColorPalette palette;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFF9F1E1), Color(0xFFEEDDBF), Color(0xFFE6D0AA)],
+          colors: palette.pageGradient,
         ),
       ),
       child: Stack(
         children: [
-          const Positioned.fill(
+          Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: RadialGradient(
-                  center: Alignment(-0.25, -0.65),
+                  center: const Alignment(-0.25, -0.65),
                   radius: 1.0,
-                  colors: [Color(0x22FFFFFF), Color(0x00FFFFFF)],
+                  colors: [
+                    Colors.white.withValues(alpha: 0.12),
+                    Colors.transparent,
+                  ],
                 ),
               ),
             ),
@@ -467,8 +480,10 @@ class _LegalBackground extends StatelessWidget {
           Positioned.fill(
             child: IgnorePointer(
               child: Opacity(
-                opacity: 0.08,
-                child: CustomPaint(painter: _CrossGridPainter()),
+                opacity: palette == AppColorPalette.blackMap ? 0.06 : 0.08,
+                child: CustomPaint(
+                  painter: _CrossGridPainter(color: palette.subtleBorder),
+                ),
               ),
             ),
           ),
@@ -479,11 +494,15 @@ class _LegalBackground extends StatelessWidget {
 }
 
 class _CrossGridPainter extends CustomPainter {
+  const _CrossGridPainter({required this.color});
+
+  final Color color;
+
   @override
   void paint(Canvas canvas, Size size) {
     const step = 36.0;
     final paint = Paint()
-      ..color = const Color(0xFFB48B58)
+      ..color = color
       ..strokeWidth = 0.5;
     for (double x = 0; x < size.width; x += step) {
       canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
@@ -494,33 +513,37 @@ class _CrossGridPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _CrossGridPainter oldDelegate) {
+    return oldDelegate.color != color;
+  }
 }
 
-BoxDecoration _panelDecoration() {
+BoxDecoration _panelDecoration(AppColorPalette palette) {
   return BoxDecoration(
-    gradient: const LinearGradient(
+    gradient: LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Color(0xFFFBF4E8), Color(0xFFF2E2C4)],
+      colors: [palette.panelSurface, palette.mutedSurface],
     ),
     borderRadius: BorderRadius.circular(28),
-    border: Border.all(color: const Color(0xC29E7A4C), width: 1.2),
-    boxShadow: const [
+    border: Border.all(color: palette.panelBorder, width: 1.2),
+    boxShadow: [
       BoxShadow(
-        color: Color(0x24000000),
+        color: Colors.black.withValues(
+          alpha: palette == AppColorPalette.blackMap ? 0.36 : 0.14,
+        ),
         blurRadius: 24,
-        offset: Offset(0, 12),
+        offset: const Offset(0, 12),
       ),
     ],
   );
 }
 
-BoxDecoration _cardDecoration() {
+BoxDecoration _cardDecoration(AppColorPalette palette) {
   return BoxDecoration(
-    color: const Color(0xDDF8F1E3),
+    color: palette.cardSurface,
     borderRadius: BorderRadius.circular(22),
-    border: Border.all(color: const Color(0xA993724C), width: 1),
+    border: Border.all(color: palette.subtleBorder, width: 1),
   );
 }
 

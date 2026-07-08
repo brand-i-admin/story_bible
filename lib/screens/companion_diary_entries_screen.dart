@@ -43,13 +43,13 @@ class _CompanionDiaryEntriesScreenState
   @override
   Widget build(BuildContext context) {
     return ParchmentListPageScaffold(
-      title: '오늘의 신앙 기록',
+      title: '신앙 다이어리',
       child: ParchmentCard(
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
         child: _entries.isEmpty
             ? const Center(
                 child: Text(
-                  '아직 남긴 신앙 기록이 없습니다.\n신앙(예배,말씀,기도,삶의 사건)을 기록해보세요.',
+                  '아직 남긴 신앙 다이어리가 없습니다.\n오늘 하나님과 함께한 순간을 기록해 보세요!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.ink300,
@@ -139,14 +139,14 @@ class _CompanionDiaryEntriesScreenState
       });
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('동행 일지를 수정했어요.')));
+      ).showSnackBar(const SnackBar(content: Text('신앙 다이어리를 수정했어요.')));
     } catch (error) {
       if (!context.mounted) {
         return;
       }
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('동행 일지를 저장하지 못했습니다.\n$error')));
+      ).showSnackBar(SnackBar(content: Text('신앙 다이어리를 저장하지 못했습니다.\n$error')));
     }
   }
 
@@ -178,7 +178,7 @@ class _CompanionDiaryEntriesScreenState
       });
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('동행 일지를 삭제했어요.')));
+      ).showSnackBar(const SnackBar(content: Text('신앙 다이어리를 삭제했어요.')));
     } catch (error) {
       if (!context.mounted) {
         return;

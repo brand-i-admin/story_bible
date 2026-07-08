@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/app_color_palette.dart';
 import '../parchment_dialog.dart';
 import 'map_tile_style.dart';
 
@@ -38,28 +39,28 @@ class _MapAttributionLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 6, right: 8),
-          child: Icon(Icons.circle, size: 5, color: Color(0xFF9A7A4C)),
+        Padding(
+          padding: const EdgeInsets.only(top: 6, right: 8),
+          child: Icon(Icons.circle, size: 5, color: palette.currentAccentDeep),
         ),
         Expanded(
           child: RichText(
             text: TextSpan(
-              style: const TextStyle(
-                fontSize: 13,
-                height: 1.5,
-                color: Color(0xFF3A2A1A),
-              ),
+              style: TextStyle(fontSize: 13, height: 1.5, color: palette.text),
               children: [
                 TextSpan(text: source),
                 if (license != null) ...[
                   const TextSpan(text: ' · '),
                   TextSpan(
                     text: license!,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      color: palette.primaryDeep,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ],
               ],

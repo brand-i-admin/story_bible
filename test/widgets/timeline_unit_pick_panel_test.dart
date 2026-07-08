@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/models/story_event.dart';
+import 'package:story_bible/theme/app_color_palette.dart';
+import 'package:story_bible/theme/app_theme.dart';
 import 'package:story_bible/widgets/v2/timeline_unit_pick_panel.dart';
 
 void main() {
@@ -88,6 +90,48 @@ void main() {
     await tester.tap(find.text('전체 선택'));
     expect(selectedAll, isTrue);
     expect(clearedAll, isFalse);
+  });
+
+  testWidgets('블랙 팔레트의 구간 선택 패널은 어두운 표면과 밝은 글자를 사용한다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(palette: AppColorPalette.blackMap),
+        home: Scaffold(
+          body: SizedBox(
+            width: 390,
+            height: 240,
+            child: TimelineUnitPickPanel(
+              events: [
+                _event(
+                  'patriarch_abraham_isaac_promise',
+                  '아브라함과 이삭의 약속',
+                  1,
+                  globalRank: 1,
+                ),
+              ],
+              selectedUnitCodes: const {'patriarch_abraham_isaac_promise'},
+              onToggleUnit: (_) {},
+              onSelectAll: () {},
+              onClearAll: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final surface = tester.widget<DecoratedBox>(
+      find.byKey(const ValueKey('timeline-unit-panel-surface')),
+    );
+    final decoration = surface.decoration as BoxDecoration;
+    final gradient = decoration.gradient! as LinearGradient;
+    final title = tester.widget<Text>(find.text('구간 선택'));
+    final cardTitle = tester.widget<Text>(find.text('1. 아브라함과 이삭의 약속'));
+
+    expect(gradient.colors.first, AppColorPalette.blackMap.softSurface);
+    expect(gradient.colors.last, AppColorPalette.blackMap.mutedSurface);
+    expect(title.style?.color, AppColorPalette.blackMap.text);
+    expect(cardTitle.style?.color, AppColorPalette.blackMap.text);
   });
 
   testWidgets('시간순 구간 카드 설명은 35자 안팎의 짧은 문장으로 렌더링한다', (tester) async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 
 /// 지도 위에 떠 있는 흐릿한 안내 문구. 사용자가 무엇을 해야 할지 모를 때
@@ -22,24 +23,28 @@ class MapHintOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final outerColor = _guideOuterColor(palette);
+    final dismissBadgeColor = _guideDismissBadgeColor(palette);
     return Center(
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 220),
         margin: const EdgeInsets.symmetric(horizontal: 22),
         constraints: const BoxConstraints(maxWidth: 410),
         child: Container(
+          key: const ValueKey('map-hint-container'),
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.54),
+            color: outerColor,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.24),
+              color: palette.utilityBorder.withValues(alpha: 0.58),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.30),
-                blurRadius: 14,
+                color: palette.primaryDeep.withValues(alpha: 0.16),
+                blurRadius: 18,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -57,27 +62,27 @@ class MapHintOverlay extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.14),
+                    color: dismissBadgeColor,
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.20),
+                      color: palette.currentAccent.withValues(alpha: 0.32),
                       width: 1,
                     ),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         Icons.hourglass_top_rounded,
-                        color: Colors.white.withValues(alpha: 0.86),
+                        color: Colors.white,
                         size: 13,
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6),
                       Text(
                         '화면 아무데나 누르면 사라집니다',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.88),
+                          color: Colors.white,
                           fontSize: 11.5,
                           fontWeight: FontWeight.w800,
                           height: 1.2,
@@ -113,13 +118,38 @@ const double _guideAvatarGap = 12;
 const double _guideAvatarSize = 48;
 const double _guideAvatarImageScale = 1.13;
 
+Color _guideOuterColor(AppColorPalette palette) {
+  return palette.utilityBackground.withValues(alpha: 0.64);
+}
+
+Color _guideDismissBadgeColor(AppColorPalette palette) {
+  return Color.alphaBlend(
+    palette.currentAccentDeep.withValues(alpha: 0.82),
+    palette.utilityBackground,
+  ).withValues(alpha: 0.78);
+}
+
+Color _guideSpeechBubbleColor(AppColorPalette palette) {
+  return Color.alphaBlend(
+    palette.characterAccent.withValues(alpha: 0.68),
+    palette.utilityBackground,
+  ).withValues(alpha: 0.72);
+}
+
+Color _guideStepBadgeColor(AppColorPalette palette) {
+  return Color.alphaBlend(
+    palette.currentAccentDeep.withValues(alpha: 0.70),
+    palette.characterAccent,
+  ).withValues(alpha: 0.70);
+}
+
 TextStyle _guideSpeechTextStyle() {
-  return TextStyle(
-    color: Colors.white.withValues(alpha: 0.96),
+  return const TextStyle(
+    color: Colors.white,
     fontSize: 12.4,
     fontWeight: FontWeight.w700,
     height: 1.38,
-    shadows: const [],
+    shadows: [],
   );
 }
 
@@ -141,14 +171,16 @@ class _GuideSpeechBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final speechBubbleColor = _guideSpeechBubbleColor(palette);
     return Container(
       key: const ValueKey('map-hint-speech-bubble'),
       padding: const EdgeInsets.fromLTRB(13, 11, 13, 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.17),
+        color: speechBubbleColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.27),
+          color: palette.characterAccent.withValues(alpha: 0.36),
           width: 1,
         ),
       ),
@@ -194,7 +226,7 @@ class _GuideSpeechMessage extends StatelessWidget {
                     key: ValueKey('map-hint-aside-line-${line.trim()}'),
                     text: line.trim(),
                     style: textStyle.copyWith(
-                      color: Colors.white.withValues(alpha: 0.84),
+                      color: Colors.white,
                       fontSize: 11.2,
                       fontWeight: FontWeight.w700,
                     ),
@@ -234,6 +266,8 @@ class _GuideStepLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final stepBadgeColor = _guideStepBadgeColor(palette);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -245,9 +279,9 @@ class _GuideStepLine extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white.withValues(alpha: 0.18),
+            color: stepBadgeColor,
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.44),
+              color: palette.currentAccent.withValues(alpha: 0.38),
               width: 1,
             ),
           ),
@@ -320,6 +354,7 @@ class _GuideAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       curve: Curves.easeOutCubic,
@@ -328,14 +363,14 @@ class _GuideAvatar extends StatelessWidget {
       padding: EdgeInsets.all(size >= 50 ? 3 : 2.4),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.parchmentCream.withValues(alpha: 0.92),
+        color: palette.softSurface.withValues(alpha: 0.94),
         border: Border.all(
-          color: AppColors.goldDeep.withValues(alpha: 0.72),
+          color: palette.currentAccentDeep.withValues(alpha: 0.74),
           width: size >= 50 ? 1.2 : 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.30),
+            color: palette.primaryDeep.withValues(alpha: 0.24),
             blurRadius: size >= 50 ? 12 : 8,
             offset: Offset(0, size >= 50 ? 4 : 2),
           ),

@@ -10,6 +10,7 @@ import '../models/event_emotion_mark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
 import '../state/story_controller.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import 'character_panel.dart';
 import 'event_timeline_row.dart';
@@ -171,19 +172,25 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isCollapsedStub = constraints.maxHeight <= collapsedStubThreshold;
-        final accentColor = _stageAccentColor(widget.panelStage);
+        final accentColor = _stageAccentColor(context, widget.panelStage);
         return ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
           child: DecoratedBox(
-            decoration: _panelDecoration(accentColor),
+            decoration: _panelDecoration(context, accentColor),
             child: Stack(
               children: [
                 const Positioned.fill(
                   child: IgnorePointer(child: _PanelTextureLayer()),
                 ),
-                const Positioned.fill(
+                Positioned.fill(
                   child: IgnorePointer(
-                    child: CustomPaint(painter: _PanelTexturePainter()),
+                    child: CustomPaint(
+                      painter: _PanelTexturePainter(
+                        lineColor: AppPaletteTheme.of(
+                          context,
+                        ).text.withValues(alpha: 0.05),
+                      ),
+                    ),
                   ),
                 ),
                 if (isCollapsedStub)
@@ -255,17 +262,25 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
     );
   }
 
-  BoxDecoration _panelDecoration(Color accentColor) {
+  BoxDecoration _panelDecoration(BuildContext context, Color accentColor) {
+    final palette = AppPaletteTheme.of(context);
+    final darkPanel = palette == AppColorPalette.blackMap;
     return BoxDecoration(
-      gradient: const LinearGradient(
+      gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [Color(0xFFFBF5E9), Color(0xFFF6EAD5), Color(0xFFEEDCBE)],
+        colors: [
+          palette.softSurface,
+          palette.panelSurface,
+          palette.mutedSurface,
+        ],
       ),
       borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
       border: Border.fromBorderSide(
         BorderSide(
-          color: Color.lerp(const Color(0xFF8C6743), accentColor, 0.38)!,
+          color: darkPanel
+              ? palette.utilityBorder.withValues(alpha: 0.44)
+              : Color.lerp(AppColors.borderFloating, accentColor, 0.52)!,
           width: 1.15,
         ),
       ),
@@ -513,6 +528,7 @@ class _CharacterStepNextPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -521,7 +537,11 @@ class _CharacterStepNextPill extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: const Color(0xFF8C5A2E),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [palette.actionTop, palette.actionBottom],
+            ),
             borderRadius: BorderRadius.circular(999),
             boxShadow: const [
               BoxShadow(

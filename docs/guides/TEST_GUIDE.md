@@ -54,7 +54,7 @@ python3 tools/lint/check_code_metrics.py
 | `app_notification_test.dart` | 알림 row 파싱, deep link/metadata |
 | `app_user_profile_test.dart` | 프로필 모델 기본값과 role |
 | `bible_ref_test.dart`, `bible_verse_test.dart`, `saved_bible_verse_test.dart` | 성경 본문/저장 구절 값 변환 |
-| `character_test.dart`, `character_study_progress_test.dart` | 인물, 아바타, 학습 진행 모델 |
+| `character_test.dart` | 인물, 아바타 모델 |
 | `era_test.dart`, `story_event_test.dart`, `landmark_test.dart` | 시대/사건/랜드마크 row 변환 |
 | `event_emotion_mark_test.dart`, `intercessory_prayer_item_test.dart` | 감정/기도 모델 |
 | `event_proposal_test.dart` | 제안 상태, 제안 payload, 관리자 workflow 데이터 |
@@ -72,6 +72,7 @@ enum 문자열, JSON list/map 변환은 정상값과 빈값을 같이 넣는다.
 | Repository | `test/data/user_repository_test.dart` | 유저 프로필, 알림, 진행도, 일지 |
 | Repository | `test/data/auth_repository_test.dart` | 계정 삭제 확인 아이디 선택/비교 helper |
 | Repository | `test/data/font_scale_repository_test.dart` | 접근성 글자 크기 저장/복원 |
+| Repository | `test/data/color_palette_repository_test.dart` | 전역 색 조합 저장/복원 |
 | Repository | `test/data/character_name_fallbacks_test.dart` | 인물 이름 fallback |
 | State | `test/state/story_state_test.dart` | `StoryState.copyWith`, 로딩/에러 상태 |
 | State | `test/state/story_controller_test.dart` | controller orchestration |

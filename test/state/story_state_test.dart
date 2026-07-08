@@ -136,6 +136,15 @@ void main() {
       expect(updated.completedBibleChapterKeys, {'1:1', '1:2'});
     });
 
+    test('completedBibleChapterReadAts를 교체할 수 있다', () {
+      const original = StoryState();
+      final readAt = DateTime.utc(2026, 5, 26, 1);
+      final updated = original.copyWith(
+        completedBibleChapterReadAts: {'1:1': readAt},
+      );
+      expect(updated.completedBibleChapterReadAts, {'1:1': readAt});
+    });
+
     test('eras를 교체할 수 있다', () {
       const original = StoryState();
       final era = Era.fromMap({

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../models/era.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/era_colors.dart';
 import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
 import '../story_home_styles.dart';
 
 /// 시대 선택 칩 — 구약/신약 두 줄. HomeIntroPanel 과 ProfileTabPage 의
-/// "장소로 시작" 탭이 공유한다.
+/// 이야기 진행률 팝업이 공유한다.
 ///
 /// 비선택 시 시대 고유 색([EraColors.forCode]) 점 + 아이콘 노출, 선택 시
-/// 갈색 그라데이션 활성 표시. 같은 시대 색은 지도 폴리곤에도 사용된다.
+/// 현재 팔레트의 다이어리 역할색으로 활성 표시. 같은 시대 색은 지도 폴리곤에도 사용된다.
 class EraPickRows extends StatelessWidget {
   const EraPickRows({
     super.key,
@@ -89,7 +90,7 @@ class EraPickRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final palette = AppPaletteTheme.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -99,9 +100,9 @@ class EraPickRow extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10),
             child: Text(
               '$label:',
-              style: theme.textTheme.labelLarge?.copyWith(
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: theme.colorScheme.onSurfaceVariant,
+                color: palette.mutedText,
               ),
             ),
           ),
@@ -143,24 +144,36 @@ class _EraChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final eraColor = EraColors.forCode(era.code);
     final iconData = eraIconFor(era.code);
+    final selectedColors = [
+      palette.currentAccentDeep,
+      palette.currentAccentDeep,
+    ];
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadii.lg),
-        splashColor: AppColors.brownWarm.withValues(alpha: 0.18),
-        highlightColor: AppColors.brownWarm.withValues(alpha: 0.10),
+        splashColor: eraColor.withValues(alpha: 0.18),
+        highlightColor: eraColor.withValues(alpha: 0.10),
         child: AnimatedContainer(
+          key: ValueKey('era-chip-${era.id}'),
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.x3,
             vertical: AppSpacing.x2,
           ),
-          decoration: softButtonDecoration(selected: selected),
+          decoration: selected
+              ? _selectedEraChipDecoration(selectedColors)
+              : softButtonDecoration(
+                  selected: false,
+                  palette: palette,
+                  includeShadow: false,
+                ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -185,7 +198,7 @@ class _EraChip extends StatelessWidget {
                 _shortEraLabel(era),
                 style: AppTextStyles.chipLabel.copyWith(
                   fontSize: 11.5,
-                  color: selected ? AppColors.parchmentCream : AppColors.ink800,
+                  color: selected ? AppColors.fgOnDark : palette.text,
                 ),
               ),
               if (selected) ...[
@@ -202,6 +215,21 @@ class _EraChip extends StatelessWidget {
       ),
     );
   }
+}
+
+BoxDecoration _selectedEraChipDecoration(List<Color> colors) {
+  return BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: colors,
+    ),
+    borderRadius: BorderRadius.circular(AppRadii.lg),
+    border: Border.all(
+      color: AppColors.parchmentCream.withValues(alpha: 0.72),
+      width: 1.0,
+    ),
+  );
 }
 
 String _shortEraLabel(Era era) {

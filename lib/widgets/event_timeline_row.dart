@@ -7,6 +7,7 @@ import '../models/era.dart';
 import '../models/event_emotion_mark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
+import '../theme/app_color_palette.dart';
 import '../utils/scene_asset_loader.dart';
 import 'completion_celebration.dart';
 import 'v2/region_event_list.dart' show StoryEventThumbCard;
@@ -338,14 +339,15 @@ class _DashedArrowConnector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return SizedBox(
       width: width,
       child: Center(
         child: SizedBox(
           height: 18,
           child: CustomPaint(
-            painter: const _ConnectorPainter(
-              color: Color(0xFF8C6743),
+            painter: _ConnectorPainter(
+              color: palette.timelineAccent,
               strokeWidth: 1.6,
               dashLength: 4,
               gapLength: 3,

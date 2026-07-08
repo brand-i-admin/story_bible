@@ -5,6 +5,7 @@ import '../../models/era.dart';
 import '../../models/event_emotion_mark.dart';
 import '../../models/quiz_attempt_summary.dart';
 import '../../models/story_event.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/scene_asset_loader.dart';
 import '../v2/region_event_list.dart' show StoryEventThumbCard;
@@ -41,6 +42,7 @@ class ProfileEventReviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final sortedEvents = sortEventsByEraThenIndex(events, eras);
     if (sortedEvents.isEmpty) {
       return Center(
@@ -49,8 +51,8 @@ class ProfileEventReviewGrid extends StatelessWidget {
           child: Text(
             emptyText,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppColors.ink300,
+            style: TextStyle(
+              color: palette.mutedText,
               fontSize: 13,
               fontWeight: FontWeight.w800,
               height: 1.35,
@@ -186,19 +188,20 @@ class _ProfileEventEraDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 8, 2, 0),
       child: Row(
         children: [
-          const Expanded(child: Divider(color: Color(0x668E6F48), height: 1)),
+          Expanded(child: Divider(color: palette.subtleBorder, height: 1)),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 8),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: const Color(0xFFF3E5BF),
+              color: palette.currentFill,
               borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: const Color(0x998E6F48), width: 0.9),
+              border: Border.all(color: palette.subtleBorder, width: 0.9),
             ),
             child: Text(
               label,
@@ -207,15 +210,20 @@ class _ProfileEventEraDivider extends StatelessWidget {
                   ? TextOverflow.visible
                   : TextOverflow.ellipsis,
               softWrap: true,
-              style: const TextStyle(
-                color: Color(0xFF5A4326),
+              style: TextStyle(
+                color: palette.text,
                 fontSize: 11.5,
                 fontWeight: FontWeight.w900,
                 height: 1.0,
               ),
             ),
           ),
-          const Expanded(child: Divider(color: Color(0x668E6F48), height: 1)),
+          Expanded(
+            child: Divider(
+              color: AppColors.borderCard.withValues(alpha: 0.58),
+              height: 1,
+            ),
+          ),
         ],
       ),
     );

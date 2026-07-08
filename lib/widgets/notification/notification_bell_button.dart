@@ -4,11 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/app_notification.dart';
 import '../../state/notification_providers.dart';
+import '../../theme/app_color_palette.dart';
+import '../../theme/tokens.dart';
 import '../web_pointer_interceptor.dart';
 import 'notification_badge.dart';
 import 'notification_dropdown.dart';
 
-/// 홈화면 상단의 종(bell) 아이콘 버튼.
+/// 프로필 헤더의 종(bell) 아이콘 버튼.
 ///
 /// - `unreadNotificationCountProvider` 를 구독해 읽지 않은 개수가 1개 이상이면
 ///   빨간 느낌표 배지 표시.
@@ -116,6 +118,7 @@ class _NotificationBellButtonState
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final unread =
         ref.watch(unreadNotificationCountProvider).asData?.value ?? 0;
     return Material(
@@ -128,9 +131,9 @@ class _NotificationBellButtonState
           height: 36,
           width: 38,
           decoration: BoxDecoration(
-            color: const Color(0xB02A2118),
+            color: palette.utilityBackground,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xBFD8BF99), width: 0.9),
+            border: Border.all(color: palette.utilityBorder, width: 0.9),
           ),
           alignment: Alignment.center,
           child: Stack(
@@ -138,7 +141,7 @@ class _NotificationBellButtonState
             children: [
               const Icon(
                 Icons.notifications_outlined,
-                color: Color(0xFFF8EED9),
+                color: AppColors.fgOnDark,
                 size: 19,
               ),
               NotificationBadge(visible: unread > 0),

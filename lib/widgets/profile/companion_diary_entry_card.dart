@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../models/user_companion_diary_entry.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../parchment_dialog.dart';
 
@@ -40,8 +41,19 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final darkSurface = palette == AppColorPalette.blackMap;
     final date = dateLabel?.trim();
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final cardColor = darkSurface
+        ? palette.cardSurface
+        : AppColors.parchmentCream.withValues(alpha: 0.74);
+    final borderColor = darkSurface
+        ? palette.subtleBorder
+        : const Color(0x66BCA47A);
+    final dateColor = darkSurface ? palette.successTop : AppColors.greenBot;
+    final titleColor = darkSurface ? palette.text : AppColors.ink800;
+    final bodyColor = darkSurface ? palette.text : AppColors.ink350;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -50,9 +62,9 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
           decoration: BoxDecoration(
-            color: AppColors.parchmentCream.withValues(alpha: 0.74),
+            color: cardColor,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0x66BCA47A), width: 0.8),
+            border: Border.all(color: borderColor, width: 0.8),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,8 +77,8 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
                       ? TextOverflow.visible
                       : TextOverflow.ellipsis,
                   softWrap: true,
-                  style: const TextStyle(
-                    color: AppColors.greenBot,
+                  style: TextStyle(
+                    color: dateColor,
                     fontSize: 11.6,
                     fontWeight: FontWeight.w900,
                     height: 1.25,
@@ -89,8 +101,8 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
                           ? TextOverflow.visible
                           : TextOverflow.ellipsis,
                       softWrap: true,
-                      style: const TextStyle(
-                        color: AppColors.ink800,
+                      style: TextStyle(
+                        color: titleColor,
                         fontSize: 15.2,
                         fontWeight: FontWeight.w900,
                         height: 1.22,
@@ -108,8 +120,8 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
                     ? TextOverflow.visible
                     : TextOverflow.ellipsis,
                 softWrap: true,
-                style: const TextStyle(
-                  color: AppColors.ink350,
+                style: TextStyle(
+                  color: bodyColor,
                   fontSize: 12.4,
                   fontWeight: FontWeight.w700,
                   height: 1.42,
@@ -128,14 +140,20 @@ class CompanionDiaryEmojiBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final darkSurface = palette == AppColorPalette.blackMap;
     return Container(
       width: 30,
       height: 30,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.greenTint1,
-        border: Border.all(color: AppColors.greenBot.withAlpha(0x55)),
+        color: darkSurface ? palette.successFill : AppColors.greenTint1,
+        border: Border.all(
+          color: darkSurface
+              ? palette.successBottom.withValues(alpha: 0.62)
+              : AppColors.greenBot.withAlpha(0x55),
+        ),
       ),
       child: const FittedBox(
         fit: BoxFit.scaleDown,
@@ -159,8 +177,12 @@ class CompanionDiaryEntryDetailDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final darkSurface = palette == AppColorPalette.blackMap;
+    final titleColor = darkSurface ? palette.text : AppColors.ink800;
+    final bodyColor = darkSurface ? palette.text : AppColors.ink500;
     return ParchmentDialog(
-      title: '동행 일지 상세',
+      title: '신앙 다이어리 상세',
       subtitle: formatCompanionDiaryEntryDate(entry.entryDate),
       showCloseButton: true,
       actions: [
@@ -189,8 +211,8 @@ class CompanionDiaryEntryDetailDialog extends StatelessWidget {
               Expanded(
                 child: Text(
                   entry.title,
-                  style: const TextStyle(
-                    color: AppColors.ink800,
+                  style: TextStyle(
+                    color: titleColor,
                     fontSize: 17,
                     fontWeight: FontWeight.w900,
                     height: 1.25,
@@ -203,8 +225,8 @@ class CompanionDiaryEntryDetailDialog extends StatelessWidget {
           Text(
             entry.body,
             key: ValueKey('companion-diary-detail-body-${entry.id}'),
-            style: const TextStyle(
-              color: AppColors.ink500,
+            style: TextStyle(
+              color: bodyColor,
               fontSize: 13.4,
               fontWeight: FontWeight.w700,
               height: 1.55,
@@ -233,10 +255,12 @@ Future<bool> showCompanionDiaryDeleteConfirmDialog(
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (dialogContext) {
+      final palette = AppPaletteTheme.of(dialogContext);
+      final darkSurface = palette == AppColorPalette.blackMap;
       final largeText = MediaQuery.textScalerOf(dialogContext).scale(1) >= 1.3;
       return ParchmentDialog(
-        title: '동행 일지를 삭제할까요?',
-        subtitle: '남긴 일지를 삭제합니다.',
+        title: '신앙 다이어리를 삭제할까요?',
+        subtitle: '남긴 다이어리를 삭제합니다.',
         actions: [
           ParchmentDialogActionButton(
             label: '취소',
@@ -254,8 +278,8 @@ Future<bool> showCompanionDiaryDeleteConfirmDialog(
           maxLines: largeText ? null : 2,
           overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
           softWrap: true,
-          style: const TextStyle(
-            color: AppColors.ink500,
+          style: TextStyle(
+            color: darkSurface ? palette.text : AppColors.ink500,
             fontSize: 13.2,
             fontWeight: FontWeight.w800,
             height: 1.4,
@@ -308,7 +332,7 @@ class _CompanionDiaryEditorDialogState
   Widget build(BuildContext context) {
     final isEditing = widget.initialEntry != null;
     return ParchmentDialog(
-      title: isEditing ? '동행 일지 수정' : '동행 일지 작성',
+      title: isEditing ? '신앙 다이어리 수정' : '신앙 다이어리 작성',
       subtitle: '오늘 하루 예수님과 동행한 마음을 기록해 보세요.',
       showCloseButton: true,
       actions: [

@@ -3,47 +3,558 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('프로필 활동 탭은 초록 segmented 버튼 톤을 사용한다', () {
+  test('프로필 헤더와 본문 프로필 카드는 공지/알림/수정 진입점을 분리한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();
+    final homeSource = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+    final helperSource = File(
+      'lib/widgets/profile/profile_helpers.dart',
+    ).readAsStringSync();
 
-    expect(source, contains('height: 42'));
-    expect(source, contains('color: const Color(0xFFF1E1C0)'));
-    expect(source, isNot(contains('math.min(constraints.maxWidth, 336.0)')));
+    expect(source, contains("Text(\n              '프로필'"));
+    expect(source, contains("tooltip: '공지사항과 사용법'"));
+    expect(source, contains('Icons.campaign_rounded'));
+    expect(source, contains('onTap: widget.onOpenAppPublications'));
+    expect(source, contains('NotificationBellButton('));
+    expect(
+      source.indexOf("tooltip: '공지사항과 사용법'"),
+      lessThan(source.indexOf('NotificationBellButton(')),
+    );
+    expect(source, isNot(contains('Icons.edit_rounded')));
+    expect(source, contains('_buildProfileBodyShell'));
+    expect(source, contains('_profileBodyShellSurface'));
+    expect(source, contains('color: _profileBodyShellSurface(palette)'));
     expect(
       source,
-      contains('selected ? AppColors.brownWarm : Colors.transparent'),
+      contains('AppColorPalette.blackMap => const Color(0xFF05070B)'),
     );
-    expect(source, contains('selected ? Colors.white : AppColors.ink350'));
-    expect(source, contains('boxShadow: selected ? AppShadows.sm : null'));
+    expect(source, contains('_profileIdentitySurface'));
+    expect(source, contains('color: _profileIdentitySurface(palette)'));
+    expect(source, contains('_buildProfileIdentityCard('));
+    expect(source, contains('Text.rich('));
+    expect(source, contains("text: '샬롬! 🙌 '"));
+    expect(source, contains('text: profile.nickname'));
+    expect(source, contains("text: '님'"));
+    expect(source, contains('palette.primary.withValues(alpha: 0.04)'));
+    expect(source, contains("'오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!'"));
+    expect(source, contains('maxLines: largeText ? 4 : 2'));
+    expect(source, contains('fontSize: largeText ? 16.8 : 18.0'));
+    expect(source, contains('fontSize: largeText ? 12.4 : 13.4'));
+    expect(source, isNot(contains('_buildProfileJourneyButton')));
+    expect(source, isNot(contains("'말씀 여정 보기'")));
+    expect(source, contains('Icons.chevron_right_rounded'));
+    expect(source, contains('_buildTodayProfileActionChecklist'));
+    expect(source, contains("ValueKey('profile-today-action-checklist-info')"));
+    expect(source, contains('_openTodayActionChecklistInfo'));
+    expect(source, contains('오늘의 할일'));
+    expect(source, contains('매일 이야기 탐험, 신앙 다이어리 작성, 통독 진행을 해봅시다!'));
+    expect(source, contains("'할일:'"));
+    expect(source, contains('alignment: WrapAlignment.center'));
+    expect(source, contains('borderRadius: BorderRadius.circular(4)'));
+    expect(
+      source,
+      contains('border: Border.all(color: checkBorder, width: 1.1)'),
+    );
+    expect(source, contains("label: '이야기 탐험'"));
+    expect(source, contains("label: '신앙 다이어리'"));
+    expect(source, contains("label: '통독'"));
+    expect(source, contains('size: largeText ? 58 : 62'));
+    expect(source, contains("message: '프로필 수정'"));
+    expect(
+      helperSource,
+      contains('child: Icon(icon, size: 17, color: palette.text)'),
+    );
+    expect(homeSource, isNot(contains("tooltip: '공지사항과 사용법'")));
+    expect(homeSource, isNot(contains('NotificationBellButton(')));
   });
 
-  test('프로필 기록 퀴즈 통계 카드는 높이와 여백을 확보한다', () {
+  test('프로필 수정 팝업은 사진과 닉네임 섹션 외곽선을 숨긴다', () {
+    final source = File(
+      'lib/widgets/profile_editor_dialog.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('_editorCardDecoration'));
+    expect(source, contains('decoration: _editorCardDecoration('));
+    expect(source, contains('modalSurfaceDecoration(palette: palette)'));
+    expect(source, isNot(contains('decoration: floatingPanelDecoration(')));
+  });
+
+  test('프로필 다크 모드 보조 팝업과 당겨 새로고침은 팔레트를 따른다', () {
+    final profileSource = File(
+      'lib/widgets/profile_tab_page.dart',
+    ).readAsStringSync();
+    final leftPanelSource = File(
+      'lib/widgets/profile/profile_left_panel.dart',
+    ).readAsStringSync();
+    final mapDialogSource = File(
+      'lib/widgets/map/map_attribution_dialog.dart',
+    ).readAsStringSync();
+    final legalSource = File(
+      'lib/screens/legal_documents_screen.dart',
+    ).readAsStringSync();
+
+    expect(profileSource, contains('Future<void> _refreshProfilePage()'));
+    expect(profileSource, contains('RefreshIndicator('));
+    expect(profileSource, contains('onRefresh: _refreshProfilePage'));
+    expect(profileSource, contains('AlwaysScrollableScrollPhysics'));
+    expect(profileSource, contains('final VoidCallback? onBackToHome;'));
+    expect(profileSource, contains('onBack: widget.onBackToHome'));
+    expect(
+      leftPanelSource,
+      contains('final palette = AppPaletteTheme.of(dialogContext);'),
+    );
+    expect(leftPanelSource, contains('color: palette.text'));
+    expect(
+      mapDialogSource,
+      contains('final palette = AppPaletteTheme.of(context);'),
+    );
+    expect(mapDialogSource, contains('color: palette.text'));
+    expect(mapDialogSource, contains('color: palette.primaryDeep'));
+    expect(legalSource, contains('backgroundColor: palette.pageBottom'));
+    expect(legalSource, contains('colors: palette.pageGradient'));
+    expect(
+      legalSource,
+      contains('BoxDecoration _panelDecoration(AppColorPalette palette)'),
+    );
+    expect(
+      legalSource,
+      contains('BoxDecoration _cardDecoration(AppColorPalette palette)'),
+    );
+  });
+
+  test('프로필 뒤로가기는 홈 인트로 상태를 강제로 복구한다', () {
+    final homeSource = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+
+    expect(
+      homeSource,
+      contains('onBackToHome: _resetProfileRouteToHomeIntroGuide'),
+    );
+    expect(homeSource, contains('void _resetProfileRouteToHomeIntroGuide()'));
+    expect(homeSource, contains('_completeMapCelebration();'));
+    expect(homeSource, contains('unawaited(ctl.setSelectedEra(null));'));
+    expect(homeSource, contains('ctl.clearSelectionMode();'));
+    expect(homeSource, contains('_selectionStep = 1;'));
+    expect(
+      homeSource,
+      contains(
+        '_animateSelectionPanelToStage(StorySelectionPanelStage.expanded)',
+      ),
+    );
+  });
+
+  test('프로필 활동 탭은 밝은 레일과 선택색 본문 표면을 연결한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();
 
-    expect(source, contains('EdgeInsets.fromLTRB(12, 11, 12, 11)'));
-    expect(source, contains('const SizedBox(width: 9)'));
-    expect(source, contains('BoxConstraints(minHeight: 62)'));
-    expect(source, contains('mainAxisAlignment: MainAxisAlignment.center'));
-    expect(source, contains('crossAxisAlignment: CrossAxisAlignment.center'));
-  });
-
-  test('프로필 전체 진행률 카드는 진행바 중앙에 작은 완료 수와 전체 수를 표시한다', () {
-    final source = File(
-      'lib/widgets/profile/profile_left_panel.dart',
-    ).readAsStringSync();
-
-    expect(source, contains("final valueLabel = '\$completed/\$total';"));
-    expect(source, contains('Stack('));
+    expect(source, contains('_profileTabRailDecoration'));
+    expect(source, contains('_profileLinkedTabGroupDecoration'));
+    expect(source, contains('_profileLinkedTabBodyDecoration'));
+    expect(source, contains('_profileSelectedTabSurface'));
+    expect(source, contains('_profileSelectedTabButtonSurface'));
+    expect(source, contains('_ProfileIconTabButton'));
+    expect(source, contains('AppColors.fgOnDark'));
+    expect(source, contains('palette.cardUnselectedTop'));
+    expect(source, contains('palette.cardUnselectedBottom'));
+    expect(source, contains('Icons.self_improvement_rounded'));
+    expect(source, isNot(contains('_ProfileContentTab.records')));
+    expect(source, contains('_profileIconTabHeight = 44'));
+    expect(source, contains('height: _profileIconTabHeight'));
+    expect(source, contains('child: Row('));
+    expect(source, contains('Flexible('));
+    expect(source, contains('child: Icon(icon, color: accent, size: 16.5)'));
     expect(source, contains('alignment: Alignment.center'));
-    expect(source, contains('minHeight: 13'));
-    expect(source, contains('fontSize: 9.4'));
+    expect(source, contains('crossAxisAlignment: CrossAxisAlignment.center'));
+    expect(source, contains('_profileLeftCardChromeHeight = 90'));
+    expect(source, isNot(contains('return 258;')));
+    expect(source, isNot(contains('labelBelow')));
+    expect(source, isNot(contains('fgOnDark.withValues(alpha: 0.92)')));
+    expect(source, isNot(contains('floatingPanelDecoration')));
+    expect(source, isNot(contains('_ProfileTabContentConnector')));
+    expect(source, isNot(contains('math.min(constraints.maxWidth, 336.0)')));
+  });
+
+  test('프로필 이야기 탐험 영역은 전체 너비 카드 덱과 요약 카드를 사용한다', () {
+    final source = File(
+      'lib/widgets/profile/profile_left_panel.dart',
+    ).readAsStringSync();
+    final progressSource = File(
+      'lib/widgets/profile/profile_progress_section.dart',
+    ).readAsStringSync();
+    final pageSource = File(
+      'lib/widgets/profile_tab_page.dart',
+    ).readAsStringSync();
+    final homeSource = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('_ProfileStoryExplorationDashboard'));
+    expect(source, contains('_profileStoryExplorationSurface'));
+    expect(source, contains('color: _profileStoryExplorationSurface(palette)'));
+    expect(source, contains('_ProfileDashboardTitle'));
+    expect(source, contains("'이야기 탐험'"));
+    expect(source, contains('Icons.explore_rounded'));
+    expect(source, contains('LinearGradient'));
+    expect(source, contains('_ProfileStoryJourneyDeck'));
+    expect(source, contains('_StoryJourneyDeckEntry'));
+    expect(source, contains('_StoryJourneyDeckLayoutItem'));
+    expect(source, contains('AnimatedPositioned'));
+    expect(source, contains('198.0 + ((textScale - 1) * 140)'));
+    expect(source, contains('sideScale = 0.82'));
+    expect(source, contains('farSideScale = 0.72'));
+    expect(source, contains('maxWidth * 0.95'));
+    expect(source, contains('math.min(3, count)'));
+    expect(source, contains('_visibleDeckItems'));
+    expect(source, contains('_resetToInitialDeck'));
+    expect(source, contains('_handleHorizontalDragEnd'));
+    expect(source, contains('_handleHorizontalDragUpdate'));
+    expect(source, contains('_dragDistance'));
+    expect(source, contains('onHorizontalDragEnd'));
+    expect(source, contains('onHorizontalDragUpdate'));
+    expect(source, contains("'되돌아가기'"));
+    expect(source, contains("recentIndex < 0 && index == 0"));
+    expect(source, contains('ProfileGlowingAddButton'));
+    expect(source, contains('onExploreStoriesFromHome'));
+    expect(source, contains('if (ordered.isEmpty) return const [];'));
+    expect(source, contains('if (current == null) {'));
+    expect(source, contains('onOpenStory(event)'));
+    expect(source, isNot(contains('Expanded(flex: 8, child: exploration)')));
+    expect(source, isNot(contains('Expanded(flex: 9, child: stats)')));
+    expect(source, isNot(contains('final useVertical')));
+    expect(progressSource, contains('_buildProfileStoryExplorationDashboard'));
+    expect(progressSource, isNot(contains('_buildProfileStoryStatsDashboard')));
+    expect(source, contains('_ProfileCompletedRatioText'));
+    expect(source, contains('_StoryExplorationSummarySection'));
+    expect(source, contains('_StoryExplorationSummaryCard'));
+    expect(source, contains('_ProfileStoryProgressPage'));
+    expect(source, contains('_ProfileExplorationLogPage'));
+    expect(source, contains("'이야기 탐험 요약'"));
+    expect(source, contains("label: '이야기'"));
+    expect(source, contains("label: '기록'"));
+    expect(source, contains("label: '저장'"));
+    expect(source, contains("label: '말씀'"));
+    expect(source, contains("text: '개'"));
+    expect(source, contains("math.max(storyProgress.total, 301)"));
+    expect(source, contains("ValueKey('profile-story-summary-explored')"));
+    expect(
+      source,
+      contains("ValueKey('profile-story-summary-exploration-log')"),
+    );
+    expect(source, contains("ValueKey('profile-story-summary-saved-stories')"));
+    expect(source, contains("ValueKey('profile-story-summary-saved-verses')"));
+    expect(source, contains('_StoryJourneyCard'));
+    expect(source, contains('StoryEventThumbCard'));
+    expect(source, contains('SceneAssetLoader()'));
+    expect(source, contains('_ProfileQuizStatsColumn'));
+    expect(source, contains("'탐험 달력과 흔적들'"));
+    expect(source, isNot(contains("'내가 새긴 감정들과 코멘트'")));
+    expect(source, contains("'최근 탐험 이야기'"));
+    expect(source, contains("'다음 이야기'"));
+    expect(source, contains('_StoryJourneyNextGlow'));
+    expect(source, contains("label == '다음 이야기'"));
+    expect(source, contains('!widget.todayStoryActionCompleted'));
+    expect(source, contains('ClipRRect'));
+    expect(source, contains(')..repeat();'));
+    expect(source, contains('math.cos(progress * math.pi * 2)'));
+    expect(source, contains('final edgeAlpha = 0.30 + 0.42 * t'));
+    expect(source, contains('final centerAlpha = 0.035 + 0.075 * t'));
+    expect(source, contains('AppColors.goldHi'));
+    expect(source, contains('AppColors.goldLight'));
+    expect(source, contains('AppColors.gold.withValues(alpha: edgeAlpha)'));
+    expect(source, contains('RadialGradient'));
+    expect(source, isNot(contains('AppColors.profileNextStoryGlow')));
+    expect(source, isNot(contains('AppColors.profileNextStoryGlowEdge')));
+    expect(source, isNot(contains('foregroundDecoration')));
+    expect(source, isNot(contains('_StoryJourneySparkleDot')));
+    expect(source, isNot(contains('Transform.translate')));
+    expect(source, contains('_StoryJourneyGuideNote'));
+    expect(source, contains("'참고'"));
+    expect(source, contains('다음 이야기를 눌러 시작하세요! (완료조건: 감정 새기기)'));
+    expect(
+      source,
+      isNot(
+        contains('color: palette.currentAccentDeep.withValues(alpha: 0.22)'),
+      ),
+    );
+    expect(source, isNot(contains('isCanonicalNextStory')));
+    expect(source, isNot(contains('nextJourneyEventId')));
+    expect(source, contains('ProfileEventOpenSource.targetOnly'));
+    expect(source, contains('ProfileEventOpenSource.detailOnly'));
+    expect(homeSource, contains('source != ProfileEventOpenSource.targetOnly'));
+    expect(homeSource, contains('notifier.setDisplayedEvents({homeEvent.id})'));
+    expect(homeSource, contains('_mapPanelController.focusSelectedEvent'));
+    expect(homeSource, contains('duration: const Duration(seconds: 1)'));
+    expect(homeSource, contains('returnToProfileOnRoot: true'));
+    expect(homeSource, contains('_StoryDetailBackContext'));
+    expect(homeSource, contains('_handleEventDetailBack'));
+    expect(
+      homeSource,
+      contains('final previousEvent = backContext.previousEvent'),
+    );
+    expect(source, contains('label.isNotEmpty'));
+    expect(source, contains('showCharacterPills: !muted'));
+    expect(source, isNot(contains("'이전이전 이야기'")));
+    expect(source, isNot(contains("'이전 이야기'")));
+    expect(source, isNot(contains("'다다음 이야기'")));
+    expect(
+      source,
+      contains('completed: eventEmotionMarks.containsKey(event.id)'),
+    );
+    expect(source, contains('showSummary: !muted'));
+    expect(source, contains('forceOpaqueSurface: !muted'));
+    expect(source, contains('_profileOpaqueStoryCardSurface(palette)'));
+    expect(source, contains('AppColorPalette.blackMap => palette.cardSurface'));
+    expect(source, contains('_profileProgressPageSurface'));
+    expect(pageSource, contains('_profileStoryEraCodeOrder'));
+    expect(pageSource, contains("'era_primeval': 0"));
+    expect(pageSource, contains("'era_nt_post_apostolic': 9"));
+    expect(pageSource, contains('isHiddenEraCode(era.code)'));
+    expect(pageSource, contains('_sortEventsByEraThenIndex('));
+    expect(source, contains("const _ProfileProgressPageSectionTitle("));
+    expect(source, contains("title: '탐험한 이야기'"));
+    expect(source, contains("title: '기록'"));
+    expect(source, contains("'복습 항목'"));
+    expect(source, contains("label: '탐험 달력과 흔적들'"));
+    expect(source, isNot(contains("label: '내가 새긴 감정들과 코멘트'")));
+    expect(source, contains('오답이나 헷갈려요를 누르면 이야기 카드가 나타납니다.'));
+    expect(source, contains("ValueKey('exploration-log-review-events')"));
+    expect(source, contains('scrollable: false'));
+    expect(source, contains('_ProfileProgressPageDivider'));
+    expect(source, contains('ProfileEmotionMarksList'));
+    expect(source, contains('countsByKey: emotionCountsByKey'));
+    expect(source, contains('_EmotionCategoryRow'));
+    expect(source, contains('EventEmotionOption.options.length'));
+    expect(source, contains("ValueKey('emotion-category-\${option.key}')"));
+    expect(source, contains("'\${option.label} \$count'"));
+    expect(source, contains('selectedDate: _selectedLogDate'));
+    expect(source, contains('onSelectedDateChanged'));
+    expect(source, contains('_ExplorationTracePanel'));
+    expect(source, contains('_SelectedDateEmotionSummary'));
+    expect(source, contains('_SelectedDateDiarySummary'));
+    expect(source, contains("ValueKey('selected-date-emotion-comments')"));
+    expect(source, contains("ValueKey('selected-date-companion-diary')"));
+    expect(source, contains('선택한 날짜에 새긴 감정과 코멘트 혹은 신앙 다이어리가 없습니다'));
+    expect(source, isNot(contains("ValueKey('emotion-filter-all')")));
+    expect(source, isNot(contains('selectedKeys.isEmpty')));
+    expect(source, isNot(contains('_EmotionFilterChips')));
     expect(source, contains('fit: BoxFit.scaleDown'));
+    expect(source, contains('storyCount: stats.wrongEventCount'));
+    expect(source, contains('quizCount: stats.wrong'));
+    expect(source, contains('storyCount: stats.confusedEventCount'));
+    expect(source, contains('quizCount: stats.confused'));
+    expect(
+      source,
+      contains('constraints: const BoxConstraints(minHeight: 45)'),
+    );
+    expect(source, contains('emoji: \'✅\''));
+    expect(source, contains('emoji: \'❌\''));
+    expect(source, contains('emoji: \'❔\''));
+    expect(source, contains('fontSize: largeText ? 14.4 : 16.2'));
+    expect(source, contains('fontSize: largeText ? 10.4 : 11.4'));
+    expect(source, contains("text: '\$storyCount 이야기'"));
+    expect(source, contains("text: ' \$quizCount 문항'"));
+    expect(source, contains('fontSize: largeText ? 9.1 : 9.8'));
+    expect(source, contains('textAlign: TextAlign.center'));
+    expect(source, contains('fontSize: largeText ? 8.5 : 9.2'));
+    expect(
+      source,
+      contains('constraints: const BoxConstraints(minHeight: 72)'),
+    );
+    expect(source, isNot(contains('progressFraction')));
+    expect(source, isNot(contains('color.withValues(alpha: 0.14)')));
+    expect(source, isNot(contains('Color(0x0A000000)')));
+    expect(source, isNot(contains('Icons.north_east_rounded')));
+    expect(source, contains('onTap: null'));
+    expect(source, contains('_selectedReviewFilter == filter ? null : filter'));
+    expect(source, contains('exploration-log-review-open-all-'));
+    expect(source, contains("ValueKey('exploration-log-review-all-grid')"));
+    expect(source, contains('events: previewEvents'));
+    expect(source, contains("label: '정답'"));
+    expect(source, contains("label: '오답'"));
+    expect(source, contains("label: '헷갈려요'"));
+    expect(source, contains('color: palette.successBottom'));
+    expect(source, isNot(contains("label: '통독 진행률'")));
+    expect(source, isNot(contains('_ProfileRecordsStatsPanel')));
+    expect(source, isNot(contains('profileQuizCountLabel(')));
+    expect(source, isNot(contains('textScale >= 1.3')));
+  });
+
+  test('프로필 이야기 탐험 요약은 숫자와 테마 역할색을 표시한다', () {
+    final source = File(
+      'lib/widgets/profile/profile_left_panel.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('_StoryExplorationSummaryCard'));
+    expect(source, contains("text: '/\$totalLabel'"));
+    expect(source, contains("text: '개'"));
+    expect(
+      source,
+      contains('if (trailing != null) trailing,\n            countUnitSpan(),'),
+    );
+    expect(source, contains('fontSize: 11.4'));
+    expect(source, contains('fontSize: 12.2'));
+    expect(source, contains('fontSize: largeText ? 14.8 : 16.2'));
+    expect(
+      source,
+      contains('constraints: const BoxConstraints(minHeight: 72)'),
+    );
+    expect(source, contains('color: palette.primary'));
+    expect(source, contains('color: palette.currentAccentDeep'));
+    expect(source, contains('color: palette.successBottom'));
+    expect(source, contains('color: palette.primaryDeep'));
+    expect(source, isNot(contains('progressFraction: storyProgress.fraction')));
+    expect(source, isNot(contains('_StoryProgressMiniCard')));
+    expect(source, isNot(contains('_ProfileProgressDonut')));
+    expect(source, isNot(contains("replaceFirst('/', ' / ')")));
     expect(source, isNot(contains("valueSuffix: '장'")));
     expect(source, isNot(contains("'퀴즈를 풀면 기록이 쌓여요.'")));
+  });
+
+  test('다크 테마에서 주요 프로필과 탐험 표면은 팔레트를 사용한다', () {
+    final profileSource = File(
+      'lib/widgets/profile/profile_left_panel.dart',
+    ).readAsStringSync();
+    final companionSource = File(
+      'lib/widgets/profile/profile_companion_diary.dart',
+    ).readAsStringSync();
+    final emotionSource = File(
+      'lib/widgets/profile/profile_emotion_diary.dart',
+    ).readAsStringSync();
+    final characterSource = File(
+      'lib/widgets/character_panel.dart',
+    ).readAsStringSync();
+    final eventCardSource = File(
+      'lib/widgets/v2/region_event_list.dart',
+    ).readAsStringSync();
+    final eraRowsSource = File(
+      'lib/widgets/v2/era_pick_rows.dart',
+    ).readAsStringSync();
+    final selectionPanelSource = File(
+      'lib/widgets/story_selection_panel.dart',
+    ).readAsStringSync();
+    final dailyMissionSource = File(
+      'lib/widgets/quiz/daily_exploration_section.dart',
+    ).readAsStringSync();
+    final eventDetailSource = File(
+      'lib/widgets/event_detail_page.dart',
+    ).readAsStringSync();
+    final stylesSource = File(
+      'lib/widgets/story_home_styles.dart',
+    ).readAsStringSync();
+    final homeSource = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+    final homeWidgetsSource = File(
+      'lib/screens/story_home_screen_widgets.dart',
+    ).readAsStringSync();
+    final quizDialogSource = File(
+      'lib/widgets/event_quiz_dialog.dart',
+    ).readAsStringSync();
+    final profileEditorSource = File(
+      'lib/widgets/profile_editor_dialog.dart',
+    ).readAsStringSync();
+    final fontScaleSource = File(
+      'lib/widgets/font_scale_bottom_sheet.dart',
+    ).readAsStringSync();
+    final weeklySource = File(
+      'lib/widgets/weekly_tab_page.dart',
+    ).readAsStringSync();
+    final settingsSource = File(
+      'lib/widgets/profile/profile_settings_sheet.dart',
+    ).readAsStringSync();
+    final publicationsSource = File(
+      'lib/screens/app_publications_screen.dart',
+    ).readAsStringSync();
+
+    expect(
+      profileSource,
+      isNot(contains('color: Colors.white.withValues(alpha: 0.96)')),
+    );
+    expect(profileSource, contains('palette.cardSurface'));
+    expect(
+      companionSource,
+      isNot(contains('backgroundColor: AppColors.goldDeep')),
+    );
+    expect(companionSource, contains('backgroundColor: palette.successBottom'));
+    expect(
+      emotionSource,
+      isNot(contains('Colors.white.withValues(alpha: 0.98)')),
+    );
+    expect(characterSource, isNot(contains("import 'game_ui_skin.dart'")));
+    expect(characterSource, isNot(contains('panelFrameDecoration')));
+    expect(characterSource, isNot(contains('tabItemDecoration')));
+    expect(characterSource, contains('palette.panelSurface'));
+    expect(eventCardSource, isNot(contains('? Colors.white')));
+    expect(eventCardSource, contains('palette.cardSurface'));
+    expect(profileSource, contains('_profileBodyShellSurface'));
+    expect(profileSource, contains('_profileOpaqueStoryCardSurface'));
+    expect(selectionPanelSource, contains('palette.softSurface'));
+    expect(selectionPanelSource, contains('palette.panelSurface'));
+    expect(selectionPanelSource, contains('palette.mutedSurface'));
+    expect(dailyMissionSource, contains('_dailyMissionSurface'));
+    expect(dailyMissionSource, contains('_dailyMissionCardSurface'));
+    expect(
+      eventDetailSource,
+      contains('modalSurfaceDecoration(palette: palette)'),
+    );
+    expect(
+      stylesSource,
+      contains('modalSurfaceDecoration({AppColorPalette? palette})'),
+    );
+    expect(stylesSource, contains('bool includeShadow = true'));
+    expect(
+      homeSource,
+      contains('_selectionSheetPanelDecoration(BuildContext context)'),
+    );
+    expect(homeSource, contains('palette.softSurface'));
+    expect(homeSource, contains('palette.panelSurface'));
+    expect(homeSource, contains('palette.mutedSurface'));
+    expect(homeWidgetsSource, contains('palette.cardSurface'));
+    expect(homeWidgetsSource, contains('palette.mutedSurface'));
+    expect(homeWidgetsSource, contains('palette.subtleBorder'));
+    expect(homeSource, isNot(contains('_parchmentPanelDecoration()')));
+    expect(weeklySource, contains('floatingPanelDecoration(palette: palette)'));
+    expect(weeklySource, contains('headerChipDecoration(palette: palette)'));
+    expect(
+      settingsSource,
+      contains('modalSurfaceDecoration(palette: palette)'),
+    );
+    expect(settingsSource, contains('color: palette.cardSurface'));
+    expect(profileSource, contains('modalSurfaceDecoration(palette: palette)'));
+    expect(
+      profileEditorSource,
+      contains('modalSurfaceDecoration(palette: palette)'),
+    );
+    expect(publicationsSource, contains('color: palette.cardSurface'));
+    expect(eraRowsSource, contains('includeShadow: false'));
+    expect(eraRowsSource, isNot(contains('boxShadow: [')));
+    expect(quizDialogSource, contains('palette.cardSurface'));
+    expect(quizDialogSource, contains('palette.currentAccentDeep'));
+    expect(stylesSource, contains('palette.mutedSurface'));
+    expect(fontScaleSource, contains('surfacePalette.cardSurface'));
+    expect(fontScaleSource, contains('palette.cardSurface'));
+  });
+
+  test('탐험한 이야기 페이지는 전체/완료/미완료 필터를 제공한다', () {
+    final source = File(
+      'lib/widgets/profile/profile_left_panel.dart',
+    ).readAsStringSync();
+    final pageSource = File(
+      'lib/widgets/profile_tab_page.dart',
+    ).readAsStringSync();
+
+    expect(pageSource, contains('enum _StoryProgressFilter'));
+    expect(source, contains('ParchmentListPageScaffold'));
+    expect(source, contains('_StoryProgressFilterTabs'));
+    expect(source, contains("label: '전체'"));
+    expect(source, contains("label: '완료'"));
+    expect(source, contains("label: '미완료'"));
+    expect(source, contains('filteredEvents'));
   });
 
   test('저장한 이야기 미리보기는 썸네일 카드 높이를 확보한다', () {
@@ -53,5 +564,83 @@ void main() {
 
     expect(source, contains('return 228;'));
     expect(source, contains('EdgeInsets.fromLTRB(2, 8, 20, 8)'));
+  });
+
+  test('시대 선택 칩은 공용으로 다이어리 역할색을 사용한다', () {
+    final source = File('lib/widgets/v2/era_pick_rows.dart').readAsStringSync();
+
+    expect(source, contains('palette.currentAccentDeep'));
+    expect(source, isNot(contains('palette.cardSelectedTop')));
+    expect(source, isNot(contains('selectedAccent')));
+  });
+
+  test('프로필 진행률 섹션은 이야기 탐험 뒤에 다이어리 카드를 보여준다', () {
+    final source = File(
+      'lib/widgets/profile/profile_progress_section.dart',
+    ).readAsStringSync();
+    final leftPanelSource = File(
+      'lib/widgets/profile/profile_left_panel.dart',
+    ).readAsStringSync();
+    final pageSource = File(
+      'lib/widgets/profile_tab_page.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('_buildProfileStoryExplorationDashboard'));
+    expect(source, isNot(contains('_buildProfileStoryStatsDashboard')));
+    expect(source, contains('ProfileDiaryFeatureCards'));
+    expect(source, isNot(contains('ProfileEmotionDiary')));
+    expect(source, isNot(contains('showFeatureCards: false')));
+    expect(
+      leftPanelSource,
+      contains("const _ProfileProgressPageSectionTitle(label: '탐험 달력과 흔적들')"),
+    );
+    expect(leftPanelSource, contains('ProfileEmotionDiary('));
+    expect(leftPanelSource, contains('showFeatureCards: false'));
+    expect(source, contains('SingleChildScrollView'));
+    expect(source, isNot(contains('_profileLinkedTabGroupDecoration')));
+    expect(source, isNot(contains('_profileLinkedTabBodyDecoration')));
+    expect(source, isNot(contains('selectedAccent')));
+    expect(source, isNot(contains('featureCardsFirst: true')));
+    expect(source, isNot(contains('_profileProgressTabAccent(palette)')));
+    expect(source, isNot(contains('Icons.directions_walk_rounded')));
+    expect(source, isNot(contains('Icons.place_rounded')));
+    expect(source, isNot(contains('_ProfileIconTabButton')));
+    expect(source, isNot(contains('_profileProgressTabBar')));
+    expect(source, isNot(contains('floatingPanelDecoration')));
+    expect(pageSource, contains('_profileSectionsFrame'));
+    expect(pageSource, contains('floatingPanelDecoration'));
+    expect(pageSource, contains('scrollBody: false'));
+    expect(source, isNot(contains('_ProfileTabContentConnector')));
+    expect(source, isNot(contains('_profileProgressTabIndex()')));
+  });
+
+  test('기도 empty 상태의 추가 버튼은 동행 일지와 같은 초록 원형 톤을 사용한다', () {
+    final source = File(
+      'lib/widgets/profile/profile_intercessory_prayer.dart',
+    ).readAsStringSync();
+    final glowSource = File(
+      'lib/widgets/profile/glowing_add_button.dart',
+    ).readAsStringSync();
+    final emptyStateSource = source
+        .split('Widget _intercessoryPrayerFab')
+        .first;
+
+    expect(emptyStateSource, contains('_profilePrayerEmptyAddButton'));
+    expect(emptyStateSource, contains('ProfileGlowingAddButton'));
+    expect(glowSource, contains('AnimationController'));
+    expect(glowSource, contains('pulseCount = 2'));
+    expect(glowSource, contains('repeat(reverse: true);'));
+    expect(
+      glowSource,
+      contains('repeat(reverse: true, count: widget.pulseCount)'),
+    );
+    expect(glowSource, contains("ValueKey('profile-add-button-pulse-ring')"));
+    expect(glowSource, contains('Colors.white.withValues(alpha: 0.88)'));
+    expect(glowSource, contains('AppColors.greenTint2'));
+    expect(glowSource, contains('AppColors.greenBot'));
+    expect(
+      emptyStateSource,
+      isNot(contains("colors: [Color(0xFFD99F4A), Color(0xFFB26B28)]")),
+    );
   });
 }

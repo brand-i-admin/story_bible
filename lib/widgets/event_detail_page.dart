@@ -12,6 +12,7 @@ import '../state/auth_providers.dart';
 import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/scene_asset_loader.dart';
@@ -44,6 +45,7 @@ class EventDetailPage extends ConsumerStatefulWidget {
     this.onNavigateToEvent,
     this.onEmotionEngraved,
     this.onLoginRequired,
+    this.onBack,
   });
 
   final StoryEvent event;
@@ -62,8 +64,8 @@ class EventDetailPage extends ConsumerStatefulWidget {
   /// (선택) 우측에 작고 연하게 표시될 다음 이야기. null 이면 표시 안 함.
   final StoryEvent? nextEvent;
 
-  /// prev/next 카드 클릭 또는 좌우 스와이프 시 호출. 호출 시 부모는 같은
-  /// 페이지를 새 사건으로 pushReplacement 하는 식으로 처리한다.
+  /// prev/next 카드 클릭 또는 좌우 스와이프 시 호출. 부모는 지도 전환
+  /// 애니메이션을 보여 준 뒤 새 사건 상세를 열 수 있다.
   final void Function(StoryEvent target)? onNavigateToEvent;
 
   /// 감정 새김 저장이 끝난 직후 호출. 부모는 상세 페이지를 닫고 지도 카드 위
@@ -71,6 +73,7 @@ class EventDetailPage extends ConsumerStatefulWidget {
   final Future<void> Function(StoryEvent event, EventEmotionOption option)?
   onEmotionEngraved;
   final void Function(String message)? onLoginRequired;
+  final VoidCallback? onBack;
 
   @override
   ConsumerState<EventDetailPage> createState() => _EventDetailPageState();
@@ -189,6 +192,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     return SubPageScaffold(
       title: event.title,
       compactBackOnly: true,
+      onBack: widget.onBack,
       child: GestureDetector(
         onHorizontalDragEnd: _handleHorizontalSwipe,
         child: Padding(
@@ -249,12 +253,13 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     required EventEmotionMark? emotionMark,
     required bool isSaved,
   }) {
+    final palette = AppPaletteTheme.of(context);
     return DecoratedBox(
-      decoration: modalSurfaceDecoration(),
+      decoration: modalSurfaceDecoration(palette: palette),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
         child: DefaultTextStyle(
-          style: const TextStyle(color: Color(0xFF3B2A16), height: 1.55),
+          style: TextStyle(color: palette.text, height: 1.55),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -268,6 +273,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
                 title: '배경 지식',
                 content: backgroundText,
                 action: _buildCharacterAvatarAction(event, currentCharacters),
+                palette: palette,
               ),
               const SizedBox(height: 12),
               storySection(
@@ -275,6 +281,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
                 content: storyText.isNotEmpty ? storyText : '요약 정보가 없습니다.',
                 footer: _buildSceneRow(),
                 inlineTitle: true,
+                palette: palette,
               ),
               const SizedBox(height: 12),
               _buildReadAndQuizProgress(
@@ -446,6 +453,7 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
           child: storySceneRow(
             sceneAssets,
             sceneCaptions: widget.event.sceneCaptions,
+            palette: AppPaletteTheme.of(context),
           ),
         );
       },
@@ -603,8 +611,11 @@ class _StoryHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final metaLabel = _eventDetailMetaLabel(event);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final titleColor = palette.text;
+    final metaColor = palette.mutedText;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -618,11 +629,11 @@ class _StoryHeader extends StatelessWidget {
                   maxLines: 3,
                   overflow: TextOverflow.visible,
                   softWrap: true,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     height: 1.22,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF3A2B15),
+                    color: titleColor,
                   ),
                 )
               else
@@ -633,11 +644,11 @@ class _StoryHeader extends StatelessWidget {
                     event.title,
                     maxLines: 1,
                     softWrap: false,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       height: 1.22,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF3A2B15),
+                      color: titleColor,
                     ),
                   ),
                 ),
@@ -650,11 +661,11 @@ class _StoryHeader extends StatelessWidget {
                       ? TextOverflow.visible
                       : TextOverflow.ellipsis,
                   softWrap: true,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11.5,
                     height: 1.2,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.ink450,
+                    color: metaColor,
                   ),
                 ),
               ],
@@ -673,7 +684,7 @@ class _StoryHeader extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 child: Icon(
                   isSaved ? Icons.star_rounded : Icons.star_border_rounded,
-                  color: isSaved ? AppColors.goldDeep : const Color(0xFF9A7A4A),
+                  color: isSaved ? palette.currentAccent : palette.mutedText,
                   size: 28,
                 ),
               ),
@@ -766,7 +777,7 @@ class _EventCharacterNamePill extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: maxWidth),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: const Color(0xDD201309),
+          color: AppColors.ink900.withValues(alpha: 0.86),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.42),
@@ -815,8 +826,8 @@ class _HiddenCharacterCountBadge extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: const Color(0xFF8C6337),
-        border: Border.all(color: const Color(0xFFF3E7CC), width: 1.2),
+        color: AppColors.oceanBot,
+        border: Border.all(color: AppColors.oceanRim, width: 1.2),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 2),
         ],
@@ -825,7 +836,7 @@ class _HiddenCharacterCountBadge extends StatelessWidget {
       child: Text(
         '+$count',
         style: const TextStyle(
-          color: Color(0xFFFDF4DE),
+          color: AppColors.fgOnDark,
           fontSize: 10,
           height: 1,
           fontWeight: FontWeight.w900,
@@ -896,6 +907,7 @@ class _NavRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final thumbnail = ClipOval(
       child: SizedBox(
@@ -908,7 +920,7 @@ class _NavRow extends StatelessWidget {
             builder: (_, snap) {
               const placeholder = Icon(
                 Icons.menu_book,
-                color: Color(0xFF8C6743),
+                color: AppColors.ink300,
                 size: 22,
               );
               if (!snap.hasData || snap.data!.isEmpty) {
@@ -942,10 +954,10 @@ class _NavRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF8C6743),
+            color: palette.primaryDeep,
           ),
         ),
         const SizedBox(height: 2),
@@ -955,10 +967,10 @@ class _NavRow extends StatelessWidget {
           overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
           softWrap: true,
           textAlign: isPrev ? TextAlign.left : TextAlign.right,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w800,
-            color: Color(0xFF3A2B15),
+            color: palette.text,
           ),
         ),
       ],
@@ -972,9 +984,11 @@ class _NavRow extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0x80FFFBEF), // 50% opacity — 시야가 비치는 투명
+            color: palette == AppColorPalette.blackMap
+                ? palette.cardSurface
+                : palette.softSurface.withValues(alpha: 0.78),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0x66B89A66), width: 0.8),
+            border: Border.all(color: palette.subtleBorder, width: 0.8),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x10000000),
@@ -986,10 +1000,10 @@ class _NavRow extends StatelessWidget {
           child: Row(
             children: isPrev
                 ? [
-                    const Icon(
+                    Icon(
                       Icons.chevron_left,
                       size: 22,
-                      color: Color(0xFF8C6743),
+                      color: palette.primaryDeep,
                     ),
                     const SizedBox(width: 4),
                     thumbnail,
@@ -1001,10 +1015,10 @@ class _NavRow extends StatelessWidget {
                     const SizedBox(width: 10),
                     thumbnail,
                     const SizedBox(width: 4),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right,
                       size: 22,
-                      color: Color(0xFF8C6743),
+                      color: palette.primaryDeep,
                     ),
                   ],
           ),
@@ -1052,6 +1066,7 @@ class _ReadAndQuizSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final readLabel = refs.isEmpty
         ? '본문 읽기'
         : '${refs.map((r) => r.displayText).join(', ')} · 읽기';
@@ -1064,19 +1079,21 @@ class _ReadAndQuizSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFBF1DC),
+        color: palette == AppColorPalette.blackMap
+            ? palette.cardSurface
+            : palette.softSurface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFD9B785), width: 1),
+        border: Border.all(color: palette.subtleBorder, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '본문 읽고 퀴즈 풀기',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF3A2B15),
+              color: palette.text,
             ),
           ),
           const SizedBox(height: 10),
@@ -1201,7 +1218,7 @@ class _CompletableActionRow extends StatelessWidget {
             style: TextButton.styleFrom(
               minimumSize: const Size(0, 32),
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              foregroundColor: const Color(0xFF8C4A3A),
+              foregroundColor: AppColors.dangerBot,
             ),
             child: const Text(
               '완료 취소',
@@ -1251,9 +1268,9 @@ class _ActionButtonTone {
       );
     }
     return const _ActionButtonTone(
-      gradientColors: [Color(0xFFF39A32), Color(0xFFD96518)],
-      borderColor: Color(0xFFFFD29A),
-      shadowColor: Color(0x33D96518),
+      gradientColors: [AppColors.goldLight, AppColors.goldDeep],
+      borderColor: AppColors.goldHi,
+      shadowColor: Color(0x33C97522),
     );
   }
 }
@@ -1331,14 +1348,15 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
   }
 
   Widget _buildEmotionStep(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Column(
       key: const ValueKey('emotion-step'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
+        Text(
           '이 이야기에서 마음에 남은 감정을 하나 골라 주세요.',
           style: TextStyle(
-            color: Color(0xFF6A4C2E),
+            color: palette.primaryDeep,
             fontSize: 13,
             fontWeight: FontWeight.w800,
             height: 1.35,
@@ -1366,6 +1384,7 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
   }
 
   Widget _buildNoteStep(BuildContext context, EventEmotionOption? selected) {
+    final palette = AppPaletteTheme.of(context);
     final option = selected ?? EventEmotionOption.options.last;
     return Column(
       key: const ValueKey('note-step'),
@@ -1373,8 +1392,8 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
       children: [
         RichText(
           text: TextSpan(
-            style: const TextStyle(
-              color: Color(0xFF3A2B15),
+            style: TextStyle(
+              color: palette.text,
               fontSize: 14,
               fontWeight: FontWeight.w800,
               height: 1.45,
@@ -1394,7 +1413,7 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
               ),
               TextSpan(
                 text: option.label,
-                style: const TextStyle(color: Color(0xFFB07220)),
+                style: TextStyle(color: palette.primaryDeep),
               ),
               const TextSpan(text: '이 남았다.'),
             ],
@@ -1451,6 +1470,14 @@ class _EmotionChoiceChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final palette = AppPaletteTheme.of(context);
+    final selectedBackground = Color.alphaBlend(
+      palette.primary.withValues(alpha: 0.16),
+      palette.cardSurface,
+    );
+    final background = selected ? selectedBackground : palette.cardSurface;
+    final borderColor = selected ? palette.primaryDeep : palette.subtleBorder;
+    final textColor = selected ? palette.primaryDeep : palette.text;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1459,14 +1486,9 @@ class _EmotionChoiceChip extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 7),
           decoration: BoxDecoration(
-            color: selected ? const Color(0xFFFFE7B8) : const Color(0xFFF8F0E2),
+            color: background,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: selected
-                  ? const Color(0xFFB07220)
-                  : const Color(0xAA8E6F48),
-              width: selected ? 1.4 : 1.0,
-            ),
+            border: Border.all(color: borderColor, width: selected ? 1.4 : 1.0),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -1486,9 +1508,7 @@ class _EmotionChoiceChip extends StatelessWidget {
                       : TextOverflow.ellipsis,
                   softWrap: true,
                   style: TextStyle(
-                    color: selected
-                        ? const Color(0xFF7C4716)
-                        : const Color(0xFF5E4427),
+                    color: textColor,
                     fontSize: 11.2,
                     fontWeight: FontWeight.w900,
                     height: 1.0,

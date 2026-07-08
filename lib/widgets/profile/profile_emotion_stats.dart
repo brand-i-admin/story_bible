@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/event_emotion_mark.dart';
-import '../../theme/tokens.dart';
+import '../../theme/app_color_palette.dart';
 import '../emotion_badge_icon.dart';
 
 class ProfileEmotionStats {
@@ -72,38 +72,21 @@ class ProfileEmotionStatsRows extends StatelessWidget {
             .indexOf(a)
             .compareTo(EventEmotionOption.options.indexOf(b));
       });
-    final firstRow = sortedOptions.take(4).toList();
-    final secondRow = sortedOptions.skip(4).toList();
-
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          key: const ValueKey('profile-emotion-stats-row'),
           children: [
-            for (var i = 0; i < firstRow.length; i++) ...[
+            for (var i = 0; i < sortedOptions.length; i++) ...[
               Expanded(
                 child: _ProfileEmotionStatChip(
-                  option: firstRow[i],
-                  count: stats.countFor(firstRow[i].key),
-                  onTap: () => onTapEmotion(firstRow[i]),
+                  option: sortedOptions[i],
+                  count: stats.countFor(sortedOptions[i].key),
+                  onTap: () => onTapEmotion(sortedOptions[i]),
                 ),
               ),
-              if (i != firstRow.length - 1) const SizedBox(width: 4),
-            ],
-          ],
-        ),
-        const SizedBox(height: 5),
-        Row(
-          children: [
-            for (var i = 0; i < secondRow.length; i++) ...[
-              Expanded(
-                child: _ProfileEmotionStatChip(
-                  option: secondRow[i],
-                  count: stats.countFor(secondRow[i].key),
-                  onTap: () => onTapEmotion(secondRow[i]),
-                ),
-              ),
-              if (i != secondRow.length - 1) const SizedBox(width: 4),
+              if (i != sortedOptions.length - 1) const SizedBox(width: 2),
             ],
           ],
         ),
@@ -125,52 +108,52 @@ class _ProfileEmotionStatChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(999),
-        child: Container(
-          height: 24,
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          decoration: BoxDecoration(
-            color: count > 0
-                ? AppColors.parchmentCream
-                : AppColors.parchmentCard,
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: count > 0 ? AppColors.goldDeep : const Color(0x66A8834D),
-              width: 0.8,
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              EmotionBadgeIcon(
-                emotionKey: option.key,
-                size: 15,
-                iconSize: 9,
-                elevation: false,
-              ),
-              const SizedBox(width: 3),
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    '${option.label} $count',
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: count > 0 ? AppColors.ink700 : AppColors.ink200,
-                      fontSize: 9.8,
-                      fontWeight: FontWeight.w900,
-                      height: 1,
-                    ),
-                  ),
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: largeText ? 30 : 27,
+              height: largeText ? 30 : 27,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: count > 0 ? palette.currentFill : palette.cardSurface,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: count > 0
+                      ? palette.currentAccentDeep.withValues(alpha: 0.44)
+                      : palette.subtleBorder,
+                  width: 0.8,
                 ),
               ),
-            ],
-          ),
+              child: EmotionBadgeIcon(
+                emotionKey: option.key,
+                size: largeText ? 23 : 21,
+                iconSize: largeText ? 14 : 12.5,
+                elevation: false,
+              ),
+            ),
+            const SizedBox(height: 3),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '${option.label} $count',
+                maxLines: 1,
+                style: TextStyle(
+                  color: count > 0 ? palette.text : palette.mutedText,
+                  fontSize: largeText ? 8.8 : 9.2,
+                  fontWeight: FontWeight.w900,
+                  height: 1,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

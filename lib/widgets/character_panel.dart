@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/character.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
-import 'game_ui_skin.dart';
 
 enum CharacterSortMode { alphabetical, eraOrder }
 
@@ -31,16 +31,38 @@ class CharacterPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(storyControllerProvider);
+    final palette = AppPaletteTheme.of(context);
     final eventCountByCode = _eventCountByCharacterCode(state);
     final sortedCharacters = _sortedCharacters();
     return Container(
       clipBehavior: Clip.hardEdge,
-      decoration: panelFrameDecoration(),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color.alphaBlend(
+              palette.characterAccent.withValues(alpha: 0.08),
+              palette.softSurface,
+            ),
+            palette.panelSurface,
+            palette.mutedSurface,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: palette.panelBorder, width: 1),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x16000000),
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
       child: LayoutBuilder(
-        builder: (context, constraints) {
-          final panelPadding = panelContentPaddingForSize(constraints.biggest);
+        builder: (context, _) {
           return Padding(
-            padding: panelPadding,
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -48,7 +70,7 @@ class CharacterPanel extends ConsumerWidget {
                   sortMode: sortMode,
                   onSortModeChanged: onSortModeChanged,
                 ),
-                Divider(height: 1, color: Colors.white.withValues(alpha: 0.45)),
+                Divider(height: 1, color: palette.subtleBorder),
                 Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.only(top: 4, bottom: 4),
@@ -119,6 +141,7 @@ class _CharacterPanelHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
       padding: const EdgeInsets.fromLTRB(2, 2, 2, 3),
@@ -127,13 +150,35 @@ class _CharacterPanelHeader extends StatelessWidget {
           Expanded(
             child: Align(
               alignment: Alignment.centerLeft,
-              child: statesButtonLabel(
-                text: '인물 선택',
-                width: 156,
-                height: 36,
+              child: Container(
+                constraints: BoxConstraints(
+                  minHeight: largeText ? 46 : 36,
+                  minWidth: 118,
+                  maxWidth: 156,
+                ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 7,
+                ),
+                decoration: BoxDecoration(
+                  color: palette.selectionFill,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: palette.selectedBorder, width: 1),
+                ),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '인물 선택',
+                  maxLines: largeText ? 2 : 1,
+                  overflow: largeText
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  softWrap: true,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w900,
+                    color: palette.text,
+                    height: 1.05,
+                  ),
                 ),
               ),
             ),
@@ -143,7 +188,11 @@ class _CharacterPanelHeader extends StatelessWidget {
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: largeText ? 46 : 36),
               child: DecoratedBox(
-                decoration: statesButtonDecoration(),
+                decoration: BoxDecoration(
+                  color: palette.cardSurface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: palette.subtleBorder, width: 1),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: DropdownButtonHideUnderline(
@@ -152,20 +201,13 @@ class _CharacterPanelHeader extends StatelessWidget {
                       isDense: !largeText,
                       isExpanded: true,
                       iconSize: 12,
-                      dropdownColor: const Color(0xFF4E3A26),
+                      dropdownColor: palette.cardSurface,
                       borderRadius: BorderRadius.circular(10),
-                      iconEnabledColor: AppColors.parchmentCream,
-                      style: const TextStyle(
+                      iconEnabledColor: palette.text,
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.parchmentCream,
-                        shadows: [
-                          Shadow(
-                            color: Color(0xAA000000),
-                            blurRadius: 2,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
+                        color: palette.text,
                       ),
                       items: [
                         DropdownMenuItem(
@@ -227,13 +269,46 @@ class _CharacterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final topSurface = selected
+        ? Color.alphaBlend(
+            accentColor.withValues(alpha: 0.18),
+            palette.cardSurface,
+          )
+        : palette.cardUnselectedTop;
+    final bottomSurface = selected
+        ? Color.alphaBlend(
+            accentColor.withValues(alpha: 0.10),
+            palette.mutedSurface,
+          )
+        : palette.cardUnselectedBottom;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
         constraints: const BoxConstraints(minHeight: 60),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-        decoration: tabItemDecoration(selected: selected),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [topSurface, bottomSurface],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected ? accentColor : palette.subtleBorder,
+            width: selected ? 1.4 : 1,
+          ),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: accentColor.withValues(alpha: 0.20),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ]
+              : AppShadows.sm,
+        ),
         child: Row(
           children: [
             Container(
@@ -248,6 +323,7 @@ class _CharacterTile extends StatelessWidget {
             _CharacterTileAvatar(
               character: character,
               selected: selected,
+              accentColor: accentColor,
               ref: ref,
             ),
             const SizedBox(width: 10),
@@ -269,22 +345,25 @@ class _CharacterTileAvatar extends StatelessWidget {
   const _CharacterTileAvatar({
     required this.character,
     required this.selected,
+    required this.accentColor,
     required this.ref,
   });
 
   final Character character;
   final bool selected;
+  final Color accentColor;
   final WidgetRef ref;
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       width: 42,
       height: 42,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: selected ? const Color(0xFF8D4E05) : const Color(0xFFC9A06B),
+          color: selected ? accentColor : palette.subtleBorder,
           width: selected ? 2 : 1.2,
         ),
         boxShadow: [
@@ -319,6 +398,7 @@ class _CharacterTileText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,17 +408,10 @@ class _CharacterTileText extends StatelessWidget {
           maxLines: largeText ? 2 : 1,
           overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
           softWrap: true,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w800,
             fontSize: 14,
-            color: AppColors.parchmentCream,
-            shadows: [
-              Shadow(
-                color: Color(0x99000000),
-                blurRadius: 3,
-                offset: Offset(0, 1),
-              ),
-            ],
+            color: palette.text,
           ),
         ),
         Row(
@@ -369,17 +442,7 @@ class _CharacterTileText extends StatelessWidget {
                     ? TextOverflow.visible
                     : TextOverflow.ellipsis,
                 softWrap: true,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFFF4E9D2),
-                  shadows: [
-                    Shadow(
-                      color: Color(0x88000000),
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
+                style: TextStyle(fontSize: 12, color: palette.mutedText),
               ),
             ),
           ],
@@ -436,17 +499,18 @@ class _PanelAvatarImage extends StatelessWidget {
         fit: BoxFit.cover,
         errorBuilder: (_, _, _) {
           if (storageUrl == null) return fallback;
-          return _network(storageUrl, fallback);
+          return _network(context, storageUrl, fallback);
         },
       );
     }
     if (storageUrl != null) {
-      return _network(storageUrl, fallback);
+      return _network(context, storageUrl, fallback);
     }
     return fallback;
   }
 
-  Widget _network(String url, Widget fallback) {
+  Widget _network(BuildContext context, String url, Widget fallback) {
+    final palette = AppPaletteTheme.of(context);
     // Imagen 1024×1024 정중앙 → 상반신 위주로 1.5× 확대 (canonical thumb 와 톤 맞춤).
     return Transform.scale(
       scale: 1.5,
@@ -456,7 +520,7 @@ class _PanelAvatarImage extends StatelessWidget {
         fit: BoxFit.cover,
         errorBuilder: (_, _, _) => fallback,
         loadingBuilder: (_, w, p) =>
-            p == null ? w : const ColoredBox(color: Color(0xFFE7D2B2)),
+            p == null ? w : ColoredBox(color: palette.mutedSurface),
       ),
     );
   }
@@ -470,22 +534,16 @@ class _AvatarFallback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final initial = name.isEmpty ? '?' : name.substring(0, 1);
     return Container(
-      color: selected ? const Color(0xFFD58E2D) : const Color(0xFFE3CDAA),
+      color: selected ? palette.currentAccentDeep : palette.selectionFill,
       alignment: Alignment.center,
       child: Text(
         initial,
-        style: const TextStyle(
-          color: AppColors.parchmentCream,
+        style: TextStyle(
+          color: selected ? AppColors.fgOnDark : palette.text,
           fontWeight: FontWeight.w800,
-          shadows: [
-            Shadow(
-              color: Color(0x99000000),
-              blurRadius: 2,
-              offset: Offset(0, 1),
-            ),
-          ],
         ),
       ),
     );

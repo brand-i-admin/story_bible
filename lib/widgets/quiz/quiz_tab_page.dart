@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/story_event.dart';
 import '../../state/auth_providers.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../sub_page_scaffold.dart';
 import '../weekly_tab_page.dart';
@@ -82,9 +83,9 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
         height: 44,
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: const Color(0xFFF1E1C0),
+          color: AppColors.greenTint1.withValues(alpha: 0.62),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xAA8E6F48), width: 0.8),
+          border: Border.all(color: AppColors.borderCard, width: 0.8),
         ),
         child: Row(
           children: [
@@ -122,18 +123,19 @@ class _QuizTabPageState extends ConsumerState<QuizTabPage> {
     required bool completed,
     required VoidCallback onTap,
   }) {
+    final palette = AppPaletteTheme.of(context);
     // 우선순위: completed > selected > 기본. 완료된 매일 미션은 항상 초록 표시.
     final Color bg;
     final Color textColor;
     if (completed) {
-      bg = const Color(0xFF7AAC4C);
+      bg = palette.successBottom;
       textColor = Colors.white;
     } else if (selected) {
-      bg = AppColors.brownWarm;
+      bg = palette.primary;
       textColor = Colors.white;
     } else {
       bg = Colors.transparent;
-      textColor = const Color(0xFF6A4C2E);
+      textColor = palette.text;
     }
     return Material(
       color: Colors.transparent,

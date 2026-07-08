@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../theme/tokens.dart';
+import '../theme/app_color_palette.dart';
 import 'parchment_texture_layer.dart';
 import 'story_home_styles.dart';
 import 'sub_page_floating_home_button.dart';
@@ -16,11 +16,13 @@ class SubPageScaffold extends StatefulWidget {
     required this.title,
     required this.child,
     this.compactBackOnly = false,
+    this.onBack,
   });
 
   final String title;
   final Widget child;
   final bool compactBackOnly;
+  final VoidCallback? onBack;
 
   @override
   State<SubPageScaffold> createState() => _SubPageScaffoldState();
@@ -32,30 +34,27 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Scaffold(
       body: Stack(
         children: [
-          const Positioned.fill(
+          Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.parchmentLight,
-                    AppColors.parchmentMid,
-                    AppColors.parchmentWarm,
-                  ],
+                  colors: palette.pageGradient,
                 ),
               ),
             ),
           ),
-          const Positioned.fill(
+          Positioned.fill(
             child: IgnorePointer(
               child: ParchmentTextureLayer(
                 opacity: 0.08,
-                tint: AppColors.brownWarm2,
+                tint: palette.primaryDeep,
               ),
             ),
           ),
@@ -99,7 +98,7 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                                 });
                               },
                               child: SubPageFloatingHomeButton(
-                                onTap: () => Navigator.of(context).pop(),
+                                onTap: _handleBack,
                               ),
                             ),
                           ),
@@ -115,7 +114,7 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                           children: [
                             topUtilityButton(
                               label: '이전',
-                              onTap: () => Navigator.of(context).pop(),
+                              onTap: _handleBack,
                               selected: true,
                             ),
                             const SizedBox(width: 12),
@@ -130,7 +129,7 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                                   vertical: largeText ? 8 : 0,
                                 ),
                                 decoration: floatingPanelDecoration(
-                                  color: AppColors.floatingSurfaceDefault,
+                                  color: palette.panelSurface,
                                   shadowOpacity: 0.08,
                                 ),
                                 child: Text(
@@ -140,8 +139,8 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                                       ? TextOverflow.visible
                                       : TextOverflow.ellipsis,
                                   softWrap: true,
-                                  style: const TextStyle(
-                                    color: AppColors.ink500,
+                                  style: TextStyle(
+                                    color: palette.text,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w900,
                                   ),
@@ -158,5 +157,15 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
         ],
       ),
     );
+  }
+
+  void _handleBack() {
+    final onBack = widget.onBack;
+    if (onBack != null) {
+      Navigator.of(context).pop();
+      onBack();
+      return;
+    }
+    Navigator.of(context).pop();
   }
 }
