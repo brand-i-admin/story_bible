@@ -1861,7 +1861,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
             Expanded(
               child: _StoryExplorationSummaryCard(
                 key: const ValueKey('profile-story-summary-explored'),
-                label: '이야기',
+                label: '완료',
                 icon: Icons.flag_rounded,
                 color: palette.primary,
                 onTap: onOpenStoryProgress,

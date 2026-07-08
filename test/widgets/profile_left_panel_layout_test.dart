@@ -239,7 +239,7 @@ void main() {
     expect(source, contains('_ProfileStoryProgressPage'));
     expect(source, contains('_ProfileExplorationLogPage'));
     expect(source, contains("'이야기 탐험 요약'"));
-    expect(source, contains("label: '이야기'"));
+    expect(source, contains("label: '완료'"));
     expect(source, contains("label: '기록'"));
     expect(source, contains("label: '저장'"));
     expect(source, contains("label: '말씀'"));

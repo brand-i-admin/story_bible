@@ -936,7 +936,7 @@ void main() {
     );
 
     expect(find.text('이야기 탐험 요약'), findsOneWidget);
-    expect(find.text('이야기'), findsOneWidget);
+    expect(find.text('완료'), findsOneWidget);
     expect(find.text('기록'), findsOneWidget);
     expect(find.text('저장'), findsOneWidget);
     expect(find.text('저장 이야기 개수'), findsNothing);
