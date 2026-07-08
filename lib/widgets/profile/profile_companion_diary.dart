@@ -274,6 +274,16 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                 bottom: -4,
                 child: _DiaryNotebookMark(active: hasEntry),
               ),
+              if (!loading && !hasEntry && canWrite)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: _DiaryWriteButton(onTap: () => _openEditor(context)),
+                  ),
+                ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -368,6 +378,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                         height: 1.45,
                       ),
                     ),
+                  const Spacer(),
                   const SizedBox(height: 12),
                   if (loading && !hasEntry)
                     const Padding(
@@ -379,12 +390,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                       ),
                     )
                   else if (!hasEntry && canWrite)
-                    Align(
-                      alignment: Alignment.center,
-                      child: _DiaryWriteButton(
-                        onTap: () => _openEditor(context),
-                      ),
-                    )
+                    const SizedBox(height: 64)
                   else if (!canWrite)
                     Text(
                       '로그인하면 기록할 수 있어요.',

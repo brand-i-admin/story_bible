@@ -500,117 +500,132 @@ class _BibleProgressFeatureCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: AppShadows.sm,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
+            clipBehavior: Clip.none,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Color.alphaBlend(
-                        readingAccent.withValues(
-                          alpha: darkSurface ? 0.24 : 0.10,
-                        ),
-                        darkSurface
-                            ? palette.softSurface
-                            : AppColors.parchmentCream,
-                      ),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: readingAccent.withValues(alpha: 0.30),
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.menu_book_rounded,
-                      size: 14,
-                      color: readingAccent,
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 9,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: PulseHighlight(
+                    active: onContinue != null && !progress.completedToday,
+                    pulseCount: null,
+                    duration: const Duration(milliseconds: 2200),
+                    borderRadius: BorderRadius.circular(999),
+                    color: darkSurface ? AppColors.goldLight : AppColors.goldHi,
+                    child: _BibleContinueButton(
+                      onTap: onContinue,
+                      completedToday: progress.completedToday,
+                      readingAccent: readingAccent,
+                      darkSurface: darkSurface,
                     ),
                   ),
-                  const SizedBox(width: 7),
-                  Expanded(
-                    child: Text(
-                      '통독 진행률',
-                      maxLines: expandReadableText ? 2 : 1,
-                      overflow: expandReadableText
-                          ? TextOverflow.visible
-                          : TextOverflow.ellipsis,
-                      softWrap: true,
-                      style: AppTextStyles.sectionTitle.copyWith(
-                        color: palette.text,
-                      ),
-                    ),
-                  ),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 19,
-                    color: palette.mutedText,
-                  ),
-                ],
+                ),
               ),
-              const SizedBox(height: 10),
-              Row(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _BibleProgressDonut(
-                    fraction: fraction,
-                    percent: progress.percent,
-                    dimension: largeText ? 38 : 44,
-                    color: readingAccent,
-                  ),
-                  SizedBox(width: largeText ? 7 : 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '마지막 통독 장',
+                  Row(
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Color.alphaBlend(
+                            readingAccent.withValues(
+                              alpha: darkSurface ? 0.24 : 0.10,
+                            ),
+                            darkSurface
+                                ? palette.softSurface
+                                : AppColors.parchmentCream,
+                          ),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: readingAccent.withValues(alpha: 0.30),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.menu_book_rounded,
+                          size: 14,
+                          color: readingAccent,
+                        ),
+                      ),
+                      const SizedBox(width: 7),
+                      Expanded(
+                        child: Text(
+                          '통독 진행률',
                           maxLines: expandReadableText ? 2 : 1,
                           overflow: expandReadableText
                               ? TextOverflow.visible
                               : TextOverflow.ellipsis,
                           softWrap: true,
-                          style: TextStyle(
-                            color: palette.mutedText,
-                            fontSize: AppFontSizes.xs,
-                            fontWeight: FontWeight.w900,
-                            height: 1,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          progress.chapterReferenceText,
-                          maxLines: largeText ? 2 : 1,
-                          overflow: largeText
-                              ? TextOverflow.visible
-                              : TextOverflow.ellipsis,
-                          softWrap: true,
-                          style: TextStyle(
+                          style: AppTextStyles.sectionTitle.copyWith(
                             color: palette.text,
-                            fontSize: largeText ? 12.2 : 12.8,
-                            fontWeight: FontWeight.w900,
-                            height: 1.1,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        size: 19,
+                        color: palette.mutedText,
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 10),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _BibleProgressDonut(
+                        fraction: fraction,
+                        percent: progress.percent,
+                        dimension: largeText ? 38 : 44,
+                        color: readingAccent,
+                      ),
+                      SizedBox(width: largeText ? 7 : 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '마지막 통독 장',
+                              maxLines: expandReadableText ? 2 : 1,
+                              overflow: expandReadableText
+                                  ? TextOverflow.visible
+                                  : TextOverflow.ellipsis,
+                              softWrap: true,
+                              style: TextStyle(
+                                color: palette.mutedText,
+                                fontSize: AppFontSizes.xs,
+                                fontWeight: FontWeight.w900,
+                                height: 1,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              progress.chapterReferenceText,
+                              maxLines: largeText ? 2 : 1,
+                              overflow: largeText
+                                  ? TextOverflow.visible
+                                  : TextOverflow.ellipsis,
+                              softWrap: true,
+                              style: TextStyle(
+                                color: palette.text,
+                                fontSize: largeText ? 12.2 : 12.8,
+                                fontWeight: FontWeight.w900,
+                                height: 1.1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 64),
                 ],
-              ),
-              const Spacer(),
-              PulseHighlight(
-                active: onContinue != null && !progress.completedToday,
-                pulseCount: null,
-                duration: const Duration(milliseconds: 2200),
-                borderRadius: BorderRadius.circular(999),
-                color: darkSurface ? AppColors.goldLight : AppColors.goldHi,
-                child: _BibleContinueButton(
-                  onTap: onContinue,
-                  completedToday: progress.completedToday,
-                ),
               ),
             ],
           ),
@@ -678,62 +693,89 @@ class _BibleContinueButton extends StatelessWidget {
   const _BibleContinueButton({
     required this.onTap,
     required this.completedToday,
+    required this.readingAccent,
+    required this.darkSurface,
   });
 
   final VoidCallback? onTap;
   final bool completedToday;
+  final Color readingAccent;
+  final bool darkSurface;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final enabled = onTap != null;
     final backgroundColor = !enabled
         ? palette.mutedSurface
         : completedToday
         ? palette.successBottom
-        : palette.currentAccentDeep.withValues(alpha: 0.92);
-    final foregroundColor = enabled ? AppColors.fgOnDark : palette.mutedText;
-    return SizedBox(
-      width: double.infinity,
-      child: Material(
-        color: backgroundColor,
+        : Color.alphaBlend(
+            readingAccent.withValues(alpha: darkSurface ? 0.32 : 0.16),
+            palette.cardSurface,
+          );
+    final badgeColor = !enabled
+        ? palette.mutedSurface
+        : completedToday
+        ? AppColors.fgOnDark
+        : readingAccent;
+    final badgeForegroundColor = !enabled
+        ? palette.mutedText
+        : completedToday
+        ? palette.successBottom
+        : AppColors.fgOnDark;
+    final labelColor = !enabled
+        ? palette.mutedText
+        : completedToday || darkSurface
+        ? AppColors.fgOnDark
+        : readingAccent;
+    return Material(
+      key: const ValueKey('bible-progress-continue-button'),
+      color: backgroundColor,
+      borderRadius: BorderRadius.circular(999),
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(999),
-        child: InkWell(
-          key: const ValueKey('bible-progress-continue-button'),
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(999),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 6,
-              vertical: largeText ? 9 : 7,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(
-                    '이어 읽기',
-                    maxLines: 1,
-                    overflow: TextOverflow.visible,
-                    softWrap: false,
-                    style: TextStyle(
-                      color: foregroundColor,
-                      fontSize: 11.6,
-                      fontWeight: FontWeight.w900,
-                      height: 1,
-                    ),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(8, 5, 11, 5),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(999)),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                key: const ValueKey('bible-progress-continue-icon-badge'),
+                width: 28,
+                height: 28,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: badgeColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: enabled
+                        ? readingAccent.withValues(alpha: 0.30)
+                        : palette.subtleBorder,
                   ),
                 ),
-                const SizedBox(width: 4),
-                Icon(
+                child: Icon(
                   Icons.arrow_forward_rounded,
-                  color: foregroundColor,
-                  size: 15,
+                  color: badgeForegroundColor,
+                  size: 18,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '이어읽기',
+                maxLines: 1,
+                overflow: TextOverflow.visible,
+                softWrap: false,
+                style: TextStyle(
+                  color: labelColor,
+                  fontSize: 12.1,
+                  fontWeight: FontWeight.w900,
+                  height: 1,
+                ),
+              ),
+            ],
           ),
         ),
       ),

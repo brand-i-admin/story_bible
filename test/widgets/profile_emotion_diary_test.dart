@@ -201,10 +201,28 @@ void _companionDiaryWidgetTests() {
     );
     expect(find.text('통독 진행률'), findsOneWidget);
     expect(find.text('마지막 통독 장'), findsOneWidget);
-    expect(find.text('이어 읽기'), findsOneWidget);
+    expect(find.text('이어읽기'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('companion-diary-add-button')),
       findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('bible-progress-continue-icon-badge')),
+      findsOneWidget,
+    );
+    final diaryWritePill = find.byKey(
+      const ValueKey('companion-diary-write-button-pill'),
+    );
+    final bibleContinuePill = find.byKey(
+      const ValueKey('bible-progress-continue-button'),
+    );
+    expect(
+      tester.getTopLeft(diaryWritePill).dy,
+      moreOrLessEquals(tester.getTopLeft(bibleContinuePill).dy, epsilon: 1.0),
+    );
+    expect(
+      tester.getSize(diaryWritePill).height,
+      moreOrLessEquals(tester.getSize(bibleContinuePill).height, epsilon: 1.0),
     );
     expect(
       tester
@@ -301,7 +319,21 @@ void _companionDiaryWidgetTests() {
 
     expect(find.text('신앙 다이어리'), findsOneWidget);
     expect(find.text('통독 진행률'), findsOneWidget);
-    expect(find.text('이어 읽기'), findsOneWidget);
+    expect(find.text('이어읽기'), findsOneWidget);
+    final diaryWritePill = find.byKey(
+      const ValueKey('companion-diary-write-button-pill'),
+    );
+    final bibleContinuePill = find.byKey(
+      const ValueKey('bible-progress-continue-button'),
+    );
+    expect(
+      tester.getTopLeft(diaryWritePill).dy,
+      moreOrLessEquals(tester.getTopLeft(bibleContinuePill).dy, epsilon: 1.0),
+    );
+    expect(
+      tester.getSize(diaryWritePill).height,
+      moreOrLessEquals(tester.getSize(bibleContinuePill).height, epsilon: 1.0),
+    );
     expect(find.byKey(const ValueKey('diary-content-tab-bar')), findsNothing);
   });
 
@@ -333,7 +365,7 @@ void _companionDiaryWidgetTests() {
     final chapterText = tester.widget<Text>(find.text('사도행전 15장'));
     expect(chapterText.maxLines, 2);
     expect(chapterText.overflow, TextOverflow.visible);
-    expect(find.text('이어 읽기'), findsOneWidget);
+    expect(find.text('이어읽기'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -642,7 +674,7 @@ void main() {
     expect(source, contains('completedToday'));
     expect(source, contains('palette.successBottom'));
     expect(source, contains('chapterReferenceText'));
-    expect(source, contains("'이어 읽기'"));
+    expect(source, contains("'이어읽기'"));
     expect(
       source,
       contains('color: darkSurface ? AppColors.goldLight : AppColors.goldHi'),
