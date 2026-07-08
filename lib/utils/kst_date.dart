@@ -2,6 +2,17 @@ const kstOffset = Duration(hours: 9);
 
 DateTime toKst(DateTime dateTime) => dateTime.toUtc().add(kstOffset);
 
+Duration durationUntilNextKstMidnight(DateTime now) {
+  final nowUtc = now.toUtc();
+  final nowKst = nowUtc.add(kstOffset);
+  final nextKstMidnightUtc = DateTime.utc(
+    nowKst.year,
+    nowKst.month,
+    nowKst.day + 1,
+  ).subtract(kstOffset);
+  return nextKstMidnightUtc.difference(nowUtc);
+}
+
 DateTime _dateOnly(DateTime dateTime) =>
     DateTime(dateTime.year, dateTime.month, dateTime.day);
 

@@ -35,6 +35,7 @@ import 'map/map_attribution_dialog.dart';
 import 'notification/notification_bell_button.dart';
 import 'parchment_dialog.dart';
 import 'parchment_page_scaffold.dart';
+import 'profile/companion_diary_entry_card.dart';
 import 'profile/glowing_add_button.dart';
 import 'profile/profile_emotion_diary.dart';
 import 'profile/profile_event_review_grid.dart';
@@ -174,10 +175,9 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
 
   void _scheduleProfileKstMidnightRefresh() {
     _profileKstMidnightTimer?.cancel();
-    final nowKst = toKst(DateTime.now());
-    final nextKstMidnight = DateTime(nowKst.year, nowKst.month, nowKst.day + 1);
     final delay =
-        nextKstMidnight.difference(nowKst) + const Duration(seconds: 1);
+        durationUntilNextKstMidnight(DateTime.now()) +
+        const Duration(seconds: 1);
     _profileKstMidnightTimer = Timer(delay, _handleProfileKstDateChanged);
   }
 
@@ -569,12 +569,12 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       final user = ref.read(signedInUserProvider);
       final repo = ref.read(storyRepositoryProvider);
       final userRepo = ref.read(userRepositoryProvider);
-      final peopleByEra = await Future.wait(
-        state.eras.map((era) => repo.fetchCharactersByEra(era.id)),
-      );
-      final eventsByEra = await Future.wait(
-        state.eras.map((era) => repo.fetchEventsByEra(era.id)),
-      );
+      final peopleByEra = <List<Character>>[];
+      final eventsByEra = <List<StoryEvent>>[];
+      for (final era in state.eras) {
+        peopleByEra.add(await repo.fetchCharactersByEra(era.id));
+        eventsByEra.add(await repo.fetchEventsByEra(era.id));
+      }
 
       final characterByCode = <String, Character>{};
       for (var i = 0; i < state.eras.length; i++) {
@@ -595,6 +595,9 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
 
       if (user != null) {
         profile = await userRepo.ensureSignedInUser(user);
+        await ref
+            .read(storyControllerProvider.notifier)
+            .refreshCompletedEventIds();
         await ref
             .read(storyControllerProvider.notifier)
             .refreshQuizAttemptSummaries();

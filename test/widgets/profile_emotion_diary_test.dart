@@ -552,6 +552,56 @@ void _companionDiaryWidgetTests() {
       findsOneWidget,
     );
   });
+
+  testWidgets('신앙 다이어리 미리보기와 상세 팝업은 다크 팔레트 색을 사용한다', (tester) async {
+    final entry = _diaryEntry(
+      entryDate: DateTime(2026, 6, 10),
+      title: '어두운 밤의 기도',
+      body: '밤에도 말씀을 붙들었습니다.',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(palette: AppColorPalette.blackMap),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => CompanionDiaryEntryPreviewCard(
+              entry: entry,
+              dateLabel: '6월 10일',
+              onTap: () => showDialog<void>(
+                context: context,
+                builder: (_) => CompanionDiaryEntryDetailDialog(entry: entry),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final cardInk = tester.widget<Ink>(
+      find
+          .descendant(
+            of: find.byType(CompanionDiaryEntryPreviewCard),
+            matching: find.byType(Ink),
+          )
+          .first,
+    );
+    final cardDecoration = cardInk.decoration! as BoxDecoration;
+    expect(cardDecoration.color, AppColorPalette.blackMap.cardSurface);
+    expect(
+      tester.widget<Text>(find.text('어두운 밤의 기도')).style?.color,
+      AppColorPalette.blackMap.text,
+    );
+
+    await tester.tap(find.text('어두운 밤의 기도'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('신앙 다이어리 상세'), findsOneWidget);
+    final detailBody = tester.widget<Text>(
+      find.byKey(const ValueKey('companion-diary-detail-body-diary_1')),
+    );
+    expect(detailBody.style?.color, AppColorPalette.blackMap.text);
+  });
 }
 
 void main() {

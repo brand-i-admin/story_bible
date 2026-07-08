@@ -157,6 +157,19 @@ void main() {
       expect(container.read(colorPaletteProvider), AppColorPalette.blackMap);
     });
 
+    test('다크 색 조합 미리보기는 어두운 표면색을 우선 사용한다', () {
+      final colors = paletteWheelPreviewColors(AppColorPalette.blackMap);
+
+      expect(colors, [
+        AppColorPalette.blackMap.pageBottom,
+        AppColorPalette.blackMap.panelSurface,
+        AppColorPalette.blackMap.cardSurface,
+        AppColorPalette.blackMap.currentFill,
+      ]);
+      expect(colors, isNot(contains(AppColorPalette.blackMap.primary)));
+      expect(colors, isNot(contains(AppColorPalette.blackMap.stepStory)));
+    });
+
     testWidgets('다크 색 조합에서는 선택 카드들이 어두운 표면을 사용한다', (tester) async {
       await _pumpSheet(tester, initialPalette: AppColorPalette.blackMap);
 

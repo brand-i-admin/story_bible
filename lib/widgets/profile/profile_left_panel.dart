@@ -382,11 +382,9 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            '오늘도 이야기 탐험, 신앙 다이어리 작성\n통독으로 하나님과 함께 해보아요!',
-                            maxLines: 2,
-                            overflow: largeText
-                                ? TextOverflow.visible
-                                : TextOverflow.ellipsis,
+                            '오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!',
+                            maxLines: largeText ? 4 : 2,
+                            overflow: TextOverflow.visible,
                             softWrap: true,
                             style: TextStyle(
                               color: palette.mutedText,
@@ -708,7 +706,12 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required List<Era> eras,
   }) {
     final ordered = _sortEventsByEraThenIndex(events, eras);
-    if (ordered.isEmpty || current == null) return const [];
+    if (ordered.isEmpty) return const [];
+    if (current == null) {
+      return [
+        for (final event in ordered) _StoryJourneyDeckEntry(event: event),
+      ];
+    }
     final index = ordered.indexWhere((event) => event.id == current.id);
     if (index < 0) return const [];
     return [for (final event in ordered) _StoryJourneyDeckEntry(event: event)];
@@ -2253,6 +2256,13 @@ class _ProfileExplorationLogPageState
     widget.onOpenEventDetail(event, source: ProfileEventOpenSource.detailOnly);
   }
 
+  Future<void> _openCompanionDiaryDetail(UserCompanionDiaryEntry entry) async {
+    await showDialog<void>(
+      context: context,
+      builder: (_) => CompanionDiaryEntryDetailDialog(entry: entry),
+    );
+  }
+
   void _openEmotionMarksPopup({
     required String title,
     required List<EventEmotionMark> marks,
@@ -2646,6 +2656,7 @@ class _ProfileExplorationLogPageState
                   companionDiaryError: widget.companionDiaryError,
                   eventById: eventById,
                   onOpenEventDetail: _openEventDetail,
+                  onOpenCompanionDiaryDetail: _openCompanionDiaryDetail,
                 ),
               ),
             ],
@@ -2702,6 +2713,7 @@ class _EmotionMarksPreviewPanel extends StatelessWidget {
     required this.companionDiaryError,
     required this.eventById,
     required this.onOpenEventDetail,
+    required this.onOpenCompanionDiaryDetail,
   });
 
   final DateTime selectedDate;
@@ -2711,6 +2723,7 @@ class _EmotionMarksPreviewPanel extends StatelessWidget {
   final String? companionDiaryError;
   final Map<String, StoryEvent> eventById;
   final ValueChanged<StoryEvent> onOpenEventDetail;
+  final ValueChanged<UserCompanionDiaryEntry> onOpenCompanionDiaryDetail;
 
   @override
   Widget build(BuildContext context) {
@@ -2752,6 +2765,9 @@ class _EmotionMarksPreviewPanel extends StatelessWidget {
               entry: selectedDateDiary,
               loading: companionDiaryLoading,
               error: companionDiaryError,
+              onTap: selectedDateDiary == null
+                  ? null
+                  : () => onOpenCompanionDiaryDetail(selectedDateDiary!),
             ),
         ],
       ],
@@ -2913,11 +2929,13 @@ class _SelectedDateDiarySummary extends StatelessWidget {
     required this.entry,
     required this.loading,
     required this.error,
+    this.onTap,
   });
 
   final UserCompanionDiaryEntry? entry;
   final bool loading;
   final String? error;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -2934,60 +2952,67 @@ class _SelectedDateDiarySummary extends StatelessWidget {
         message: error ?? '선택한 날짜에 남긴 신앙 다이어리가 없습니다.',
       );
     }
-    return Container(
+    return Material(
       key: const ValueKey('selected-date-companion-diary'),
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-      decoration: BoxDecoration(
-        color: palette.cardSurface,
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: palette.subtleBorder, width: 0.9),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const _SelectedDateDiaryBadge(),
-          const SizedBox(width: 9),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '신앙 다이어리',
-                  style: TextStyle(
-                    color: palette.successBottom,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                    height: 1.15,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  currentEntry.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: palette.text,
-                    fontSize: 13.2,
-                    fontWeight: FontWeight.w900,
-                    height: 1.24,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  currentEntry.body,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: palette.mutedText,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    height: 1.38,
-                  ),
-                ),
-              ],
-            ),
+        child: Ink(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          decoration: BoxDecoration(
+            color: palette.cardSurface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: palette.subtleBorder, width: 0.9),
           ),
-        ],
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _SelectedDateDiaryBadge(),
+              const SizedBox(width: 9),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '신앙 다이어리',
+                      style: TextStyle(
+                        color: palette.successBottom,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        height: 1.15,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      currentEntry.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: palette.text,
+                        fontSize: 13.2,
+                        fontWeight: FontWeight.w900,
+                        height: 1.24,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      currentEntry.body,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: palette.mutedText,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        height: 1.38,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -3308,6 +3333,9 @@ class _ProfileStoryJourneyDeckState extends State<_ProfileStoryJourneyDeck> {
 
   String _labelForIndex(int index) {
     final recentIndex = _recentIndex();
+    if (recentIndex < 0 && index == 0) {
+      return '다음 이야기';
+    }
     if (index == recentIndex) {
       return '최근 탐험 이야기';
     }

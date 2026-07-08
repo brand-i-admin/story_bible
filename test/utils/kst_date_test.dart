@@ -22,4 +22,22 @@ void main() {
       expect(text, '5월 26일');
     });
   });
+
+  group('KST midnight timer', () {
+    test('한국 오후 시간에도 다음 자정까지 양수 delay 를 반환한다', () {
+      final delay = durationUntilNextKstMidnight(
+        DateTime.parse('2026-07-08T07:29:00Z'),
+      );
+
+      expect(delay, const Duration(hours: 7, minutes: 31));
+    });
+
+    test('한국 자정 직전에는 남은 1초를 반환한다', () {
+      final delay = durationUntilNextKstMidnight(
+        DateTime.parse('2026-07-08T14:59:59Z'),
+      );
+
+      expect(delay, const Duration(seconds: 1));
+    });
+  });
 }

@@ -256,17 +256,29 @@ class _PaletteWheel extends StatelessWidget {
       child: ClipOval(
         child: CustomPaint(
           painter: _PaletteWheelPainter(
-            colors: [
-              palette.primary,
-              palette.currentAccent,
-              palette.stepStory,
-              palette.successBottom,
-            ],
+            colors: paletteWheelPreviewColors(palette),
           ),
         ),
       ),
     );
   }
+}
+
+List<Color> paletteWheelPreviewColors(AppColorPalette palette) {
+  if (palette == AppColorPalette.blackMap) {
+    return [
+      palette.pageBottom,
+      palette.panelSurface,
+      palette.cardSurface,
+      palette.currentFill,
+    ];
+  }
+  return [
+    palette.primary,
+    palette.currentAccent,
+    palette.stepStory,
+    palette.successBottom,
+  ];
 }
 
 class _PaletteWheelPainter extends CustomPainter {

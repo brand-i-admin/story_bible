@@ -21,6 +21,7 @@ import 'package:story_bible/models/user_companion_diary_entry.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/notification_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
+import 'package:story_bible/state/story_state.dart';
 import 'package:story_bible/widgets/parchment_page_scaffold.dart';
 import 'package:story_bible/widgets/profile_editor_dialog.dart';
 import 'package:story_bible/widgets/profile_tab_page.dart';
@@ -35,6 +36,44 @@ class _MockNotificationRepository extends Mock
 class _MockSupabaseClient extends Mock implements SupabaseClient {}
 
 class _MockGoTrueClient extends Mock implements GoTrueClient {}
+
+class _ProfileProgressRefreshStoryController extends StoryController {
+  @override
+  StoryState build() => const StoryState(
+    loading: false,
+    eras: [
+      Era(
+        id: 'era-1',
+        code: 'era_patriarch',
+        testament: 'old',
+        name: '테스트 시대',
+        displayOrder: 1,
+        startYear: null,
+        endYear: null,
+        mapCenterLat: null,
+        mapCenterLng: null,
+        mapZoom: null,
+      ),
+    ],
+  );
+
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  Future<void> refreshCompletedEventIds() async {
+    state = state.copyWith(completedEventIds: {'event-done'});
+  }
+
+  @override
+  Future<void> refreshQuizAttemptSummaries() async {}
+
+  @override
+  Future<void> refreshSavedEventIds() async {}
+
+  @override
+  Future<void> refreshCompletedBibleChapterKeys() async {}
+}
 
 StoryEvent _profileEvent({
   required String id,
@@ -302,9 +341,23 @@ void main() {
       userRepository: userRepository,
       supabaseClient: supabaseClient,
       viewSize: const Size(390, 800),
+      tickerEnabled: true,
+      settleAfterPump: false,
     );
 
     expect(find.byType(RefreshIndicator), findsOneWidget);
+
+    final refresh = tester
+        .state<RefreshIndicatorState>(find.byType(RefreshIndicator))
+        .show();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    await refresh;
+    await tester.pump(const Duration(milliseconds: 100));
+
+    verify(() => storyRepository.fetchCharactersByEra('era-1')).called(2);
+    verify(() => storyRepository.fetchEventsByEra('era-1')).called(2);
+    verify(() => userRepository.ensureSignedInUser(user)).called(2);
   });
 
   testWidgets('기도 기능은 pending 상태로 코드만 보존하고 화면에는 표시하지 않는다', (tester) async {
@@ -460,7 +513,7 @@ void main() {
     );
 
     expect(
-      find.text('오늘도 이야기 탐험, 신앙 다이어리 작성\n통독으로 하나님과 함께 해보아요!'),
+      find.text('오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!'),
       findsOneWidget,
     );
     expect(find.text('이야기 탐험'), findsWidgets);
@@ -479,7 +532,7 @@ void main() {
     }
   });
 
-  testWidgets('탐험 기록이 없으면 홈 탐험 CTA를 보여주고 콜백을 호출한다', (tester) async {
+  testWidgets('탐험 기록이 없으면 첫 이야기를 다음 이야기로 보여준다', (tester) async {
     final firstEvent = _profileEvent(id: 'event-first', title: '첫 이야기');
 
     when(() => auth.currentUser).thenReturn(user);
@@ -506,22 +559,32 @@ void main() {
       () => storyRepository.fetchCompletedBibleChapterKeys(user.id),
     ).thenAnswer((_) async => const <String>{});
 
-    var tapped = false;
+    var homeTapped = false;
+    StoryEvent? openedEvent;
+    ProfileEventOpenSource? openedSource;
     await _pumpProfileTab(
       tester,
       user: user,
       storyRepository: storyRepository,
       userRepository: userRepository,
       supabaseClient: supabaseClient,
-      onExploreStoriesFromHome: () => tapped = true,
+      onExploreStoriesFromHome: () => homeTapped = true,
+      onOpenEventDetail: (event, {source}) {
+        openedEvent = event;
+        openedSource = source;
+      },
     );
 
-    expect(find.text('홈 화면에서 이야기를 탐험해보세요!'), findsOneWidget);
+    expect(find.text('홈 화면에서 이야기를 탐험해보세요!'), findsNothing);
+    expect(find.text('다음 이야기'), findsOneWidget);
+    expect(find.text('첫 이야기'), findsOneWidget);
 
-    await tester.tap(find.byTooltip('이야기 탐험 시작'));
+    await tester.tap(find.text('첫 이야기'));
     await tester.pump();
 
-    expect(tapped, isTrue);
+    expect(homeTapped, isFalse);
+    expect(openedEvent?.id, 'event-first');
+    expect(openedSource, ProfileEventOpenSource.targetOnly);
   });
 
   testWidgets('좁은 프로필 화면은 기도 없이 독립 진행 카드를 overflow 없이 보여준다', (tester) async {
@@ -788,6 +851,75 @@ void main() {
 
     expect(find.text('저장한 이야기'), findsWidgets);
     expect(find.byType(ParchmentListPageScaffold), findsOneWidget);
+  });
+
+  testWidgets('프로필 첫 진입은 기존 컨트롤러 상태가 비어 있어도 완료 이야기 수를 새로 읽는다', (tester) async {
+    final completedEvent = _profileEvent(
+      id: 'event-done',
+      title: '완료한 이야기',
+      storyIndex: 1,
+    );
+    final incompleteEvent = _profileEvent(
+      id: 'event-todo',
+      title: '미완료 이야기',
+      storyIndex: 2,
+    );
+    final notificationRepository = _MockNotificationRepository();
+
+    when(
+      () => notificationRepository.watchUnreadCount(),
+    ).thenAnswer((_) => Stream<int>.value(0));
+    when(
+      () => storyRepository.fetchEventsByEra('era-1'),
+    ).thenAnswer((_) async => [completedEvent, incompleteEvent]);
+
+    final container = ProviderContainer(
+      overrides: [
+        signedInUserProvider.overrideWithValue(user),
+        storyRepositoryProvider.overrideWithValue(storyRepository),
+        storyControllerProvider.overrideWith(
+          _ProfileProgressRefreshStoryController.new,
+        ),
+        userRepositoryProvider.overrideWithValue(userRepository),
+        notificationRepositoryProvider.overrideWithValue(
+          notificationRepository,
+        ),
+        supabaseClientProvider.overrideWithValue(supabaseClient),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    expect(container.read(storyControllerProvider).completedEventIds, isEmpty);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          home: TickerMode(
+            enabled: false,
+            child: ProfileTabPage(
+              onStartQuiz: (_) {},
+              onOpenEventDetail: (_, {source}) {},
+              onOpenBibleReader:
+                  ({initialBookNo, initialChapterNo, initialVerseNo}) async {},
+              onOpenAppPublications: () {},
+              onNavigateNotification: (_) {},
+              onOpenNotificationHistory: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(container.read(storyControllerProvider).completedEventIds, {
+      'event-done',
+    });
+    final richTexts = tester
+        .widgetList<RichText>(find.byType(RichText, skipOffstage: false))
+        .map((widget) => widget.text.toPlainText())
+        .toList(growable: false);
+    expect(richTexts, contains('1/301개'));
   });
 
   testWidgets('저장한 말씀 요약 카드는 저장 말씀 페이지로 이동한다', (tester) async {
@@ -1379,6 +1511,23 @@ void main() {
     expect(find.text('감정과 코멘트'), findsOneWidget);
     expect(find.text('오늘의 기록'), findsOneWidget);
 
+    final selectedDateDiary = find.byKey(
+      const ValueKey('selected-date-companion-diary'),
+    );
+    await tester.ensureVisible(selectedDateDiary);
+    await tester.pumpAndSettle();
+    await tester.tap(selectedDateDiary);
+    await tester.pumpAndSettle();
+
+    expect(find.text('신앙 다이어리 상세'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-body-diary-selected')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byIcon(Icons.close_rounded).last);
+    await tester.pumpAndSettle();
+
     await tester.tap(emotionListTitle('감사로 새긴 이야기'));
     await tester.pumpAndSettle();
 
@@ -1417,6 +1566,8 @@ Future<void> _pumpProfileTab(
   onOpenBibleReader,
   Size viewSize = const Size(900, 700),
   double textScale = 1.0,
+  bool tickerEnabled = false,
+  bool settleAfterPump = true,
   VoidCallback? onExploreStoriesFromHome,
   ProfileEventDetailCallback? onOpenEventDetail,
 }) async {
@@ -1445,7 +1596,7 @@ Future<void> _pumpProfileTab(
         home: MediaQuery(
           data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
           child: TickerMode(
-            enabled: false,
+            enabled: tickerEnabled,
             child: ProfileTabPage(
               onStartQuiz: (_) {},
               onOpenEventDetail: onOpenEventDetail ?? (_, {source}) {},
@@ -1464,5 +1615,11 @@ Future<void> _pumpProfileTab(
       ),
     ),
   );
-  await tester.pumpAndSettle();
+  if (settleAfterPump) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
+  }
 }

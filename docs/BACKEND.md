@@ -478,7 +478,7 @@ explanation text, display_order int
 | eras, bible_verses, quiz_questions | 공개 (anon) | — |
 | persons | 공개, **`is_active = true`만 노출** (admin은 전체) | admin만 |
 | events | 공개, **`status = 'published'`만 노출** (admin은 전체) | admin만 |
-| events_ordered, character_eras (view) | 공개 | — (view, underlying RLS 따름) |
+| events_ordered, character_eras (view) | 공개, `security_invoker=true` 로 하위 테이블 RLS 적용 | — |
 | user_profiles | 본인만 | 본인만 |
 | user_event_progress | 본인만 | 본인만 |
 | user_quiz_attempts | 본인만 | 본인만 |

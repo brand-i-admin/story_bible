@@ -39,7 +39,8 @@ void main() {
     expect(source, contains('text: profile.nickname'));
     expect(source, contains("text: '님'"));
     expect(source, contains('palette.primary.withValues(alpha: 0.04)'));
-    expect(source, contains("'오늘도 이야기 탐험, 신앙 다이어리 작성\\n통독으로 하나님과 함께 해보아요!'"));
+    expect(source, contains("'오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!'"));
+    expect(source, contains('maxLines: largeText ? 4 : 2'));
     expect(source, contains('fontSize: largeText ? 16.8 : 18.0'));
     expect(source, contains('fontSize: largeText ? 12.4 : 13.4'));
     expect(source, isNot(contains('_buildProfileJourneyButton')));
@@ -216,11 +217,11 @@ void main() {
     expect(source, contains('onHorizontalDragEnd'));
     expect(source, contains('onHorizontalDragUpdate'));
     expect(source, contains("'되돌아가기'"));
-    expect(source, contains('_EmptyStoryJourneyCtaCard'));
-    expect(source, contains("'홈 화면에서 이야기를 탐험해보세요!'"));
+    expect(source, contains("recentIndex < 0 && index == 0"));
     expect(source, contains('ProfileGlowingAddButton'));
     expect(source, contains('onExploreStoriesFromHome'));
-    expect(source, contains('return const [];'));
+    expect(source, contains('if (ordered.isEmpty) return const [];'));
+    expect(source, contains('if (current == null) {'));
     expect(source, contains('onOpenStory(event)'));
     expect(source, isNot(contains('Expanded(flex: 8, child: exploration)')));
     expect(source, isNot(contains('Expanded(flex: 9, child: stats)')));
