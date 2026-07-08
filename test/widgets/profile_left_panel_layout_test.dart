@@ -25,13 +25,20 @@ void main() {
     );
     expect(source, isNot(contains('Icons.edit_rounded')));
     expect(source, contains('_buildProfileBodyShell'));
-    expect(source, contains('color: AppColors.fgOnDark'));
-    expect(source, contains('color: AppColors.parchmentCard'));
+    expect(source, contains('_profileBodyShellSurface'));
+    expect(source, contains('color: _profileBodyShellSurface(palette)'));
+    expect(
+      source,
+      contains('AppColorPalette.blackMap => const Color(0xFF05070B)'),
+    );
+    expect(source, contains('_profileIdentitySurface'));
+    expect(source, contains('color: _profileIdentitySurface(palette)'));
     expect(source, contains('_buildProfileIdentityCard('));
     expect(source, contains('Text.rich('));
     expect(source, contains("text: '샬롬! 🙌 '"));
     expect(source, contains('text: profile.nickname'));
     expect(source, contains("text: '님'"));
+    expect(source, contains('palette.primary.withValues(alpha: 0.04)'));
     expect(source, contains("'오늘도 이야기 탐험, 신앙 다이어리 작성\\n통독으로 하나님과 함께 해보아요!'"));
     expect(source, contains('fontSize: largeText ? 16.8 : 18.0'));
     expect(source, contains('fontSize: largeText ? 12.4 : 13.4'));
@@ -39,6 +46,17 @@ void main() {
     expect(source, isNot(contains("'말씀 여정 보기'")));
     expect(source, contains('Icons.chevron_right_rounded'));
     expect(source, contains('_buildTodayProfileActionChecklist'));
+    expect(source, contains("ValueKey('profile-today-action-checklist-info')"));
+    expect(source, contains('_openTodayActionChecklistInfo'));
+    expect(source, contains('오늘의 할일'));
+    expect(source, contains('매일 이야기 탐험, 신앙 다이어리 작성, 통독 진행을 해봅시다!'));
+    expect(source, contains("'할일:'"));
+    expect(source, contains('alignment: WrapAlignment.center'));
+    expect(source, contains('borderRadius: BorderRadius.circular(4)'));
+    expect(
+      source,
+      contains('border: Border.all(color: checkBorder, width: 1.1)'),
+    );
     expect(source, contains("label: '이야기 탐험'"));
     expect(source, contains("label: '신앙 다이어리'"));
     expect(source, contains("label: '통독'"));
@@ -67,7 +85,6 @@ void main() {
     expect(source, contains('palette.cardUnselectedTop'));
     expect(source, contains('palette.cardUnselectedBottom'));
     expect(source, contains('Icons.self_improvement_rounded'));
-    expect(source, isNot(contains("label: '기록'")));
     expect(source, isNot(contains('_ProfileContentTab.records')));
     expect(source, contains('_profileIconTabHeight = 44'));
     expect(source, contains('height: _profileIconTabHeight'));
@@ -100,7 +117,8 @@ void main() {
     ).readAsStringSync();
 
     expect(source, contains('_ProfileStoryExplorationDashboard'));
-    expect(source, contains('color: AppColors.parchmentCard'));
+    expect(source, contains('_profileStoryExplorationSurface'));
+    expect(source, contains('color: _profileStoryExplorationSurface(palette)'));
     expect(source, contains('_ProfileDashboardTitle'));
     expect(source, contains("'이야기 탐험'"));
     expect(source, contains('Icons.explore_rounded'));
@@ -140,7 +158,7 @@ void main() {
     expect(source, contains('_ProfileExplorationLogPage'));
     expect(source, contains("'이야기 탐험 요약'"));
     expect(source, contains("label: '이야기'"));
-    expect(source, contains("label: '로그'"));
+    expect(source, contains("label: '기록'"));
     expect(source, contains("label: '저장'"));
     expect(source, contains("label: '말씀'"));
     expect(source, contains("text: '개'"));
@@ -166,10 +184,11 @@ void main() {
     expect(source, contains('ClipRRect'));
     expect(source, contains(')..repeat();'));
     expect(source, contains('math.cos(progress * math.pi * 2)'));
-    expect(source, contains('final edgeAlpha = 0.16 + 0.22 * t'));
-    expect(source, contains('final centerAlpha = 0.02 + 0.04 * t'));
+    expect(source, contains('final edgeAlpha = 0.30 + 0.42 * t'));
+    expect(source, contains('final centerAlpha = 0.035 + 0.075 * t'));
     expect(source, contains('AppColors.goldHi'));
     expect(source, contains('AppColors.goldLight'));
+    expect(source, contains('AppColors.gold.withValues(alpha: edgeAlpha)'));
     expect(source, contains('RadialGradient'));
     expect(source, isNot(contains('AppColors.profileNextStoryGlow')));
     expect(source, isNot(contains('AppColors.profileNextStoryGlowEdge')));
@@ -179,6 +198,12 @@ void main() {
     expect(source, contains('_StoryJourneyGuideNote'));
     expect(source, contains("'참고'"));
     expect(source, contains('다음 이야기를 눌러 시작하세요! (완료 조건은 감정 새기기입니다)'));
+    expect(
+      source,
+      isNot(
+        contains('color: palette.currentAccentDeep.withValues(alpha: 0.22)'),
+      ),
+    );
     expect(source, isNot(contains('isCanonicalNextStory')));
     expect(source, isNot(contains('nextJourneyEventId')));
     expect(source, contains('ProfileEventOpenSource.targetOnly'));
@@ -186,6 +211,14 @@ void main() {
     expect(homeSource, contains('source != ProfileEventOpenSource.targetOnly'));
     expect(homeSource, contains('notifier.setDisplayedEvents({homeEvent.id})'));
     expect(homeSource, contains('_mapPanelController.focusSelectedEvent'));
+    expect(homeSource, contains('duration: const Duration(seconds: 1)'));
+    expect(homeSource, contains('returnToProfileOnRoot: true'));
+    expect(homeSource, contains('_StoryDetailBackContext'));
+    expect(homeSource, contains('_handleEventDetailBack'));
+    expect(
+      homeSource,
+      contains('final previousEvent = backContext.previousEvent'),
+    );
     expect(source, contains('label.isNotEmpty'));
     expect(source, contains('showCharacterPills: !muted'));
     expect(source, isNot(contains("'이전이전 이야기'")));
@@ -197,6 +230,9 @@ void main() {
     );
     expect(source, contains('showSummary: !muted'));
     expect(source, contains('forceOpaqueSurface: !muted'));
+    expect(source, contains('_profileOpaqueStoryCardSurface(palette)'));
+    expect(source, contains('AppColorPalette.blackMap => palette.cardSurface'));
+    expect(source, contains('_profileProgressPageSurface'));
     expect(pageSource, contains('_profileStoryEraCodeOrder'));
     expect(pageSource, contains("'era_primeval': 0"));
     expect(pageSource, contains("'era_nt_post_apostolic': 9"));
@@ -243,9 +279,12 @@ void main() {
     expect(source, contains('textAlign: TextAlign.right'));
     expect(source, contains('fontSize: largeText ? 8.8 : 9.5'));
     expect(source, contains('labelIconSize = largeText ? 15.6 : 17.4'));
-    expect(source, contains('progressFraction'));
-    expect(source, contains('LinearProgressIndicator'));
-    expect(source, contains('color.withValues(alpha: 0.14)'));
+    expect(
+      source,
+      contains('constraints: const BoxConstraints(minHeight: 72)'),
+    );
+    expect(source, isNot(contains('progressFraction')));
+    expect(source, isNot(contains('color.withValues(alpha: 0.14)')));
     expect(source, isNot(contains('Color(0x0A000000)')));
     expect(source, isNot(contains('Icons.north_east_rounded')));
     expect(source, contains('onTap: null'));
@@ -263,7 +302,7 @@ void main() {
     expect(source, isNot(contains('textScale >= 1.3')));
   });
 
-  test('프로필 이야기 탐험 요약은 숫자와 작은 진행 바를 표시한다', () {
+  test('프로필 이야기 탐험 요약은 숫자와 테마 역할색을 표시한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();
@@ -278,8 +317,15 @@ void main() {
     expect(source, contains('fontSize: 11.4'));
     expect(source, contains('fontSize: 12.2'));
     expect(source, contains('fontSize: largeText ? 14.8 : 16.2'));
-    expect(source, contains('progressFraction: storyProgress.fraction'));
-    expect(source, contains('minHeight: 4'));
+    expect(
+      source,
+      contains('constraints: const BoxConstraints(minHeight: 72)'),
+    );
+    expect(source, contains('color: palette.primary'));
+    expect(source, contains('color: palette.currentAccentDeep'));
+    expect(source, contains('color: palette.successBottom'));
+    expect(source, contains('color: palette.primaryDeep'));
+    expect(source, isNot(contains('progressFraction: storyProgress.fraction')));
     expect(source, isNot(contains('_StoryProgressMiniCard')));
     expect(source, isNot(contains('_ProfileProgressDonut')));
     expect(source, isNot(contains("replaceFirst('/', ' / ')")));
@@ -303,6 +349,21 @@ void main() {
     final eventCardSource = File(
       'lib/widgets/v2/region_event_list.dart',
     ).readAsStringSync();
+    final eraRowsSource = File(
+      'lib/widgets/v2/era_pick_rows.dart',
+    ).readAsStringSync();
+    final selectionPanelSource = File(
+      'lib/widgets/story_selection_panel.dart',
+    ).readAsStringSync();
+    final dailyMissionSource = File(
+      'lib/widgets/quiz/daily_exploration_section.dart',
+    ).readAsStringSync();
+    final eventDetailSource = File(
+      'lib/widgets/event_detail_page.dart',
+    ).readAsStringSync();
+    final stylesSource = File(
+      'lib/widgets/story_home_styles.dart',
+    ).readAsStringSync();
 
     expect(
       profileSource,
@@ -324,6 +385,22 @@ void main() {
     expect(characterSource, contains('palette.panelSurface'));
     expect(eventCardSource, isNot(contains('? Colors.white')));
     expect(eventCardSource, contains('palette.cardSurface'));
+    expect(profileSource, contains('_profileBodyShellSurface'));
+    expect(profileSource, contains('_profileOpaqueStoryCardSurface'));
+    expect(selectionPanelSource, contains('const [Color(0xFF05070B)'));
+    expect(dailyMissionSource, contains('_dailyMissionSurface'));
+    expect(dailyMissionSource, contains('_dailyMissionCardSurface'));
+    expect(
+      eventDetailSource,
+      contains('modalSurfaceDecoration(palette: palette)'),
+    );
+    expect(
+      stylesSource,
+      contains('modalSurfaceDecoration({AppColorPalette? palette})'),
+    );
+    expect(stylesSource, contains('bool includeShadow = true'));
+    expect(eraRowsSource, contains('includeShadow: false'));
+    expect(eraRowsSource, isNot(contains('boxShadow: [')));
   });
 
   test('탐험한 이야기 페이지는 전체/완료/미완료 필터를 제공한다', () {

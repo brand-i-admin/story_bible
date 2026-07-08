@@ -9,6 +9,7 @@ import '../../models/story_event.dart';
 import '../../state/auth_providers.dart';
 import '../../state/story_controller.dart';
 import '../../state/story_state.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/daily_exploration_prompt.dart';
 import '../../utils/daily_exploration_selection.dart';
@@ -314,6 +315,7 @@ class _DailyExplorationSectionState
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        final palette = AppPaletteTheme.of(context);
         final gap = (constraints.maxWidth * 0.011).clamp(8.0, 14.0).toDouble();
         final timelineHeight = eventTimelineRowHeightFor(context, base: 264);
         final mapHeight = (constraints.maxHeight * 0.34)
@@ -334,9 +336,9 @@ class _DailyExplorationSectionState
                 padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
-                  color: const Color(0x66FFF6E2),
+                  color: _dailyMissionSurface(palette),
                   borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: AppColors.borderCard, width: 0.9),
+                  border: Border.all(color: palette.subtleBorder, width: 0.9),
                 ),
                 child: SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
@@ -533,6 +535,26 @@ class _DailyExplorationSectionState
   }
 }
 
+Color _dailyMissionSurface(AppColorPalette palette) {
+  return switch (palette) {
+    AppColorPalette.blackMap => palette.softSurface,
+    _ => Color.alphaBlend(
+      palette.currentAccent.withValues(alpha: 0.055),
+      AppColors.parchmentCream,
+    ),
+  };
+}
+
+Color _dailyMissionCardSurface(AppColorPalette palette) {
+  return switch (palette) {
+    AppColorPalette.blackMap => palette.cardSurface,
+    _ => Color.alphaBlend(
+      palette.currentAccent.withValues(alpha: 0.035),
+      AppColors.parchmentCream,
+    ),
+  };
+}
+
 class _DailyExplorationIntro extends StatelessWidget {
   const _DailyExplorationIntro({required this.data});
 
@@ -540,28 +562,29 @@ class _DailyExplorationIntro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 13, 14, 14),
       decoration: BoxDecoration(
-        color: const Color(0x66FFF6E2),
+        color: _dailyMissionSurface(palette),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: AppColors.borderCard, width: 0.8),
+        border: Border.all(color: palette.subtleBorder, width: 0.8),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
               Icon(
                 Icons.navigation_rounded,
-                color: AppColors.greenBtnBot,
+                color: palette.successBottom,
                 size: 18,
               ),
-              SizedBox(width: 7),
+              const SizedBox(width: 7),
               Text(
                 '오늘의 미션',
                 style: TextStyle(
-                  color: AppColors.greenBtnBot,
+                  color: palette.successBottom,
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
                   height: 1,
@@ -616,17 +639,18 @@ class _DailyExplorationViewSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Row(
+        Row(
           children: [
-            Text('🧭', style: TextStyle(fontSize: 15.5, height: 1)),
-            SizedBox(width: 7),
+            const Text('🧭', style: TextStyle(fontSize: 15.5, height: 1)),
+            const SizedBox(width: 7),
             Text(
               '오늘의 사건',
               style: TextStyle(
-                color: AppColors.greenBtnBot,
+                color: palette.successBottom,
                 fontSize: 13,
                 fontWeight: FontWeight.w900,
                 height: 1,
@@ -656,8 +680,8 @@ class _DailyExplorationViewSwitch extends StatelessWidget {
                         ? TextOverflow.visible
                         : TextOverflow.ellipsis,
                     softWrap: true,
-                    style: const TextStyle(
-                      color: AppColors.ink300,
+                    style: TextStyle(
+                      color: palette.mutedText,
                       fontSize: 11.8,
                       fontWeight: FontWeight.w900,
                       height: 1,
@@ -714,6 +738,7 @@ class _DailyExplorationPrimaryAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
+    final palette = AppPaletteTheme.of(context);
     return Tooltip(
       message: '오늘 선정된 사건 보기',
       child: Material(
@@ -724,12 +749,14 @@ class _DailyExplorationPrimaryAction extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.fromLTRB(13, 12, 11, 12),
             decoration: BoxDecoration(
-              color: selected ? AppColors.greenBtnBot : const Color(0xFFFFF6E2),
+              color: selected
+                  ? palette.successBottom
+                  : _dailyMissionCardSurface(palette),
               borderRadius: BorderRadius.circular(13),
               border: Border.all(
                 color: selected
-                    ? AppColors.greenBorder
-                    : AppColors.borderFloating,
+                    ? palette.completedBorder
+                    : palette.subtleBorder,
                 width: selected ? 1.2 : 0.9,
               ),
             ),
@@ -746,7 +773,7 @@ class _DailyExplorationPrimaryAction extends StatelessWidget {
                     softWrap: true,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: selected ? AppColors.fgOnDark : AppColors.ink500,
+                      color: selected ? AppColors.fgOnDark : palette.text,
                       fontSize: 14.2,
                       fontWeight: FontWeight.w900,
                       height: 1.28,
@@ -781,12 +808,13 @@ class _DailyExplorationSideButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final color = selected
-        ? AppColors.greenBtnBot
+        ? palette.successBottom
         : enabled
-        ? AppColors.ink450
-        : AppColors.ink300.withValues(alpha: 0.62);
+        ? palette.text
+        : palette.mutedText.withValues(alpha: 0.62);
     final textScale = MediaQuery.textScalerOf(
       context,
     ).scale(1).clamp(1.0, 1.35).toDouble();
@@ -803,13 +831,13 @@ class _DailyExplorationSideButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 9),
             decoration: BoxDecoration(
               color: selected
-                  ? AppColors.greenTint1.withValues(alpha: 0.9)
-                  : const Color(0x80FFF6E2),
+                  ? palette.successFill
+                  : _dailyMissionCardSurface(palette),
               borderRadius: BorderRadius.circular(11),
               border: Border.all(
                 color: selected
-                    ? AppColors.greenBorder.withValues(alpha: 0.92)
-                    : AppColors.borderCard,
+                    ? palette.completedBorder.withValues(alpha: 0.92)
+                    : palette.subtleBorder,
                 width: selected ? 1.2 : 0.8,
               ),
             ),
@@ -882,19 +910,20 @@ class _DailyExplorationCardNoteBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final isBlessing = note.kind == DailyExplorationCardNoteKind.blessing;
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
       decoration: BoxDecoration(
         color: isBlessing
-            ? AppColors.greenTint1.withValues(alpha: 0.92)
-            : const Color(0xB8FFF6E2),
+            ? palette.successFill
+            : _dailyMissionCardSurface(palette),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: isBlessing
-              ? AppColors.greenBorder.withValues(alpha: 0.78)
-              : AppColors.borderCard,
+              ? palette.completedBorder.withValues(alpha: 0.78)
+              : palette.subtleBorder,
           width: 0.8,
         ),
       ),
@@ -904,7 +933,7 @@ class _DailyExplorationCardNoteBanner extends StatelessWidget {
           Icon(
             isBlessing ? Icons.check_circle_rounded : Icons.refresh_rounded,
             size: 16,
-            color: isBlessing ? AppColors.greenBtnBot : AppColors.goldDeep,
+            color: isBlessing ? palette.successBottom : palette.currentAccent,
           ),
           const SizedBox(width: 7),
           Expanded(
@@ -915,8 +944,8 @@ class _DailyExplorationCardNoteBanner extends StatelessWidget {
                   ? TextOverflow.visible
                   : TextOverflow.ellipsis,
               softWrap: true,
-              style: const TextStyle(
-                color: AppColors.ink450,
+              style: TextStyle(
+                color: palette.text,
                 fontSize: 12.4,
                 fontWeight: FontWeight.w800,
                 height: 1.34,
@@ -936,10 +965,11 @@ class _DailyIntroText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Text(
       text,
-      style: const TextStyle(
-        color: AppColors.ink500,
+      style: TextStyle(
+        color: palette.text,
         fontSize: 14.1,
         fontWeight: FontWeight.w800,
         height: 1.45,
@@ -956,6 +986,7 @@ class _DailyIntroChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final maxWidth = MediaQuery.sizeOf(context).width * 0.58;
     return ConstrainedBox(
@@ -973,8 +1004,8 @@ class _DailyIntroChip extends StatelessWidget {
                   ? TextOverflow.visible
                   : TextOverflow.ellipsis,
               softWrap: true,
-              style: const TextStyle(
-                color: AppColors.ink450,
+              style: TextStyle(
+                color: palette.text,
                 fontSize: 13.0,
                 fontWeight: FontWeight.w900,
                 height: 1.12,

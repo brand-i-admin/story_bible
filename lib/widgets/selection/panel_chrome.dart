@@ -85,6 +85,9 @@ class _BottomFadeHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final fadeEnd = palette == AppColorPalette.blackMap
+        ? const Color(0xFF05070B)
+        : palette.mutedSurface;
     return Container(
       height: 26,
       decoration: BoxDecoration(
@@ -93,7 +96,7 @@ class _BottomFadeHint extends StatelessWidget {
           end: Alignment.bottomCenter,
           colors: [
             palette.panelSurface.withValues(alpha: 0),
-            palette.mutedSurface.withValues(alpha: 0.86),
+            fadeEnd.withValues(alpha: 0.86),
           ],
         ),
       ),

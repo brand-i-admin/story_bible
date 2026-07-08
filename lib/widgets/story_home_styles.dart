@@ -28,8 +28,8 @@ double topUtilityBarHeightFor(BuildContext context) {
   return topUtilityButtonHeightFor(context) + 2;
 }
 
-BoxDecoration modalSurfaceDecoration() {
-  return AppSurfaces.modal();
+BoxDecoration modalSurfaceDecoration({AppColorPalette? palette}) {
+  return AppSurfaces.modal(palette: palette);
 }
 
 BoxDecoration floatingPanelDecoration({
@@ -121,6 +121,7 @@ BoxDecoration headerChipDecoration() {
 BoxDecoration softButtonDecoration({
   required bool selected,
   AppColorPalette? palette,
+  bool includeShadow = true,
 }) {
   if (palette != null) {
     return BoxDecoration(
@@ -136,7 +137,9 @@ BoxDecoration softButtonDecoration({
         color: selected ? palette.actionBorder : palette.subtleBorder,
         width: 1.0,
       ),
-      boxShadow: selected
+      boxShadow: !includeShadow
+          ? null
+          : selected
           ? [
               BoxShadow(
                 color: palette.actionBottom.withValues(alpha: 0.18),
@@ -169,7 +172,9 @@ BoxDecoration softButtonDecoration({
           : AppColors.borderFloating,
       width: 1.0,
     ),
-    boxShadow: selected
+    boxShadow: !includeShadow
+        ? null
+        : selected
         ? const [
             BoxShadow(
               color: Color(0x26A35B22),
@@ -682,14 +687,27 @@ Widget storySection({
   Widget? action,
   Widget? footer,
   bool inlineTitle = false,
+  AppColorPalette? palette,
 }) {
+  final surfaceColor = palette == null
+      ? AppColors.parchmentCard.withValues(alpha: 0.96)
+      : (palette == AppColorPalette.blackMap
+            ? palette.cardSurface
+            : palette.softSurface);
+  final borderColor = palette?.subtleBorder ?? AppColors.borderCard;
+  final bodyColor = palette?.text ?? AppColors.ink800;
+  final titleColor = palette == null
+      ? AppColors.ink450
+      : (palette == AppColorPalette.blackMap
+            ? palette.primaryDeep
+            : palette.mutedText);
   return SizedBox(
     width: double.infinity,
     child: Container(
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.borderCard, width: 1.2),
+        border: Border.all(color: borderColor, width: 1.2),
         borderRadius: BorderRadius.circular(AppRadii.md),
-        color: AppColors.parchmentCard.withValues(alpha: 0.96),
+        color: surfaceColor,
       ),
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -701,14 +719,13 @@ Widget storySection({
                 style: const TextStyle(
                   fontSize: AppFontSizes.body,
                   height: AppLineHeights.body,
-                  color: AppColors.ink800,
-                ),
+                ).copyWith(color: bodyColor),
                 children: [
                   TextSpan(
                     text: title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w800,
-                      color: AppColors.ink450,
+                      color: titleColor,
                     ),
                   ),
                   TextSpan(text: content),
@@ -722,10 +739,10 @@ Widget storySection({
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: AppFontSizes.body,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.ink450,
+                      color: titleColor,
                     ),
                   ),
                 ),
@@ -735,10 +752,10 @@ Widget storySection({
             const SizedBox(height: 6),
             Text(
               content,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: AppFontSizes.body,
                 height: AppLineHeights.body,
-                color: AppColors.ink800,
+                color: bodyColor,
               ),
             ),
           ],

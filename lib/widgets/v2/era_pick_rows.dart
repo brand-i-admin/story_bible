@@ -169,7 +169,11 @@ class _EraChip extends StatelessWidget {
           ),
           decoration: selected
               ? _selectedEraChipDecoration(selectedColors)
-              : softButtonDecoration(selected: false, palette: palette),
+              : softButtonDecoration(
+                  selected: false,
+                  palette: palette,
+                  includeShadow: false,
+                ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -225,13 +229,6 @@ BoxDecoration _selectedEraChipDecoration(List<Color> colors) {
       color: AppColors.parchmentCream.withValues(alpha: 0.72),
       width: 1.0,
     ),
-    boxShadow: [
-      BoxShadow(
-        color: colors.last.withValues(alpha: 0.22),
-        blurRadius: 10,
-        offset: const Offset(0, 5),
-      ),
-    ],
   );
 }
 

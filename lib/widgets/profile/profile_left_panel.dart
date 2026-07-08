@@ -78,6 +78,50 @@ Color _profileSelectedTabButtonSurface(Color accent) {
   return accent;
 }
 
+Color _profileIdentitySurface(AppColorPalette palette) {
+  return switch (palette) {
+    AppColorPalette.blackMap => palette.cardSurface,
+    _ => Color.alphaBlend(
+      palette.primary.withValues(alpha: 0.04),
+      AppColors.parchmentCream,
+    ),
+  };
+}
+
+Color _profileStoryExplorationSurface(AppColorPalette palette) {
+  final base = switch (palette) {
+    AppColorPalette.blackMap => palette.cardSurface,
+    _ => AppColors.parchmentCard,
+  };
+  return Color.alphaBlend(
+    palette.currentAccent.withValues(
+      alpha: palette == AppColorPalette.blackMap ? 0.12 : 0.08,
+    ),
+    base,
+  );
+}
+
+Color _profileBodyShellSurface(AppColorPalette palette) {
+  return switch (palette) {
+    AppColorPalette.blackMap => const Color(0xFF05070B),
+    _ => Colors.white,
+  };
+}
+
+Color _profileOpaqueStoryCardSurface(AppColorPalette palette) {
+  return switch (palette) {
+    AppColorPalette.blackMap => palette.cardSurface,
+    _ => Colors.white,
+  };
+}
+
+Color _profileProgressPageSurface(AppColorPalette palette) {
+  return switch (palette) {
+    AppColorPalette.blackMap => palette.softSurface,
+    _ => palette.softSurface,
+  };
+}
+
 const double _profileIconTabHeight = 44;
 
 BoxDecoration _profileLinkedTabBodyDecoration(
@@ -233,7 +277,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     final palette = AppPaletteTheme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.fgOnDark,
+        color: _profileBodyShellSurface(palette),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -282,7 +326,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
               largeText ? 13 : 15,
             ),
             decoration: BoxDecoration(
-              color: AppColors.parchmentCard,
+              color: _profileIdentitySurface(palette),
               borderRadius: BorderRadius.circular(18),
             ),
             child: Column(
@@ -375,44 +419,42 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   Widget _buildTodayActionCheck({
     required String id,
     required String label,
-    required IconData icon,
     required Color accent,
     required bool completed,
   }) {
     final palette = AppPaletteTheme.of(context);
-    final fill = completed
-        ? Color.alphaBlend(
-            palette.successBottom.withValues(alpha: 0.11),
-            AppColors.fgOnDark,
-          )
-        : Colors.transparent;
     final foreground = completed ? palette.successBottom : palette.mutedText;
-    final badgeFill = completed
+    final checkFill = completed
         ? palette.successBottom
-        : Color.alphaBlend(accent.withValues(alpha: 0.10), palette.softSurface);
-    final badgeForeground = completed ? AppColors.fgOnDark : palette.mutedText;
+        : Color.alphaBlend(
+            accent.withValues(alpha: 0.07),
+            palette == AppColorPalette.blackMap
+                ? palette.mutedSurface
+                : Colors.white,
+          );
+    final checkBorder = completed
+        ? palette.successBottom
+        : accent.withValues(alpha: 0.52);
     return AnimatedContainer(
       key: ValueKey('profile-today-action-$id-check'),
       duration: const Duration(milliseconds: 180),
       curve: Curves.easeOutCubic,
-      padding: const EdgeInsets.fromLTRB(6, 5, 8, 5),
-      decoration: BoxDecoration(
-        color: fill,
-        borderRadius: BorderRadius.circular(999),
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 18,
-            height: 18,
+            width: 16,
+            height: 16,
             alignment: Alignment.center,
-            decoration: BoxDecoration(color: badgeFill, shape: BoxShape.circle),
-            child: Icon(
-              completed ? Icons.check_rounded : icon,
-              color: badgeForeground,
-              size: completed ? 12.5 : 10.5,
+            decoration: BoxDecoration(
+              color: checkFill,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: checkBorder, width: 1.1),
             ),
+            child: completed
+                ? const Icon(Icons.check_rounded, color: Colors.white, size: 12)
+                : null,
           ),
           const SizedBox(width: 5),
           Text(
@@ -442,14 +484,12 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   Widget _todayActionButton({
     required String id,
     required String label,
-    required IconData icon,
     required Color accent,
     required bool completed,
   }) {
     return _buildTodayActionCheck(
       id: id,
       label: label,
-      icon: icon,
       accent: accent,
       completed: completed,
     );
@@ -460,44 +500,82 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     actions,
   }) {
     final palette = AppPaletteTheme.of(context);
-    return Wrap(
-      spacing: 7,
-      runSpacing: 6,
-      children: [
-        _todayActionButton(
-          id: 'story',
-          label: '이야기 탐험',
-          icon: Icons.explore_rounded,
-          accent: _todayActionAccent(
-            palette: palette,
+    return GestureDetector(
+      key: const ValueKey('profile-today-action-checklist-info'),
+      behavior: HitTestBehavior.opaque,
+      onTap: _openTodayActionChecklistInfo,
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        runAlignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 8,
+        runSpacing: 6,
+        children: [
+          Text(
+            '할일:',
+            style: TextStyle(
+              color: palette.mutedText,
+              fontSize: 11.2,
+              fontWeight: FontWeight.w900,
+              height: 1,
+            ),
+          ),
+          _todayActionButton(
+            id: 'story',
+            label: '이야기 탐험',
+            accent: _todayActionAccent(
+              palette: palette,
+              completed: actions.storyExploration,
+              fallback: palette.currentAccentDeep,
+            ),
             completed: actions.storyExploration,
-            fallback: palette.currentAccentDeep,
           ),
-          completed: actions.storyExploration,
-        ),
-        _todayActionButton(
-          id: 'diary',
-          label: '신앙 다이어리',
-          icon: Icons.edit_note_rounded,
-          accent: _todayActionAccent(
-            palette: palette,
+          _todayActionButton(
+            id: 'diary',
+            label: '신앙 다이어리',
+            accent: _todayActionAccent(
+              palette: palette,
+              completed: actions.companionDiary,
+              fallback: palette.successBottom,
+            ),
             completed: actions.companionDiary,
-            fallback: palette.successBottom,
           ),
-          completed: actions.companionDiary,
-        ),
-        _todayActionButton(
-          id: 'bible',
-          label: '통독',
-          icon: Icons.menu_book_rounded,
-          accent: _todayActionAccent(
-            palette: palette,
+          _todayActionButton(
+            id: 'bible',
+            label: '통독',
+            accent: _todayActionAccent(
+              palette: palette,
+              completed: actions.bibleReading,
+              fallback: palette.currentAccentDeep,
+            ),
             completed: actions.bibleReading,
-            fallback: palette.currentAccentDeep,
           ),
-          completed: actions.bibleReading,
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openTodayActionChecklistInfo() async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => ParchmentDialog(
+        title: '오늘의 할일',
+        actions: [
+          ParchmentDialogActionButton(
+            label: '확인',
+            onTap: () => Navigator.of(dialogContext).pop(),
+          ),
+        ],
+        child: const Text(
+          '매일 이야기 탐험, 신앙 다이어리 작성, 통독 진행을 해봅시다!\n(완료 시 자동으로 체크 돼요)',
+          style: TextStyle(
+            color: AppColors.ink500,
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            height: 1.45,
+          ),
         ),
-      ],
+      ),
     );
   }
 
@@ -1668,10 +1746,11 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
       decoration: BoxDecoration(
-        color: AppColors.parchmentCard,
+        color: _profileStoryExplorationSurface(palette),
         borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
@@ -1771,9 +1850,8 @@ class _StoryExplorationSummarySection extends StatelessWidget {
                 key: const ValueKey('profile-story-summary-explored'),
                 label: '이야기',
                 icon: Icons.flag_rounded,
-                color: palette.currentAccentDeep,
+                color: palette.primary,
                 onTap: onOpenStoryProgress,
-                progressFraction: storyProgress.fraction,
                 value: countValue(
                   storyProgress.completed,
                   trailing: TextSpan(
@@ -1791,7 +1869,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
             Expanded(
               child: _StoryExplorationSummaryCard(
                 key: const ValueKey('profile-story-summary-exploration-log'),
-                label: '로그',
+                label: '기록',
                 icon: Icons.history_rounded,
                 color: palette.currentAccentDeep,
                 onTap: onOpenExplorationLog,
@@ -1804,7 +1882,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
                 key: const ValueKey('profile-story-summary-saved-stories'),
                 label: '저장',
                 icon: Icons.bookmark_rounded,
-                color: palette.primary,
+                color: palette.successBottom,
                 onTap: onOpenSavedStories,
                 value: countValue(savedStoryCount),
               ),
@@ -1815,7 +1893,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
                 key: const ValueKey('profile-story-summary-saved-verses'),
                 label: '말씀',
                 icon: Icons.menu_book_rounded,
-                color: palette.currentAccentDeep,
+                color: palette.primaryDeep,
                 onTap: onOpenSavedVerses,
                 value: countValue(savedVerseCount),
               ),
@@ -1835,7 +1913,6 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
     required this.color,
     required this.value,
     required this.onTap,
-    this.progressFraction,
   });
 
   final String label;
@@ -1843,7 +1920,6 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
   final Color color;
   final Widget value;
   final VoidCallback onTap;
-  final double? progressFraction;
 
   @override
   Widget build(BuildContext context) {
@@ -1878,9 +1954,9 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
             ),
           ),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 80),
+            constraints: const BoxConstraints(minHeight: 72),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(8, largeText ? 8 : 9, 8, 8),
+              padding: EdgeInsets.fromLTRB(8, largeText ? 7 : 8, 8, 7),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -1918,18 +1994,6 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
                     ),
                     child: FittedBox(fit: BoxFit.scaleDown, child: value),
                   ),
-                  if (progressFraction != null) ...[
-                    const SizedBox(height: 7),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(999),
-                      child: LinearProgressIndicator(
-                        minHeight: 4,
-                        value: progressFraction!.clamp(0.0, 1.0).toDouble(),
-                        backgroundColor: color.withValues(alpha: 0.14),
-                        color: color,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
@@ -1955,10 +2019,6 @@ class _StoryJourneyGuideNote extends StatelessWidget {
             palette.softSurface,
           ),
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(
-            color: palette.currentAccentDeep.withValues(alpha: 0.22),
-            width: 0.9,
-          ),
         ),
         child: Wrap(
           alignment: WrapAlignment.center,
@@ -2090,7 +2150,7 @@ class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
         child: Container(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
           decoration: BoxDecoration(
-            color: palette.cardSurface.withValues(alpha: 0.90),
+            color: _profileProgressPageSurface(palette),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: palette.subtleBorder, width: 1),
           ),
@@ -3478,6 +3538,9 @@ class _StoryJourneyCard extends StatelessWidget {
             showCharacterPills: !muted,
             forceOpaqueSurface: !muted,
             expandSurface: true,
+            surfaceColorOverride: muted
+                ? null
+                : _profileOpaqueStoryCardSurface(palette),
             loader: SceneAssetLoader(),
             onTap: onTap ?? () {},
           );
@@ -3566,16 +3629,16 @@ class _StoryJourneyNextGlowState extends State<_StoryJourneyNextGlow>
       builder: (context, child) {
         final progress = _controller.value;
         final t = (1 - math.cos(progress * math.pi * 2)) / 2;
-        final edgeAlpha = 0.16 + 0.22 * t;
-        final centerAlpha = 0.02 + 0.04 * t;
+        final edgeAlpha = 0.30 + 0.42 * t;
+        final centerAlpha = 0.035 + 0.075 * t;
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
-                color: AppColors.goldHi.withValues(alpha: 0.16 + 0.22 * t),
-                blurRadius: 14 + 12 * t,
-                spreadRadius: 1.5 + 2.5 * t,
+                color: AppColors.goldLight.withValues(alpha: 0.30 + 0.40 * t),
+                blurRadius: 20 + 22 * t,
+                spreadRadius: 3.0 + 5.5 * t,
               ),
             ],
           ),
@@ -3594,7 +3657,7 @@ class _StoryJourneyNextGlowState extends State<_StoryJourneyNextGlow>
                         colors: [
                           AppColors.goldHi.withValues(alpha: centerAlpha),
                           AppColors.goldHi.withValues(alpha: centerAlpha),
-                          AppColors.goldLight.withValues(alpha: edgeAlpha),
+                          AppColors.gold.withValues(alpha: edgeAlpha),
                         ],
                         stops: const [0.0, 0.58, 1.0],
                       ),
@@ -3607,9 +3670,9 @@ class _StoryJourneyNextGlowState extends State<_StoryJourneyNextGlow>
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: AppColors.goldHi.withValues(
-                          alpha: 0.24 + 0.24 * t,
+                          alpha: 0.42 + 0.42 * t,
                         ),
-                        width: 1.2 + 0.4 * t,
+                        width: 1.7 + 0.7 * t,
                       ),
                     ),
                   ),

@@ -5,6 +5,7 @@ import '../../screens/companion_diary_entries_screen.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
+import '../pulse_highlight.dart';
 import 'companion_diary_entry_card.dart';
 import 'glowing_add_button.dart';
 
@@ -223,6 +224,24 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
     final canWrite = onSave != null;
     final hasEntry = entry != null;
     final message = error ?? '오늘 하나님과 함께한 순간을 기록해 보세요!';
+    final darkSurface =
+        ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
+        Brightness.dark;
+    final surfaceTop = Color.alphaBlend(
+      palette.successBottom.withValues(alpha: darkSurface ? 0.18 : 0.10),
+      darkSurface ? palette.cardSurface : AppColors.greenTint1,
+    );
+    final surfaceBottom = Color.alphaBlend(
+      palette.successTop.withValues(alpha: darkSurface ? 0.24 : 0.14),
+      darkSurface ? palette.softSurface : AppColors.parchmentCream,
+    );
+    final diaryEntry = entry;
+    final diaryTitle = diaryEntry != null && diaryEntry.title.trim().isNotEmpty
+        ? diaryEntry.title.trim()
+        : '제목 없는 다이어리';
+    final diaryBody = diaryEntry != null && diaryEntry.body.trim().isNotEmpty
+        ? diaryEntry.body.trim()
+        : '작성한 내용이 없습니다.';
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -236,21 +255,13 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color.alphaBlend(
-                  palette.successBottom.withValues(alpha: 0.08),
-                  palette.cardSurface,
-                ),
-                Color.alphaBlend(
-                  palette.successTop.withValues(alpha: 0.14),
-                  palette.softSurface,
-                ),
-              ],
+              colors: [surfaceTop, surfaceBottom],
             ),
             borderRadius: BorderRadius.circular(18),
             boxShadow: AppShadows.sm,
           ),
           child: Stack(
+            clipBehavior: Clip.none,
             children: [
               Positioned(
                 right: -3,
@@ -296,17 +307,49 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    hasEntry ? '오늘의 신앙 다이어리를 남겼어요.' : message,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: error == null ? palette.text : AppColors.dangerBot,
-                      fontSize: AppFontSizes.base,
-                      fontWeight: FontWeight.w800,
-                      height: 1.45,
+                  if (hasEntry)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          diaryTitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: palette.text,
+                            fontSize: 12.2,
+                            fontWeight: FontWeight.w900,
+                            height: 1.15,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          diaryBody,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: palette.mutedText,
+                            fontSize: 11.6,
+                            fontWeight: FontWeight.w800,
+                            height: 1.25,
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Text(
+                      message,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: error == null
+                            ? palette.text
+                            : AppColors.dangerBot,
+                        fontSize: AppFontSizes.base,
+                        fontWeight: FontWeight.w800,
+                        height: 1.45,
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 12),
                   if (loading && !hasEntry)
                     const Padding(
@@ -414,40 +457,52 @@ class _DiaryWriteButton extends StatelessWidget {
       palette.cardSurface,
     );
     final labelColor = darkSurface ? AppColors.fgOnDark : palette.successBottom;
-    return Material(
-      key: const ValueKey('companion-diary-write-button-pill'),
-      color: backgroundColor,
-      borderRadius: BorderRadius.circular(999),
-      child: InkWell(
-        onTap: onTap,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 7, 8, 9),
+      child: PulseHighlight(
+        active: true,
+        pulseCount: null,
+        duration: const Duration(milliseconds: 2100),
         borderRadius: BorderRadius.circular(999),
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(8, 5, 11, 5),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(999)),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ProfileGlowingAddButton(
-                key: const ValueKey('companion-diary-add-button'),
-                tooltip: '신앙 다이어리 기록하기',
-                onTap: onTap,
-                size: 28,
-                iconSize: 19,
-                backgroundColor: palette.successBottom,
-                foregroundColor: AppColors.fgOnDark,
-                pulseDuration: const Duration(milliseconds: 1600),
-                pulseCount: null,
+        color: darkSurface ? palette.successTop : AppColors.greenRim,
+        child: Material(
+          key: const ValueKey('companion-diary-write-button-pill'),
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(999),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(999),
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(8, 5, 11, 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
               ),
-              const SizedBox(width: 8),
-              Text(
-                '기록하기',
-                style: TextStyle(
-                  color: labelColor,
-                  fontSize: 12.1,
-                  fontWeight: FontWeight.w900,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ProfileGlowingAddButton(
+                    key: const ValueKey('companion-diary-add-button'),
+                    tooltip: '신앙 다이어리 기록하기',
+                    onTap: onTap,
+                    size: 28,
+                    iconSize: 19,
+                    backgroundColor: palette.successBottom,
+                    foregroundColor: AppColors.fgOnDark,
+                    pulseDuration: const Duration(milliseconds: 1600),
+                    pulseCount: null,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '기록하기',
+                    style: TextStyle(
+                      color: labelColor,
+                      fontSize: 12.1,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

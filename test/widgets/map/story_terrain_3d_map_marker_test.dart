@@ -140,6 +140,16 @@ void main() {
       expect(methodBody, contains('map_math.eventFitTopPadding'));
       expect(methodBody, contains('_terrain3dController.fitBounds'));
       expect(methodBody, contains('maxZoom: targetZoom.toDouble()'));
+      expect(
+        methodBody,
+        contains('Duration duration = const Duration(seconds: 2)'),
+      );
+      expect(methodBody, contains('if (from.id == to.id)'));
+      expect(
+        methodBody,
+        isNot(contains('if (from.id == to.id) {\n      return;')),
+      );
+      expect(methodBody, contains('duration: duration'));
     });
 
     test('event path uses selected character colors', () {

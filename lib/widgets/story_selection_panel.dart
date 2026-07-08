@@ -264,20 +264,21 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
 
   BoxDecoration _panelDecoration(BuildContext context, Color accentColor) {
     final palette = AppPaletteTheme.of(context);
+    final darkPanel = palette == AppColorPalette.blackMap;
     return BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [
-          palette.softSurface,
-          palette.panelSurface,
-          palette.mutedSurface,
-        ],
+        colors: darkPanel
+            ? const [Color(0xFF05070B), Color(0xFF060A12), Color(0xFF05070B)]
+            : [palette.softSurface, palette.panelSurface, palette.mutedSurface],
       ),
       borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
       border: Border.fromBorderSide(
         BorderSide(
-          color: Color.lerp(AppColors.borderFloating, accentColor, 0.52)!,
+          color: darkPanel
+              ? palette.utilityBorder.withValues(alpha: 0.44)
+              : Color.lerp(AppColors.borderFloating, accentColor, 0.52)!,
           width: 1.15,
         ),
       ),

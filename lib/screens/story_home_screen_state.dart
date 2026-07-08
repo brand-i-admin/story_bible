@@ -20,6 +20,36 @@ class _HomeMapFilterSnapshot {
   final Set<String> draftDisplayedEventIds;
 }
 
+class _StoryDetailBackContext {
+  const _StoryDetailBackContext({
+    this.history = const <StoryEvent>[],
+    this.returnToProfileOnRoot = false,
+  });
+
+  final List<StoryEvent> history;
+  final bool returnToProfileOnRoot;
+
+  bool get needsCustomBack => history.isNotEmpty || returnToProfileOnRoot;
+  StoryEvent? get previousEvent => history.isEmpty ? null : history.last;
+
+  _StoryDetailBackContext push(StoryEvent event) {
+    return _StoryDetailBackContext(
+      history: [...history, event],
+      returnToProfileOnRoot: returnToProfileOnRoot,
+    );
+  }
+
+  _StoryDetailBackContext popPrevious() {
+    if (history.isEmpty) {
+      return this;
+    }
+    return _StoryDetailBackContext(
+      history: history.sublist(0, history.length - 1),
+      returnToProfileOnRoot: returnToProfileOnRoot,
+    );
+  }
+}
+
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   static const double _selectionSheetCollapsedSize = 0.16;
   static const double _selectionSheetExpandedSize = 0.60;
@@ -1507,12 +1537,30 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       }
       await WidgetsBinding.instance.endOfFrame;
       _mapPanelController.focusSelectedEvent(force: true);
-      await Future<void>.delayed(const Duration(milliseconds: 420));
+      final state = ref.read(storyControllerProvider);
+      final previewEvent =
+          state.events.where((entry) => entry.id == event.id).firstOrNull ??
+          event;
+      await Future<void>.delayed(const Duration(milliseconds: 120));
+      if (!mounted) {
+        return;
+      }
+      await _mapPanelController.playEventTransition(
+        from: previewEvent,
+        to: previewEvent,
+        duration: const Duration(seconds: 1),
+      );
       if (!mounted) {
         return;
       }
     }
-    await _openEventDetailPage(event, revealHomeBeforeMapAnimation: true);
+    await _openEventDetailPage(
+      event,
+      revealHomeBeforeMapAnimation: true,
+      backContext: source == ProfileEventOpenSource.targetOnly
+          ? const _StoryDetailBackContext(returnToProfileOnRoot: true)
+          : const _StoryDetailBackContext(),
+    );
   }
 
   Future<void> _prepareHomeMapForProfileEvent(
@@ -1875,6 +1923,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _openEventDetailPage(
     StoryEvent event, {
     bool revealHomeBeforeMapAnimation = false,
+    _StoryDetailBackContext backContext = const _StoryDetailBackContext(),
   }) async {
     // 하이브리드 로딩: 로컬 assets 가 있으면 그걸로, 없으면
     // events.scene_image_paths 를 Supabase Storage public URL 로 변환해 반환.
@@ -1926,15 +1975,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             event: event,
             option: option,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+            backContext: backContext,
           ),
           prevEvent: prev,
           nextEvent: next,
+          onBack: backContext.needsCustomBack
+              ? () => _handleEventDetailBack(backContext)
+              : null,
           onNavigateToEvent: (target) {
             unawaited(
               _navigateDetailThroughMap(
                 from: event,
                 target: target,
                 revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+                backContext: backContext.push(event),
               ),
             );
           },
@@ -1971,10 +2025,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return all;
   }
 
-  /// pushReplacement 시 동일 detail page 빌드 — 새 prev/next 도 다시 계산.
+  /// 지도 전환 후 열 detail page 빌드 — 새 prev/next 와 back context 를 다시 계산.
   Widget _buildDetailPageForEvent(
     StoryEvent event, {
     bool revealHomeBeforeMapAnimation = false,
+    _StoryDetailBackContext backContext = const _StoryDetailBackContext(),
   }) {
     final sceneAssetsFuture = _sceneAssetLoader.loadForEvent(
       event,
@@ -2014,25 +2069,68 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         event: event,
         option: option,
         revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+        backContext: backContext,
       ),
       prevEvent: prev,
       nextEvent: next,
+      onBack: backContext.needsCustomBack
+          ? () => _handleEventDetailBack(backContext)
+          : null,
       onNavigateToEvent: (target) {
         unawaited(
           _navigateDetailThroughMap(
             from: event,
             target: target,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+            backContext: backContext.push(event),
           ),
         );
       },
     );
   }
 
+  void _handleEventDetailBack(_StoryDetailBackContext backContext) {
+    if (_mapAnimationInputLocked) {
+      return;
+    }
+    unawaited(_handleEventDetailBackAsync(backContext));
+  }
+
+  Future<void> _handleEventDetailBackAsync(
+    _StoryDetailBackContext backContext,
+  ) async {
+    if (!mounted || _mapAnimationInputLocked) {
+      return;
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 180));
+    if (!mounted) {
+      return;
+    }
+
+    final previousEvent = backContext.previousEvent;
+    if (previousEvent != null) {
+      await _openEventDetailPage(
+        previousEvent,
+        revealHomeBeforeMapAnimation: backContext.returnToProfileOnRoot,
+        backContext: backContext.popPrevious(),
+      );
+      return;
+    }
+
+    if (backContext.returnToProfileOnRoot) {
+      await Future<void>.delayed(const Duration(milliseconds: 80));
+      if (!mounted) {
+        return;
+      }
+      await _openProfileTab();
+    }
+  }
+
   Future<void> _showEmotionCelebrationOnMap({
     required StoryEvent event,
     required EventEmotionOption option,
     bool revealHomeBeforeMapAnimation = false,
+    _StoryDetailBackContext backContext = const _StoryDetailBackContext(),
   }) async {
     if (!mounted || _mapAnimationInputLocked) return;
     final filterSnapshot = _captureHomeMapFilterSnapshot(event);
@@ -2121,6 +2219,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           builder: (_) => _buildDetailPageForEvent(
             event,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+            backContext: backContext,
           ),
         ),
       );
@@ -2133,6 +2232,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     required StoryEvent from,
     required StoryEvent target,
     bool revealHomeBeforeMapAnimation = false,
+    _StoryDetailBackContext backContext = const _StoryDetailBackContext(),
   }) async {
     if (!mounted || _mapAnimationInputLocked) return;
     _setMapAnimationInputLocked(true);
@@ -2185,6 +2285,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           builder: (_) => _buildDetailPageForEvent(
             target,
             revealHomeBeforeMapAnimation: revealHomeBeforeMapAnimation,
+            backContext: backContext,
           ),
         ),
       );

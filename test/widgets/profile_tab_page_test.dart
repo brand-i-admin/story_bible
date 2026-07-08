@@ -272,6 +272,28 @@ void main() {
     expect(find.byIcon(Icons.check_rounded), findsWidgets);
   });
 
+  testWidgets('프로필 할일 row는 수정 대신 안내 팝업을 연다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    await tester.tap(
+      find.byKey(const ValueKey('profile-today-action-checklist-info')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('오늘의 할일'), findsOneWidget);
+    expect(
+      find.text('매일 이야기 탐험, 신앙 다이어리 작성, 통독 진행을 해봅시다!\n(완료 시 자동으로 체크 돼요)'),
+      findsOneWidget,
+    );
+    expect(find.byType(ProfileEditorDialog), findsNothing);
+  });
+
   testWidgets('기도 기능은 pending 상태로 코드만 보존하고 화면에는 표시하지 않는다', (tester) async {
     await _pumpProfileTab(
       tester,
@@ -431,6 +453,7 @@ void main() {
     expect(find.text('이야기 탐험'), findsWidgets);
     expect(find.text('신앙 다이어리'), findsWidgets);
     expect(find.text('통독'), findsOneWidget);
+    expect(find.text('할일:'), findsOneWidget);
 
     for (final id in ['story', 'diary', 'bible']) {
       expect(
@@ -500,7 +523,7 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('기록'), findsNothing);
+    expect(find.text('기록'), findsOneWidget);
     expect(find.text('기도'), findsNothing);
     expect(find.text('신앙 다이어리'), findsWidgets);
     expect(find.text('이야기 탐험'), findsWidgets);
@@ -738,7 +761,7 @@ void main() {
 
     expect(find.text('이야기 탐험 요약'), findsOneWidget);
     expect(find.text('이야기'), findsOneWidget);
-    expect(find.text('로그'), findsOneWidget);
+    expect(find.text('기록'), findsOneWidget);
     expect(find.text('저장'), findsOneWidget);
     expect(find.text('저장 이야기 개수'), findsNothing);
     expect(find.text('말씀'), findsOneWidget);

@@ -181,6 +181,7 @@ class StoryEventThumbCard extends StatelessWidget {
     this.showCharacterPills = true,
     this.forceOpaqueSurface = false,
     this.expandSurface = false,
+    this.surfaceColorOverride,
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
     this.publicUrlForStoragePath,
@@ -199,6 +200,7 @@ class StoryEventThumbCard extends StatelessWidget {
   final bool showCharacterPills;
   final bool forceOpaqueSurface;
   final bool expandSurface;
+  final Color? surfaceColorOverride;
   final SceneAssetLoader loader;
   final VoidCallback onTap;
   final String Function(String storagePath)? publicUrlForStoragePath;
@@ -250,6 +252,7 @@ class StoryEventThumbCard extends StatelessWidget {
     final palette = AppPaletteTheme.of(context);
     final quizTone = _QuizCardTone.fromAttempt(attemptSummary, palette);
     final surfaceColor =
+        surfaceColorOverride ??
         quizTone?.background ??
         (completed
             ? Color.alphaBlend(palette.completedSurface, palette.cardSurface)

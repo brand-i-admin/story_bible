@@ -148,6 +148,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   String? _profileError;
   bool _signingOut = false;
   bool _deletingAccount = false;
+  Timer? _profileKstMidnightTimer;
 
   @override
   void initState() {
@@ -155,15 +156,43 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     _intercessoryPrayerScrollController.addListener(
       _handleIntercessoryPrayerScroll,
     );
+    _scheduleProfileKstMidnightRefresh();
     Future.microtask(() => _loadProfilePeople(forceRefresh: true));
   }
 
   @override
   void dispose() {
+    _profileKstMidnightTimer?.cancel();
     _intercessoryPrayerScrollController
       ..removeListener(_handleIntercessoryPrayerScroll)
       ..dispose();
     super.dispose();
+  }
+
+  void _scheduleProfileKstMidnightRefresh() {
+    _profileKstMidnightTimer?.cancel();
+    final nowKst = toKst(DateTime.now());
+    final nextKstMidnight = DateTime(nowKst.year, nowKst.month, nowKst.day + 1);
+    final delay =
+        nextKstMidnight.difference(nowKst) + const Duration(seconds: 1);
+    _profileKstMidnightTimer = Timer(delay, _handleProfileKstDateChanged);
+  }
+
+  void _handleProfileKstDateChanged() {
+    if (!mounted) {
+      return;
+    }
+    setState(() {});
+    unawaited(
+      ref.read(storyControllerProvider.notifier).refreshEventEmotionMarks(),
+    );
+    unawaited(
+      ref
+          .read(storyControllerProvider.notifier)
+          .refreshCompletedBibleChapterKeys(),
+    );
+    unawaited(_loadProfileCompanionDiaryEntries(showLoading: false));
+    _scheduleProfileKstMidnightRefresh();
   }
 
   /// 외부에서 퀴즈 완료 후 프로필 진행도를 다시 불러올 때 호출한다.

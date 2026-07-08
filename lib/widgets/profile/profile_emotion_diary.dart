@@ -455,6 +455,16 @@ class _BibleProgressFeatureCard extends StatelessWidget {
     final darkSurface =
         ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
         Brightness.dark;
+    final readingAccent = palette.primaryDeep;
+    final readingAccentSoft = palette.primary;
+    final surfaceTop = Color.alphaBlend(
+      readingAccent.withValues(alpha: darkSurface ? 0.18 : 0.10),
+      darkSurface ? palette.cardSurface : AppColors.parchmentCream,
+    );
+    final surfaceBottom = Color.alphaBlend(
+      readingAccentSoft.withValues(alpha: darkSurface ? 0.16 : 0.08),
+      darkSurface ? palette.softSurface : AppColors.parchmentCard,
+    );
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -468,20 +478,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color.alphaBlend(
-                  palette.currentAccent.withValues(
-                    alpha: darkSurface ? 0.11 : 0.08,
-                  ),
-                  palette.cardSurface,
-                ),
-                Color.alphaBlend(
-                  palette.currentAccent.withValues(
-                    alpha: darkSurface ? 0.18 : 0.14,
-                  ),
-                  palette.softSurface,
-                ),
-              ],
+              colors: [surfaceTop, surfaceBottom],
             ),
             borderRadius: BorderRadius.circular(18),
             boxShadow: AppShadows.sm,
@@ -496,18 +493,23 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                     height: 24,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: palette.currentFill,
+                      color: Color.alphaBlend(
+                        readingAccent.withValues(
+                          alpha: darkSurface ? 0.24 : 0.10,
+                        ),
+                        darkSurface
+                            ? palette.softSurface
+                            : AppColors.parchmentCream,
+                      ),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: palette.currentAccentDeep.withValues(
-                          alpha: 0.30,
-                        ),
+                        color: readingAccent.withValues(alpha: 0.30),
                       ),
                     ),
                     child: Icon(
                       Icons.menu_book_rounded,
                       size: 14,
-                      color: palette.currentAccentDeep,
+                      color: readingAccent,
                     ),
                   ),
                   const SizedBox(width: 7),
@@ -535,7 +537,8 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                   _BibleProgressDonut(
                     fraction: fraction,
                     percent: progress.percent,
-                    dimension: largeText ? 44 : 50,
+                    dimension: largeText ? 38 : 44,
+                    color: readingAccent,
                   ),
                   SizedBox(width: largeText ? 7 : 10),
                   Expanded(
@@ -580,8 +583,11 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                 pulseCount: null,
                 duration: const Duration(milliseconds: 2200),
                 borderRadius: BorderRadius.circular(999),
-                color: AppColors.goldLight,
-                child: _BibleContinueButton(onTap: onContinue),
+                color: darkSurface ? AppColors.goldLight : AppColors.goldHi,
+                child: _BibleContinueButton(
+                  onTap: onContinue,
+                  completedToday: progress.completedToday,
+                ),
               ),
             ],
           ),
@@ -596,11 +602,13 @@ class _BibleProgressDonut extends StatelessWidget {
     required this.fraction,
     required this.percent,
     required this.dimension,
+    required this.color,
   });
 
   final double fraction;
   final int percent;
   final double dimension;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -609,12 +617,10 @@ class _BibleProgressDonut extends StatelessWidget {
         ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
         Brightness.dark;
     final trackColor = Color.alphaBlend(
-      palette.currentAccent.withValues(alpha: darkSurface ? 0.30 : 0.24),
+      color.withValues(alpha: darkSurface ? 0.32 : 0.18),
       palette.cardSurface,
     );
-    final progressColor = darkSurface
-        ? palette.currentAccent
-        : palette.currentAccentDeep;
+    final progressColor = color;
     return SizedBox.square(
       dimension: dimension,
       child: Stack(
@@ -624,7 +630,7 @@ class _BibleProgressDonut extends StatelessWidget {
             child: CircularProgressIndicator(
               key: const ValueKey('bible-progress-donut-indicator'),
               value: fraction,
-              strokeWidth: 5.2,
+              strokeWidth: 4.6,
               backgroundColor: trackColor,
               color: progressColor,
             ),
@@ -634,7 +640,7 @@ class _BibleProgressDonut extends StatelessWidget {
             maxLines: 1,
             style: TextStyle(
               color: progressColor,
-              fontSize: 12.2,
+              fontSize: 11.2,
               fontWeight: FontWeight.w900,
               height: 1,
             ),
@@ -646,19 +652,28 @@ class _BibleProgressDonut extends StatelessWidget {
 }
 
 class _BibleContinueButton extends StatelessWidget {
-  const _BibleContinueButton({required this.onTap});
+  const _BibleContinueButton({
+    required this.onTap,
+    required this.completedToday,
+  });
 
   final VoidCallback? onTap;
+  final bool completedToday;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final enabled = onTap != null;
+    final backgroundColor = !enabled
+        ? palette.mutedSurface
+        : completedToday
+        ? palette.successBottom
+        : palette.currentAccentDeep.withValues(alpha: 0.92);
+    final foregroundColor = enabled ? AppColors.fgOnDark : palette.mutedText;
     return SizedBox(
       width: double.infinity,
       child: Material(
-        color: onTap == null
-            ? palette.mutedSurface
-            : palette.currentAccentDeep.withValues(alpha: 0.92),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(999),
         child: InkWell(
           key: const ValueKey('bible-progress-continue-button'),
@@ -677,9 +692,7 @@ class _BibleContinueButton extends StatelessWidget {
                     Text(
                       '이어 읽기',
                       style: TextStyle(
-                        color: onTap == null
-                            ? palette.mutedText
-                            : AppColors.fgOnDark,
+                        color: foregroundColor,
                         fontSize: 11.6,
                         fontWeight: FontWeight.w900,
                         height: 1,
@@ -688,9 +701,7 @@ class _BibleContinueButton extends StatelessWidget {
                     const SizedBox(width: 4),
                     Icon(
                       Icons.arrow_forward_rounded,
-                      color: onTap == null
-                          ? palette.mutedText
-                          : AppColors.fgOnDark,
+                      color: foregroundColor,
                       size: 15,
                     ),
                   ],

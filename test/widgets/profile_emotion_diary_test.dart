@@ -355,13 +355,15 @@ void _companionDiaryWidgetTests() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('오늘의 신앙 다이어리를 남겼어요.'), findsOneWidget);
+    expect(find.text('오늘의 걸음'), findsOneWidget);
+    expect(find.text('오늘 본문입니다.'), findsOneWidget);
     expect(find.text('만나의 하루'), findsNothing);
 
     await tester.tap(find.text('8'));
     await tester.pumpAndSettle();
 
-    expect(find.text('오늘의 신앙 다이어리를 남겼어요.'), findsOneWidget);
+    expect(find.text('오늘의 걸음'), findsOneWidget);
+    expect(find.text('오늘 본문입니다.'), findsOneWidget);
     expect(find.text('만나의 하루'), findsNothing);
     expect(
       find.byKey(const ValueKey('companion-diary-marker-2026-6-8')),
@@ -441,9 +443,8 @@ void _companionDiaryWidgetTests() {
       find.byKey(const ValueKey('companion-diary-detail-delete-button')),
       findsNothing,
     );
-    expect(find.text('오늘의 신앙 다이어리를 남겼어요.'), findsOneWidget);
-    expect(find.text('갈릴리의 하루'), findsNothing);
-    expect(find.text('말씀을 묵상하며 차분히 걸었습니다.'), findsNothing);
+    expect(find.text('갈릴리의 하루'), findsOneWidget);
+    expect(find.text('말씀을 묵상하며 차분히 걸었습니다.'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('companion-diary-marker-2026-6-10')),
       findsOneWidget,
@@ -562,6 +563,9 @@ void main() {
     final source = File(
       'lib/widgets/profile/profile_emotion_diary.dart',
     ).readAsStringSync();
+    final companionSource = File(
+      'lib/widgets/profile/profile_companion_diary.dart',
+    ).readAsStringSync();
 
     expect(source, contains('ProfileDiaryFeatureCards'));
     expect(source, contains('CompanionDiaryFeatureCard'));
@@ -570,9 +574,35 @@ void main() {
     expect(source, contains('crossAxisAlignment: CrossAxisAlignment.stretch'));
     expect(source, contains('AppTextStyles.sectionTitle'));
     expect(source, contains('_BibleProgressDonut'));
+    expect(source, contains('final readingAccent = palette.primaryDeep'));
+    expect(source, contains('colors: [surfaceTop, surfaceBottom]'));
+    expect(source, contains('color: readingAccent'));
     expect(source, contains('CircularProgressIndicator'));
+    expect(source, contains('dimension: largeText ? 38 : 44'));
+    expect(source, contains('strokeWidth: 4.6'));
+    expect(source, contains('completedToday'));
+    expect(source, contains('palette.successBottom'));
     expect(source, contains('chapterReferenceText'));
     expect(source, contains("'이어 읽기'"));
+    expect(
+      source,
+      contains('color: darkSurface ? AppColors.goldLight : AppColors.goldHi'),
+    );
+    expect(companionSource, contains("import '../pulse_highlight.dart';"));
+    expect(
+      companionSource,
+      contains('duration: const Duration(milliseconds: 2100)'),
+    );
+    expect(companionSource, contains('clipBehavior: Clip.none'));
+    expect(companionSource, contains('EdgeInsets.fromLTRB(8, 7, 8, 9)'));
+    expect(
+      companionSource,
+      contains('color: darkSurface ? palette.successTop : AppColors.greenRim'),
+    );
+    expect(companionSource, contains('AppColors.greenTint1'));
+    expect(companionSource, contains('diaryTitle'));
+    expect(companionSource, contains('diaryBody'));
+    expect(companionSource, isNot(contains('오늘 적은 다이어리')));
     expect(source, isNot(contains('_DiaryLinkedTabSection')));
     expect(source, isNot(contains('_DiaryContentTab')));
   });

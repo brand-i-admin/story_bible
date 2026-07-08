@@ -16,11 +16,13 @@ class SubPageScaffold extends StatefulWidget {
     required this.title,
     required this.child,
     this.compactBackOnly = false,
+    this.onBack,
   });
 
   final String title;
   final Widget child;
   final bool compactBackOnly;
+  final VoidCallback? onBack;
 
   @override
   State<SubPageScaffold> createState() => _SubPageScaffoldState();
@@ -96,7 +98,7 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                                 });
                               },
                               child: SubPageFloatingHomeButton(
-                                onTap: () => Navigator.of(context).pop(),
+                                onTap: _handleBack,
                               ),
                             ),
                           ),
@@ -112,7 +114,7 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                           children: [
                             topUtilityButton(
                               label: '이전',
-                              onTap: () => Navigator.of(context).pop(),
+                              onTap: _handleBack,
                               selected: true,
                             ),
                             const SizedBox(width: 12),
@@ -155,5 +157,15 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
         ],
       ),
     );
+  }
+
+  void _handleBack() {
+    final onBack = widget.onBack;
+    if (onBack != null) {
+      Navigator.of(context).pop();
+      onBack();
+      return;
+    }
+    Navigator.of(context).pop();
   }
 }

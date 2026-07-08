@@ -206,8 +206,14 @@ class StoryMapPanelController {
   Future<void> playEventTransition({
     required StoryEvent from,
     required StoryEvent to,
+    Duration duration = const Duration(seconds: 2),
   }) {
-    return _state?._playEventTransition(from: from, to: to) ?? Future.value();
+    return _state?._playEventTransition(
+          from: from,
+          to: to,
+          duration: duration,
+        ) ??
+        Future.value();
   }
 
   /// 감정 새김 직후 지도 위 해당 사건 핀에 감정 도장을 1회 재생한다.
