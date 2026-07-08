@@ -25,13 +25,24 @@ void main() {
     );
     expect(source, isNot(contains('Icons.edit_rounded')));
     expect(source, contains('_buildProfileBodyShell'));
-    expect(source, contains('_buildProfileIdentityCard(profile: profile)'));
-    expect(source, contains('Text.rich'));
+    expect(source, contains('color: AppColors.fgOnDark'));
+    expect(source, contains('color: AppColors.parchmentCard'));
+    expect(source, contains('_buildProfileIdentityCard('));
+    expect(source, contains('Text.rich('));
     expect(source, contains("text: '샬롬! 🙌 '"));
+    expect(source, contains('text: profile.nickname'));
     expect(source, contains("text: '님'"));
-    expect(source, contains("'오늘도 말씀 안에서\\n승리하는 하루 되세요!'"));
-    expect(source, contains('size: largeText ? 58 : 64'));
+    expect(source, contains("'오늘도 이야기 탐험, 신앙 다이어리 작성\\n통독으로 하나님과 함께 해보아요!'"));
+    expect(source, contains('fontSize: largeText ? 16.8 : 18.0'));
+    expect(source, contains('fontSize: largeText ? 12.4 : 13.4'));
+    expect(source, isNot(contains('_buildProfileJourneyButton')));
+    expect(source, isNot(contains("'말씀 여정 보기'")));
     expect(source, contains('Icons.chevron_right_rounded'));
+    expect(source, contains('_buildTodayProfileActionChecklist'));
+    expect(source, contains("label: '이야기 탐험'"));
+    expect(source, contains("label: '신앙 다이어리'"));
+    expect(source, contains("label: '통독'"));
+    expect(source, contains('size: largeText ? 58 : 62'));
     expect(source, contains("message: '프로필 수정'"));
     expect(
       helperSource,
@@ -56,10 +67,7 @@ void main() {
     expect(source, contains('palette.cardUnselectedTop'));
     expect(source, contains('palette.cardUnselectedBottom'));
     expect(source, contains('Icons.self_improvement_rounded'));
-    expect(source, isNot(contains('Icons.edit_note_rounded')));
     expect(source, isNot(contains("label: '기록'")));
-    expect(source, isNot(contains("label: '저장'")));
-    expect(source, isNot(contains("label: '말씀'")));
     expect(source, isNot(contains('_ProfileContentTab.records')));
     expect(source, contains('_profileIconTabHeight = 44'));
     expect(source, contains('height: _profileIconTabHeight'));
@@ -92,6 +100,7 @@ void main() {
     ).readAsStringSync();
 
     expect(source, contains('_ProfileStoryExplorationDashboard'));
+    expect(source, contains('color: AppColors.parchmentCard'));
     expect(source, contains('_ProfileDashboardTitle'));
     expect(source, contains("'이야기 탐험'"));
     expect(source, contains('Icons.explore_rounded'));
@@ -100,7 +109,7 @@ void main() {
     expect(source, contains('_StoryJourneyDeckEntry'));
     expect(source, contains('_StoryJourneyDeckLayoutItem'));
     expect(source, contains('AnimatedPositioned'));
-    expect(source, contains('178.0 + ((textScale - 1) * 130)'));
+    expect(source, contains('198.0 + ((textScale - 1) * 140)'));
     expect(source, contains('sideScale = 0.82'));
     expect(source, contains('farSideScale = 0.72'));
     expect(source, contains('maxWidth * 0.95'));
@@ -130,10 +139,11 @@ void main() {
     expect(source, contains('_ProfileStoryProgressPage'));
     expect(source, contains('_ProfileExplorationLogPage'));
     expect(source, contains("'이야기 탐험 요약'"));
-    expect(source, contains("'탐험한\\n이야기'"));
-    expect(source, contains("'탐험\\n로그'"));
-    expect(source, contains("'저장\\n이야기'"));
-    expect(source, contains("'저장한\\n말씀'"));
+    expect(source, contains("label: '이야기'"));
+    expect(source, contains("label: '로그'"));
+    expect(source, contains("label: '저장'"));
+    expect(source, contains("label: '말씀'"));
+    expect(source, contains("text: '개'"));
     expect(source, contains("math.max(storyProgress.total, 301)"));
     expect(source, contains("ValueKey('profile-story-summary-explored')"));
     expect(
@@ -151,13 +161,21 @@ void main() {
     expect(source, contains("'최근 탐험 이야기'"));
     expect(source, contains("'다음 이야기'"));
     expect(source, contains('_StoryJourneyNextGlow'));
-    expect(source, contains('_StoryJourneySparkleDot'));
-    expect(source, contains('highlight: label == \'다음 이야기\''));
-    expect(source, contains('clipBehavior: Clip.antiAlias'));
-    expect(source, contains('foregroundDecoration'));
+    expect(source, contains("label == '다음 이야기'"));
+    expect(source, contains('!widget.todayStoryActionCompleted'));
+    expect(source, contains('ClipRRect'));
     expect(source, contains(')..repeat();'));
-    expect(source, contains('Transform.translate'));
-    expect(source, isNot(contains('blurRadius: 8 + 12 * t')));
+    expect(source, contains('math.cos(progress * math.pi * 2)'));
+    expect(source, contains('final edgeAlpha = 0.16 + 0.22 * t'));
+    expect(source, contains('final centerAlpha = 0.02 + 0.04 * t'));
+    expect(source, contains('AppColors.goldHi'));
+    expect(source, contains('AppColors.goldLight'));
+    expect(source, contains('RadialGradient'));
+    expect(source, isNot(contains('AppColors.profileNextStoryGlow')));
+    expect(source, isNot(contains('AppColors.profileNextStoryGlowEdge')));
+    expect(source, isNot(contains('foregroundDecoration')));
+    expect(source, isNot(contains('_StoryJourneySparkleDot')));
+    expect(source, isNot(contains('Transform.translate')));
     expect(source, contains('_StoryJourneyGuideNote'));
     expect(source, contains("'참고'"));
     expect(source, contains('다음 이야기를 눌러 시작하세요! (완료 조건은 감정 새기기입니다)'));
@@ -223,10 +241,13 @@ void main() {
     expect(source, contains('fontSize: largeText ? 10.2 : 11.2'));
     expect(source, contains('fontSize: largeText ? 9.3 : 10.0'));
     expect(source, contains('textAlign: TextAlign.right'));
-    expect(source, contains('fontSize: largeText ? 14.8 : 16.2'));
-    expect(source, contains('largeText ? 15.2 : 17.0'));
-    expect(source, contains('Icons.north_east_rounded'));
-    expect(source, contains('Icons.chevron_right_rounded'));
+    expect(source, contains('fontSize: largeText ? 8.8 : 9.5'));
+    expect(source, contains('labelIconSize = largeText ? 15.6 : 17.4'));
+    expect(source, contains('progressFraction'));
+    expect(source, contains('LinearProgressIndicator'));
+    expect(source, contains('color.withValues(alpha: 0.14)'));
+    expect(source, isNot(contains('Color(0x0A000000)')));
+    expect(source, isNot(contains('Icons.north_east_rounded')));
     expect(source, contains('onTap: null'));
     expect(source, contains('_selectedReviewFilter == filter ? null : filter'));
     expect(source, contains('exploration-log-review-open-all-'));
@@ -242,15 +263,23 @@ void main() {
     expect(source, isNot(contains('textScale >= 1.3')));
   });
 
-  test('프로필 이야기 탐험 요약의 진행률은 심플한 숫자로 표시한다', () {
+  test('프로필 이야기 탐험 요약은 숫자와 작은 진행 바를 표시한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();
 
     expect(source, contains('_StoryExplorationSummaryCard'));
     expect(source, contains("text: '/\$totalLabel'"));
+    expect(source, contains("text: '개'"));
+    expect(
+      source,
+      contains('if (trailing != null) trailing,\n            countUnitSpan(),'),
+    );
+    expect(source, contains('fontSize: 11.4'));
     expect(source, contains('fontSize: 12.2'));
     expect(source, contains('fontSize: largeText ? 14.8 : 16.2'));
+    expect(source, contains('progressFraction: storyProgress.fraction'));
+    expect(source, contains('minHeight: 4'));
     expect(source, isNot(contains('_StoryProgressMiniCard')));
     expect(source, isNot(contains('_ProfileProgressDonut')));
     expect(source, isNot(contains("replaceFirst('/', ' / ')")));
@@ -385,7 +414,12 @@ void main() {
     expect(emptyStateSource, contains('_profilePrayerEmptyAddButton'));
     expect(emptyStateSource, contains('ProfileGlowingAddButton'));
     expect(glowSource, contains('AnimationController'));
-    expect(glowSource, contains('repeat(reverse: true, count: 2)'));
+    expect(glowSource, contains('pulseCount = 2'));
+    expect(glowSource, contains('repeat(reverse: true);'));
+    expect(
+      glowSource,
+      contains('repeat(reverse: true, count: widget.pulseCount)'),
+    );
     expect(glowSource, contains("ValueKey('profile-add-button-pulse-ring')"));
     expect(glowSource, contains('Colors.white.withValues(alpha: 0.88)'));
     expect(glowSource, contains('AppColors.greenTint2'));

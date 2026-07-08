@@ -88,6 +88,7 @@ class AppColors {
   // Alpha 적용 보더(청록 해안선 계열) — surfaces 팩토리에서 사용
   static const borderModalDialog = Color(0xCC5D8F8B);
   static const borderFloating = Color(0xC06D9D9A);
+
   static const borderCard = Color(0xAA6D9D9A);
 
   // 표면 기본/오버레이

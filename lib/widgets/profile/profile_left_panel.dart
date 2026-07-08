@@ -227,32 +227,19 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   Widget _buildProfileBodyShell({
     required AppUserProfile profile,
     required Widget child,
+    required ({bool storyExploration, bool companionDiary, bool bibleReading})
+    todayActions,
   }) {
     final palette = AppPaletteTheme.of(context);
-    final borderColor = palette.subtleBorder.withValues(alpha: 0.7);
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color.alphaBlend(
-              palette.primary.withValues(alpha: 0.04),
-              palette.softSurface,
-            ),
-            Color.alphaBlend(
-              palette.currentAccent.withValues(alpha: 0.05),
-              palette.cardSurface,
-            ),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(26),
-        border: Border.all(color: borderColor, width: 1),
+        color: AppColors.fgOnDark,
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: palette.primaryDeep.withValues(alpha: 0.08),
+            color: palette.primaryDeep.withValues(alpha: 0.05),
             blurRadius: 18,
-            offset: const Offset(0, 10),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -261,7 +248,10 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildProfileIdentityCard(profile: profile),
+            _buildProfileIdentityCard(
+              profile: profile,
+              todayActions: todayActions,
+            ),
             const SizedBox(height: 10),
             child,
           ],
@@ -270,7 +260,11 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
-  Widget _buildProfileIdentityCard({required AppUserProfile profile}) {
+  Widget _buildProfileIdentityCard({
+    required AppUserProfile profile,
+    required ({bool storyExploration, bool companionDiary, bool bibleReading})
+    todayActions,
+  }) {
     final palette = AppPaletteTheme.of(context);
     final largeText = _profileUsesLargeTextLayout(context);
     return Tooltip(
@@ -282,98 +276,228 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
           borderRadius: BorderRadius.circular(18),
           child: Ink(
             padding: EdgeInsets.fromLTRB(
-              largeText ? 10 : 12,
-              largeText ? 9 : 10,
-              10,
-              largeText ? 9 : 10,
+              largeText ? 14 : 16,
+              largeText ? 14 : 16,
+              largeText ? 14 : 16,
+              largeText ? 13 : 15,
             ),
             decoration: BoxDecoration(
-              color: Color.alphaBlend(
-                palette.primary.withValues(alpha: 0.035),
-                palette.softSurface,
-              ),
+              color: AppColors.parchmentCard,
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: palette.subtleBorder.withValues(alpha: 0.75),
-                width: 1,
-              ),
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildCurrentUserAvatar(
-                  profile: profile,
-                  size: largeText ? 58 : 64,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildCurrentUserAvatar(
+                      profile: profile,
+                      size: largeText ? 58 : 62,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text.rich(
                             TextSpan(
-                              text: '샬롬! 🙌 ',
-                              style: TextStyle(
-                                color: palette.mutedText,
-                                fontSize: largeText ? 12.0 : 12.8,
-                                fontWeight: FontWeight.w800,
-                              ),
+                              children: [
+                                TextSpan(
+                                  text: '샬롬! 🙌 ',
+                                  style: TextStyle(
+                                    color: palette.mutedText,
+                                    fontSize: largeText ? 11.8 : 12.6,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: profile.nickname,
+                                  style: TextStyle(
+                                    color: palette.text,
+                                    fontSize: largeText ? 16.8 : 18.0,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '님',
+                                  style: TextStyle(
+                                    color: palette.mutedText,
+                                    fontSize: largeText ? 11.8 : 12.6,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: profile.nickname,
-                              style: TextStyle(
-                                color: palette.text,
-                                fontSize: largeText ? 17.8 : 19.0,
-                                fontWeight: FontWeight.w900,
-                              ),
+                            maxLines: largeText ? 2 : 1,
+                            overflow: largeText
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            softWrap: true,
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            '오늘도 이야기 탐험, 신앙 다이어리 작성\n통독으로 하나님과 함께 해보아요!',
+                            maxLines: 2,
+                            overflow: largeText
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            softWrap: true,
+                            style: TextStyle(
+                              color: palette.mutedText,
+                              fontSize: largeText ? 12.4 : 13.4,
+                              fontWeight: FontWeight.w800,
+                              height: 1.18,
                             ),
-                            TextSpan(
-                              text: '님',
-                              style: TextStyle(
-                                color: palette.mutedText,
-                                fontSize: largeText ? 12.0 : 12.8,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ],
-                        ),
-                        maxLines: largeText ? 2 : 1,
-                        overflow: largeText
-                            ? TextOverflow.visible
-                            : TextOverflow.ellipsis,
-                        softWrap: true,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '오늘도 말씀 안에서\n승리하는 하루 되세요!',
-                        maxLines: 2,
-                        overflow: largeText
-                            ? TextOverflow.visible
-                            : TextOverflow.ellipsis,
-                        softWrap: true,
-                        style: TextStyle(
-                          color: palette.mutedText,
-                          fontSize: largeText ? 11.4 : 12.0,
-                          fontWeight: FontWeight.w700,
-                          height: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: palette.mutedText,
+                      size: largeText ? 24 : 28,
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 6),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: palette.mutedText,
-                  size: largeText ? 24 : 28,
-                ),
+                const SizedBox(height: 10),
+                _buildTodayProfileActionChecklist(actions: todayActions),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTodayActionCheck({
+    required String id,
+    required String label,
+    required IconData icon,
+    required Color accent,
+    required bool completed,
+  }) {
+    final palette = AppPaletteTheme.of(context);
+    final fill = completed
+        ? Color.alphaBlend(
+            palette.successBottom.withValues(alpha: 0.11),
+            AppColors.fgOnDark,
+          )
+        : Colors.transparent;
+    final foreground = completed ? palette.successBottom : palette.mutedText;
+    final badgeFill = completed
+        ? palette.successBottom
+        : Color.alphaBlend(accent.withValues(alpha: 0.10), palette.softSurface);
+    final badgeForeground = completed ? AppColors.fgOnDark : palette.mutedText;
+    return AnimatedContainer(
+      key: ValueKey('profile-today-action-$id-check'),
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOutCubic,
+      padding: const EdgeInsets.fromLTRB(6, 5, 8, 5),
+      decoration: BoxDecoration(
+        color: fill,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 18,
+            height: 18,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: badgeFill, shape: BoxShape.circle),
+            child: Icon(
+              completed ? Icons.check_rounded : icon,
+              color: badgeForeground,
+              size: completed ? 12.5 : 10.5,
+            ),
+          ),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: foreground,
+              fontSize: 11.2,
+              fontWeight: FontWeight.w800,
+              height: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _todayActionAccent({
+    required AppColorPalette palette,
+    required bool completed,
+    required Color fallback,
+  }) {
+    return completed ? palette.successBottom : fallback;
+  }
+
+  Widget _todayActionButton({
+    required String id,
+    required String label,
+    required IconData icon,
+    required Color accent,
+    required bool completed,
+  }) {
+    return _buildTodayActionCheck(
+      id: id,
+      label: label,
+      icon: icon,
+      accent: accent,
+      completed: completed,
+    );
+  }
+
+  Widget _buildTodayProfileActionChecklist({
+    required ({bool storyExploration, bool companionDiary, bool bibleReading})
+    actions,
+  }) {
+    final palette = AppPaletteTheme.of(context);
+    return Wrap(
+      spacing: 7,
+      runSpacing: 6,
+      children: [
+        _todayActionButton(
+          id: 'story',
+          label: '이야기 탐험',
+          icon: Icons.explore_rounded,
+          accent: _todayActionAccent(
+            palette: palette,
+            completed: actions.storyExploration,
+            fallback: palette.currentAccentDeep,
+          ),
+          completed: actions.storyExploration,
+        ),
+        _todayActionButton(
+          id: 'diary',
+          label: '신앙 다이어리',
+          icon: Icons.edit_note_rounded,
+          accent: _todayActionAccent(
+            palette: palette,
+            completed: actions.companionDiary,
+            fallback: palette.successBottom,
+          ),
+          completed: actions.companionDiary,
+        ),
+        _todayActionButton(
+          id: 'bible',
+          label: '통독',
+          icon: Icons.menu_book_rounded,
+          accent: _todayActionAccent(
+            palette: palette,
+            completed: actions.bibleReading,
+            fallback: palette.currentAccentDeep,
+          ),
+          completed: actions.bibleReading,
+        ),
+      ],
     );
   }
 
@@ -519,7 +643,9 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     return a.eventId.compareTo(b.eventId);
   }
 
-  Widget _buildProfileStoryExplorationDashboard() {
+  Widget _buildProfileStoryExplorationDashboard({
+    required bool todayStoryActionCompleted,
+  }) {
     final state = ref.watch(storyControllerProvider);
     final events = _profileAllEvents.isNotEmpty
         ? _profileAllEvents
@@ -551,6 +677,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
           state.eventEmotionMarks.length + _profileCompanionDiaryEntries.length,
       savedStoryCount: state.savedEventIds.length,
       savedVerseCount: _profileSavedVersesCount,
+      todayStoryActionCompleted: todayStoryActionCompleted,
       onExploreStoriesFromHome: widget.onExploreStoriesFromHome,
       onOpenStoryProgress: _openStoryProgressPage,
       onOpenExplorationLog: _openExplorationLogPage,
@@ -1512,6 +1639,7 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
     required this.explorationLogCount,
     required this.savedStoryCount,
     required this.savedVerseCount,
+    required this.todayStoryActionCompleted,
     required this.onExploreStoriesFromHome,
     required this.onOpenStoryProgress,
     required this.onOpenExplorationLog,
@@ -1530,6 +1658,7 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
   final int explorationLogCount;
   final int savedStoryCount;
   final int savedVerseCount;
+  final bool todayStoryActionCompleted;
   final VoidCallback? onExploreStoriesFromHome;
   final VoidCallback onOpenStoryProgress;
   final VoidCallback onOpenExplorationLog;
@@ -1539,69 +1668,41 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final palette = AppPaletteTheme.of(context);
-        return Container(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.alphaBlend(
-                  palette.regionAccent.withValues(alpha: 0.08),
-                  palette.softSurface,
-                ),
-                Color.alphaBlend(
-                  palette.currentAccent.withValues(alpha: 0.07),
-                  palette.panelSurface,
-                ),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(
-              color: palette.regionAccent.withValues(alpha: 0.16),
-              width: 1,
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x12000000),
-                blurRadius: 16,
-                offset: Offset(0, 6),
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+      decoration: BoxDecoration(
+        color: AppColors.parchmentCard,
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _StoryExplorationSummarySection(
+            storyProgress: storyProgress,
+            explorationLogCount: explorationLogCount,
+            savedStoryCount: savedStoryCount,
+            savedVerseCount: savedVerseCount,
+            onOpenStoryProgress: onOpenStoryProgress,
+            onOpenExplorationLog: onOpenExplorationLog,
+            onOpenSavedStories: onOpenSavedStories,
+            onOpenSavedVerses: onOpenSavedVerses,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _StoryExplorationSummarySection(
-                storyProgress: storyProgress,
-                explorationLogCount: explorationLogCount,
-                savedStoryCount: savedStoryCount,
-                savedVerseCount: savedVerseCount,
-                onOpenStoryProgress: onOpenStoryProgress,
-                onOpenExplorationLog: onOpenExplorationLog,
-                onOpenSavedStories: onOpenSavedStories,
-                onOpenSavedVerses: onOpenSavedVerses,
-              ),
-              const SizedBox(height: 10),
-              _ProfileStoryJourneyDeck(
-                entries: entries,
-                initialSelectedEventId: initialSelectedEventId,
-                eras: eras,
-                charactersByCode: charactersByCode,
-                eventEmotionMarks: eventEmotionMarks,
-                quizAttemptSummaries: quizAttemptSummaries,
-                onExploreStoriesFromHome: onExploreStoriesFromHome,
-                onOpenStory: onOpenStory,
-              ),
-              const SizedBox(height: 7),
-              const _StoryJourneyGuideNote(),
-            ],
+          const SizedBox(height: 10),
+          _ProfileStoryJourneyDeck(
+            entries: entries,
+            initialSelectedEventId: initialSelectedEventId,
+            eras: eras,
+            charactersByCode: charactersByCode,
+            eventEmotionMarks: eventEmotionMarks,
+            quizAttemptSummaries: quizAttemptSummaries,
+            todayStoryActionCompleted: todayStoryActionCompleted,
+            onExploreStoriesFromHome: onExploreStoriesFromHome,
+            onOpenStory: onOpenStory,
           ),
-        );
-      },
+          const SizedBox(height: 7),
+          const _StoryJourneyGuideNote(),
+        ],
+      ),
     );
   }
 }
@@ -1631,6 +1732,29 @@ class _StoryExplorationSummarySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final totalLabel = math.max(storyProgress.total, 301);
+    TextSpan countUnitSpan() {
+      return TextSpan(
+        text: '개',
+        style: TextStyle(
+          color: palette.mutedText,
+          fontSize: 11.4,
+          fontWeight: FontWeight.w800,
+        ),
+      );
+    }
+
+    Widget countValue(int count, {InlineSpan? trailing}) {
+      return Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(text: '$count'),
+            if (trailing != null) trailing,
+            countUnitSpan(),
+          ],
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1645,23 +1769,20 @@ class _StoryExplorationSummarySection extends StatelessWidget {
             Expanded(
               child: _StoryExplorationSummaryCard(
                 key: const ValueKey('profile-story-summary-explored'),
-                label: '탐험한\n이야기',
+                label: '이야기',
                 icon: Icons.flag_rounded,
-                color: palette.regionAccent,
+                color: palette.currentAccentDeep,
                 onTap: onOpenStoryProgress,
-                value: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(text: '${storyProgress.completed}'),
-                      TextSpan(
-                        text: '/$totalLabel',
-                        style: TextStyle(
-                          color: palette.mutedText,
-                          fontSize: 12.2,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ],
+                progressFraction: storyProgress.fraction,
+                value: countValue(
+                  storyProgress.completed,
+                  trailing: TextSpan(
+                    text: '/$totalLabel',
+                    style: TextStyle(
+                      color: palette.mutedText,
+                      fontSize: 12.2,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
               ),
@@ -1670,33 +1791,33 @@ class _StoryExplorationSummarySection extends StatelessWidget {
             Expanded(
               child: _StoryExplorationSummaryCard(
                 key: const ValueKey('profile-story-summary-exploration-log'),
-                label: '탐험\n로그',
+                label: '로그',
                 icon: Icons.history_rounded,
                 color: palette.currentAccentDeep,
                 onTap: onOpenExplorationLog,
-                value: Text('$explorationLogCount개'),
+                value: countValue(explorationLogCount),
               ),
             ),
             const SizedBox(width: 5),
             Expanded(
               child: _StoryExplorationSummaryCard(
                 key: const ValueKey('profile-story-summary-saved-stories'),
-                label: '저장\n이야기',
+                label: '저장',
                 icon: Icons.bookmark_rounded,
                 color: palette.primary,
                 onTap: onOpenSavedStories,
-                value: Text('$savedStoryCount개'),
+                value: countValue(savedStoryCount),
               ),
             ),
             const SizedBox(width: 5),
             Expanded(
               child: _StoryExplorationSummaryCard(
                 key: const ValueKey('profile-story-summary-saved-verses'),
-                label: '저장한\n말씀',
+                label: '말씀',
                 icon: Icons.menu_book_rounded,
                 color: palette.currentAccentDeep,
                 onTap: onOpenSavedVerses,
-                value: Text('$savedVerseCount개'),
+                value: countValue(savedVerseCount),
               ),
             ),
           ],
@@ -1714,6 +1835,7 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
     required this.color,
     required this.value,
     required this.onTap,
+    this.progressFraction,
   });
 
   final String label;
@@ -1721,12 +1843,13 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
   final Color color;
   final Widget value;
   final VoidCallback onTap;
+  final double? progressFraction;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final largeText = _profileUsesLargeTextLayout(context);
-    final labelIconSize = largeText ? 15.2 : 17.0;
+    final labelIconSize = largeText ? 15.6 : 17.4;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1739,7 +1862,7 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [
                 Color.alphaBlend(
-                  color.withValues(alpha: 0.11),
+                  color.withValues(alpha: 0.10),
                   palette.cardSurface,
                 ),
                 Color.alphaBlend(
@@ -1750,76 +1873,63 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: color.withValues(alpha: 0.42),
-              width: 1.1,
+              color: color.withValues(alpha: 0.36),
+              width: 1.0,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: color.withValues(alpha: 0.12),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-              const BoxShadow(
-                color: Color(0x0A000000),
-                blurRadius: 4,
-                offset: Offset(0, 1),
-              ),
-            ],
           ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 80),
             child: Padding(
               padding: EdgeInsets.fromLTRB(8, largeText ? 8 : 9, 8, 8),
-              child: Stack(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Icon(
-                      Icons.north_east_rounded,
-                      size: largeText ? 10.5 : 11.5,
-                      color: color.withValues(alpha: 0.58),
-                    ),
-                  ),
-                  Column(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(icon, size: labelIconSize, color: color),
-                          const SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              label,
-                              maxLines: 2,
-                              overflow: TextOverflow.visible,
-                              softWrap: true,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: palette.mutedText,
-                                fontSize: largeText ? 11.2 : 12.1,
-                                fontWeight: FontWeight.w900,
-                                height: 1.08,
-                              ),
-                            ),
+                      Icon(icon, size: labelIconSize, color: color),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          label,
+                          maxLines: 2,
+                          overflow: TextOverflow.visible,
+                          softWrap: true,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: palette.mutedText,
+                            fontSize: largeText ? 11.2 : 12.1,
+                            fontWeight: FontWeight.w900,
+                            height: 1.08,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 7),
-                      DefaultTextStyle(
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: palette.text,
-                          fontSize: largeText ? 14.8 : 16.2,
-                          fontWeight: FontWeight.w900,
-                          height: 1,
                         ),
-                        child: FittedBox(fit: BoxFit.scaleDown, child: value),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 7),
+                  DefaultTextStyle(
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: palette.text,
+                      fontSize: largeText ? 14.8 : 16.2,
+                      fontWeight: FontWeight.w900,
+                      height: 1,
+                    ),
+                    child: FittedBox(fit: BoxFit.scaleDown, child: value),
+                  ),
+                  if (progressFraction != null) ...[
+                    const SizedBox(height: 7),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(999),
+                      child: LinearProgressIndicator(
+                        minHeight: 4,
+                        value: progressFraction!.clamp(0.0, 1.0).toDouble(),
+                        backgroundColor: color.withValues(alpha: 0.14),
+                        color: color,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -2979,6 +3089,7 @@ class _ProfileStoryJourneyDeck extends StatefulWidget {
     required this.charactersByCode,
     required this.eventEmotionMarks,
     required this.quizAttemptSummaries,
+    required this.todayStoryActionCompleted,
     required this.onExploreStoriesFromHome,
     required this.onOpenStory,
   });
@@ -2989,6 +3100,7 @@ class _ProfileStoryJourneyDeck extends StatefulWidget {
   final Map<String, Character> charactersByCode;
   final Map<String, EventEmotionMark> eventEmotionMarks;
   final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+  final bool todayStoryActionCompleted;
   final VoidCallback? onExploreStoriesFromHome;
   final ValueChanged<StoryEvent> onOpenStory;
 
@@ -3162,7 +3274,7 @@ class _ProfileStoryJourneyDeckState extends State<_ProfileStoryJourneyDeck> {
     const farSidePeekTop = 14.0;
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final largeHeight =
-        178.0 + ((textScale - 1) * 130).clamp(0.0, 58.0).toDouble();
+        198.0 + ((textScale - 1) * 140).clamp(0.0, 72.0).toDouble();
     final entries = widget.entries;
     final mainIndex = entries.isEmpty ? -1 : _mainIndex();
     final initialMainEventId = _resolvedInitialMainEventId();
@@ -3287,7 +3399,9 @@ class _ProfileStoryJourneyDeckState extends State<_ProfileStoryJourneyDeck> {
                                   ? '아직 탐험한 이야기가 없어요.'
                                   : '기록 없음',
                               contentScale: contentScale,
-                              highlight: label == '다음 이야기',
+                              highlight:
+                                  label == '다음 이야기' &&
+                                  !widget.todayStoryActionCompleted,
                             );
                             return AnimatedPositioned(
                               key: ValueKey(
@@ -3376,11 +3490,12 @@ class _StoryJourneyCard extends StatelessWidget {
       child: rawCard,
     );
 
+    final glowingCard = highlight ? _StoryJourneyNextGlow(child: card) : card;
     final content = Stack(
       clipBehavior: Clip.none,
       children: [
         Positioned.fill(
-          child: Opacity(opacity: muted ? 0.74 : 1, child: card),
+          child: Opacity(opacity: muted ? 0.74 : 1, child: glowingCard),
         ),
         if (label.isNotEmpty)
           Positioned(
@@ -3412,10 +3527,7 @@ class _StoryJourneyCard extends StatelessWidget {
               );
             },
           );
-    if (!highlight) {
-      return scaledContent;
-    }
-    return _StoryJourneyNextGlow(child: scaledContent);
+    return scaledContent;
   }
 }
 
@@ -3449,138 +3561,65 @@ class _StoryJourneyNextGlowState extends State<_StoryJourneyNextGlow>
 
   @override
   Widget build(BuildContext context) {
-    const glowColor = AppColors.gold;
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
         final progress = _controller.value;
-        final t = math.sin(progress * math.pi);
+        final t = (1 - math.cos(progress * math.pi * 2)) / 2;
+        final edgeAlpha = 0.16 + 0.22 * t;
+        final centerAlpha = 0.02 + 0.04 * t;
         return Container(
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-          foregroundDecoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: glowColor.withValues(alpha: 0.018 + 0.03 * t),
-            border: Border.all(
-              color: glowColor.withValues(alpha: 0.44 + 0.28 * t),
-              width: 1.5,
-            ),
-          ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              if (child != null) child,
-              IgnorePointer(
-                child: ClipRect(
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: Transform.translate(
-                          offset: Offset(-180 + progress * 360, 0),
-                          child: Transform.rotate(
-                            angle: -0.42,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Container(
-                                width: 82,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [
-                                      Colors.transparent,
-                                      glowColor.withValues(alpha: 0.16),
-                                      Colors.white.withValues(alpha: 0.22),
-                                      glowColor.withValues(alpha: 0.14),
-                                      Colors.transparent,
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      _StoryJourneySparkleDot(
-                        left: 22,
-                        top: 22,
-                        size: 4.2,
-                        progress: progress,
-                        phase: 0.05,
-                      ),
-                      _StoryJourneySparkleDot(
-                        right: 26,
-                        top: 42,
-                        size: 3.4,
-                        progress: progress,
-                        phase: 0.38,
-                      ),
-                      _StoryJourneySparkleDot(
-                        left: 46,
-                        bottom: 28,
-                        size: 3.6,
-                        progress: progress,
-                        phase: 0.68,
-                      ),
-                    ],
-                  ),
-                ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.goldHi.withValues(alpha: 0.16 + 0.22 * t),
+                blurRadius: 14 + 12 * t,
+                spreadRadius: 1.5 + 2.5 * t,
               ),
             ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (child != null) child,
+                IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: Alignment.center,
+                        radius: 0.92,
+                        colors: [
+                          AppColors.goldHi.withValues(alpha: centerAlpha),
+                          AppColors.goldHi.withValues(alpha: centerAlpha),
+                          AppColors.goldLight.withValues(alpha: edgeAlpha),
+                        ],
+                        stops: const [0.0, 0.58, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppColors.goldHi.withValues(
+                          alpha: 0.24 + 0.24 * t,
+                        ),
+                        width: 1.2 + 0.4 * t,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
       child: widget.child,
-    );
-  }
-}
-
-class _StoryJourneySparkleDot extends StatelessWidget {
-  const _StoryJourneySparkleDot({
-    this.left,
-    this.top,
-    this.right,
-    this.bottom,
-    required this.size,
-    required this.progress,
-    required this.phase,
-  });
-
-  final double? left;
-  final double? top;
-  final double? right;
-  final double? bottom;
-  final double size;
-  final double progress;
-  final double phase;
-
-  @override
-  Widget build(BuildContext context) {
-    final wave = (math.sin((progress + phase) * math.pi * 2) + 1) / 2;
-    final opacity = (0.22 + 0.58 * wave).clamp(0.0, 1.0).toDouble();
-    return Positioned(
-      left: left,
-      top: top,
-      right: right,
-      bottom: bottom,
-      child: Opacity(
-        opacity: opacity,
-        child: Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.86),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.gold.withValues(alpha: 0.58),
-                blurRadius: 6,
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

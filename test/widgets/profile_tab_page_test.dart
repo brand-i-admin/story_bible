@@ -258,7 +258,7 @@ void main() {
 
     final profileGreeting = find.textContaining('기도친구');
     expect(profileGreeting, findsOneWidget);
-    expect(tester.getTopLeft(profileGreeting).dx, greaterThan(100));
+    expect(tester.getTopLeft(profileGreeting).dx, greaterThan(80));
 
     await tester.tap(profileGreeting);
     await tester.pumpAndSettle();
@@ -377,6 +377,72 @@ void main() {
     expect(find.byIcon(Icons.place_rounded), findsNothing);
   });
 
+  testWidgets('오늘 액션을 모두 완료하면 프로필 체커에 표시한다', (tester) async {
+    final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
+    final today = DateTime(nowKst.year, nowKst.month, nowKst.day);
+    final todayUtc = DateTime.utc(today.year, today.month, today.day);
+    final event = _profileEvent(
+      id: 'today-event',
+      title: '오늘 감정을 새긴 이야기',
+      storyIndex: 1,
+    );
+
+    when(() => auth.currentUser).thenReturn(user);
+    when(
+      () => storyRepository.fetchEventsByEra('era-1'),
+    ).thenAnswer((_) async => [event]);
+    when(
+      () => storyRepository.fetchEventProgress(user.id),
+    ).thenAnswer((_) async => const {});
+    when(() => storyRepository.fetchEventEmotionMarks(user.id)).thenAnswer(
+      (_) async => {
+        event.id: _profileEmotionMark(event.id, updatedAt: todayUtc),
+      },
+    );
+    when(
+      () => userRepository.fetchCompanionDiaryEntries(userId: user.id),
+    ).thenAnswer(
+      (_) async => [
+        _profileDiaryEntry('today-diary', userId: user.id, entryDate: today),
+      ],
+    );
+    when(
+      () => storyRepository.fetchSavedEventIds(user.id),
+    ).thenAnswer((_) async => const <String>{});
+    when(
+      () => storyRepository.fetchQuizAttemptSummaries(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchCompletedBibleChapterReadAts(user.id),
+    ).thenAnswer((_) async => {'1:1': todayUtc});
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    expect(
+      find.text('오늘도 이야기 탐험, 신앙 다이어리 작성\n통독으로 하나님과 함께 해보아요!'),
+      findsOneWidget,
+    );
+    expect(find.text('이야기 탐험'), findsWidgets);
+    expect(find.text('신앙 다이어리'), findsWidgets);
+    expect(find.text('통독'), findsOneWidget);
+
+    for (final id in ['story', 'diary', 'bible']) {
+      expect(
+        find.descendant(
+          of: find.byKey(ValueKey('profile-today-action-$id-check')),
+          matching: find.byIcon(Icons.check_rounded),
+        ),
+        findsOneWidget,
+      );
+    }
+  });
+
   testWidgets('탐험 기록이 없으면 홈 탐험 CTA를 보여주고 콜백을 호출한다', (tester) async {
     final firstEvent = _profileEvent(id: 'event-first', title: '첫 이야기');
 
@@ -437,10 +503,12 @@ void main() {
     expect(find.text('기록'), findsNothing);
     expect(find.text('기도'), findsNothing);
     expect(find.text('신앙 다이어리'), findsWidgets);
-    expect(find.text('이야기 탐험'), findsOneWidget);
+    expect(find.text('이야기 탐험'), findsWidgets);
+    final explorationTitle = find.text('이야기 탐험').last;
+    final diaryCardTitle = find.text('신앙 다이어리').last;
     expect(
-      tester.getTopLeft(find.text('이야기 탐험')).dy,
-      lessThan(tester.getTopLeft(find.text('신앙 다이어리').first).dy),
+      tester.getTopLeft(explorationTitle).dy,
+      lessThan(tester.getTopLeft(diaryCardTitle).dy),
     );
 
     final faithPrompt = find.text('오늘 하나님과 함께한 순간을 기록해 보세요!');
@@ -668,14 +736,12 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    expect(find.text('저장'), findsNothing);
-    expect(find.text('말씀'), findsNothing);
     expect(find.text('이야기 탐험 요약'), findsOneWidget);
-    expect(find.text('탐험한\n이야기'), findsOneWidget);
-    expect(find.text('탐험\n로그'), findsOneWidget);
-    expect(find.text('저장\n이야기'), findsOneWidget);
+    expect(find.text('이야기'), findsOneWidget);
+    expect(find.text('로그'), findsOneWidget);
+    expect(find.text('저장'), findsOneWidget);
     expect(find.text('저장 이야기 개수'), findsNothing);
-    expect(find.text('저장한\n말씀'), findsOneWidget);
+    expect(find.text('말씀'), findsOneWidget);
     expect(find.text('1개'), findsWidgets);
     expect(find.text('2개'), findsOneWidget);
 

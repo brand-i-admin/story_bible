@@ -44,8 +44,8 @@ class StoryController extends Notifier<StoryState> {
       final eventProgress = await _fetchEventProgressForCurrentUser();
       final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
       final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
-      final completedBibleChapterKeys =
-          await _fetchCompletedBibleChapterKeysForCurrentUser();
+      final bibleChapterProgress =
+          await _fetchCompletedBibleChapterProgressForCurrentUser();
       final completedEventIds = _completedIdsFromProgress(
         eventProgress,
         eventEmotionMarks,
@@ -89,7 +89,8 @@ class StoryController extends Notifier<StoryState> {
         quizAttemptSummaries: quizAttemptSummaries,
         eventEmotionMarks: eventEmotionMarks,
         savedEventIds: savedEventIds,
-        completedBibleChapterKeys: completedBibleChapterKeys,
+        completedBibleChapterKeys: bibleChapterProgress.keys,
+        completedBibleChapterReadAts: bibleChapterProgress.readAts,
         selectedEraId: null,
         selectedCharacterCodes: const {},
         selectedCharacterColors: const {},
@@ -247,8 +248,8 @@ class StoryController extends Notifier<StoryState> {
       final eventProgress = await _fetchEventProgressForCurrentUser();
       final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
       final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
-      final completedBibleChapterKeys =
-          await _fetchCompletedBibleChapterKeysForCurrentUser();
+      final bibleChapterProgress =
+          await _fetchCompletedBibleChapterProgressForCurrentUser();
       final completedEventIds = _completedIdsFromProgress(
         eventProgress,
         eventEmotionMarks,
@@ -266,7 +267,8 @@ class StoryController extends Notifier<StoryState> {
         quizAttemptSummaries: quizAttemptSummaries,
         eventEmotionMarks: eventEmotionMarks,
         savedEventIds: savedEventIds,
-        completedBibleChapterKeys: completedBibleChapterKeys,
+        completedBibleChapterKeys: bibleChapterProgress.keys,
+        completedBibleChapterReadAts: bibleChapterProgress.readAts,
         selectedCharacterCodes: selectedCharacterCodes,
         selectedCharacterColors: _assignSelectedColors(selectedCharacterCodes),
         selectedTimelineUnitCodes: const {},
@@ -446,8 +448,11 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Future<void> refreshCompletedBibleChapterKeys() async {
-    final keys = await _fetchCompletedBibleChapterKeysForCurrentUser();
-    state = state.copyWith(completedBibleChapterKeys: keys);
+    final progress = await _fetchCompletedBibleChapterProgressForCurrentUser();
+    state = state.copyWith(
+      completedBibleChapterKeys: progress.keys,
+      completedBibleChapterReadAts: progress.readAts,
+    );
   }
 
   Future<void> setBibleChapterRead({
@@ -467,13 +472,20 @@ class StoryController extends Notifier<StoryState> {
       chapterNo: safeChapterNo,
     );
     final previous = state.completedBibleChapterKeys;
+    final previousReadAts = state.completedBibleChapterReadAts;
     final next = {...previous};
+    final nextReadAts = {...previousReadAts};
     if (isRead) {
       next.add(key);
+      nextReadAts[key] = DateTime.now();
     } else {
       next.remove(key);
+      nextReadAts.remove(key);
     }
-    state = state.copyWith(completedBibleChapterKeys: next);
+    state = state.copyWith(
+      completedBibleChapterKeys: next,
+      completedBibleChapterReadAts: nextReadAts,
+    );
     try {
       await _repo.setBibleChapterRead(
         userId: user.id,
@@ -482,7 +494,10 @@ class StoryController extends Notifier<StoryState> {
         isRead: isRead,
       );
     } catch (_) {
-      state = state.copyWith(completedBibleChapterKeys: previous);
+      state = state.copyWith(
+        completedBibleChapterKeys: previous,
+        completedBibleChapterReadAts: previousReadAts,
+      );
       rethrow;
     }
   }
@@ -763,18 +778,26 @@ class StoryController extends Notifier<StoryState> {
     return _repo.fetchSavedEventIds(user.id);
   }
 
-  Future<Set<String>> _fetchCompletedBibleChapterKeysForCurrentUser() async {
+  Future<({Set<String> keys, Map<String, DateTime?> readAts})>
+  _fetchCompletedBibleChapterProgressForCurrentUser() async {
     final user = ref.read(supabaseClientProvider).auth.currentUser;
     if (user == null) {
-      return const <String>{};
+      return (keys: const <String>{}, readAts: const <String, DateTime?>{});
     }
     try {
-      return await _repo.fetchCompletedBibleChapterKeys(user.id);
+      final readAts = await _repo.fetchCompletedBibleChapterReadAts(user.id);
+      return (keys: readAts.keys.toSet(), readAts: readAts);
+    } catch (_) {
+      // Older mocks or deployments can fall back to the key-only query.
+    }
+    try {
+      final keys = await _repo.fetchCompletedBibleChapterKeys(user.id);
+      return (keys: keys, readAts: {for (final key in keys) key: null});
     } catch (error) {
       debugPrint(
         '[StoryController] fetch bible chapter progress failed: $error',
       );
-      return const <String>{};
+      return (keys: const <String>{}, readAts: const <String, DateTime?>{});
     }
   }
 

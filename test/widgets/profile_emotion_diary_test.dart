@@ -108,31 +108,35 @@ Widget _wrap({
           body: SingleChildScrollView(
             child: SizedBox(
               width: width,
-              child: ProfileEmotionDiary(
-                eventEmotionMarks: marks,
-                companionDiaryEntries: companionDiaryEntries,
-                onSaveCompanionDiary:
-                    onSaveCompanionDiary ??
-                    ({
-                      required entryDate,
-                      required title,
-                      required body,
-                    }) async => _diaryEntry(
-                      entryDate: entryDate,
-                      title: title,
-                      body: body,
-                    ),
-                onDeleteCompanionDiary: onDeleteCompanionDiary ?? (_) async {},
-                bibleProgress:
-                    bibleProgress ??
-                    const ProfileBibleProgressSummary(
-                      completed: 12,
-                      total: 1189,
-                      fraction: 12 / 1189,
-                    ),
-                onOpenBibleProgress: onOpenBibleProgress ?? () {},
-                onContinueBibleReading: onContinueBibleReading ?? () {},
-                now: now,
+              child: TickerMode(
+                enabled: false,
+                child: ProfileEmotionDiary(
+                  eventEmotionMarks: marks,
+                  companionDiaryEntries: companionDiaryEntries,
+                  onSaveCompanionDiary:
+                      onSaveCompanionDiary ??
+                      ({
+                        required entryDate,
+                        required title,
+                        required body,
+                      }) async => _diaryEntry(
+                        entryDate: entryDate,
+                        title: title,
+                        body: body,
+                      ),
+                  onDeleteCompanionDiary:
+                      onDeleteCompanionDiary ?? (_) async {},
+                  bibleProgress:
+                      bibleProgress ??
+                      const ProfileBibleProgressSummary(
+                        completed: 12,
+                        total: 1189,
+                        fraction: 12 / 1189,
+                      ),
+                  onOpenBibleProgress: onOpenBibleProgress ?? () {},
+                  onContinueBibleReading: onContinueBibleReading ?? () {},
+                  now: now,
+                ),
               ),
             ),
           ),
@@ -235,8 +239,9 @@ void _companionDiaryWidgetTests() {
 
     expect(writePill.color, isNot(AppColorPalette.atlasNavy.cardSurface));
     expect(writeLabel.style?.color, AppColorPalette.atlasNavy.successBottom);
-    expect(donut.backgroundColor, isNot(AppColorPalette.atlasNavy.currentFill));
-    expect(donut.color, AppColorPalette.atlasNavy.currentAccentDeep);
+    expect(donut.backgroundColor, isNot(AppColorPalette.atlasNavy.cardSurface));
+    expect(donut.color, isNot(AppColorPalette.atlasNavy.cardSurface));
+    expect(donut.color?.a, 1);
   });
 
   testWidgets('아주크게에서도 두 자리 날짜는 한 줄로 표시된다', (tester) async {

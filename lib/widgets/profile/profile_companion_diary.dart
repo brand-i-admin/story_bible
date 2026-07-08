@@ -248,7 +248,6 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
               ],
             ),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: palette.completedBorder, width: 0.9),
             boxShadow: AppShadows.sm,
           ),
           child: Stack(
@@ -424,13 +423,7 @@ class _DiaryWriteButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
         child: Container(
           padding: const EdgeInsets.fromLTRB(8, 5, 11, 5),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: palette.successBottom.withValues(alpha: 0.58),
-              width: 1,
-            ),
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(999)),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -442,6 +435,8 @@ class _DiaryWriteButton extends StatelessWidget {
                 iconSize: 19,
                 backgroundColor: palette.successBottom,
                 foregroundColor: AppColors.fgOnDark,
+                pulseDuration: const Duration(milliseconds: 1600),
+                pulseCount: null,
               ),
               const SizedBox(width: 8),
               Text(

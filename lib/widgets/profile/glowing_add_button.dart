@@ -14,7 +14,9 @@ class ProfileGlowingAddButton extends StatefulWidget {
     this.foregroundColor = AppColors.greenBot,
     this.disabledBackgroundColor,
     this.disabledForegroundColor,
-  });
+    this.pulseDuration = const Duration(milliseconds: 760),
+    this.pulseCount = 2,
+  }) : assert(pulseCount == null || pulseCount > 0);
 
   final String tooltip;
   final VoidCallback? onTap;
@@ -24,6 +26,8 @@ class ProfileGlowingAddButton extends StatefulWidget {
   final Color foregroundColor;
   final Color? disabledBackgroundColor;
   final Color? disabledForegroundColor;
+  final Duration pulseDuration;
+  final int? pulseCount;
 
   @override
   State<ProfileGlowingAddButton> createState() =>
@@ -41,7 +45,7 @@ class _ProfileGlowingAddButtonState extends State<ProfileGlowingAddButton>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 760),
+      duration: widget.pulseDuration,
     );
     _syncPulse();
   }
@@ -49,14 +53,22 @@ class _ProfileGlowingAddButtonState extends State<ProfileGlowingAddButton>
   @override
   void didUpdateWidget(covariant ProfileGlowingAddButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.onTap != widget.onTap) {
+    if (oldWidget.pulseDuration != widget.pulseDuration) {
+      _controller.duration = widget.pulseDuration;
+    }
+    if (oldWidget.onTap != widget.onTap ||
+        oldWidget.pulseCount != widget.pulseCount) {
       _syncPulse();
     }
   }
 
   void _syncPulse() {
     if (_enabled) {
-      _controller.repeat(reverse: true, count: 2);
+      if (widget.pulseCount == null) {
+        _controller.repeat(reverse: true);
+      } else {
+        _controller.repeat(reverse: true, count: widget.pulseCount);
+      }
     } else {
       _controller
         ..stop()

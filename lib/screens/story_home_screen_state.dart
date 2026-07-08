@@ -2804,50 +2804,65 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           onPointerSignal: (_) => _suppressMapTaps(),
                           child: SizedBox(
                             height: topUtilityBarHeightFor(context),
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: Row(
-                                children: [
-                                  // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
-                                  // 항상 일부 보이므로 별도 토글 불필요.
-                                  topUtilityIconButton(
-                                    icon: Icons.search_rounded,
-                                    tooltip: '성경 구절로 이야기 찾기',
-                                    onTap: _openBibleVerseSearch,
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
                                   ),
-                                  const SizedBox(width: 4),
-                                  topUtilityButton(
-                                    label: '성경',
-                                    onTap: _openBibleReaderPopup,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  topMissionButton(
-                                    onTap: _openQuizTab,
-                                    dailyCompleted: dailyMissionCompleted,
-                                    dailyStatusKnown: dailyMissionStatusKnown,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  topUtilityButton(
-                                    label: '프로필',
-                                    onTap: _openProfileTab,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  topFontScaleButton(
-                                    onTap: () =>
-                                        unawaited(_openFontScaleSheet()),
-                                  ),
-                                  if (kIsWeb) ...[
-                                    const SizedBox(width: 4),
-                                    topUtilityButton(
-                                      label: '이야기 등록',
-                                      onTap: _openProposalBoardOrGate,
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minWidth: math.max(
+                                        0,
+                                        constraints.maxWidth - 24,
+                                      ),
                                     ),
-                                  ],
-                                ],
-                              ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
+                                        // 항상 일부 보이므로 별도 토글 불필요.
+                                        topUtilityIconButton(
+                                          icon: Icons.search_rounded,
+                                          tooltip: '성경 구절로 이야기 찾기',
+                                          onTap: _openBibleVerseSearch,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        topUtilityButton(
+                                          label: '성경',
+                                          onTap: _openBibleReaderPopup,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        topMissionButton(
+                                          onTap: _openQuizTab,
+                                          dailyCompleted: dailyMissionCompleted,
+                                          dailyStatusKnown:
+                                              dailyMissionStatusKnown,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        topUtilityButton(
+                                          label: '프로필',
+                                          onTap: _openProfileTab,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        topFontScaleButton(
+                                          onTap: () =>
+                                              unawaited(_openFontScaleSheet()),
+                                        ),
+                                        if (kIsWeb) ...[
+                                          const SizedBox(width: 4),
+                                          topUtilityButton(
+                                            label: '이야기 등록',
+                                            onTap: _openProposalBoardOrGate,
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),

@@ -22,6 +22,7 @@ class ProfileBibleProgressSummary {
     required this.fraction,
     this.lastCompletedBookNo,
     this.lastCompletedChapterNo,
+    this.completedToday = false,
   });
 
   final int completed;
@@ -29,6 +30,7 @@ class ProfileBibleProgressSummary {
   final double fraction;
   final int? lastCompletedBookNo;
   final int? lastCompletedChapterNo;
+  final bool completedToday;
 
   int get percent => (fraction.clamp(0.0, 1.0) * 100).round();
 
@@ -482,12 +484,6 @@ class _BibleProgressFeatureCard extends StatelessWidget {
               ],
             ),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: palette.currentAccentDeep.withValues(
-                alpha: darkSurface ? 0.48 : 0.32,
-              ),
-              width: 0.9,
-            ),
             boxShadow: AppShadows.sm,
           ),
           child: Column(
@@ -539,7 +535,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                   _BibleProgressDonut(
                     fraction: fraction,
                     percent: progress.percent,
-                    dimension: largeText ? 48 : 54,
+                    dimension: largeText ? 44 : 50,
                   ),
                   SizedBox(width: largeText ? 7 : 10),
                   Expanded(
@@ -580,10 +576,11 @@ class _BibleProgressFeatureCard extends StatelessWidget {
               ),
               const Spacer(),
               PulseHighlight(
-                active: onContinue != null,
-                pulseCount: 2,
+                active: onContinue != null && !progress.completedToday,
+                pulseCount: null,
+                duration: const Duration(milliseconds: 2200),
                 borderRadius: BorderRadius.circular(999),
-                color: palette.currentAccentDeep,
+                color: AppColors.goldLight,
                 child: _BibleContinueButton(onTap: onContinue),
               ),
             ],

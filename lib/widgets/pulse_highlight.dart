@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 /// 자식 위젯 외곽에 부드럽게 깜빡이는 골드 glow 를 그린다.
 ///
-/// `active` 가 true 로 바뀌면 1.4초 사이클로 0→1→0 부드럽게 몇 번 박동한다.
-/// 정해진 횟수 뒤에는 active 가 true 여도 glow 를 숨긴다. false 가 되면 즉시
-/// 멈추고 glow 가 사라진다.
+/// `active` 가 true 로 바뀌면 1.4초 사이클로 0→1→0 부드럽게 박동한다.
+/// `pulseCount`가 있으면 정해진 횟수 뒤에 숨기고, null이면 active 동안
+/// 계속 반복한다. false 가 되면 즉시 멈추고 glow 가 사라진다.
 ///
 /// EventDetailPage 의 "다음 이야기" 카드에 부착해 완료 후 다음 이동 동선을
 /// 시각적으로 유도하기 위해 만들어졌다.
@@ -18,13 +18,15 @@ class PulseHighlight extends StatefulWidget {
     this.borderRadius = const BorderRadius.all(Radius.circular(14)),
     this.color = const Color(0xFFE8A33D),
     this.pulseCount = 2,
-  }) : assert(pulseCount > 0);
+    this.duration = const Duration(milliseconds: 1400),
+  }) : assert(pulseCount == null || pulseCount > 0);
 
   final Widget child;
   final bool active;
   final BorderRadius borderRadius;
   final Color color;
-  final int pulseCount;
+  final int? pulseCount;
+  final Duration duration;
 
   @override
   State<PulseHighlight> createState() => _PulseHighlightState();
@@ -41,10 +43,8 @@ class _PulseHighlightState extends State<PulseHighlight>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1400),
-    )..addStatusListener(_handleStatus);
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..addStatusListener(_handleStatus);
     if (widget.active) {
       _startPulse();
     }
@@ -53,7 +53,11 @@ class _PulseHighlightState extends State<PulseHighlight>
   @override
   void didUpdateWidget(covariant PulseHighlight oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.active && !oldWidget.active) {
+    if (oldWidget.duration != widget.duration) {
+      _controller.duration = widget.duration;
+    }
+    if (widget.active &&
+        (!oldWidget.active || oldWidget.pulseCount != widget.pulseCount)) {
       _startPulse();
     } else if (!widget.active && oldWidget.active) {
       _stopPulse();
@@ -66,6 +70,10 @@ class _PulseHighlightState extends State<PulseHighlight>
     }
     if (!widget.active) {
       _stopPulse();
+      return;
+    }
+    if (widget.pulseCount == null) {
+      _controller.forward(from: 0);
       return;
     }
     _remainingPulses -= 1;
@@ -84,7 +92,9 @@ class _PulseHighlightState extends State<PulseHighlight>
   }
 
   void _startPulse() {
-    _remainingPulses = math.max(1, widget.pulseCount);
+    _remainingPulses = widget.pulseCount == null
+        ? -1
+        : math.max(1, widget.pulseCount!);
     _visible = true;
     _controller.forward(from: 0);
   }

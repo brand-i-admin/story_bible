@@ -436,6 +436,16 @@ void main() {
     expect(source, contains('max: 0.38'));
   });
 
+  test('홈 상단 유틸리티 버튼 row는 가운데 정렬한다', () {
+    final source = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('constraints.maxWidth - 24'));
+    expect(source, contains('MainAxisAlignment.center'));
+    expect(source, contains('topUtilityBarHeightFor(context)'));
+  });
+
   test('Android 폰은 시스템 inset 이 0이어도 하단 시트 여백을 보정한다', () {
     final source = File(
       'lib/screens/story_home_screen_state.dart',

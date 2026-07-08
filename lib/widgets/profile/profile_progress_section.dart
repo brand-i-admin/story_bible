@@ -9,8 +9,10 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     required AppUserProfile profile,
     bool scrollBody = true,
   }) {
+    final todayActions = _profileTodayActions();
     final body = ProfileLeftPanelExt(this)._buildProfileBodyShell(
       profile: profile,
+      todayActions: todayActions,
       child: _profileProgressLifeBody(),
     );
     if (!scrollBody) {
@@ -30,23 +32,27 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
       state.completedBibleChapterKeys,
     );
     final today = toKst(DateTime.now());
+    final todayCompanionDiary = _profileCompanionDiaryEntries
+        .where((entry) => _isSameProfileDate(entry.entryDate, today))
+        .firstOrNull;
     final bibleProgressSummary = ProfileBibleProgressSummary(
       completed: bibleProgress.completed,
       total: bibleProgress.total,
       fraction: bibleProgress.fraction,
       lastCompletedBookNo: lastCompletedChapter?.bookNo,
       lastCompletedChapterNo: lastCompletedChapter?.chapterNo,
+      completedToday: _hasBibleReadToday(state, today),
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ProfileLeftPanelExt(this)._buildProfileStoryExplorationDashboard(),
+        ProfileLeftPanelExt(this)._buildProfileStoryExplorationDashboard(
+          todayStoryActionCompleted: _hasStoryEmotionToday(state, today),
+        ),
         const SizedBox(height: 10),
         ProfileDiaryFeatureCards(
           today: today,
-          todayCompanionDiary: _profileCompanionDiaryEntries
-              .where((entry) => _isSameProfileDate(entry.entryDate, today))
-              .firstOrNull,
+          todayCompanionDiary: todayCompanionDiary,
           companionDiaryEntries: _profileCompanionDiaryEntries,
           companionDiaryLoading: _profileCompanionDiaryLoading,
           companionDiaryError: _profileCompanionDiaryError,
@@ -64,5 +70,38 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
 
   bool _isSameProfileDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  ({bool storyExploration, bool companionDiary, bool bibleReading})
+  _profileTodayActions() {
+    final state = ref.watch(storyControllerProvider);
+    final today = toKst(DateTime.now());
+    final todayCompanionDiary = _profileCompanionDiaryEntries.any(
+      (entry) => _isSameProfileDate(entry.entryDate, today),
+    );
+    return (
+      storyExploration: _hasStoryEmotionToday(state, today),
+      companionDiary: todayCompanionDiary,
+      bibleReading: _hasBibleReadToday(state, today),
+    );
+  }
+
+  bool _hasStoryEmotionToday(StoryState state, DateTime today) {
+    return state.eventEmotionMarks.values.any((mark) {
+      final updatedAt = mark.updatedAt;
+      if (updatedAt == null) {
+        return false;
+      }
+      return _isSameProfileDate(toKst(updatedAt), today);
+    });
+  }
+
+  bool _hasBibleReadToday(StoryState state, DateTime today) {
+    return state.completedBibleChapterReadAts.values.any((readAt) {
+      if (readAt == null) {
+        return false;
+      }
+      return _isSameProfileDate(toKst(readAt), today);
+    });
   }
 }

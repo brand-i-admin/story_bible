@@ -37,6 +37,7 @@ class StoryState {
     this.eventEmotionMarks = const {},
     this.savedEventIds = const {},
     this.completedBibleChapterKeys = const {},
+    this.completedBibleChapterReadAts = const {},
     this.searchQuery = '',
     this.searchResults = const [],
     this.isSearching = false,
@@ -101,6 +102,9 @@ class StoryState {
   /// 성경 통독 완료 장. key는 `bookNo:chapterNo`.
   final Set<String> completedBibleChapterKeys;
 
+  /// 성경 통독 완료 장의 읽음 처리 시각. key는 `bookNo:chapterNo`.
+  final Map<String, DateTime?> completedBibleChapterReadAts;
+
   final String searchQuery;
   final List<StoryEvent> searchResults;
   final bool isSearching;
@@ -133,6 +137,7 @@ class StoryState {
     Map<String, EventEmotionMark>? eventEmotionMarks,
     Set<String>? savedEventIds,
     Set<String>? completedBibleChapterKeys,
+    Map<String, DateTime?>? completedBibleChapterReadAts,
     bool clearSelectedEvent = false,
     String? searchQuery,
     List<StoryEvent>? searchResults,
@@ -175,6 +180,8 @@ class StoryState {
       savedEventIds: savedEventIds ?? this.savedEventIds,
       completedBibleChapterKeys:
           completedBibleChapterKeys ?? this.completedBibleChapterKeys,
+      completedBibleChapterReadAts:
+          completedBibleChapterReadAts ?? this.completedBibleChapterReadAts,
       searchQuery: searchQuery ?? this.searchQuery,
       searchResults: searchResults ?? this.searchResults,
       isSearching: isSearching ?? this.isSearching,
