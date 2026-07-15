@@ -610,60 +610,68 @@ void main() {
     expect(hintCard.bottom, closeTo(currentCard.bottom, 0.1));
   });
 
-  testWidgets('아주큰 글자에서도 첫 이야기 앞 탐험 정렬 안내가 넘치지 않는다', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(430, 900));
+  testWidgets('좁은 실제 기기 폭에서 보통과 아주큰 탐험 정렬 안내가 넘치지 않는다', (tester) async {
+    const screenSize = Size(390, 900);
+    await tester.binding.setSurfaceSize(screenSize);
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: MediaQuery(
-          data: const MediaQueryData(
-            size: Size(430, 900),
-            textScaler: TextScaler.linear(1.4),
-          ),
-          child: Scaffold(
-            body: SizedBox(
-              height: 445,
-              child: HomeJourneyOverlay(
-                events: events,
-                recommendedEventId: 'previous',
-                currentEventId: 'previous',
-                eras: const [_era],
-                charactersByCode: const {},
-                eventEmotionMarks: const {},
-                quizAttemptSummaries: const {},
-                isAuthenticated: true,
-                todayDiary: null,
-                diaryLoading: false,
-                diaryError: null,
-                bibleTargetLabel: '창세기 14장',
-                onOpenStory: (_) {},
-                onCurrentStoryChanged: (_) {},
-                onSaveDiary: _discardDiarySave,
-                onDeleteDiary: _discardDiaryDelete,
-                onContinueBibleReading: () {},
-                onOpenProfile: () {},
+    for (final textScale in [1.0, 1.4]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(
+              size: screenSize,
+              textScaler: TextScaler.linear(textScale),
+            ),
+            child: Scaffold(
+              body: SizedBox(
+                height: 445,
+                child: HomeJourneyOverlay(
+                  events: events,
+                  recommendedEventId: 'previous',
+                  currentEventId: 'previous',
+                  eras: const [_era],
+                  charactersByCode: const {},
+                  eventEmotionMarks: const {},
+                  quizAttemptSummaries: const {},
+                  isAuthenticated: true,
+                  todayDiary: null,
+                  diaryLoading: false,
+                  diaryError: null,
+                  bibleTargetLabel: '창세기 14장',
+                  onOpenStory: (_) {},
+                  onCurrentStoryChanged: (_) {},
+                  onSaveDiary: _discardDiarySave,
+                  onDeleteDiary: _discardDiaryDelete,
+                  onContinueBibleReading: () {},
+                  onOpenProfile: () {},
+                ),
               ),
             ),
           ),
         ),
-      ),
-    );
-    await tester.pump(const Duration(milliseconds: 120));
+      );
+      await tester.pump(const Duration(milliseconds: 120));
 
-    final hintCard = find.byKey(
-      const ValueKey('home-exploration-sort-hint-card'),
-    );
-    final hintBody = find.byKey(
-      const ValueKey('home-exploration-sort-hint-body'),
-    );
-    expect(hintCard, findsOneWidget);
-    expect(hintBody, findsOneWidget);
-    expect(
-      tester.getRect(hintBody).bottom,
-      lessThanOrEqualTo(tester.getRect(hintCard).bottom),
-    );
-    expect(tester.takeException(), isNull);
+      final hintCard = find.byKey(
+        const ValueKey('home-exploration-sort-hint-card'),
+      );
+      final hintBody = find.byKey(
+        const ValueKey('home-exploration-sort-hint-body'),
+      );
+      expect(hintCard, findsOneWidget);
+      expect(hintBody, findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('home-exploration-sort-hint-fit')),
+        findsOneWidget,
+      );
+      expect(
+        tester.getRect(hintBody).bottom,
+        lessThanOrEqualTo(tester.getRect(hintCard).bottom),
+        reason: 'textScale=$textScale',
+      );
+      expect(tester.takeException(), isNull, reason: 'textScale=$textScale');
+    }
   });
 
   testWidgets('다른 시대로 넘어가는 카드 사이에는 시대 이동 라벨이 보인다', (tester) async {
@@ -718,10 +726,25 @@ void main() {
       find.byKey(const ValueKey('home-journey-era-boundary-badge')),
     );
     final boundaryDecoration = boundaryBadge.decoration! as BoxDecoration;
-    expect(boundaryDecoration.color, AppColorPalette.blackMap.currentFill);
+    expect(
+      boundaryDecoration.color,
+      AppColorPalette.blackMap.utilitySelectedBackground.withValues(alpha: 1),
+    );
     expect(
       tester.widget<Text>(find.text('원역사\n이동')).style?.color,
-      AppColorPalette.blackMap.text,
+      AppColors.fgOnDark,
+    );
+    final missingBadge = tester.widget<Container>(
+      find.byKey(const ValueKey('home-journey-missing-boundary-badge')),
+    );
+    final missingDecoration = missingBadge.decoration! as BoxDecoration;
+    expect(
+      missingDecoration.color,
+      AppColorPalette.blackMap.utilitySelectedBackground.withValues(alpha: 1),
+    );
+    expect(
+      tester.widget<Text>(find.text('다음 이야기 없음')).style?.color,
+      AppColors.fgOnDark,
     );
   });
 

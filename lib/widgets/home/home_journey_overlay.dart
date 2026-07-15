@@ -501,27 +501,21 @@ class _HomeJourneyBoundaryBadge extends StatelessWidget {
     return Container(
       key: isEraTransition
           ? const ValueKey('home-journey-era-boundary-badge')
-          : null,
+          : const ValueKey('home-journey-missing-boundary-badge'),
       width: 64,
       constraints: const BoxConstraints(minHeight: 38),
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       decoration: BoxDecoration(
-        color: isEraTransition
-            ? palette.currentFill
-            : palette.panelSurface.withValues(alpha: 0.96),
+        color: palette.utilitySelectedBackground.withValues(alpha: 1),
         borderRadius: BorderRadius.circular(999),
         border: Border.all(
-          color: palette.currentAccent.withValues(
-            alpha: isEraTransition ? 0.78 : 0.5,
-          ),
+          color: palette.currentAccent.withValues(alpha: 0.95),
         ),
         boxShadow: [
           BoxShadow(
-            color:
-                (isEraTransition ? palette.currentAccent : palette.primaryDeep)
-                    .withValues(alpha: isEraTransition ? 0.22 : 0.15),
-            blurRadius: isEraTransition ? 10 : 8,
+            color: palette.currentAccent.withValues(alpha: 0.32),
+            blurRadius: 12,
             offset: const Offset(0, 3),
           ),
         ],
@@ -531,7 +525,7 @@ class _HomeJourneyBoundaryBadge extends StatelessWidget {
         maxLines: 2,
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: palette.text,
+          color: AppColors.fgOnDark,
           fontSize: label.contains('\n') ? 9.2 : 8.4,
           fontWeight: FontWeight.w900,
           height: 1.15,
@@ -566,39 +560,49 @@ class _HomeExplorationSortHintCard extends StatelessWidget {
             color: palette.regionAccent.withValues(alpha: 0.28),
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.add_location_alt_rounded,
-              color: palette.regionAccent,
-              size: largeText ? 20 : 24,
-            ),
-            SizedBox(height: largeText ? 4 : 8),
-            Text(
-              '탐험 정렬 안내',
-              maxLines: 2,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: palette.text,
-                fontSize: largeText ? 11 : 12.5,
-                fontWeight: FontWeight.w900,
-                height: 1.15,
+        child: LayoutBuilder(
+          builder: (context, constraints) => FittedBox(
+            key: const ValueKey('home-exploration-sort-hint-fit'),
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: constraints.maxWidth,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.add_location_alt_rounded,
+                    color: palette.regionAccent,
+                    size: largeText ? 20 : 24,
+                  ),
+                  SizedBox(height: largeText ? 4 : 8),
+                  Text(
+                    '탐험 정렬 안내',
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: palette.text,
+                      fontSize: largeText ? 11 : 12.5,
+                      fontWeight: FontWeight.w900,
+                      height: 1.15,
+                    ),
+                  ),
+                  SizedBox(height: largeText ? 3 : 6),
+                  Text(
+                    '지도 탭에서 사건에 직접 감정을 새기면\n그 사건 기준으로 탐험 정렬이 바뀌어요.',
+                    key: const ValueKey('home-exploration-sort-hint-body'),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: palette.mutedText,
+                      fontSize: largeText ? 9.4 : 10.5,
+                      fontWeight: FontWeight.w800,
+                      height: largeText ? 1.28 : 1.35,
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: largeText ? 3 : 6),
-            Text(
-              '지도 탭에서 사건에 직접 감정을 새기면\n그 사건 기준으로 탐험 정렬이 바뀌어요.',
-              key: const ValueKey('home-exploration-sort-hint-body'),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: palette.mutedText,
-                fontSize: largeText ? 9.4 : 10.5,
-                fontWeight: FontWeight.w800,
-                height: largeText ? 1.28 : 1.35,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
