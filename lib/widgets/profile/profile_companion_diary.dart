@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/user_companion_diary_entry.dart';
+import '../../screens/companion_diary_editor_screen.dart';
 import '../../screens/companion_diary_entries_screen.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
@@ -88,8 +89,9 @@ class CompanionDiaryTodaySection extends StatelessWidget {
     if (save == null) {
       return;
     }
-    final draft = await showCompanionDiaryEditorDialog(
+    final draft = await openCompanionDiaryEditorPage(
       context,
+      entryDate: initialEntry?.entryDate ?? entryDate,
       initialEntry: initialEntry,
     );
     if (draft == null) {
@@ -210,6 +212,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
     required this.onDelete,
     this.minHeight = 158,
     this.expandTextForNarrowLargeText = false,
+    this.readOnlySummary = false,
   });
 
   final DateTime entryDate;
@@ -221,15 +224,20 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
   final CompanionDiaryDeleteCallback? onDelete;
   final double minHeight;
   final bool expandTextForNarrowLargeText;
+  final bool readOnlySummary;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final expandReadableText = largeText && expandTextForNarrowLargeText;
-    final canWrite = onSave != null;
+    final canWrite = onSave != null && !readOnlySummary;
     final hasEntry = entry != null;
-    final message = error ?? '오늘 하나님과 함께한 순간을 기록해 보세요!';
+    final message =
+        error ??
+        (readOnlySummary
+            ? "오늘 작성한 신앙 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요."
+            : '오늘 하나님과 함께한 순간을 기록해 보세요!');
     final darkSurface =
         ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
         Brightness.dark;
@@ -349,7 +357,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                           padding: const EdgeInsets.only(right: 58),
                           child: Text(
                             diaryBody,
-                            maxLines: 3,
+                            maxLines: readOnlySummary ? 2 : 3,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: palette.mutedText,
@@ -391,7 +399,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                     )
                   else if (!hasEntry && canWrite)
                     const SizedBox(height: 64)
-                  else if (!canWrite)
+                  else if (!canWrite && !readOnlySummary)
                     Text(
                       '로그인하면 기록할 수 있어요.',
                       style: TextStyle(
@@ -421,8 +429,9 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
     if (save == null) {
       return;
     }
-    final draft = await showCompanionDiaryEditorDialog(
+    final draft = await openCompanionDiaryEditorPage(
       context,
+      entryDate: initialEntry?.entryDate ?? entryDate,
       initialEntry: initialEntry,
     );
     if (draft == null) {

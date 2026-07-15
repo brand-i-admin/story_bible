@@ -18,6 +18,7 @@ import 'package:story_bible/models/quiz_attempt_summary.dart';
 import 'package:story_bible/models/saved_bible_verse.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/models/user_companion_diary_entry.dart';
+import 'package:story_bible/screens/bible_progress_screen.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/notification_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
@@ -286,7 +287,7 @@ void main() {
     ).thenAnswer((_) async => 0);
   });
 
-  testWidgets('프로필 정보 카드를 누르면 수정 다이얼로그를 연다', (tester) async {
+  testWidgets('내정보 헤더의 사진·닉네임을 누르면 수정 다이얼로그를 연다', (tester) async {
     await _pumpProfileTab(
       tester,
       user: user,
@@ -295,11 +296,20 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    final profileGreeting = find.textContaining('기도친구');
-    expect(profileGreeting, findsOneWidget);
-    expect(tester.getTopLeft(profileGreeting).dx, greaterThan(80));
+    final headerIdentity = find.byKey(
+      const ValueKey('profile-header-identity'),
+    );
+    expect(find.text('내정보'), findsOneWidget);
+    expect(find.text('기도친구'), findsOneWidget);
+    expect(headerIdentity, findsOneWidget);
+    expect(find.textContaining('샬롬!'), findsNothing);
+    expect(find.textContaining('오늘도 이야기 탐험'), findsNothing);
+    final nicknameText = tester.widget<Text>(
+      find.descendant(of: headerIdentity, matching: find.text('기도친구')),
+    );
+    expect(nicknameText.overflow, TextOverflow.visible);
 
-    await tester.tap(profileGreeting);
+    await tester.tap(headerIdentity);
     await tester.pumpAndSettle();
 
     expect(find.byType(ProfileEditorDialog), findsOneWidget);
@@ -311,7 +321,42 @@ void main() {
     expect(find.byIcon(Icons.check_rounded), findsWidgets);
   });
 
-  testWidgets('프로필 할일 row는 수정 대신 안내 팝업을 연다', (tester) async {
+  testWidgets('내정보 헤더는 긴 닉네임도 말줄임표 없이 모두 표시한다', (tester) async {
+    profile = AppUserProfile(
+      userId: user.id,
+      shareId: 'ABC1234',
+      nickname: '말씀과 함께 걷는 기도친구',
+      photoUrl: null,
+      prayerRequest: '오늘 함께 기도해주세요.',
+      createdAt: now,
+      updatedAt: now,
+    );
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      viewSize: const Size(430, 932),
+    );
+
+    final identity = find.byKey(const ValueKey('profile-header-identity'));
+    final nickname = find.descendant(
+      of: identity,
+      matching: find.text('말씀과 함께 걷는 기도친구'),
+    );
+    final nicknameText = tester.widget<Text>(nickname);
+    expect(nicknameText.overflow, TextOverflow.visible);
+    expect(nicknameText.maxLines, greaterThanOrEqualTo(2));
+    expect(
+      tester.getRect(nickname).right,
+      lessThanOrEqualTo(tester.getRect(identity).right),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('프로필 정보 카드에는 오늘 할 일 체크리스트를 표시하지 않는다', (tester) async {
     await _pumpProfileTab(
       tester,
       user: user,
@@ -320,20 +365,14 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    await tester.tap(
-      find.byKey(const ValueKey('profile-today-action-checklist-info')),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text('오늘의 할일'), findsOneWidget);
+    expect(find.text('오늘 할 일:'), findsNothing);
     expect(
-      find.text('매일 이야기 탐험, 신앙 다이어리 작성, 통독 진행을 해봅시다!\n(완료 시 자동으로 체크 돼요)'),
-      findsOneWidget,
+      find.byKey(const ValueKey('profile-today-action-checklist-info')),
+      findsNothing,
     );
-    expect(find.byType(ProfileEditorDialog), findsNothing);
   });
 
-  testWidgets('아주크게에서도 오늘 할 일 row는 한 줄로 표시한다', (tester) async {
+  testWidgets('아주크게에서도 프로필 오늘 할 일 체크리스트는 노출하지 않는다', (tester) async {
     await _pumpProfileTab(
       tester,
       user: user,
@@ -344,42 +383,7 @@ void main() {
       textScale: 1.4,
     );
 
-    final checklist = find.byKey(
-      const ValueKey('profile-today-action-checklist-info'),
-    );
-    final todayLabel = find.descendant(
-      of: checklist,
-      matching: find.text('오늘 할 일:'),
-    );
-    final storyLabel = find.descendant(
-      of: checklist,
-      matching: find.text('이야기 탐험'),
-    );
-    final diaryLabel = find.descendant(
-      of: checklist,
-      matching: find.text('신앙 다이어리'),
-    );
-    final bibleLabel = find.descendant(
-      of: checklist,
-      matching: find.text('통독'),
-    );
-
-    final todayText = tester.widget<Text>(todayLabel);
-    expect(todayText.maxLines, 1);
-    expect(todayText.softWrap, isFalse);
-    expect(todayText.overflow, TextOverflow.visible);
-    expect(
-      tester.getCenter(todayLabel).dy,
-      closeTo(tester.getCenter(storyLabel).dy, 2),
-    );
-    expect(
-      tester.getCenter(todayLabel).dy,
-      closeTo(tester.getCenter(diaryLabel).dy, 2),
-    );
-    expect(
-      tester.getCenter(todayLabel).dy,
-      closeTo(tester.getCenter(bibleLabel).dy, 2),
-    );
+    expect(find.text('오늘 할 일:'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -515,7 +519,7 @@ void main() {
     expect(find.byIcon(Icons.place_rounded), findsNothing);
   });
 
-  testWidgets('오늘 액션을 모두 완료하면 프로필 체커에 표시한다', (tester) async {
+  testWidgets('오늘 액션을 모두 완료해도 프로필 체커는 표시하지 않는다', (tester) async {
     final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
     final today = DateTime(nowKst.year, nowKst.month, nowKst.day);
     final todayUtc = DateTime.utc(today.year, today.month, today.day);
@@ -562,31 +566,44 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
+    expect(find.textContaining('샬롬!'), findsNothing);
+    expect(find.textContaining('오늘도 이야기 탐험'), findsNothing);
+    expect(find.text('오늘 할 일:'), findsNothing);
     expect(
-      find.text('오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!'),
+      find.byKey(const ValueKey('profile-today-action-story-check')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('profile-today-action-diary-check')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('profile-today-action-bible-check')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('selected-date-emotion-heading-badge')),
       findsOneWidget,
     );
-    final journeyMessage = tester.widget<Text>(
-      find.text('오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!'),
+    expect(
+      find.byKey(const ValueKey('selected-date-bible-reading-badge')),
+      findsOneWidget,
     );
-    expect(journeyMessage.maxLines, 4);
-    expect(find.text('이야기 탐험'), findsWidgets);
-    expect(find.text('신앙 다이어리'), findsWidgets);
-    expect(find.text('통독'), findsOneWidget);
-    expect(find.text('오늘 할 일:'), findsOneWidget);
-
-    for (final id in ['story', 'diary', 'bible']) {
-      expect(
-        find.descendant(
-          of: find.byKey(ValueKey('profile-today-action-$id-check')),
-          matching: find.byIcon(Icons.check_rounded),
-        ),
-        findsOneWidget,
-      );
-    }
+    final diaryBadge = find.byKey(
+      const ValueKey('selected-date-companion-diary-badge'),
+    );
+    final diaryCard = find.byKey(
+      const ValueKey('selected-date-companion-diary'),
+    );
+    expect(diaryBadge, findsOneWidget);
+    expect(diaryCard, findsOneWidget);
+    expect(
+      tester.getCenter(diaryBadge).dy,
+      moreOrLessEquals(tester.getCenter(diaryCard).dy, epsilon: 1.0),
+    );
   });
 
-  testWidgets('프로필에서는 이야기 카드 대신 탐험 달력과 흔적을 보여준다', (tester) async {
+  testWidgets('프로필에서는 이야기 탐험 요약과 다이어리를 독립 레이어로 보여준다', (tester) async {
     final firstEvent = _profileEvent(id: 'event-first', title: '첫 이야기');
 
     when(() => auth.currentUser).thenReturn(user);
@@ -629,7 +646,50 @@ void main() {
       },
     );
 
-    expect(find.text('탐험 달력과 흔적들'), findsOneWidget);
+    expect(find.text('다이어리'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('profile-story-exploration-summary-layer')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('profile-diary-layer')), findsOneWidget);
+    final summaryLayer = find.byKey(
+      const ValueKey('profile-story-exploration-summary-layer'),
+    );
+    final featureCards = find.byKey(
+      const ValueKey('profile-diary-feature-cards'),
+    );
+    final diaryLayer = find.byKey(const ValueKey('profile-diary-layer'));
+    expect(featureCards, findsOneWidget);
+    final diaryLayerContainer = tester.widget<Container>(diaryLayer);
+    final diaryLayerDecoration =
+        diaryLayerContainer.decoration! as BoxDecoration;
+    expect(diaryLayerDecoration.border, isNull);
+    expect(diaryLayerDecoration.boxShadow, isNotEmpty);
+    expect(
+      tester.getTopLeft(summaryLayer).dy,
+      lessThan(tester.getTopLeft(featureCards).dy),
+    );
+    expect(
+      tester.getTopLeft(featureCards).dy,
+      lessThan(tester.getTopLeft(diaryLayer).dy),
+    );
+    expect(
+      find.byKey(const ValueKey('companion-diary-write-button-pill')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('bible-progress-continue-button')),
+      findsNothing,
+    );
+    expect(
+      find.ancestor(
+        of: find.byKey(const ValueKey('profile-diary-layer')),
+        matching: find.byKey(
+          const ValueKey('profile-story-exploration-summary-layer'),
+        ),
+      ),
+      findsNothing,
+    );
     expect(find.text('다음 이야기'), findsNothing);
     expect(find.text('첫 이야기'), findsNothing);
     expect(homeTapped, isFalse);
@@ -660,7 +720,7 @@ void main() {
       lessThan(tester.getTopLeft(diaryCardTitle).dy),
     );
 
-    final faithPrompt = find.text('오늘 하나님과 함께한 순간을 기록해 보세요!');
+    final faithPrompt = find.text("오늘 작성한 신앙 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요.");
     await tester.ensureVisible(faithPrompt);
     await tester.pumpAndSettle();
 
@@ -697,7 +757,7 @@ void main() {
     expect(diaryTitleWidget.maxLines, 2);
     expect(diaryTitleWidget.overflow, TextOverflow.visible);
 
-    final faithPrompt = find.text('오늘 하나님과 함께한 순간을 기록해 보세요!');
+    final faithPrompt = find.text("오늘 작성한 신앙 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요.");
     final faithPromptWidget = tester.widget<Text>(faithPrompt);
     expect(faithPromptWidget.maxLines, 4);
     expect(faithPromptWidget.overflow, TextOverflow.visible);
@@ -709,7 +769,7 @@ void main() {
       const ValueKey('companion-diary-feature-card'),
     );
     final bibleCard = find.byKey(const ValueKey('bible-progress-feature-card'));
-    expect(tester.getSize(diaryCard).height, greaterThan(158));
+    expect(tester.getSize(diaryCard).height, greaterThanOrEqualTo(138));
     expect(
       tester.getSize(diaryCard).height,
       closeTo(tester.getSize(bibleCard).height, 0.1),
@@ -771,7 +831,7 @@ void main() {
       textScale: 1.4,
     );
 
-    final titleFinder = find.text('탐험 달력과 흔적들');
+    final titleFinder = find.text('다이어리');
     expect(titleFinder, findsOneWidget);
     expect(find.text('고라의 반역: 권위에 맞서다'), findsNothing);
     expect(
@@ -781,7 +841,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('탐험 흔적의 감정 카테고리는 큰 글자에서도 overflow 없이 렌더링된다', (tester) async {
+  testWidgets('다이어리는 감정 카테고리를 중복 표시하지 않는다', (tester) async {
     final recentEvent = _profileEvent(
       id: 'event-recent',
       title: '가나안 정탐: 믿음과 두려움의 갈림길',
@@ -848,10 +908,10 @@ void main() {
       textScale: 1.4,
     );
 
-    expect(find.text('탐험 달력과 흔적들'), findsOneWidget);
+    expect(find.text('다이어리'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('emotion-category-gratitude')),
-      findsOneWidget,
+      findsNothing,
     );
     expect(find.text('고라의 반역: 권위에 맞서다'), findsNothing);
     expect(tester.takeException(), isNull);
@@ -1084,7 +1144,7 @@ void main() {
     expect(find.text('저장한 성경 구절'), findsOneWidget);
   });
 
-  testWidgets('통독 진행률 팝업에서 장을 누르면 해당 장 성경 리더를 연다', (tester) async {
+  testWidgets('통독 진행률 페이지에서 장을 누르면 해당 장 성경 리더를 연다', (tester) async {
     int? openedBookNo;
     int? openedChapterNo;
     int? openedVerseNo;
@@ -1111,6 +1171,8 @@ void main() {
     await tester.tap(bibleProgressCard);
     await tester.pumpAndSettle();
 
+    expect(find.byType(BibleProgressScreen), findsOneWidget);
+    expect(find.byType(Dialog), findsNothing);
     expect(
       find.byKey(const ValueKey('bible-progress-chapter-2')),
       findsOneWidget,
@@ -1128,7 +1190,7 @@ void main() {
     );
   });
 
-  testWidgets('통독 진행률 팝업은 마지막 통독 완료 권으로 열린다', (tester) async {
+  testWidgets('통독 진행률 페이지는 마지막 통독 완료 권으로 열린다', (tester) async {
     when(() => auth.currentUser).thenReturn(user);
     when(
       () => storyRepository.fetchEventProgress(user.id),
@@ -1162,6 +1224,7 @@ void main() {
     await tester.tap(bibleProgressCard);
     await tester.pumpAndSettle();
 
+    expect(find.byType(BibleProgressScreen), findsOneWidget);
     expect(find.text('신약'), findsOneWidget);
     expect(find.text('요한복음'), findsOneWidget);
     expect(
@@ -1174,7 +1237,7 @@ void main() {
     );
   });
 
-  testWidgets('통독 이어 읽기는 저장 구절이 아니라 마지막 통독 완료 장 다음을 연다', (tester) async {
+  testWidgets('내정보 통독 카드에는 이어 읽기 버튼을 표시하지 않는다', (tester) async {
     int? openedBookNo;
     int? openedChapterNo;
     int? openedVerseNo;
@@ -1234,16 +1297,12 @@ void main() {
           },
     );
 
-    final continueButton = find.byKey(
-      const ValueKey('bible-progress-continue-button'),
+    expect(
+      find.byKey(const ValueKey('bible-progress-continue-button')),
+      findsNothing,
     );
-    await tester.ensureVisible(continueButton);
-    await tester.pumpAndSettle();
-    await tester.tap(continueButton);
-    await tester.pumpAndSettle();
-
-    expect(openedBookNo, 1);
-    expect(openedChapterNo, 2);
+    expect(openedBookNo, isNull);
+    expect(openedChapterNo, isNull);
     expect(openedVerseNo, isNull);
   });
 
@@ -1452,7 +1511,7 @@ void main() {
     expect(reviewPanelTitle('헷갈려요로 복습할 이야기'), findsOneWidget);
   });
 
-  testWidgets('복습 페이지에는 탐험 달력과 흔적들을 표시하지 않는다', (tester) async {
+  testWidgets('복습 페이지에는 다이어리 달력 없이 감정 카테고리만 표시한다', (tester) async {
     final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
     final selectedDate = DateTime(nowKst.year, nowKst.month, nowKst.day);
     final joyEvent = _profileEvent(
@@ -1575,8 +1634,8 @@ void main() {
 
     expect(find.text('복습'), findsOneWidget);
     expect(find.text('복습 항목'), findsOneWidget);
-    expect(find.text('탐험 달력과 흔적들'), findsNothing);
-    expect(find.byKey(const ValueKey('emotion-category-joy')), findsNothing);
+    expect(find.text('다이어리'), findsNothing);
+    expect(find.byKey(const ValueKey('emotion-category-joy')), findsOneWidget);
     expect(
       find.byKey(const ValueKey('selected-date-companion-diary')),
       findsNothing,
@@ -1585,6 +1644,153 @@ void main() {
       find.byKey(const ValueKey('selected-date-emotion-comments')),
       findsNothing,
     );
+  });
+
+  testWidgets('복습 페이지는 감정 카테고리와 복습 항목을 서로 다른 단일 카드로 보여준다', (tester) async {
+    final event = _profileEvent(id: 'event-gratitude', title: '감사로 새긴 이야기');
+    when(() => auth.currentUser).thenReturn(user);
+    when(
+      () => storyRepository.fetchEventsByEra('era-1'),
+    ).thenAnswer((_) async => [event]);
+    when(
+      () => storyRepository.fetchEventProgress(user.id),
+    ).thenAnswer((_) async => const {});
+    when(() => storyRepository.fetchEventEmotionMarks(user.id)).thenAnswer(
+      (_) async => {
+        event.id: _profileEmotionMark(
+          event.id,
+          emotionKey: 'gratitude',
+          emotionLabel: '감사',
+          emotionEmoji: '💛',
+        ),
+      },
+    );
+    when(
+      () => storyRepository.fetchQuizAttemptSummaries(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchSavedEventIds(user.id),
+    ).thenAnswer((_) async => const <String>{});
+    when(
+      () => storyRepository.fetchCompletedBibleChapterKeys(user.id),
+    ).thenAnswer((_) async => const <String>{});
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      viewSize: const Size(430, 932),
+      textScale: 1.4,
+    );
+
+    final reviewCard = find.byKey(
+      const ValueKey('profile-story-summary-exploration-log'),
+    );
+    await tester.ensureVisible(reviewCard);
+    await tester.tap(reviewCard);
+    await tester.pumpAndSettle();
+
+    final categoryCard = find.byKey(
+      const ValueKey('exploration-log-emotion-categories'),
+    );
+    final reviewItemsCard = find.byKey(
+      const ValueKey('exploration-log-review-events'),
+    );
+    expect(categoryCard, findsOneWidget);
+    expect(reviewItemsCard, findsOneWidget);
+    expect(find.text('감정 카테고리'), findsOneWidget);
+    expect(find.text('복습 항목'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('emotion-category-gratitude')),
+      findsOneWidget,
+    );
+
+    final categoryDecoration =
+        tester.widget<Container>(categoryCard).decoration! as BoxDecoration;
+    final reviewDecoration =
+        tester.widget<Container>(reviewItemsCard).decoration! as BoxDecoration;
+    expect(categoryDecoration.color, isNot(reviewDecoration.color));
+
+    final label = find.byKey(
+      const ValueKey('emotion-category-label-gratitude'),
+    );
+    final count = find.byKey(
+      const ValueKey('emotion-category-count-gratitude'),
+    );
+    expect(
+      tester.getTopLeft(count).dy,
+      greaterThan(tester.getTopLeft(label).dy),
+    );
+    expect(
+      tester.widget<Text>(count).style?.fontSize,
+      greaterThanOrEqualTo(10),
+    );
+  });
+
+  testWidgets('기록이 없는 날짜에는 다른 탭에서 기록하도록 안내한다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    expect(find.text("'오늘' '성경' '지도' 탭으로 이동하여 기록을 남겨보세요"), findsOneWidget);
+  });
+
+  testWidgets('선택 날짜 통독 기록은 권 장을 가운데점으로 잇고 초과분은 상세에서 보여준다', (tester) async {
+    final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
+    final todayUtc = DateTime.utc(nowKst.year, nowKst.month, nowKst.day, 1);
+    when(() => auth.currentUser).thenReturn(user);
+    when(
+      () => storyRepository.fetchEventProgress(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchEventEmotionMarks(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchQuizAttemptSummaries(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchSavedEventIds(user.id),
+    ).thenAnswer((_) async => const <String>{});
+    when(
+      () => storyRepository.fetchCompletedBibleChapterReadAts(user.id),
+    ).thenAnswer(
+      (_) async => {
+        '1:1': todayUtc,
+        '1:3': todayUtc,
+        '2:2': todayUtc,
+        '43:3': todayUtc,
+      },
+    );
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    expect(
+      find.byKey(const ValueKey('selected-date-bible-reading')),
+      findsOneWidget,
+    );
+    expect(find.text('창세기 1장 · 창세기 3장 · 출애굽기 2장'), findsOneWidget);
+    final more = find.byKey(const ValueKey('selected-date-bible-reading-more'));
+    expect(more, findsOneWidget);
+
+    await tester.ensureVisible(more);
+    await tester.pumpAndSettle();
+    await tester.tap(more);
+    await tester.pumpAndSettle();
+
+    expect(find.text('통독 기록 상세'), findsOneWidget);
+    expect(find.text('요한복음 3장'), findsWidgets);
   });
 }
 

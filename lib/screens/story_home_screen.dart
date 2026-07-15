@@ -31,6 +31,7 @@ import '../utils/daily_exploration_selection.dart';
 import '../utils/home_back_navigation.dart';
 import '../utils/kst_date.dart';
 import '../utils/scene_asset_loader.dart';
+import '../utils/today_activity_summary.dart';
 import '../widgets/bible_reader_page.dart';
 import '../widgets/character_panel.dart';
 import '../widgets/completion_celebration.dart';

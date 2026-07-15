@@ -15,8 +15,6 @@ import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/theme/app_color_palette.dart';
 import 'package:story_bible/theme/app_theme.dart';
 import 'package:story_bible/theme/tokens.dart';
-import 'package:story_bible/widgets/emotion_badge_icon.dart';
-import 'package:story_bible/widgets/parchment_page_scaffold.dart';
 import 'package:story_bible/widgets/profile/companion_diary_entry_card.dart';
 import 'package:story_bible/widgets/profile/profile_emotion_diary.dart';
 import 'package:story_bible/widgets/pulse_highlight.dart';
@@ -98,6 +96,7 @@ Widget _wrap({
   ProfileBibleProgressSummary? bibleProgress,
   VoidCallback? onOpenBibleProgress,
   VoidCallback? onContinueBibleReading,
+  Map<String, DateTime?> completedBibleChapterReadAts = const {},
   AppColorPalette palette = AppColorPalette.classic,
 }) {
   return ProviderScope(
@@ -114,6 +113,7 @@ Widget _wrap({
                 enabled: false,
                 child: ProfileEmotionDiary(
                   eventEmotionMarks: marks,
+                  completedBibleChapterReadAts: completedBibleChapterReadAts,
                   companionDiaryEntries: companionDiaryEntries,
                   onSaveCompanionDiary:
                       onSaveCompanionDiary ??
@@ -445,7 +445,9 @@ void _companionDiaryWidgetTests() {
     await tester.enterText(find.byType(TextField).at(0), '선택한 날');
     await tester.enterText(find.byType(TextField).at(1), '그날의 본문');
     await tester.pump();
-    await tester.tap(find.text('저장'));
+    expect(find.text('신앙 다이어리 작성'), findsOneWidget);
+    expect(find.text('오늘의 말씀 연결'), findsNothing);
+    await tester.tap(find.text('기록 저장'));
     await tester.pumpAndSettle();
 
     expect(savedEntryDate, DateTime(2026, 6, 10));
@@ -570,8 +572,11 @@ void _companionDiaryWidgetTests() {
     await tester.pumpAndSettle();
 
     expect(find.text('신앙 다이어리'), findsWidgets);
-    expect(tester.getTopLeft(find.byType(ParchmentCard).last).dx, lessThan(24));
-    expect(find.text('6월 9일'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.byType(CompanionDiaryEntryPreviewCard)).dx,
+      lessThan(24),
+    );
+    expect(find.text('6월 9일 화요일'), findsOneWidget);
     expect(find.text('광야의 감사'), findsOneWidget);
     expect(find.text('작은 공급을 놓치지 않기로 했습니다.'), findsOneWidget);
     expect(find.byType(CompanionDiaryEntryPreviewCard), findsOneWidget);
@@ -675,10 +680,9 @@ void main() {
     expect(source, contains('palette.successBottom'));
     expect(source, contains('chapterReferenceText'));
     expect(source, contains("'이어읽기'"));
-    expect(
-      source,
-      contains('color: darkSurface ? AppColors.goldLight : AppColors.goldHi'),
-    );
+    expect(source, contains('color: darkSurface'));
+    expect(source, contains('? AppColors.goldLight'));
+    expect(source, contains(': AppColors.goldHi'));
     expect(companionSource, contains("import '../pulse_highlight.dart';"));
     expect(
       companionSource,
@@ -700,7 +704,7 @@ void main() {
       companionSource,
       contains('constraints: BoxConstraints(minHeight: minHeight)'),
     );
-    expect(companionSource, contains('maxLines: 3'));
+    expect(companionSource, contains('maxLines: readOnlySummary ? 2 : 3'));
     expect(companionSource, isNot(contains('오늘 적은 다이어리')));
     expect(source, isNot(contains('_DiaryLinkedTabSection')));
     expect(source, isNot(contains('_DiaryContentTab')));
@@ -858,7 +862,7 @@ void main() {
     expect(previousWeekHeight, lessThan(currentWeekHeight));
   });
 
-  testWidgets('주차 높이는 해당 주의 최대 감정 개수에 따라 1줄 또는 2줄로 조정된다', (tester) async {
+  testWidgets('감정 개수와 무관하게 기록이 있는 주는 한 줄 높이를 사용한다', (tester) async {
     final repository = _MockStoryRepository();
     final events = [
       for (var index = 0; index < 5; index++)
@@ -900,16 +904,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final previousWeekTop = tester.getTopLeft(find.text('31')).dy;
-    final currentWeekTop = tester.getTopLeft(find.text('7')).dy;
-    final diaryTitleTop = tester.getTopLeft(find.text('신앙 다이어리')).dy;
-    final previousWeekHeight = currentWeekTop - previousWeekTop;
-    final currentWeekHeight = diaryTitleTop - currentWeekTop;
-
-    expect(previousWeekHeight, lessThan(currentWeekHeight));
+    final previousWeekCell = find.byKey(
+      const ValueKey('emotion-calendar-day-2026-6-2'),
+    );
+    final currentWeekCell = find.byKey(
+      const ValueKey('emotion-calendar-day-2026-6-10'),
+    );
+    expect(tester.getSize(previousWeekCell).height, 56);
+    expect(tester.getSize(currentWeekCell).height, 56);
   });
 
-  testWidgets('하루 4개 이상 새기면 달력에는 3개 감정과 남은 개수를 보여준다', (tester) async {
+  testWidgets('하루에 감정을 여러 개 새겨도 달력에는 웃는 얼굴 하나만 보여준다', (tester) async {
     final repository = _MockStoryRepository();
     final events = [
       for (var index = 0; index < 5; index++)
@@ -943,7 +948,120 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('+2'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('calendar-emotion-marker-2026-6-10')),
+      findsOneWidget,
+    );
+    expect(find.text('+2'), findsNothing);
+  });
+
+  testWidgets('감정 통독 다이어리를 모두 한 날은 큰 체크 하나만 보여준다', (tester) async {
+    final repository = _MockStoryRepository();
+    final event = _event(id: 'all_action_event', title: '세 가지를 마친 날');
+    final mark = _mark(
+      event: event,
+      emotionKey: 'joy',
+      emotionLabel: '기쁨',
+      note: '기쁨을 새겼습니다.',
+      updatedAt: DateTime.utc(2026, 6, 9, 16),
+    );
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => [event]);
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: {event.id: mark},
+        companionDiaryEntries: [_diaryEntry(entryDate: DateTime(2026, 6, 10))],
+        completedBibleChapterReadAts: {'1:1': DateTime.utc(2026, 6, 9, 16)},
+        now: DateTime.utc(2026, 6, 10),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('calendar-all-actions-marker-2026-6-10')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('calendar-emotion-marker-2026-6-10')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('bible-reading-marker-2026-6-10')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const ValueKey('companion-diary-marker-2026-6-10')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('통독과 다이어리만 한 날은 날짜 아래 한 줄에 원형 아이콘을 보여준다', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: const {},
+        width: 350,
+        companionDiaryEntries: [_diaryEntry(entryDate: DateTime(2026, 6, 10))],
+        completedBibleChapterReadAts: {'1:1': DateTime.utc(2026, 6, 9, 16)},
+        now: DateTime.utc(2026, 6, 10),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final diaryMarker = find.byKey(
+      const ValueKey('companion-diary-marker-2026-6-10'),
+    );
+    final bibleMarker = find.byKey(
+      const ValueKey('bible-reading-marker-2026-6-10'),
+    );
+    expect(diaryMarker, findsOneWidget);
+    expect(bibleMarker, findsOneWidget);
+    final diaryDecoration =
+        tester
+                .widget<Container>(
+                  find.descendant(
+                    of: diaryMarker,
+                    matching: find.byType(Container),
+                  ),
+                )
+                .decoration!
+            as BoxDecoration;
+    final bibleDecoration =
+        tester
+                .widget<Container>(
+                  find.descendant(
+                    of: bibleMarker,
+                    matching: find.byType(Container),
+                  ),
+                )
+                .decoration!
+            as BoxDecoration;
+    expect(diaryDecoration.shape, BoxShape.circle);
+    expect(bibleDecoration.shape, BoxShape.circle);
+    expect(tester.getSize(diaryMarker), tester.getSize(bibleMarker));
+    expect(
+      tester.getTopLeft(diaryMarker).dy,
+      moreOrLessEquals(tester.getTopLeft(bibleMarker).dy, epsilon: 0.1),
+    );
+    final dayRect = tester.getRect(
+      find.byKey(const ValueKey('emotion-calendar-day-2026-6-10')),
+    );
+    for (final marker in [diaryMarker, bibleMarker]) {
+      final markerRect = tester.getRect(marker);
+      expect(markerRect.left, greaterThanOrEqualTo(dayRect.left));
+      expect(markerRect.right, lessThanOrEqualTo(dayRect.right));
+    }
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('감정 row를 누르면 상세 이동 콜백을 호출한다', (tester) async {
@@ -1011,7 +1129,7 @@ void main() {
 
     expect(find.text('만나를 먹다'), findsNothing);
     expect(find.text('오늘 필요한 만큼 채워주심을 봅니다.'), findsNothing);
-    expect(find.byType(EmotionBadgeIcon), findsWidgets);
+    expect(find.byIcon(Icons.sentiment_satisfied_alt_rounded), findsOneWidget);
   });
 
   testWidgets('선택한 날짜는 팔레트 날짜색과 칸 배경으로 표시된다', (tester) async {

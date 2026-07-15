@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('프로필 헤더와 본문 프로필 카드는 공지/알림/수정 진입점을 분리한다', () {
+  test('내정보 헤더는 사진·닉네임 수정과 공지·알림·설정 진입점을 제공한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();
@@ -14,7 +14,7 @@ void main() {
       'lib/widgets/profile/profile_helpers.dart',
     ).readAsStringSync();
 
-    expect(source, contains("Text(\n              '프로필'"));
+    expect(source, contains("'내정보'"));
     expect(source, contains("tooltip: '공지사항과 사용법'"));
     expect(source, contains('Icons.campaign_rounded'));
     expect(source, contains('onTap: widget.onOpenAppPublications'));
@@ -31,42 +31,25 @@ void main() {
       source,
       contains('AppColorPalette.blackMap => const Color(0xFF05070B)'),
     );
-    expect(source, contains('_profileIdentitySurface'));
-    expect(source, contains('color: _profileIdentitySurface(palette)'));
-    expect(source, contains('_buildProfileIdentityCard('));
-    expect(source, contains('Text.rich('));
-    expect(source, contains("text: '샬롬! 🙌 '"));
-    expect(source, contains('text: profile.nickname'));
-    expect(source, contains("text: '님'"));
-    expect(source, contains('palette.primary.withValues(alpha: 0.04)'));
-    expect(source, contains("'오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!'"));
-    expect(source, contains('maxLines: 4'));
-    expect(source, isNot(contains('maxLines: largeText ? 4 : 2')));
-    expect(source, contains('fontSize: largeText ? 16.8 : 18.0'));
-    expect(source, contains('fontSize: largeText ? 12.4 : 13.4'));
-    expect(source, isNot(contains('_buildProfileJourneyButton')));
-    expect(source, isNot(contains("'말씀 여정 보기'")));
-    expect(source, contains('Icons.chevron_right_rounded'));
-    expect(source, contains('_buildTodayProfileActionChecklist'));
-    expect(source, contains("ValueKey('profile-today-action-checklist-info')"));
-    expect(source, contains('_openTodayActionChecklistInfo'));
-    expect(source, contains('오늘의 할일'));
-    expect(source, contains('매일 이야기 탐험, 신앙 다이어리 작성, 통독 진행을 해봅시다!'));
-    expect(source, contains("'오늘 할 일:'"));
-    expect(source, contains('FittedBox('));
-    expect(source, contains('fit: BoxFit.scaleDown'));
-    expect(source, contains('mainAxisSize: MainAxisSize.min'));
-    expect(source, contains('softWrap: false'));
-    expect(source, contains('maxLines: 1'));
-    expect(source, contains('borderRadius: BorderRadius.circular(4)'));
+    expect(source, contains("ValueKey('profile-header-identity')"));
+    expect(source, contains('_buildCurrentUserAvatar('));
+    expect(source, contains('profile.nickname'));
+    expect(source, isNot(contains('_buildProfileIdentityCard(')));
+    expect(source, isNot(contains("'샬롬! 🙌 '")));
     expect(
       source,
-      contains('border: Border.all(color: checkBorder, width: 1.1)'),
+      isNot(contains("'오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!'")),
     );
-    expect(source, contains("label: '이야기 탐험'"));
-    expect(source, contains("label: '신앙 다이어리'"));
-    expect(source, contains("label: '통독'"));
-    expect(source, contains('size: largeText ? 58 : 62'));
+    expect(source, isNot(contains('_buildProfileJourneyButton')));
+    expect(source, isNot(contains("'말씀 여정 보기'")));
+    expect(source, isNot(contains('_buildTodayProfileActionChecklist')));
+    expect(
+      source,
+      isNot(contains("ValueKey('profile-today-action-checklist-info')")),
+    );
+    expect(source, isNot(contains('_openTodayActionChecklistInfo')));
+    expect(source, isNot(contains("'오늘 할 일:'")));
+    expect(source, contains('size: 34'));
     expect(source, contains("message: '프로필 수정'"));
     expect(
       helperSource,
@@ -94,6 +77,9 @@ void main() {
     final leftPanelSource = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();
+    final bibleProgressSource = File(
+      'lib/screens/bible_progress_screen.dart',
+    ).readAsStringSync();
     final mapDialogSource = File(
       'lib/widgets/map/map_attribution_dialog.dart',
     ).readAsStringSync();
@@ -107,10 +93,14 @@ void main() {
     expect(profileSource, contains('AlwaysScrollableScrollPhysics'));
     expect(profileSource, contains('final VoidCallback? onBackToHome;'));
     expect(profileSource, contains('onBack: widget.onBackToHome'));
+    expect(leftPanelSource, contains('BibleProgressScreen('));
+    expect(leftPanelSource, isNot(contains('showGeneralDialog(')));
     expect(
-      leftPanelSource,
-      contains('final palette = AppPaletteTheme.of(dialogContext);'),
+      bibleProgressSource,
+      contains('final palette = AppPaletteTheme.of(context);'),
     );
+    expect(bibleProgressSource, contains('ParchmentListPageScaffold('));
+    expect(bibleProgressSource, contains('palette.cardSurface'));
     expect(leftPanelSource, contains('color: palette.text'));
     expect(
       mapDialogSource,
@@ -247,7 +237,7 @@ void main() {
     expect(source, contains('StoryEventThumbCard'));
     expect(source, contains('SceneAssetLoader()'));
     expect(source, contains('_ProfileQuizStatsColumn'));
-    expect(source, contains("'탐험 달력과 흔적들'"));
+    expect(source, contains("label: '다이어리'"));
     expect(source, isNot(contains("'내가 새긴 감정들과 코멘트'")));
     expect(source, contains("'최근 탐험 이야기'"));
     expect(source, contains("'다음 이야기'"));
@@ -314,18 +304,21 @@ void main() {
     expect(source, contains("title: '탐험한 이야기'"));
     expect(source, contains("title: '복습'"));
     expect(source, contains("'복습 항목'"));
-    expect(source, contains("label: '탐험 달력과 흔적들'"));
+    expect(source, contains("label: '다이어리'"));
     expect(source, isNot(contains("label: '내가 새긴 감정들과 코멘트'")));
     expect(source, contains('오답이나 헷갈려요를 누르면 이야기 카드가 나타납니다.'));
     expect(source, contains("ValueKey('exploration-log-review-events')"));
     expect(source, contains('scrollable: false'));
     expect(source, isNot(contains('_ProfileProgressPageDivider')));
     expect(source, contains('ProfileEmotionMarksList'));
-    expect(source, contains('countsByKey: emotionCountsByKey'));
+    expect(source, contains('countsByKey: countsByKey'));
     expect(source, contains('_EmotionCategoryRow'));
     expect(source, contains('EventEmotionOption.options.length'));
     expect(source, contains("ValueKey('emotion-category-\${option.key}')"));
-    expect(source, contains("'\${option.label} \$count'"));
+    expect(
+      source,
+      contains("ValueKey('emotion-category-count-\${option.key}')"),
+    );
     expect(source, contains('selectedDate: _selectedDate'));
     expect(source, contains('onSelectedDateChanged'));
 
@@ -347,7 +340,7 @@ void main() {
     expect(source, contains('_SelectedDateDiarySummary'));
     expect(source, contains("ValueKey('selected-date-emotion-comments')"));
     expect(source, contains("ValueKey('selected-date-companion-diary')"));
-    expect(source, contains('선택한 날짜에 새긴 감정과 코멘트 혹은 신앙 다이어리가 없습니다'));
+    expect(source, contains("'오늘' '성경' '지도' 탭으로 이동하여 기록을 남겨보세요"));
     expect(source, isNot(contains("ValueKey('emotion-filter-all')")));
     expect(source, isNot(contains('selectedKeys.isEmpty')));
     expect(source, isNot(contains('_EmotionFilterChips')));
@@ -358,7 +351,7 @@ void main() {
     expect(source, contains('quizCount: stats.confused'));
     expect(
       source,
-      contains('constraints: const BoxConstraints(minHeight: 45)'),
+      contains('constraints: const BoxConstraints(minHeight: 62)'),
     );
     expect(source, contains('emoji: \'✅\''));
     expect(source, contains('emoji: \'❌\''));
@@ -470,6 +463,9 @@ void main() {
     final profileEditorSource = File(
       'lib/widgets/profile_editor_dialog.dart',
     ).readAsStringSync();
+    final bibleProgressSource = File(
+      'lib/screens/bible_progress_screen.dart',
+    ).readAsStringSync();
     final fontScaleSource = File(
       'lib/widgets/font_scale_bottom_sheet.dart',
     ).readAsStringSync();
@@ -536,7 +532,9 @@ void main() {
       contains('modalSurfaceDecoration(palette: palette)'),
     );
     expect(settingsSource, contains('color: palette.cardSurface'));
-    expect(profileSource, contains('modalSurfaceDecoration(palette: palette)'));
+    expect(profileSource, contains('BibleProgressScreen('));
+    expect(bibleProgressSource, contains('palette.cardSurface'));
+    expect(bibleProgressSource, contains('palette.softSurface'));
     expect(
       profileEditorSource,
       contains('modalSurfaceDecoration(palette: palette)'),
@@ -607,10 +605,7 @@ void main() {
     expect(source, contains('ProfileDiaryFeatureCards'));
     expect(source, isNot(contains('ProfileEmotionDiary')));
     expect(source, isNot(contains('showFeatureCards: false')));
-    expect(
-      leftPanelSource,
-      contains("const _ProfileProgressPageSectionTitle(label: '탐험 달력과 흔적들')"),
-    );
+    expect(leftPanelSource, contains("label: '다이어리'"));
     expect(leftPanelSource, contains('ProfileEmotionDiary('));
     expect(leftPanelSource, contains('showFeatureCards: false'));
     expect(source, contains('SingleChildScrollView'));
@@ -640,7 +635,12 @@ void main() {
         'final expandTextForNarrowLargeText = largeText && cardWidth < 176',
       ),
     );
-    expect(emotionSource, contains('const featureCardMinHeight = 158.0'));
+    expect(
+      emotionSource,
+      contains(
+        'final featureCardMinHeight = profileSummaryMode ? 138.0 : 158.0',
+      ),
+    );
     expect(emotionSource, contains('minHeight: featureCardMinHeight'));
     expect(companionSource, contains('maxLines: expandReadableText ? 2 : 1'));
     expect(companionSource, contains('maxLines: expandReadableText ? 4 : 2'));

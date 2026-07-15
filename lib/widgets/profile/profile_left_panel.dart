@@ -78,16 +78,6 @@ Color _profileSelectedTabButtonSurface(Color accent) {
   return accent;
 }
 
-Color _profileIdentitySurface(AppColorPalette palette) {
-  return switch (palette) {
-    AppColorPalette.blackMap => palette.cardSurface,
-    _ => Color.alphaBlend(
-      palette.primary.withValues(alpha: 0.04),
-      AppColors.parchmentCream,
-    ),
-  };
-}
-
 Color _profileStoryExplorationSurface(AppColorPalette palette) {
   final base = switch (palette) {
     AppColorPalette.blackMap => palette.cardSurface,
@@ -228,25 +218,61 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     return (86 + visibleVerses * 52).clamp(154.0, 236.0).toDouble();
   }
 
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader(AppUserProfile profile) {
     final palette = AppPaletteTheme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(left: 56, right: 10),
+      padding: EdgeInsets.only(left: widget.embedded ? 10 : 56, right: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Text(
+            '내정보',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.sectionTitle.copyWith(
+              color: palette.text,
+              fontSize: 21,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              '프로필',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.sectionTitle.copyWith(
-                color: palette.text,
-                fontSize: 21,
-                fontWeight: FontWeight.w900,
+            child: Tooltip(
+              message: '프로필 수정',
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  key: const ValueKey('profile-header-identity'),
+                  onTap: _openProfileEditor,
+                  borderRadius: BorderRadius.circular(999),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(2, 2, 7, 2),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildCurrentUserAvatar(profile: profile, size: 34),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            profile.nickname,
+                            maxLines: 2,
+                            overflow: TextOverflow.visible,
+                            softWrap: true,
+                            style: TextStyle(
+                              color: palette.text,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
+          const SizedBox(width: 4),
           _profileTinyIconButton(
             tooltip: '공지사항과 사용법',
             onTap: widget.onOpenAppPublications,
@@ -268,12 +294,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
-  Widget _buildProfileBodyShell({
-    required AppUserProfile profile,
-    required Widget child,
-    required ({bool storyExploration, bool companionDiary, bool bibleReading})
-    todayActions,
-  }) {
+  Widget _buildProfileBodyShell({required Widget child}) {
     final palette = AppPaletteTheme.of(context);
     return Container(
       decoration: BoxDecoration(
@@ -289,301 +310,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildProfileIdentityCard(
-              profile: profile,
-              todayActions: todayActions,
-            ),
-            const SizedBox(height: 10),
-            child,
-          ],
-        ),
+        child: child,
       ),
-    );
-  }
-
-  Widget _buildProfileIdentityCard({
-    required AppUserProfile profile,
-    required ({bool storyExploration, bool companionDiary, bool bibleReading})
-    todayActions,
-  }) {
-    final palette = AppPaletteTheme.of(context);
-    final largeText = _profileUsesLargeTextLayout(context);
-    return Tooltip(
-      message: '프로필 수정',
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _openProfileEditor,
-          borderRadius: BorderRadius.circular(18),
-          child: Ink(
-            padding: EdgeInsets.fromLTRB(
-              largeText ? 14 : 16,
-              largeText ? 14 : 16,
-              largeText ? 14 : 16,
-              largeText ? 13 : 15,
-            ),
-            decoration: BoxDecoration(
-              color: _profileIdentitySurface(palette),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildCurrentUserAvatar(
-                      profile: profile,
-                      size: largeText ? 58 : 62,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: '샬롬! 🙌 ',
-                                  style: TextStyle(
-                                    color: palette.mutedText,
-                                    fontSize: largeText ? 11.8 : 12.6,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: profile.nickname,
-                                  style: TextStyle(
-                                    color: palette.text,
-                                    fontSize: largeText ? 16.8 : 18.0,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: '님',
-                                  style: TextStyle(
-                                    color: palette.mutedText,
-                                    fontSize: largeText ? 11.8 : 12.6,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            maxLines: largeText ? 2 : 1,
-                            overflow: largeText
-                                ? TextOverflow.visible
-                                : TextOverflow.ellipsis,
-                            softWrap: true,
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            '오늘도 이야기 탐험, 신앙 다이어리 작성, 통독으로 하나님과 함께 해보아요!',
-                            maxLines: 4,
-                            overflow: TextOverflow.visible,
-                            softWrap: true,
-                            style: TextStyle(
-                              color: palette.mutedText,
-                              fontSize: largeText ? 12.4 : 13.4,
-                              fontWeight: FontWeight.w800,
-                              height: 1.18,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      color: palette.mutedText,
-                      size: largeText ? 24 : 28,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                _buildTodayProfileActionChecklist(actions: todayActions),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTodayActionCheck({
-    required String id,
-    required String label,
-    required Color accent,
-    required bool completed,
-  }) {
-    final palette = AppPaletteTheme.of(context);
-    final foreground = completed ? palette.successBottom : palette.mutedText;
-    final checkFill = completed
-        ? palette.successBottom
-        : Color.alphaBlend(
-            accent.withValues(alpha: 0.07),
-            palette == AppColorPalette.blackMap
-                ? palette.mutedSurface
-                : Colors.white,
-          );
-    final checkBorder = completed
-        ? palette.successBottom
-        : accent.withValues(alpha: 0.52);
-    return AnimatedContainer(
-      key: ValueKey('profile-today-action-$id-check'),
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOutCubic,
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 16,
-            height: 16,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: checkFill,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: checkBorder, width: 1.1),
-            ),
-            child: completed
-                ? const Icon(Icons.check_rounded, color: Colors.white, size: 12)
-                : null,
-          ),
-          const SizedBox(width: 5),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: foreground,
-              fontSize: 11.2,
-              fontWeight: FontWeight.w800,
-              height: 1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _todayActionAccent({
-    required AppColorPalette palette,
-    required bool completed,
-    required Color fallback,
-  }) {
-    return completed ? palette.successBottom : fallback;
-  }
-
-  Widget _todayActionButton({
-    required String id,
-    required String label,
-    required Color accent,
-    required bool completed,
-  }) {
-    return _buildTodayActionCheck(
-      id: id,
-      label: label,
-      accent: accent,
-      completed: completed,
-    );
-  }
-
-  Widget _buildTodayProfileActionChecklist({
-    required ({bool storyExploration, bool companionDiary, bool bibleReading})
-    actions,
-  }) {
-    final palette = AppPaletteTheme.of(context);
-    return GestureDetector(
-      key: const ValueKey('profile-today-action-checklist-info'),
-      behavior: HitTestBehavior.opaque,
-      onTap: _openTodayActionChecklistInfo,
-      child: Center(
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '오늘 할 일:',
-                maxLines: 1,
-                overflow: TextOverflow.visible,
-                softWrap: false,
-                style: TextStyle(
-                  color: palette.mutedText,
-                  fontSize: 11.2,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                ),
-              ),
-              const SizedBox(width: 8),
-              _todayActionButton(
-                id: 'story',
-                label: '이야기 탐험',
-                accent: _todayActionAccent(
-                  palette: palette,
-                  completed: actions.storyExploration,
-                  fallback: palette.currentAccentDeep,
-                ),
-                completed: actions.storyExploration,
-              ),
-              const SizedBox(width: 8),
-              _todayActionButton(
-                id: 'diary',
-                label: '신앙 다이어리',
-                accent: _todayActionAccent(
-                  palette: palette,
-                  completed: actions.companionDiary,
-                  fallback: palette.successBottom,
-                ),
-                completed: actions.companionDiary,
-              ),
-              const SizedBox(width: 8),
-              _todayActionButton(
-                id: 'bible',
-                label: '통독',
-                accent: _todayActionAccent(
-                  palette: palette,
-                  completed: actions.bibleReading,
-                  fallback: palette.currentAccentDeep,
-                ),
-                completed: actions.bibleReading,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _openTodayActionChecklistInfo() async {
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) {
-        final palette = AppPaletteTheme.of(dialogContext);
-        return ParchmentDialog(
-          title: '오늘의 할일',
-          actions: [
-            ParchmentDialogActionButton(
-              label: '확인',
-              onTap: () => Navigator.of(dialogContext).pop(),
-            ),
-          ],
-          child: Text(
-            '매일 이야기 탐험, 신앙 다이어리 작성, 통독 진행을 해봅시다!\n(완료 시 자동으로 체크 돼요)',
-            style: TextStyle(
-              color: palette.text,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              height: 1.45,
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -689,7 +417,9 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     return bibleBooks.fold<int>(0, (sum, book) => sum + book.chapters);
   }
 
-  Widget _buildProfileStoryExplorationDashboard() {
+  Widget _buildProfileStoryExplorationDashboard({
+    required Widget featureSection,
+  }) {
     final state = ref.watch(storyControllerProvider);
     final events = _profileAllEvents.isNotEmpty
         ? _profileAllEvents
@@ -705,9 +435,11 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       onOpenExplorationLog: _openExplorationLogPage,
       onOpenSavedStories: _openSavedStoriesOverview,
       onOpenSavedVerses: _openSavedVersesPage,
+      featureSection: featureSection,
       traceSection: _ProfileExplorationTraceSection(
         events: events,
         eventEmotionMarks: state.eventEmotionMarks,
+        completedBibleChapterReadAts: state.completedBibleChapterReadAts,
         companionDiaryEntries: _profileCompanionDiaryEntries,
         companionDiaryLoading: _profileCompanionDiaryLoading,
         companionDiaryError: _profileCompanionDiaryError,
@@ -1101,202 +833,27 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
-  Future<void> _openBibleProgressDialog() async {
+  Future<void> _openBibleProgressPage() async {
     final state = ref.read(storyControllerProvider);
     final lastCompletedChapter = _profileLastCompletedBibleChapter(
       state.completedBibleChapterKeys,
     );
-    var selectedBookNo =
-        lastCompletedChapter?.bookNo.clamp(1, bibleBooks.length).toInt() ??
-        oldTestamentFirstBookNo;
-    var selectedTestament = isNewTestamentBook(selectedBookNo) ? 'new' : 'old';
-
-    await showGeneralDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'close',
-      barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 260),
-      pageBuilder: (dialogContext, _, __) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            final palette = AppPaletteTheme.of(context);
-            final bookNumbers = _profileBookNumbersForTestament(
-              selectedTestament,
-            );
-            if (!bookNumbers.contains(selectedBookNo)) {
-              selectedBookNo = bookNumbers.first;
-            }
-            final book = bibleBooks[selectedBookNo - 1];
-            final completedChapters = {
-              for (var chapter = 1; chapter <= book.chapters; chapter += 1)
-                if (state.completedBibleChapterKeys.contains(
-                  bibleChapterProgressKey(
-                    bookNo: selectedBookNo,
-                    chapterNo: chapter,
-                  ),
-                ))
-                  chapter,
-            };
-            final fraction = book.chapters == 0
-                ? 0.0
-                : (completedChapters.length / book.chapters)
-                      .clamp(0.0, 1.0)
-                      .toDouble();
-            return Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: 720,
-                  maxHeight: MediaQuery.of(dialogContext).size.height * 0.82,
-                  minWidth: 320,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: modalSurfaceDecoration(palette: palette),
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  '통독 진행률',
-                                  style: TextStyle(
-                                    color: palette.text,
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                _BibleProgressPickerRow(
-                                  selectedTestament: selectedTestament,
-                                  selectedBookNo: selectedBookNo,
-                                  bookNumbers: bookNumbers,
-                                  onTestamentChanged: (testament) {
-                                    setDialogState(() {
-                                      selectedTestament = testament;
-                                      selectedBookNo =
-                                          _profileBookNumbersForTestament(
-                                            testament,
-                                          ).first;
-                                    });
-                                  },
-                                  onBookChanged: (bookNo) {
-                                    setDialogState(() {
-                                      selectedBookNo = bookNo;
-                                    });
-                                  },
-                                ),
-                                const SizedBox(height: 14),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    physics: const ClampingScrollPhysics(),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        _BibleChapterProgressGrid(
-                                          chapterCount: book.chapters,
-                                          completedChapters: completedChapters,
-                                          onChapterTap: (chapter) async {
-                                            final bookNo = selectedBookNo;
-                                            Navigator.of(dialogContext).pop();
-                                            await widget.onOpenBibleReader(
-                                              initialBookNo: bookNo,
-                                              initialChapterNo: chapter,
-                                            );
-                                          },
-                                        ),
-                                        const SizedBox(height: 14),
-                                        _BibleBookProgressFooter(
-                                          bookName: book.name,
-                                          completed: completedChapters.length,
-                                          total: book.chapters,
-                                          fraction: fraction,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Positioned(
-                            right: 12,
-                            top: 12,
-                            child: modalCloseButton(
-                              onTap: () => Navigator.of(dialogContext).pop(),
-                              size: 32,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+    final initialBookNo =
+        lastCompletedChapter?.bookNo ?? oldTestamentFirstBookNo;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => BibleProgressScreen(
+          completedChapterKeys: state.completedBibleChapterKeys,
+          initialBookNo: initialBookNo,
+          onOpenChapter: ({required bookNo, required chapterNo}) {
+            return widget.onOpenBibleReader(
+              initialBookNo: bookNo,
+              initialChapterNo: chapterNo,
             );
           },
-        );
-      },
+        ),
+      ),
     );
-  }
-
-  Future<void> _openBibleReaderFromLastCompletedChapter() async {
-    final state = ref.read(storyControllerProvider);
-    final lastCompletedChapter = _profileLastCompletedBibleChapter(
-      state.completedBibleChapterKeys,
-    );
-    if (lastCompletedChapter == null) {
-      await widget.onOpenBibleReader(
-        initialBookNo: oldTestamentFirstBookNo,
-        initialChapterNo: 1,
-      );
-      return;
-    }
-
-    final target = _nextBibleChapterAfter(
-      bookNo: lastCompletedChapter.bookNo,
-      chapterNo: lastCompletedChapter.chapterNo,
-    );
-    if (target == null) {
-      if (!mounted) {
-        return;
-      }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('마지막 장이었습니다.')));
-      return;
-    }
-    await widget.onOpenBibleReader(
-      initialBookNo: target.bookNo,
-      initialChapterNo: target.chapterNo,
-    );
-  }
-
-  ({int bookNo, int chapterNo})? _nextBibleChapterAfter({
-    required int bookNo,
-    required int chapterNo,
-  }) {
-    final safeBookNo = bookNo.clamp(1, bibleBooks.length).toInt();
-    final maxChapter = bibleBooks[safeBookNo - 1].chapters;
-    final safeChapterNo = chapterNo.clamp(1, maxChapter).toInt();
-
-    if (safeChapterNo < maxChapter) {
-      return (bookNo: safeBookNo, chapterNo: safeChapterNo + 1);
-    }
-    if (safeBookNo < bibleBooks.length) {
-      return (bookNo: safeBookNo + 1, chapterNo: 1);
-    }
-    return null;
   }
 
   ({int bookNo, int chapterNo})? _profileLastCompletedBibleChapter(
@@ -1661,6 +1218,7 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
     required this.onOpenExplorationLog,
     required this.onOpenSavedStories,
     required this.onOpenSavedVerses,
+    required this.featureSection,
     required this.traceSection,
   });
 
@@ -1672,21 +1230,23 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
   final VoidCallback onOpenExplorationLog;
   final VoidCallback onOpenSavedStories;
   final VoidCallback onOpenSavedVerses;
+  final Widget featureSection;
   final Widget traceSection;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    return Container(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
-      decoration: BoxDecoration(
-        color: _profileStoryExplorationSurface(palette),
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _StoryExplorationSummarySection(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          key: const ValueKey('profile-story-exploration-summary-layer'),
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+          decoration: BoxDecoration(
+            color: _profileStoryExplorationSurface(palette),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: _StoryExplorationSummarySection(
             storyProgress: storyProgress,
             explorationLogCount: explorationLogCount,
             savedStoryCount: savedStoryCount,
@@ -1696,10 +1256,12 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
             onOpenSavedStories: onOpenSavedStories,
             onOpenSavedVerses: onOpenSavedVerses,
           ),
-          const SizedBox(height: 10),
-          traceSection,
-        ],
-      ),
+        ),
+        const SizedBox(height: 10),
+        featureSection,
+        const SizedBox(height: 10),
+        traceSection,
+      ],
     );
   }
 }
@@ -2295,20 +1857,153 @@ class _ProfileExplorationLogPageState
           );
   }
 
+  void _openEmotionCategoryPopup(EventEmotionOption option) {
+    final eventById = {for (final event in widget.events) event.id: event};
+    final marks =
+        widget.eventEmotionMarks.values
+            .where((mark) => mark.emotionKey == option.key)
+            .toList(growable: false)
+          ..sort((a, b) {
+            final aTime = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+            final bTime = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+            return bTime.compareTo(aTime);
+          });
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final palette = AppPaletteTheme.of(sheetContext);
+        return SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.74,
+              ),
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+              decoration: BoxDecoration(
+                color: palette.cardSurface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: palette.subtleBorder, width: 1),
+                boxShadow: AppShadows.lg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${option.emoji} ${option.label} 코멘트',
+                          style: AppTextStyles.sectionTitle.copyWith(
+                            color: palette.text,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: '닫기',
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        icon: const Icon(Icons.close_rounded),
+                        color: palette.mutedText,
+                      ),
+                    ],
+                  ),
+                  Divider(height: 10, color: palette.subtleBorder),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      child: ProfileEmotionMarksList(
+                        key: const ValueKey('emotion-marks-category-list'),
+                        marks: marks,
+                        eventById: eventById,
+                        emptyMessage: '${option.label}로 새긴 코멘트가 없습니다.',
+                        loading: false,
+                        hasError: false,
+                        showTimestamp: true,
+                        onOpenEventDetail: (event) {
+                          Navigator.of(sheetContext).pop();
+                          if (mounted) {
+                            _openEventDetail(event);
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEmotionCategorySection() {
+    final palette = AppPaletteTheme.of(context);
+    final countsByKey = {
+      for (final option in EventEmotionOption.options)
+        option.key: widget.eventEmotionMarks.values
+            .where((mark) => mark.emotionKey == option.key)
+            .length,
+    };
+    return Container(
+      key: const ValueKey('exploration-log-emotion-categories'),
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 11),
+      decoration: BoxDecoration(
+        color: Color.alphaBlend(
+          palette.currentAccent.withValues(alpha: 0.10),
+          palette.cardSurface,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: palette.currentAccent.withValues(alpha: 0.26),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _ProfileDashboardTitle(
+            icon: Icons.sentiment_satisfied_alt_rounded,
+            label: '감정 카테고리',
+            color: palette.currentAccentDeep,
+          ),
+          const SizedBox(height: 9),
+          _EmotionCategoryRow(
+            countsByKey: countsByKey,
+            onOpenCategory: _openEmotionCategoryPopup,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildReviewSection() {
     final palette = AppPaletteTheme.of(context);
     return Container(
       key: const ValueKey('exploration-log-review-events'),
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 10),
       decoration: BoxDecoration(
-        color: palette.softSurface,
+        color: Color.alphaBlend(
+          palette.primary.withValues(alpha: 0.08),
+          palette.softSurface,
+        ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: palette.subtleBorder, width: 1),
+        border: Border.all(
+          color: palette.primary.withValues(alpha: 0.24),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _ProfileProgressPageSectionTitle(label: '복습 항목'),
+          _ProfileDashboardTitle(
+            icon: Icons.fact_check_rounded,
+            label: '복습 항목',
+            color: palette.primaryDeep,
+          ),
           const SizedBox(height: 10),
           _ProfileQuizStatsColumn(
             stats: widget.quizStats,
@@ -2327,22 +2022,19 @@ class _ProfileExplorationLogPageState
 
   @override
   Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-
     return ParchmentListPageScaffold(
       title: '복습',
       child: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
-        child: Container(
+        child: Padding(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
-          decoration: BoxDecoration(
-            color: palette.cardSurface.withValues(alpha: 0.90),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: palette.subtleBorder, width: 1),
-          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [_buildReviewSection()],
+            children: [
+              _buildEmotionCategorySection(),
+              const SizedBox(height: 10),
+              _buildReviewSection(),
+            ],
           ),
         ),
       ),
@@ -2354,6 +2046,7 @@ class _ProfileExplorationTraceSection extends StatefulWidget {
   const _ProfileExplorationTraceSection({
     required this.events,
     required this.eventEmotionMarks,
+    required this.completedBibleChapterReadAts,
     required this.companionDiaryEntries,
     required this.companionDiaryLoading,
     required this.companionDiaryError,
@@ -2362,6 +2055,7 @@ class _ProfileExplorationTraceSection extends StatefulWidget {
 
   final List<StoryEvent> events;
   final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, DateTime?> completedBibleChapterReadAts;
   final List<UserCompanionDiaryEntry> companionDiaryEntries;
   final bool companionDiaryLoading;
   final String? companionDiaryError;
@@ -2402,88 +2096,42 @@ class _ProfileExplorationTraceSectionState
     return selected;
   }
 
+  List<({int bookNo, int chapterNo})> _bibleReadingsForDate(DateTime date) {
+    final targetDate = _profileDateOnly(date);
+    final readings = <({int bookNo, int chapterNo})>[];
+    for (final entry in widget.completedBibleChapterReadAts.entries) {
+      final readAt = entry.value;
+      if (readAt == null ||
+          !_profileSameDate(_profileDateOnly(toKst(readAt)), targetDate)) {
+        continue;
+      }
+      final parts = entry.key.split(':');
+      if (parts.length != 2) {
+        continue;
+      }
+      final bookNo = int.tryParse(parts[0]);
+      final chapterNo = int.tryParse(parts[1]);
+      if (bookNo == null ||
+          chapterNo == null ||
+          bookNo < 1 ||
+          bookNo > bibleBooks.length ||
+          chapterNo < 1 ||
+          chapterNo > bibleBooks[bookNo - 1].chapters) {
+        continue;
+      }
+      readings.add((bookNo: bookNo, chapterNo: chapterNo));
+    }
+    readings.sort((a, b) {
+      final bookOrder = a.bookNo.compareTo(b.bookNo);
+      return bookOrder != 0 ? bookOrder : a.chapterNo.compareTo(b.chapterNo);
+    });
+    return readings;
+  }
+
   Future<void> _openCompanionDiaryDetail(UserCompanionDiaryEntry entry) async {
     await showDialog<void>(
       context: context,
       builder: (_) => CompanionDiaryEntryDetailDialog(entry: entry),
-    );
-  }
-
-  void _openEmotionMarksPopup({
-    required String title,
-    required List<EventEmotionMark> marks,
-    required Map<String, StoryEvent> eventById,
-    required String emptyMessage,
-  }) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) {
-        final palette = AppPaletteTheme.of(sheetContext);
-        final maxHeight = MediaQuery.sizeOf(sheetContext).height * 0.74;
-        return SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-            child: Container(
-              constraints: BoxConstraints(maxHeight: maxHeight),
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-              decoration: BoxDecoration(
-                color: palette.cardSurface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: palette.subtleBorder, width: 1),
-                boxShadow: AppShadows.lg,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.sectionTitle.copyWith(
-                            color: palette.text,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: '닫기',
-                        onPressed: () => Navigator.of(sheetContext).pop(),
-                        icon: const Icon(Icons.close_rounded),
-                        color: palette.mutedText,
-                      ),
-                    ],
-                  ),
-                  Divider(height: 10, color: palette.subtleBorder),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      child: ProfileEmotionMarksList(
-                        key: const ValueKey('emotion-marks-category-list'),
-                        marks: marks,
-                        eventById: eventById,
-                        emptyMessage: emptyMessage,
-                        loading: false,
-                        hasError: false,
-                        showTimestamp: true,
-                        onOpenEventDetail: (event) {
-                          Navigator.of(sheetContext).pop();
-                          if (!mounted) return;
-                          widget.onOpenEventDetail(event);
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -2499,28 +2147,12 @@ class _ProfileExplorationTraceSectionState
       });
     final selectedDateMarks = _marksForDate(marks, _selectedDate);
     final selectedDateDiary = _companionDiaryForDate(_selectedDate);
-    final emotionCountsByKey = {
-      for (final option in EventEmotionOption.options)
-        option.key: marks.where((mark) => mark.emotionKey == option.key).length,
-    };
+    final selectedDateBibleReadings = _bibleReadingsForDate(_selectedDate);
 
     return _ExplorationTracePanel(
-      categoryRow: _EmotionCategoryRow(
-        countsByKey: emotionCountsByKey,
-        onOpenCategory: (option) {
-          final categoryMarks = marks
-              .where((mark) => mark.emotionKey == option.key)
-              .toList(growable: false);
-          _openEmotionMarksPopup(
-            title: '${option.emoji} ${option.label} 코멘트',
-            marks: categoryMarks,
-            eventById: eventById,
-            emptyMessage: '${option.label}로 새긴 코멘트가 없습니다.',
-          );
-        },
-      ),
       calendar: ProfileEmotionDiary(
         eventEmotionMarks: widget.eventEmotionMarks,
+        completedBibleChapterReadAts: widget.completedBibleChapterReadAts,
         companionDiaryEntries: widget.companionDiaryEntries,
         companionDiaryLoading: widget.companionDiaryLoading,
         companionDiaryError: widget.companionDiaryError,
@@ -2533,6 +2165,7 @@ class _ProfileExplorationTraceSectionState
         selectedDate: _selectedDate,
         marks: selectedDateMarks,
         selectedDateDiary: selectedDateDiary,
+        bibleReadings: selectedDateBibleReadings,
         companionDiaryLoading: widget.companionDiaryLoading,
         companionDiaryError: widget.companionDiaryError,
         eventById: eventById,
@@ -2545,12 +2178,10 @@ class _ProfileExplorationTraceSectionState
 
 class _ExplorationTracePanel extends StatelessWidget {
   const _ExplorationTracePanel({
-    required this.categoryRow,
     required this.calendar,
     required this.previewPanel,
   });
 
-  final Widget categoryRow;
   final Widget calendar;
   final Widget previewPanel;
 
@@ -2558,19 +2189,22 @@ class _ExplorationTracePanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     return Container(
+      key: const ValueKey('profile-diary-layer'),
       padding: const EdgeInsets.fromLTRB(9, 9, 9, 10),
       decoration: BoxDecoration(
         color: palette.softSurface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: palette.subtleBorder, width: 1),
+        boxShadow: AppShadows.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _ProfileProgressPageSectionTitle(label: '탐험 달력과 흔적들'),
+          _ProfileDashboardTitle(
+            icon: Icons.calendar_month_rounded,
+            label: '다이어리',
+            color: palette.successBottom,
+          ),
           const SizedBox(height: 8),
-          categoryRow,
-          Divider(height: 18, color: palette.subtleBorder),
           calendar,
           const SizedBox(height: 10),
           previewPanel,
@@ -2585,6 +2219,7 @@ class _EmotionMarksPreviewPanel extends StatelessWidget {
     required this.selectedDate,
     required this.marks,
     required this.selectedDateDiary,
+    required this.bibleReadings,
     required this.companionDiaryLoading,
     required this.companionDiaryError,
     required this.eventById,
@@ -2595,6 +2230,7 @@ class _EmotionMarksPreviewPanel extends StatelessWidget {
   final DateTime selectedDate;
   final List<EventEmotionMark> marks;
   final UserCompanionDiaryEntry? selectedDateDiary;
+  final List<({int bookNo, int chapterNo})> bibleReadings;
   final bool companionDiaryLoading;
   final String? companionDiaryError;
   final Map<String, StoryEvent> eventById;
@@ -2609,6 +2245,7 @@ class _EmotionMarksPreviewPanel extends StatelessWidget {
     final hasDiary = selectedDateDiary != null;
     final hasDiaryMessage =
         companionDiaryLoading || companionDiaryError != null || hasDiary;
+    final hasBibleReadings = bibleReadings.isNotEmpty;
     return Column(
       key: const ValueKey('emotion-marks-review-list'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2624,9 +2261,9 @@ class _EmotionMarksPreviewPanel extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        if (!hasEmotionMarks && !hasDiaryMessage)
+        if (!hasEmotionMarks && !hasDiaryMessage && !hasBibleReadings)
           const _ProfileLogEmptyMessage(
-            message: '선택한 날짜에 새긴 감정과 코멘트 혹은 신앙 다이어리가 없습니다',
+            message: "'오늘' '성경' '지도' 탭으로 이동하여 기록을 남겨보세요",
           )
         else ...[
           if (hasEmotionMarks)
@@ -2635,7 +2272,11 @@ class _EmotionMarksPreviewPanel extends StatelessWidget {
               eventById: eventById,
               onOpenEventDetail: onOpenEventDetail,
             ),
-          if (hasEmotionMarks && hasDiaryMessage) const SizedBox(height: 8),
+          if (hasEmotionMarks && hasBibleReadings) const SizedBox(height: 8),
+          if (hasBibleReadings)
+            _SelectedDateBibleReadingSummary(readings: bibleReadings),
+          if ((hasEmotionMarks || hasBibleReadings) && hasDiaryMessage)
+            const SizedBox(height: 8),
           if (hasDiaryMessage)
             _SelectedDateDiarySummary(
               entry: selectedDateDiary,
@@ -2676,14 +2317,25 @@ class _SelectedDateEmotionSummary extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            '감정과 코멘트',
-            style: TextStyle(
-              color: palette.currentAccentDeep,
-              fontSize: 11,
-              fontWeight: FontWeight.w900,
-              height: 1.15,
-            ),
+          Row(
+            children: [
+              const ProfileActivityBadge(
+                key: ValueKey('selected-date-emotion-heading-badge'),
+                type: ProfileActivityBadgeType.emotion,
+                size: 24,
+                iconSize: 14,
+              ),
+              const SizedBox(width: 7),
+              Text(
+                '감정과 코멘트',
+                style: TextStyle(
+                  color: palette.currentAccentDeep,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  height: 1.15,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 7),
           ProfileEmotionMarksList(
@@ -2699,6 +2351,137 @@ class _SelectedDateEmotionSummary extends StatelessWidget {
       ),
     );
   }
+}
+
+class _SelectedDateBibleReadingSummary extends StatelessWidget {
+  const _SelectedDateBibleReadingSummary({required this.readings});
+
+  static const int _previewLimit = 3;
+
+  final List<({int bookNo, int chapterNo})> readings;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final preview = readings
+        .take(_previewLimit)
+        .map(_bibleReadingLabel)
+        .join(' · ');
+    final hasMore = readings.length > _previewLimit;
+    return Container(
+      key: const ValueKey('selected-date-bible-reading'),
+      padding: const EdgeInsets.fromLTRB(10, 9, 8, 9),
+      decoration: BoxDecoration(
+        color: Color.alphaBlend(
+          palette.primary.withValues(alpha: 0.08),
+          palette.cardSurface,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: palette.primary.withValues(alpha: 0.28),
+          width: 0.9,
+        ),
+      ),
+      child: Row(
+        children: [
+          const ProfileActivityBadge(
+            key: ValueKey('selected-date-bible-reading-badge'),
+            type: ProfileActivityBadgeType.bibleReading,
+            size: 30,
+            iconSize: 17,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '통독 진행률',
+                  style: TextStyle(
+                    color: palette.primaryDeep,
+                    fontSize: 11.2,
+                    fontWeight: FontWeight.w900,
+                    height: 1.1,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  preview,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: palette.text,
+                    fontSize: 12.4,
+                    fontWeight: FontWeight.w800,
+                    height: 1.25,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (hasMore)
+            TextButton(
+              key: const ValueKey('selected-date-bible-reading-more'),
+              onPressed: () => _openDetails(context),
+              style: TextButton.styleFrom(
+                foregroundColor: palette.primaryDeep,
+                minimumSize: const Size(34, 34),
+                padding: EdgeInsets.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: const Text(
+                '>',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openDetails(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        final palette = AppPaletteTheme.of(dialogContext);
+        return ParchmentDialog(
+          title: '통독 기록 상세',
+          subtitle: '${readings.length}장을 읽음 처리했어요.',
+          showCloseButton: true,
+          child: Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final reading in readings)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: palette.softSurface,
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: palette.subtleBorder),
+                  ),
+                  child: Text(
+                    _bibleReadingLabel(reading),
+                    style: TextStyle(
+                      color: palette.text,
+                      fontSize: 12.2,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+String _bibleReadingLabel(({int bookNo, int chapterNo}) reading) {
+  return '${bibleBooks[reading.bookNo - 1].name} ${reading.chapterNo}장';
 }
 
 class _EmotionCategoryRow extends StatelessWidget {
@@ -2760,7 +2543,7 @@ class _EmotionCategoryButton extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
           child: Container(
-            constraints: const BoxConstraints(minHeight: 45),
+            constraints: const BoxConstraints(minHeight: 62),
             padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
@@ -2781,14 +2564,27 @@ class _EmotionCategoryButton extends StatelessWidget {
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
-                    '${option.label} $count',
+                    option.label,
+                    key: ValueKey('emotion-category-label-${option.key}'),
                     maxLines: 1,
                     style: TextStyle(
                       color: palette.currentAccentDeep,
-                      fontSize: 8.8,
+                      fontSize: 9.8,
                       fontWeight: FontWeight.w900,
                       height: 1,
                     ),
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  '$count',
+                  key: ValueKey('emotion-category-count-${option.key}'),
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: palette.text,
+                    fontSize: 10.6,
+                    fontWeight: FontWeight.w900,
+                    height: 1,
                   ),
                 ),
               ],
@@ -2842,9 +2638,14 @@ class _SelectedDateDiarySummary extends StatelessWidget {
             border: Border.all(color: palette.subtleBorder, width: 0.9),
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const _SelectedDateDiaryBadge(),
+              const ProfileActivityBadge(
+                key: ValueKey('selected-date-companion-diary-badge'),
+                type: ProfileActivityBadgeType.companionDiary,
+                size: 30,
+                iconSize: 17,
+              ),
               const SizedBox(width: 9),
               Expanded(
                 child: Column(
@@ -2889,31 +2690,6 @@ class _SelectedDateDiarySummary extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _SelectedDateDiaryBadge extends StatelessWidget {
-  const _SelectedDateDiaryBadge();
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Container(
-      width: 30,
-      height: 30,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: palette.successFill,
-        border: Border.all(
-          color: palette.successBottom.withValues(alpha: 0.42),
-        ),
-      ),
-      child: const FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text('📝', style: TextStyle(fontSize: 17, height: 1)),
       ),
     );
   }
@@ -3962,316 +3738,6 @@ class _StoryProgressFilterTabs extends StatelessWidget {
   }
 }
 
-class _BibleProgressPickerRow extends StatelessWidget {
-  const _BibleProgressPickerRow({
-    required this.selectedTestament,
-    required this.selectedBookNo,
-    required this.bookNumbers,
-    required this.onTestamentChanged,
-    required this.onBookChanged,
-  });
-
-  final String selectedTestament;
-  final int selectedBookNo;
-  final List<int> bookNumbers;
-  final ValueChanged<String> onTestamentChanged;
-  final ValueChanged<int> onBookChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final safeBookNo = bookNumbers.contains(selectedBookNo)
-        ? selectedBookNo
-        : bookNumbers.first;
-    final largeText = _profileUsesLargeTextLayout(context);
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 92,
-            child: bibleDropdownFrame<String>(
-              value: selectedTestament,
-              items: const [
-                DropdownMenuItem(value: 'old', child: Text('구약')),
-                DropdownMenuItem(value: 'new', child: Text('신약')),
-              ],
-              onChanged: (v) => v != null ? onTestamentChanged(v) : null,
-            ),
-          ),
-          const SizedBox(width: 8),
-          SizedBox(
-            width: 148,
-            child: bibleDropdownFrame<int>(
-              value: safeBookNo,
-              items: [
-                for (final bookNo in bookNumbers)
-                  DropdownMenuItem<int>(
-                    value: bookNo,
-                    child: Text(
-                      bibleBooks[bookNo - 1].name,
-                      maxLines: largeText ? 2 : 1,
-                      overflow: largeText
-                          ? TextOverflow.visible
-                          : TextOverflow.ellipsis,
-                      softWrap: true,
-                    ),
-                  ),
-              ],
-              onChanged: (v) => v != null ? onBookChanged(v) : null,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BibleChapterProgressGrid extends StatelessWidget {
-  const _BibleChapterProgressGrid({
-    required this.chapterCount,
-    required this.completedChapters,
-    required this.onChapterTap,
-  });
-
-  final int chapterCount;
-  final Set<int> completedChapters;
-  final ValueChanged<int> onChapterTap;
-
-  @override
-  Widget build(BuildContext context) {
-    if (chapterCount <= 0) {
-      return const SizedBox.shrink();
-    }
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final columns = constraints.maxWidth >= 620
-            ? 10
-            : (constraints.maxWidth >= 460 ? 8 : 6);
-        final rowCount = (chapterCount / columns).ceil();
-        final palette = AppPaletteTheme.of(context);
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadii.lg),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: palette.softSurface,
-              borderRadius: BorderRadius.circular(AppRadii.lg),
-              border: Border.all(color: palette.subtleBorder),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (var rowIndex = 0; rowIndex < rowCount; rowIndex++) ...[
-                  if (rowIndex > 0) const _BibleChapterHorizontalDivider(),
-                  SizedBox(
-                    height: 42,
-                    child: Row(
-                      children: [
-                        for (
-                          var colIndex = 0;
-                          colIndex < columns;
-                          colIndex++
-                        ) ...[
-                          Expanded(
-                            child: _BibleChapterGridCell(
-                              chapter: rowIndex * columns + colIndex + 1,
-                              chapterCount: chapterCount,
-                              completedChapters: completedChapters,
-                              onTap: onChapterTap,
-                            ),
-                          ),
-                          if (colIndex < columns - 1)
-                            const _BibleChapterVerticalDivider(),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _BibleChapterGridCell extends StatelessWidget {
-  const _BibleChapterGridCell({
-    required this.chapter,
-    required this.chapterCount,
-    required this.completedChapters,
-    required this.onTap,
-  });
-
-  final int chapter;
-  final int chapterCount;
-  final Set<int> completedChapters;
-  final ValueChanged<int> onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    if (chapter > chapterCount) {
-      return const SizedBox.shrink();
-    }
-    final completed = completedChapters.contains(chapter);
-    return Semantics(
-      button: true,
-      label: '$chapter장 성경 열기',
-      child: Tooltip(
-        message: '$chapter장 읽기',
-        child: InkWell(
-          key: ValueKey('bible-progress-chapter-$chapter'),
-          onTap: () => onTap(chapter),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 140),
-            alignment: Alignment.center,
-            color: completed ? palette.successFill : Colors.transparent,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '$chapter',
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: completed
-                          ? palette.successBottom
-                          : palette.mutedText,
-                      fontSize: AppFontSizes.body,
-                      fontWeight: completed ? FontWeight.w900 : FontWeight.w800,
-                      height: 1,
-                    ),
-                  ),
-                  if (completed) ...[
-                    const SizedBox(width: 4),
-                    Icon(
-                      Icons.check_circle_rounded,
-                      size: 14,
-                      color: palette.successBottom,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BibleBookProgressFooter extends StatelessWidget {
-  const _BibleBookProgressFooter({
-    required this.bookName,
-    required this.completed,
-    required this.total,
-    required this.fraction,
-  });
-
-  final String bookName;
-  final int completed;
-  final int total;
-  final double fraction;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    final percent = (fraction.clamp(0.0, 1.0) * 100).round();
-    final largeText = _profileUsesLargeTextLayout(context);
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 11, 12, 12),
-      decoration: BoxDecoration(
-        color: palette.cardSurface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: palette.subtleBorder, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '$bookName 통독',
-                  maxLines: largeText ? 2 : 1,
-                  overflow: largeText
-                      ? TextOverflow.visible
-                      : TextOverflow.ellipsis,
-                  softWrap: true,
-                  style: TextStyle(
-                    color: palette.text,
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              Text(
-                '$percent%',
-                style: TextStyle(
-                  color: palette.successBottom,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 9),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              minHeight: 8,
-              value: fraction.clamp(0.0, 1.0).toDouble(),
-              backgroundColor: palette.successFill,
-              color: palette.successBottom,
-            ),
-          ),
-          const SizedBox(height: 7),
-          _ProfileCompletedRatioText(
-            completed: completed,
-            totalLabel: '$total장',
-            fontSize: 11.5,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BibleChapterHorizontalDivider extends StatelessWidget {
-  const _BibleChapterHorizontalDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Container(
-      height: 7,
-      alignment: Alignment.center,
-      child: Container(height: 1, color: palette.subtleBorder),
-    );
-  }
-}
-
-class _BibleChapterVerticalDivider extends StatelessWidget {
-  const _BibleChapterVerticalDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Container(
-      width: 5,
-      alignment: Alignment.center,
-      child: Container(
-        width: 1,
-        margin: const EdgeInsets.symmetric(vertical: 5),
-        color: palette.subtleBorder,
-      ),
-    );
-  }
-}
-
 class _ProfileQuizStatItem extends StatelessWidget {
   const _ProfileQuizStatItem({
     required this.emoji,
@@ -4432,17 +3898,4 @@ class _ProfileEraSectionLabel extends StatelessWidget {
       ),
     );
   }
-}
-
-List<int> _profileBookNumbersForTestament(String testament) {
-  final firstBookNo = testament == 'new'
-      ? newTestamentFirstBookNo
-      : oldTestamentFirstBookNo;
-  final lastBookNo = testament == 'new'
-      ? newTestamentLastBookNo
-      : oldTestamentLastBookNo;
-  return List<int>.generate(
-    lastBookNo - firstBookNo + 1,
-    (index) => firstBookNo + index,
-  );
 }

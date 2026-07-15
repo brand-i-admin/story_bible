@@ -70,8 +70,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     milliseconds: 650,
   );
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
-  final TodayHomePageController _todayHomePageController =
-      TodayHomePageController();
   final GlobalKey _sharedMapKey = GlobalKey(debugLabel: 'shared-story-map');
   final ScrollController _selectionPanelScrollController = ScrollController();
   final GlobalKey<ProfileTabPageState> _profileTabKey =
@@ -82,8 +80,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   BibleReadingTarget? _bibleTabTarget;
   int? _bibleTabVerseNo;
   List<UserCompanionDiaryEntry> _homeDiaryEntries = const [];
+  String _todayNickname = '사용자';
   bool _homeDiaryLoading = false;
   String? _homeDiaryError;
+  Timer? _todayKstMidnightTimer;
   CharacterSortMode _characterSortMode = CharacterSortMode.eraOrder;
   String? _mapCelebrationEventId;
   String? _mapCelebrationStampLabel;
@@ -148,12 +148,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _handleAuthUserChanged(initialUser);
       }
     });
+    _scheduleTodayKstMidnightRefresh();
     _scheduleHomeIntroMapAffordance();
   }
 
   @override
   void dispose() {
     _completeMapCelebrationFuture();
+    _todayKstMidnightTimer?.cancel();
     _authUserSubscription?.close();
     _selectionPanelScrollController.dispose();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -166,6 +168,22 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       completer.complete();
     }
     _mapCelebrationCompleter = null;
+  }
+
+  void _scheduleTodayKstMidnightRefresh() {
+    _todayKstMidnightTimer?.cancel();
+    final delay =
+        durationUntilNextKstMidnight(DateTime.now()) +
+        const Duration(seconds: 1);
+    _todayKstMidnightTimer = Timer(delay, _handleTodayKstDateChanged);
+  }
+
+  void _handleTodayKstDateChanged() {
+    if (!mounted) {
+      return;
+    }
+    setState(() {});
+    _scheduleTodayKstMidnightRefresh();
   }
 
   void _completeMapCelebration([int? nonce]) {
@@ -212,6 +230,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (user == null) {
       setState(() {
         _homeDiaryEntries = const [];
+        _todayNickname = '사용자';
         _homeDiaryLoading = false;
         _homeDiaryError = null;
       });
@@ -222,10 +241,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
 
     try {
-      await ref.read(userRepositoryProvider).ensureSignedInUser(user);
+      final profile = await ref
+          .read(userRepositoryProvider)
+          .ensureSignedInUser(user);
       if (!mounted) {
         return;
       }
+      setState(() => _todayNickname = profile.nickname);
       await ref
           .read(storyControllerProvider.notifier)
           .refreshCompletedEventIds();
@@ -275,6 +297,27 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _homeDiaryLoading = false;
         _homeDiaryError = '신앙 다이어리를 불러오지 못했습니다.';
       });
+    }
+  }
+
+  Future<void> _loadTodayNickname() async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      if (mounted && _todayNickname != '사용자') {
+        setState(() => _todayNickname = '사용자');
+      }
+      return;
+    }
+    try {
+      final profile = await ref
+          .read(userRepositoryProvider)
+          .fetchUserProfile(user.id);
+      if (!mounted) {
+        return;
+      }
+      setState(() => _todayNickname = profile.nickname);
+    } catch (_) {
+      // 헤더 닉네임 새로고침 실패는 기존 표시값을 유지한다.
     }
   }
 
@@ -2616,8 +2659,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             Brightness.dark
         ? Brightness.light
         : Brightness.dark;
+    final showCreamTodayHeader = _rootTab == StoryRootTab.today;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
+        statusBarColor: showCreamTodayHeader ? AppColors.parchmentLight : null,
+        statusBarIconBrightness: showCreamTodayHeader ? Brightness.dark : null,
+        statusBarBrightness: showCreamTodayHeader ? Brightness.light : null,
         systemNavigationBarColor: navigationSurfaceColor,
         systemNavigationBarDividerColor: navigationSurfaceColor,
         systemNavigationBarIconBrightness: navigationIconBrightness,
@@ -2646,20 +2693,19 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           entry.key: entry.value.updatedAt,
       },
     )?.id;
-    final today = toKst(DateTime.now());
+    final now = DateTime.now();
+    final today = toKst(now);
     final todayDiary = _homeDiaryEntries
         .where((entry) => _sameHomeDiaryDate(entry.entryDate, today))
         .firstOrNull;
-    final todayStoryCompleted = state.eventEmotionMarks.values.any((mark) {
-      final updatedAt = mark.updatedAt;
-      return updatedAt != null && _sameHomeDiaryDate(toKst(updatedAt), today);
-    });
-    final bibleReadingCompleted = state.completedBibleChapterReadAts.values.any(
-      (readAt) => readAt != null && _sameHomeDiaryDate(toKst(readAt), today),
+    final activitySummary = summarizeTodayActivity(
+      now: now,
+      emotionMarks: state.eventEmotionMarks,
+      diaryEntries: _homeDiaryEntries,
+      bibleChapterReadAts: state.completedBibleChapterReadAts,
     );
     final bibleTarget = nextBibleReadingTarget(state.completedBibleChapterKeys);
     return TodayHomePage(
-      controller: _todayHomePageController,
       mapKey: _sharedMapKey,
       mapController: _mapPanelController,
       events: events,
@@ -2675,8 +2721,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       diaryLoading: _homeDiaryLoading,
       diaryError: _homeDiaryError,
       bibleTargetLabel: bibleReadingTargetLabel(bibleTarget),
-      todayStoryCompleted: todayStoryCompleted,
-      bibleReadingCompleted: bibleReadingCompleted,
+      nickname: user == null ? '사용자' : _todayNickname,
+      activitySummary: activitySummary,
       colorForCharacter: ref
           .read(storyControllerProvider.notifier)
           .colorForCharacter,
@@ -2770,9 +2816,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
     if (_rootTab == tab) {
-      if (tab == StoryRootTab.today) {
-        _todayHomePageController.showWelcomeGuide();
-      }
       return;
     }
     final leavingMap = _rootTab == StoryRootTab.map && tab != StoryRootTab.map;
@@ -2782,6 +2825,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     setState(() => _rootTab = tab);
     if (tab == StoryRootTab.today) {
       unawaited(_loadHomeDiaryEntries(showLoading: false));
+      unawaited(_loadTodayNickname());
     }
     if (tab == StoryRootTab.map) {
       _scheduleHomeIntroMapAffordance();

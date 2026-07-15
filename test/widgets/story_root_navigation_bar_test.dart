@@ -181,23 +181,19 @@ void main() {
     expect(todaySource, contains('clearMapGestureSuspension'));
   });
 
-  test('오늘 화면은 첫 터치에 사라지는 환영 가이드와 최소화 패널을 제공한다', () {
+  test('오늘 화면은 일일 활동 헤더와 지도 위 플로팅 카드 덱을 제공한다', () {
     final source = File(
       'lib/widgets/home/today_home_page.dart',
     ).readAsStringSync();
 
-    expect(source, contains('MapHintOverlay('));
-    expect(source, contains('환영합니다! 매일 3가지로 주님과 동행해요!'));
-    expect(source, contains('① 이야기 탐험'));
-    expect(source, contains('(최근 감정을 새긴 다음 이야기가 추천되요)'));
-    expect(source, contains('② 신앙 다이어리'));
-    expect(source, contains('③ 통독'));
-    expect(source, contains("(기록은 '내정보'에 쌓여요)"));
-    expect(source, contains('_showWelcomeGuide'));
-    expect(source, contains('onPointerDown: (_) => _dismissWelcomeGuide()'));
-    expect(source, contains('IgnorePointer('));
-    expect(source, contains('AnimatedContainer('));
-    expect(source, contains('_todayPanelCollapsedHeight'));
+    expect(source, contains('TodayActivityHeader('));
+    expect(source, isNot(contains('MapHintOverlay(')));
+    expect(source, isNot(contains('_showWelcomeGuide')));
+    expect(source, isNot(contains('AnimatedContainer(')));
+    expect(source, isNot(contains('_todayPanelCollapsedHeight')));
+    expect(source, isNot(contains('constraints.maxHeight * 0.43')));
+    expect(source, contains('HomeJourneyOverlay('));
+    expect(source, contains('bottom: 8'));
   });
 
   test('오늘 지도는 역할 핀 경로와 촘촘한 세 사건 전용 확대 상한을 사용한다', () {
@@ -221,9 +217,13 @@ void main() {
       contains('systemNavigationBarColor: navigationSurfaceColor'),
     );
     expect(source, contains('systemNavigationBarContrastEnforced: false'));
+    expect(source, contains('statusBarColor: showCreamTodayHeader'));
+    expect(source, contains('AppColors.parchmentLight'));
+    expect(source, contains('statusBarIconBrightness: showCreamTodayHeader'));
+    expect(source, contains('statusBarBrightness: showCreamTodayHeader'));
   });
 
-  test('오늘 패널은 지도 패널과 공유하는 표면과 모바일 배치를 쓴다', () {
+  test('오늘 카드 덱은 지도 하단 패널 표면에서 분리되어 공중에 뜬다', () {
     final todaySource = File(
       'lib/widgets/home/today_home_page.dart',
     ).readAsStringSync();
@@ -234,13 +234,17 @@ void main() {
       'lib/widgets/home/home_journey_overlay.dart',
     ).readAsStringSync();
 
-    expect(todaySource, contains('storyBottomPanelHorizontalMargin'));
+    expect(todaySource, isNot(contains('storyBottomPanelHorizontalMargin')));
     expect(mapSource, contains('storyBottomPanelHorizontalMargin'));
-    expect(todaySource, contains('bottom: 0'));
-    expect(overlaySource, contains('storyBottomPanelDecoration(context)'));
+    expect(todaySource, contains('bottom: 8'));
+    expect(
+      overlaySource,
+      isNot(contains('storyBottomPanelDecoration(context)')),
+    );
+    expect(overlaySource, isNot(contains('home-journey-panel-toggle')));
   });
 
-  test('선택된 오늘 탭을 다시 누르면 환영 가이드를 다시 보여 준다', () {
+  test('선택된 오늘 탭을 다시 눌러도 제거된 환영 가이드를 다시 만들지 않는다', () {
     final homeSource = File(
       'lib/screens/story_home_screen_state.dart',
     ).readAsStringSync();
@@ -248,10 +252,10 @@ void main() {
       'lib/widgets/home/today_home_page.dart',
     ).readAsStringSync();
 
-    expect(homeSource, contains('TodayHomePageController'));
-    expect(homeSource, contains('showWelcomeGuide()'));
-    expect(todaySource, contains('class TodayHomePageController'));
-    expect(todaySource, contains('void showWelcomeGuide()'));
+    expect(homeSource, isNot(contains('TodayHomePageController')));
+    expect(homeSource, isNot(contains('showWelcomeGuide()')));
+    expect(todaySource, isNot(contains('class TodayHomePageController')));
+    expect(todaySource, isNot(contains('void showWelcomeGuide()')));
   });
 
   test('지도 탭을 벗어나면 지도 탐색 선택을 첫 단계로 초기화한다', () {

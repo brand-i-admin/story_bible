@@ -343,6 +343,7 @@ class StoryEventThumbCard extends StatelessWidget {
           event: event,
           loader: loader,
           size: thumbnailSize,
+          presentation: presentation,
           publicUrlForStoragePath: publicUrlForStoragePath,
         ),
         SizedBox(height: gapAfterThumbnail),
@@ -414,30 +415,39 @@ class _CardThumbnailFrame extends StatelessWidget {
     required this.event,
     required this.loader,
     required this.size,
+    required this.presentation,
     this.publicUrlForStoragePath,
   });
 
   final StoryEvent event;
   final SceneAssetLoader loader;
   final double size;
+  final StoryEventCardPresentation presentation;
   final String Function(String storagePath)? publicUrlForStoragePath;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    return ClipOval(
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: ColoredBox(
-          color: palette.mutedSurface,
-          child: _CardThumbnail(
-            event: event,
-            loader: loader,
-            publicUrlForStoragePath: publicUrlForStoragePath,
-          ),
-        ),
+    final thumbnail = ColoredBox(
+      color: palette.mutedSurface,
+      child: _CardThumbnail(
+        event: event,
+        loader: loader,
+        publicUrlForStoragePath: publicUrlForStoragePath,
       ),
+    );
+    if (presentation == StoryEventCardPresentation.mapTimeline) {
+      return ClipOval(
+        child: SizedBox(width: size, height: size, child: thumbnail),
+      );
+    }
+    final aspectRatio = presentation == StoryEventCardPresentation.todayCurrent
+        ? 16 / 9
+        : 1.0;
+    return ClipRRect(
+      key: ValueKey('story-thumbnail-frame-${presentation.name}-${event.id}'),
+      borderRadius: BorderRadius.circular(10),
+      child: AspectRatio(aspectRatio: aspectRatio, child: thumbnail),
     );
   }
 }

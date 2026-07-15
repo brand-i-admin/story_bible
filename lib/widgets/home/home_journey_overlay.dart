@@ -6,15 +6,14 @@ import '../../models/event_emotion_mark.dart';
 import '../../models/quiz_attempt_summary.dart';
 import '../../models/story_event.dart';
 import '../../models/user_companion_diary_entry.dart';
+import '../../screens/companion_diary_editor_screen.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
-import '../../theme/typography.dart';
 import '../../utils/daily_exploration_selection.dart';
 import '../../utils/scene_asset_loader.dart';
 import '../login_required_dialog.dart';
 import '../profile/companion_diary_entry_card.dart';
 import '../pulse_highlight.dart';
-import '../story_bottom_panel_style.dart';
 
 import '../v2/region_event_list.dart'
     show StoryEventCardPresentation, StoryEventThumbCard;
@@ -36,9 +35,6 @@ class HomeJourneyOverlay extends StatelessWidget {
     required this.bibleTargetLabel,
     this.todayStoryCompleted = false,
     this.bibleReadingCompleted = false,
-    this.panelExpanded = true,
-    this.onTogglePanel,
-    this.scrollController,
     required this.onOpenStory,
     required this.onCurrentStoryChanged,
     required this.onSaveDiary,
@@ -61,9 +57,6 @@ class HomeJourneyOverlay extends StatelessWidget {
   final String bibleTargetLabel;
   final bool todayStoryCompleted;
   final bool bibleReadingCompleted;
-  final bool panelExpanded;
-  final VoidCallback? onTogglePanel;
-  final ScrollController? scrollController;
   final ValueChanged<StoryEvent> onOpenStory;
   final ValueChanged<StoryEvent> onCurrentStoryChanged;
   final CompanionDiarySaveCallback? onSaveDiary;
@@ -73,111 +66,43 @@ class HomeJourneyOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Column(
       key: const ValueKey('home-journey-overlay'),
-      clipBehavior: Clip.antiAlias,
-      decoration: storyBottomPanelDecoration(context),
-      child: Column(
-        children: [
-          _HomeJourneyPanelHandle(
-            expanded: panelExpanded,
-            onToggle: onTogglePanel,
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _HomeStoryJourneyDeck(
+          key: ValueKey(
+            'home-story-deck-${events.map((event) => event.id).join('-')}',
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              controller: scrollController,
-              physics: const ClampingScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(12, 2, 12, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _HomeStoryJourneyDeck(
-                    key: ValueKey(
-                      'home-story-deck-${events.map((event) => event.id).join('-')}',
-                    ),
-                    events: events,
-                    recommendedEventId: recommendedEventId,
-                    currentEventId: currentEventId,
-                    eras: eras,
-                    charactersByCode: charactersByCode,
-                    eventEmotionMarks: eventEmotionMarks,
-                    quizAttemptSummaries: quizAttemptSummaries,
-                    todayStoryCompleted: todayStoryCompleted,
-                    onOpenStory: onOpenStory,
-                    onCurrentStoryChanged: onCurrentStoryChanged,
-                  ),
-                  const SizedBox(height: 10),
-                  const _HomeRoutineSectionHeader(),
-                  const SizedBox(height: 7),
-                  _HomeQuickActions(
-                    isAuthenticated: isAuthenticated,
-                    todayDiary: todayDiary,
-                    diaryLoading: diaryLoading,
-                    diaryError: diaryError,
-                    bibleTargetLabel: bibleTargetLabel,
-                    bibleReadingCompleted: bibleReadingCompleted,
-                    onSaveDiary: onSaveDiary,
-                    onDeleteDiary: onDeleteDiary,
-                    onContinueBibleReading: onContinueBibleReading,
-                    onOpenProfile: onOpenProfile,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HomeJourneyPanelHandle extends StatelessWidget {
-  const _HomeJourneyPanelHandle({
-    required this.expanded,
-    required this.onToggle,
-  });
-
-  final bool expanded;
-  final VoidCallback? onToggle;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return SizedBox(
-      height: 40,
-      child: Center(
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            key: const ValueKey('home-journey-panel-toggle'),
-            onTap: onToggle,
-            borderRadius: BorderRadius.circular(999),
-            child: Tooltip(
-              message: expanded ? '아래로 접기' : '위로 펼치기',
-              child: Container(
-                width: 48,
-                height: 30,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: palette.successFill.withValues(alpha: 0.78),
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(
-                    color: palette.successBottom.withValues(alpha: 0.48),
-                  ),
-                ),
-                child: Icon(
-                  expanded
-                      ? Icons.keyboard_arrow_down_rounded
-                      : Icons.keyboard_arrow_up_rounded,
-                  color: palette.successBottom,
-                  size: 23,
-                  semanticLabel: expanded ? '아래로 접기' : '위로 펼치기',
-                ),
-              ),
-            ),
+          events: events,
+          recommendedEventId: recommendedEventId,
+          currentEventId: currentEventId,
+          eras: eras,
+          charactersByCode: charactersByCode,
+          eventEmotionMarks: eventEmotionMarks,
+          quizAttemptSummaries: quizAttemptSummaries,
+          todayStoryCompleted: todayStoryCompleted,
+          onOpenStory: onOpenStory,
+          onCurrentStoryChanged: onCurrentStoryChanged,
+        ),
+        const SizedBox(height: 9),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: _HomeQuickActions(
+            isAuthenticated: isAuthenticated,
+            todayDiary: todayDiary,
+            diaryLoading: diaryLoading,
+            diaryError: diaryError,
+            bibleTargetLabel: bibleTargetLabel,
+            bibleReadingCompleted: bibleReadingCompleted,
+            onSaveDiary: onSaveDiary,
+            onDeleteDiary: onDeleteDiary,
+            onContinueBibleReading: onContinueBibleReading,
+            onOpenProfile: onOpenProfile,
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -261,12 +186,10 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     final palette = AppPaletteTheme.of(context);
     final ordered = _orderedEvents();
     final textScale = MediaQuery.textScalerOf(context).scale(1);
-    final deckHeight = 224.0 + ((textScale - 1) * 105).clamp(0.0, 54.0);
+    final deckHeight = 186.0 + ((textScale - 1) * 80).clamp(0.0, 40.0);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _HomeStorySectionHeader(),
-        const SizedBox(height: 5),
         if (ordered.isEmpty)
           Container(
             height: deckHeight,
@@ -397,6 +320,8 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
       presentation: isCurrent
           ? StoryEventCardPresentation.todayCurrent
           : StoryEventCardPresentation.todayAdjacent,
+      showSummary: false,
+      showCharacterPills: true,
       surfaceColorOverride: palette.cardSurface,
       loader: SceneAssetLoader(),
       onTap: () {
@@ -428,9 +353,9 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
           child: Padding(
             padding: EdgeInsets.fromLTRB(
               5,
-              isCurrent ? 0 : 16,
+              isCurrent ? 0 : 14,
               5,
-              isCurrent ? 0 : 16,
+              isCurrent ? 0 : 14,
             ),
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 180),
@@ -513,7 +438,8 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
         final expandedWidth = ((baseWidth - 10) * 1.5) + 10;
         final horizontalShift = isCurrent
             ? 0.0
-            : (expandedWidth - baseWidth) / 2 * (page < _currentPage ? -1 : 1);
+            : ((expandedWidth - baseWidth) / 2 - 6) *
+                  (page < _currentPage ? -1 : 1);
         final frameWidth = isCurrent ? expandedWidth : baseWidth;
         return Transform.translate(
           offset: Offset(horizontalShift, 0),
@@ -641,120 +567,6 @@ class _HomeExplorationSortHintCard extends StatelessWidget {
   }
 }
 
-class _HomeStorySectionHeader extends StatelessWidget {
-  const _HomeStorySectionHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Row(
-      key: const ValueKey('home-story-section-header'),
-      children: [
-        _HomeSectionIcon(
-          icon: Icons.explore_rounded,
-          color: palette.regionAccent,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          '이야기 탐험',
-          style: AppTextStyles.sectionTitle.copyWith(
-            color: palette.text,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              key: const ValueKey('home-story-guide-note'),
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-              decoration: BoxDecoration(
-                color: palette.currentFill.withValues(alpha: 0.48),
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '참고',
-                      style: TextStyle(
-                        color: palette.currentAccentDeep,
-                        fontSize: 9.6,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '카드를 눌러 탐험하세요! (완료조건: 감정 새기기)',
-                      maxLines: 1,
-                      style: TextStyle(
-                        color: palette.mutedText,
-                        fontSize: 9.6,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _HomeRoutineSectionHeader extends StatelessWidget {
-  const _HomeRoutineSectionHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Row(
-      key: const ValueKey('home-routine-section-header'),
-      children: [
-        _HomeSectionIcon(
-          icon: Icons.volunteer_activism_rounded,
-          color: palette.primary,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          '신앙 다이어리 & 통독',
-          style: AppTextStyles.sectionTitle.copyWith(
-            color: palette.text,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _HomeSectionIcon extends StatelessWidget {
-  const _HomeSectionIcon({required this.icon, required this.color});
-
-  final IconData icon;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 26,
-      height: 26,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.13),
-        shape: BoxShape.circle,
-        border: Border.all(color: color.withValues(alpha: 0.30)),
-      ),
-      child: Icon(icon, color: color, size: 15),
-    );
-  }
-}
-
 class _HomeQuickActions extends StatelessWidget {
   const _HomeQuickActions({
     required this.isAuthenticated,
@@ -788,51 +600,49 @@ class _HomeQuickActions extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            child: PulseHighlight(
-              key: const ValueKey('home-diary-task-highlight'),
-              active: !diaryLoading && todayDiary == null,
-              pulseCount: null,
-              duration: const Duration(milliseconds: 2200),
-              borderRadius: BorderRadius.circular(18),
-              color: AppColors.goldLight,
-              child: _HomeQuickActionCard(
-                key: const ValueKey('home-diary-quick-action'),
-                icon: diaryLoading
-                    ? Icons.hourglass_top_rounded
-                    : todayDiary == null
-                    ? Icons.add_rounded
-                    : Icons.check_rounded,
-                title: '신앙 다이어리',
-                subtitle:
-                    diaryError ?? (todayDiary == null ? '작성 가능' : '오늘 작성 완료'),
-                accent: palette.successBottom,
-                onTap: diaryLoading ? null : () => _handleDiaryTap(context),
-              ),
+            child: _HomeQuickActionCard(
+              key: const ValueKey('home-diary-quick-action'),
+              effectId: 'diary',
+              icon: Icons.edit_note_rounded,
+              title: '신앙 다이어리',
+              subtitle: diaryError ?? _diaryPreviewText(todayDiary),
+              subtitleMaxLines: todayDiary == null ? 2 : 3,
+              actionLabel: !diaryLoading && todayDiary == null
+                  ? '+ 기록하기'
+                  : null,
+              actionEffectActive: !diaryLoading && todayDiary == null,
+              accent: palette.successBottom,
+              onTap: diaryLoading ? null : () => _handleDiaryTap(context),
             ),
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: PulseHighlight(
-              key: const ValueKey('home-bible-task-highlight'),
-              active: !bibleReadingCompleted,
-              pulseCount: null,
-              duration: const Duration(milliseconds: 2200),
-              borderRadius: BorderRadius.circular(18),
-              color: AppColors.goldLight,
-              child: _HomeQuickActionCard(
-                key: const ValueKey('home-bible-quick-action'),
-                icon: Icons.menu_book_rounded,
-                title: '통독 이어읽기',
-                subtitle: bibleTargetLabel,
-                accent: palette.primary,
-                trailing: Icons.chevron_right_rounded,
-                onTap: () => _handleBibleTap(context),
-              ),
+            child: _HomeQuickActionCard(
+              key: const ValueKey('home-bible-quick-action'),
+              effectId: 'bible',
+              icon: Icons.menu_book_rounded,
+              title: '통독 이어읽기',
+              subtitle: bibleTargetLabel,
+              subtitleMaxLines: 2,
+              actionLabel: '→ 이어읽기',
+              actionEffectActive: !bibleReadingCompleted,
+              accent: palette.primary,
+              onTap: () => _handleBibleTap(context),
             ),
           ),
         ],
       ),
     );
+  }
+
+  String _diaryPreviewText(UserCompanionDiaryEntry? entry) {
+    if (diaryLoading) {
+      return '오늘 기록을 불러오는 중이에요.';
+    }
+    if (entry == null) {
+      return '오늘의 동행을 기록해 보세요.';
+    }
+    return '${entry.title}\n${entry.body}';
   }
 
   Future<void> _handleDiaryTap(BuildContext context) async {
@@ -879,8 +689,9 @@ class _HomeQuickActions extends StatelessWidget {
     if (save == null) {
       return;
     }
-    final draft = await showCompanionDiaryEditorDialog(
+    final draft = await openCompanionDiaryEditorPage(
       context,
+      entryDate: initialEntry?.entryDate ?? DateTime.now(),
       initialEntry: initialEntry,
     );
     if (draft == null) {
@@ -968,24 +779,31 @@ class _HomeQuickActions extends StatelessWidget {
 class _HomeQuickActionCard extends StatelessWidget {
   const _HomeQuickActionCard({
     super.key,
+    required this.effectId,
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.accent,
     required this.onTap,
-    this.trailing,
+    this.actionLabel,
+    this.actionEffectActive = false,
+    this.subtitleMaxLines = 1,
   });
 
+  final String effectId;
   final IconData icon;
   final String title;
   final String subtitle;
   final Color accent;
   final VoidCallback? onTap;
-  final IconData? trailing;
+  final String? actionLabel;
+  final bool actionEffectActive;
+  final int subtitleMaxLines;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final darkSurface = palette == AppColorPalette.blackMap;
     final surface = Color.alphaBlend(
       accent.withValues(alpha: darkSurface ? 0.18 : 0.10),
@@ -998,7 +816,7 @@ class _HomeQuickActionCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(19),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 68),
+          constraints: const BoxConstraints(minHeight: 82),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(19),
@@ -1024,8 +842,11 @@ class _HomeQuickActionCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: largeText ? 2 : 1,
+                      overflow: largeText
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      softWrap: true,
                       style: TextStyle(
                         color: palette.text,
                         fontSize: 13,
@@ -1036,8 +857,11 @@ class _HomeQuickActionCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: largeText
+                          ? subtitleMaxLines + 2
+                          : subtitleMaxLines,
+                      overflow: TextOverflow.visible,
+                      softWrap: true,
                       style: TextStyle(
                         color: palette.mutedText,
                         fontSize: 11.4,
@@ -1045,15 +869,204 @@ class _HomeQuickActionCard extends StatelessWidget {
                         height: 1.1,
                       ),
                     ),
+                    if (actionLabel != null) ...[
+                      const SizedBox(height: 6),
+                      _HomeQuickActionCta(
+                        effectId: effectId,
+                        label: actionLabel!,
+                        accent: accent,
+                        active: actionEffectActive,
+                      ),
+                    ],
                   ],
                 ),
               ),
-              if (trailing != null)
-                Icon(trailing, color: palette.mutedText, size: 22),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class _HomeQuickActionCta extends StatelessWidget {
+  const _HomeQuickActionCta({
+    required this.effectId,
+    required this.label,
+    required this.accent,
+    required this.active,
+  });
+
+  final String effectId;
+  final String label;
+  final Color accent;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: PulseHighlight(
+        key: ValueKey('home-$effectId-quick-action-cta-glow'),
+        active: active,
+        pulseCount: null,
+        duration: const Duration(milliseconds: 1900),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        color: accent,
+        child: Container(
+          key: ValueKey('home-$effectId-quick-action-cta'),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: Color.alphaBlend(
+              accent.withValues(alpha: 0.13),
+              palette.cardSurface,
+            ),
+            borderRadius: BorderRadius.circular(AppRadii.pill),
+            border: Border.all(color: accent.withValues(alpha: 0.42)),
+          ),
+          child: _HomeQuickActionRipple(
+            effectId: effectId,
+            label: label,
+            accent: accent,
+            active: active,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeQuickActionRipple extends StatefulWidget {
+  const _HomeQuickActionRipple({
+    required this.effectId,
+    required this.label,
+    required this.accent,
+    required this.active,
+  });
+
+  final String effectId;
+  final String label;
+  final Color accent;
+  final bool active;
+
+  @override
+  State<_HomeQuickActionRipple> createState() => _HomeQuickActionRippleState();
+}
+
+class _HomeQuickActionRippleState extends State<_HomeQuickActionRipple>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1900),
+    );
+    if (widget.active) {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _HomeQuickActionRipple oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.active == oldWidget.active) return;
+    if (widget.active) {
+      _controller.repeat();
+    } else {
+      _controller
+        ..stop()
+        ..value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final label = Text(
+      widget.label,
+      key: ValueKey(
+        'home-quick-action-label-${widget.label.replaceAll(' ', '-')}',
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.visible,
+      style: TextStyle(
+        color: widget.accent,
+        fontSize: 11.6,
+        fontWeight: FontWeight.w900,
+        height: 1.1,
+      ),
+    );
+    if (!widget.active) return label;
+    return AnimatedBuilder(
+      animation: _controller,
+      child: label,
+      builder: (context, child) {
+        return Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.centerLeft,
+          children: [
+            Positioned(
+              left: -8,
+              top: -8,
+              bottom: -8,
+              width: 32,
+              child: IgnorePointer(
+                child: CustomPaint(
+                  key: ValueKey('home-${widget.effectId}-quick-action-ripple'),
+                  painter: _HomeQuickActionRipplePainter(
+                    progress: _controller.value,
+                    color: widget.accent,
+                  ),
+                ),
+              ),
+            ),
+            child!,
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _HomeQuickActionRipplePainter extends CustomPainter {
+  const _HomeQuickActionRipplePainter({
+    required this.progress,
+    required this.color,
+  });
+
+  final double progress;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    void paintRipple(double phase) {
+      final curved = Curves.easeOutCubic.transform(phase);
+      final paint = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.25
+        ..color = color.withValues(alpha: (1 - phase) * 0.58);
+      canvas.drawCircle(
+        size.center(Offset.zero),
+        4 + (size.shortestSide * 0.38 * curved),
+        paint,
+      );
+    }
+
+    paintRipple(progress);
+    paintRipple((progress + 0.5) % 1);
+  }
+
+  @override
+  bool shouldRepaint(covariant _HomeQuickActionRipplePainter oldDelegate) {
+    return oldDelegate.progress != progress || oldDelegate.color != color;
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../models/user_companion_diary_entry.dart';
 import '../../theme/app_color_palette.dart';
@@ -17,13 +16,6 @@ typedef CompanionDiaryDeleteCallback =
     Future<void> Function(UserCompanionDiaryEntry entry);
 
 enum CompanionDiaryDetailAction { edit, delete }
-
-class CompanionDiaryDraft {
-  const CompanionDiaryDraft({required this.title, required this.body});
-
-  final String title;
-  final String body;
-}
 
 class CompanionDiaryEntryPreviewCard extends StatelessWidget {
   const CompanionDiaryEntryPreviewCard({
@@ -238,16 +230,6 @@ class CompanionDiaryEntryDetailDialog extends StatelessWidget {
   }
 }
 
-Future<CompanionDiaryDraft?> showCompanionDiaryEditorDialog(
-  BuildContext context, {
-  UserCompanionDiaryEntry? initialEntry,
-}) {
-  return showDialog<CompanionDiaryDraft>(
-    context: context,
-    builder: (_) => _CompanionDiaryEditorDialog(initialEntry: initialEntry),
-  );
-}
-
 Future<bool> showCompanionDiaryDeleteConfirmDialog(
   BuildContext context,
   UserCompanionDiaryEntry entry,
@@ -293,97 +275,4 @@ Future<bool> showCompanionDiaryDeleteConfirmDialog(
 
 String formatCompanionDiaryEntryDate(DateTime date) {
   return '${date.month}월 ${date.day}일';
-}
-
-class _CompanionDiaryEditorDialog extends StatefulWidget {
-  const _CompanionDiaryEditorDialog({required this.initialEntry});
-
-  final UserCompanionDiaryEntry? initialEntry;
-
-  @override
-  State<_CompanionDiaryEditorDialog> createState() =>
-      _CompanionDiaryEditorDialogState();
-}
-
-class _CompanionDiaryEditorDialogState
-    extends State<_CompanionDiaryEditorDialog> {
-  late final TextEditingController _titleController;
-  late final TextEditingController _bodyController;
-
-  @override
-  void initState() {
-    super.initState();
-    _titleController = TextEditingController(
-      text: widget.initialEntry?.title ?? '',
-    );
-    _bodyController = TextEditingController(
-      text: widget.initialEntry?.body ?? '',
-    );
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _bodyController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isEditing = widget.initialEntry != null;
-    return ParchmentDialog(
-      title: isEditing ? '신앙 다이어리 수정' : '신앙 다이어리 작성',
-      subtitle: '오늘 하루 예수님과 동행한 마음을 기록해 보세요.',
-      showCloseButton: true,
-      actions: [
-        ParchmentDialogActionButton(
-          label: isEditing ? '수정' : '저장',
-          onTap: _canSubmit ? _submit : null,
-        ),
-      ],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ParchmentDialogTextField(
-            controller: _titleController,
-            hintText: '제목',
-            maxLength: 80,
-            autofocus: true,
-            textInputAction: TextInputAction.next,
-            inputFormatters: [LengthLimitingTextInputFormatter(80)],
-            onChanged: (_) => setState(() {}),
-          ),
-          const SizedBox(height: 10),
-          ParchmentDialogTextField(
-            controller: _bodyController,
-            hintText: '오늘 어떤 순간에 예수님과 동행했나요?',
-            maxLength: 1000,
-            minLines: 5,
-            maxLines: 8,
-            autofocus: false,
-            keyboardType: TextInputType.multiline,
-            inputFormatters: [LengthLimitingTextInputFormatter(1000)],
-            onChanged: (_) => setState(() {}),
-          ),
-        ],
-      ),
-    );
-  }
-
-  bool get _canSubmit {
-    return _titleController.text.trim().isNotEmpty &&
-        _bodyController.text.trim().isNotEmpty;
-  }
-
-  void _submit() {
-    if (!_canSubmit) {
-      return;
-    }
-    Navigator.of(context).pop(
-      CompanionDiaryDraft(
-        title: _titleController.text.trim(),
-        body: _bodyController.text.trim(),
-      ),
-    );
-  }
 }

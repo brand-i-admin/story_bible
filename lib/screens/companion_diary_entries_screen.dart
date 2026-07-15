@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../models/user_companion_diary_entry.dart';
+import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
+import '../theme/typography.dart';
+import '../utils/kst_date.dart';
 import '../widgets/parchment_page_scaffold.dart';
 import '../widgets/profile/companion_diary_entry_card.dart';
+import 'companion_diary_editor_screen.dart';
 
 class CompanionDiaryEntriesScreen extends StatefulWidget {
   const CompanionDiaryEntriesScreen({
@@ -11,11 +15,13 @@ class CompanionDiaryEntriesScreen extends StatefulWidget {
     required this.entries,
     this.onSave,
     this.onDelete,
+    this.now,
   });
 
   final List<UserCompanionDiaryEntry> entries;
   final CompanionDiarySaveCallback? onSave;
   final CompanionDiaryDeleteCallback? onDelete;
+  final DateTime? now;
 
   @override
   State<CompanionDiaryEntriesScreen> createState() =>
@@ -25,6 +31,7 @@ class CompanionDiaryEntriesScreen extends StatefulWidget {
 class _CompanionDiaryEntriesScreenState
     extends State<CompanionDiaryEntriesScreen> {
   late List<UserCompanionDiaryEntry> _entries;
+  _CompanionDiaryEntriesFilter _filter = _CompanionDiaryEntriesFilter.all;
 
   @override
   void initState() {
@@ -42,39 +49,93 @@ class _CompanionDiaryEntriesScreenState
 
   @override
   Widget build(BuildContext context) {
+    final today = _dateOnly(toKst(widget.now ?? DateTime.now()));
+    final monthEntries = _entries
+        .where(
+          (entry) =>
+              entry.entryDate.year == today.year &&
+              entry.entryDate.month == today.month,
+        )
+        .toList(growable: false);
+    final visibleEntries = _filter == _CompanionDiaryEntriesFilter.thisMonth
+        ? monthEntries
+        : _entries;
     return ParchmentListPageScaffold(
       title: '신앙 다이어리',
-      child: ParchmentCard(
-        padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
-        child: _entries.isEmpty
-            ? const Center(
-                child: Text(
-                  '아직 남긴 신앙 다이어리가 없습니다.\n오늘 하나님과 함께한 순간을 기록해 보세요!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.ink300,
-                    fontSize: 13.2,
-                    fontWeight: FontWeight.w800,
-                    height: 1.55,
+      bodyPadding: const EdgeInsets.fromLTRB(
+        AppSpacing.x5,
+        62,
+        AppSpacing.x5,
+        AppSpacing.x5,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _CompanionDiaryStatsRow(
+            monthRecordCount: _uniqueDateCount(monthEntries),
+            streakDays: _currentStreakDays(today),
+          ),
+          const SizedBox(height: AppSpacing.x6),
+          _CompanionDiaryFilterBar(
+            selected: _filter,
+            onChanged: (filter) => setState(() => _filter = filter),
+          ),
+          const SizedBox(height: AppSpacing.x6),
+          Expanded(
+            child: visibleEntries.isEmpty
+                ? _CompanionDiaryEntriesEmptyState(filter: _filter)
+                : ListView.separated(
+                    padding: EdgeInsets.zero,
+                    itemCount: visibleEntries.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(height: AppSpacing.x6),
+                    itemBuilder: (context, index) {
+                      final entry = visibleEntries[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            _formatDiaryDateHeader(entry.entryDate),
+                            style: AppTextStyles.h3.copyWith(
+                              color: AppPaletteTheme.of(context).text,
+                              fontSize: 15.5,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.x3),
+                          CompanionDiaryEntryPreviewCard(
+                            entry: entry,
+                            dateLabel: _formatDiaryTime(entry.updatedAt),
+                            maxBodyLines: 2,
+                            onTap: () => _openDetail(context, entry),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                ),
-              )
-            : ListView.separated(
-                padding: EdgeInsets.zero,
-                itemCount: _entries.length,
-                separatorBuilder: (_, __) =>
-                    const Divider(height: 14, color: Color(0x44BCA47A)),
-                itemBuilder: (context, index) {
-                  final entry = _entries[index];
-                  return CompanionDiaryEntryPreviewCard(
-                    entry: entry,
-                    dateLabel: formatCompanionDiaryEntryDate(entry.entryDate),
-                    onTap: () => _openDetail(context, entry),
-                  );
-                },
-              ),
+          ),
+        ],
       ),
     );
+  }
+
+  int _uniqueDateCount(List<UserCompanionDiaryEntry> entries) {
+    return entries.map((entry) => _dateOnly(entry.entryDate)).toSet().length;
+  }
+
+  int _currentStreakDays(DateTime today) {
+    final dates = _entries.map((entry) => _dateOnly(entry.entryDate)).toSet();
+    var cursor = dates.contains(today)
+        ? today
+        : today.subtract(const Duration(days: 1));
+    if (!dates.contains(cursor)) {
+      return 0;
+    }
+    var streak = 0;
+    while (dates.contains(cursor)) {
+      streak += 1;
+      cursor = cursor.subtract(const Duration(days: 1));
+    }
+    return streak;
   }
 
   Future<void> _openDetail(
@@ -118,8 +179,9 @@ class _CompanionDiaryEntriesScreenState
     if (save == null) {
       return;
     }
-    final draft = await showCompanionDiaryEditorDialog(
+    final draft = await openCompanionDiaryEditorPage(
       context,
+      entryDate: entry.entryDate,
       initialEntry: entry,
     );
     if (draft == null) {
@@ -202,6 +264,220 @@ class _CompanionDiaryEntriesScreenState
         a.entryDate.month == b.entryDate.month &&
         a.entryDate.day == b.entryDate.day;
   }
+}
+
+enum _CompanionDiaryEntriesFilter { all, thisMonth }
+
+class _CompanionDiaryStatsRow extends StatelessWidget {
+  const _CompanionDiaryStatsRow({
+    required this.monthRecordCount,
+    required this.streakDays,
+  });
+
+  final int monthRecordCount;
+  final int streakDays;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Row(
+      children: [
+        Expanded(
+          child: _CompanionDiaryStatCard(
+            key: const ValueKey('companion-diary-month-stat'),
+            icon: Icons.calendar_month_rounded,
+            label: '이번 달',
+            value: '$monthRecordCount일 기록',
+            accent: palette.primaryDeep,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.x4),
+        Expanded(
+          child: _CompanionDiaryStatCard(
+            key: const ValueKey('companion-diary-streak-stat'),
+            icon: Icons.local_fire_department_rounded,
+            label: '연속',
+            value: '$streakDays일',
+            accent: palette.successBottom,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CompanionDiaryStatCard extends StatelessWidget {
+  const _CompanionDiaryStatCard({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.accent,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Container(
+      constraints: const BoxConstraints(minHeight: 102),
+      padding: const EdgeInsets.all(AppSpacing.x5),
+      decoration: BoxDecoration(
+        color: Color.alphaBlend(
+          accent.withValues(alpha: 0.10),
+          palette.cardSurface,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.xl),
+        border: Border.all(color: accent.withValues(alpha: 0.24)),
+        boxShadow: AppShadows.sm,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: accent, size: 25),
+          const SizedBox(height: AppSpacing.x3),
+          Text(
+            label,
+            style: AppTextStyles.subtitle.copyWith(color: palette.mutedText),
+          ),
+          const SizedBox(height: AppSpacing.x2),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: AppTextStyles.h2.copyWith(
+                color: palette.text,
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CompanionDiaryFilterBar extends StatelessWidget {
+  const _CompanionDiaryFilterBar({
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final _CompanionDiaryEntriesFilter selected;
+  final ValueChanged<_CompanionDiaryEntriesFilter> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _CompanionDiaryFilterButton(
+            key: const ValueKey('companion-diary-filter-all'),
+            label: '전체',
+            selected: selected == _CompanionDiaryEntriesFilter.all,
+            onTap: () => onChanged(_CompanionDiaryEntriesFilter.all),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.x4),
+        Expanded(
+          child: _CompanionDiaryFilterButton(
+            key: const ValueKey('companion-diary-filter-this-month'),
+            label: '이번 달',
+            selected: selected == _CompanionDiaryEntriesFilter.thisMonth,
+            onTap: () => onChanged(_CompanionDiaryEntriesFilter.thisMonth),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CompanionDiaryFilterButton extends StatelessWidget {
+  const _CompanionDiaryFilterButton({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final background = selected ? palette.primary : palette.cardSurface;
+    final foreground = selected ? AppColors.fgOnDark : palette.text;
+    return Material(
+      color: background,
+      borderRadius: BorderRadius.circular(999),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 44),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: selected ? palette.primary : palette.subtleBorder,
+            ),
+          ),
+          child: Text(
+            label,
+            style: AppTextStyles.buttonLabel.copyWith(color: foreground),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CompanionDiaryEntriesEmptyState extends StatelessWidget {
+  const _CompanionDiaryEntriesEmptyState({required this.filter});
+
+  final _CompanionDiaryEntriesFilter filter;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final message = filter == _CompanionDiaryEntriesFilter.thisMonth
+        ? '이번 달에 남긴 신앙 다이어리가 없어요.'
+        : '아직 남긴 신앙 다이어리가 없어요.\n오늘 탭에서 첫 기록을 남겨보세요.';
+    return Center(
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: AppTextStyles.body.copyWith(
+          color: palette.mutedText,
+          fontWeight: FontWeight.w800,
+          height: 1.55,
+        ),
+      ),
+    );
+  }
+}
+
+DateTime _dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
+
+String _formatDiaryDateHeader(DateTime date) {
+  const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+  return '${date.month}월 ${date.day}일 ${weekdays[date.weekday - 1]}요일';
+}
+
+String _formatDiaryTime(DateTime date) {
+  final local = toKst(date);
+  final period = local.hour < 12 ? '오전' : '오후';
+  final hour = local.hour % 12 == 0 ? 12 : local.hour % 12;
+  final minute = local.minute.toString().padLeft(2, '0');
+  return '$period $hour:$minute';
 }
 
 int _compareEntriesNewestFirst(

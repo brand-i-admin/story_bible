@@ -149,14 +149,25 @@ void main() {
                 '② 신앙 다이어리\n'
                 '③ 통독\n'
                 "(기록은 '내정보'에 쌓여요)",
+            checklistStates: {'1': true, '2': false, '3': true},
           ),
         ),
       ),
     );
 
-    expect(find.byKey(const ValueKey('map-hint-step-badge-1')), findsOneWidget);
-    expect(find.byKey(const ValueKey('map-hint-step-badge-2')), findsOneWidget);
-    expect(find.byKey(const ValueKey('map-hint-step-badge-3')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('map-hint-check-1-completed')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('map-hint-check-2-pending')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('map-hint-check-3-completed')),
+      findsOneWidget,
+    );
+    expect(find.byType(Checkbox), findsNothing);
     expect(find.text('이야기 탐험'), findsOneWidget);
     expect(find.text('신앙 다이어리'), findsOneWidget);
     expect(find.text('통독'), findsOneWidget);

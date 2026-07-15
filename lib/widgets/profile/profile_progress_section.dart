@@ -5,16 +5,10 @@
 part of '../profile_tab_page.dart';
 
 extension ProfileProgressSectionExt on ProfileTabPageState {
-  Widget _buildProfileProgressSection({
-    required AppUserProfile profile,
-    bool scrollBody = true,
-  }) {
-    final todayActions = _profileTodayActions();
-    final body = ProfileLeftPanelExt(this)._buildProfileBodyShell(
-      profile: profile,
-      todayActions: todayActions,
-      child: _profileProgressLifeBody(),
-    );
+  Widget _buildProfileProgressSection({bool scrollBody = true}) {
+    final body = ProfileLeftPanelExt(
+      this,
+    )._buildProfileBodyShell(child: _profileProgressLifeBody());
     if (!scrollBody) {
       return body;
     }
@@ -43,55 +37,25 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
       lastCompletedChapterNo: lastCompletedChapter?.chapterNo,
       completedToday: _hasBibleReadToday(state, today),
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ProfileLeftPanelExt(this)._buildProfileStoryExplorationDashboard(),
-        const SizedBox(height: 10),
-        ProfileDiaryFeatureCards(
-          today: today,
-          todayCompanionDiary: todayCompanionDiary,
-          companionDiaryEntries: _profileCompanionDiaryEntries,
-          companionDiaryLoading: _profileCompanionDiaryLoading,
-          companionDiaryError: _profileCompanionDiaryError,
-          onSaveCompanionDiary: _saveCompanionDiaryEntry,
-          onDeleteCompanionDiary: _deleteCompanionDiaryEntry,
-          bibleProgress: bibleProgressSummary,
-          onOpenBibleProgress: _openBibleProgressDialog,
-          onContinueBibleReading: () {
-            unawaited(_openBibleReaderFromLastCompletedChapter());
-          },
-        ),
-      ],
+    return ProfileLeftPanelExt(this)._buildProfileStoryExplorationDashboard(
+      featureSection: ProfileDiaryFeatureCards(
+        today: today,
+        todayCompanionDiary: todayCompanionDiary,
+        companionDiaryEntries: _profileCompanionDiaryEntries,
+        companionDiaryLoading: _profileCompanionDiaryLoading,
+        companionDiaryError: _profileCompanionDiaryError,
+        onSaveCompanionDiary: _saveCompanionDiaryEntry,
+        onDeleteCompanionDiary: _deleteCompanionDiaryEntry,
+        bibleProgress: bibleProgressSummary,
+        onOpenBibleProgress: _openBibleProgressPage,
+        onContinueBibleReading: null,
+        profileSummaryMode: true,
+      ),
     );
   }
 
   bool _isSameProfileDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
-  ({bool storyExploration, bool companionDiary, bool bibleReading})
-  _profileTodayActions() {
-    final state = ref.watch(storyControllerProvider);
-    final today = toKst(DateTime.now());
-    final todayCompanionDiary = _profileCompanionDiaryEntries.any(
-      (entry) => _isSameProfileDate(entry.entryDate, today),
-    );
-    return (
-      storyExploration: _hasStoryEmotionToday(state, today),
-      companionDiary: todayCompanionDiary,
-      bibleReading: _hasBibleReadToday(state, today),
-    );
-  }
-
-  bool _hasStoryEmotionToday(StoryState state, DateTime today) {
-    return state.eventEmotionMarks.values.any((mark) {
-      final updatedAt = mark.updatedAt;
-      if (updatedAt == null) {
-        return false;
-      }
-      return _isSameProfileDate(toKst(updatedAt), today);
-    });
   }
 
   bool _hasBibleReadToday(StoryState state, DateTime today) {

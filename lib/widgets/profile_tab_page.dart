@@ -19,6 +19,7 @@ import '../models/quiz_attempt_summary.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
 import '../models/user_companion_diary_entry.dart';
+import '../screens/bible_progress_screen.dart';
 import '../screens/legal_documents_screen.dart';
 import '../screens/saved_verses_screen.dart';
 import '../state/auth_providers.dart';
@@ -37,6 +38,7 @@ import 'parchment_dialog.dart';
 import 'parchment_page_scaffold.dart';
 import 'profile/companion_diary_entry_card.dart';
 import 'profile/glowing_add_button.dart';
+import 'profile/profile_activity_badge.dart';
 import 'profile/profile_emotion_diary.dart';
 import 'profile/profile_event_review_grid.dart';
 import 'profile/profile_feature_flags.dart';
@@ -789,12 +791,9 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildProfileHeader(),
+                  _buildProfileHeader(profile),
                   const SizedBox(height: 6),
-                  _buildProfileProgressSection(
-                    profile: profile,
-                    scrollBody: false,
-                  ),
+                  _buildProfileProgressSection(scrollBody: false),
                   if (showPrayerActivitySection) ...[
                     const SizedBox(height: 8),
                     _profileSectionsFrame(
@@ -822,18 +821,14 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildProfileHeader(),
+              _buildProfileHeader(profile),
               const SizedBox(height: 6),
               Expanded(
                 child: showPrayerActivitySection
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: _buildProfileProgressSection(
-                              profile: profile,
-                            ),
-                          ),
+                          Expanded(child: _buildProfileProgressSection()),
                           SizedBox(width: gap),
                           SizedBox(
                             width: leftWidth,
@@ -849,7 +844,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
                           ),
                         ],
                       )
-                    : _buildProfileProgressSection(profile: profile),
+                    : _buildProfileProgressSection(),
               ),
             ],
           ),
@@ -1083,7 +1078,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     final state = ref.watch(storyControllerProvider);
     final isAuthenticated = ref.watch(signedInUserProvider) != null;
     return SubPageScaffold(
-      title: '프로필',
+      title: '내정보',
       compactBackOnly: true,
       showBackButton: !widget.embedded,
       onBack: widget.onBackToHome,
@@ -1109,8 +1104,8 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             Positioned.fill(
               child: lockedPreviewOverlay(
                 child: InlineLoginPromptCard(
-                  title: '프로필을 보려면 로그인이 필요해요',
-                  description: '프로필, 저장한 이야기와 말씀, 공부 기록은 로그인 후 사용할 수 있어요.',
+                  title: '내정보를 보려면 로그인이 필요해요',
+                  description: '내정보, 저장한 이야기와 말씀, 공부 기록은 로그인 후 사용할 수 있어요.',
                   onSignedIn: () async {
                     if (!mounted) {
                       return;

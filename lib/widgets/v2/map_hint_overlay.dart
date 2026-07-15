@@ -15,11 +15,13 @@ class MapHintOverlay extends StatelessWidget {
     required this.message,
     this.avatarSize = _guideAvatarSize,
     this.avatarAssetPath = 'assets/avatars_thumbs/guide.png',
+    this.checklistStates,
   });
 
   final String message;
   final double avatarSize;
   final String avatarAssetPath;
+  final Map<String, bool>? checklistStates;
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +118,12 @@ class MapHintOverlay extends StatelessWidget {
                             size: avatarSize,
                           ),
                           const SizedBox(width: _guideAvatarGap),
-                          Expanded(child: _GuideSpeechBubble(message: message)),
+                          Expanded(
+                            child: _GuideSpeechBubble(
+                              message: message,
+                              checklistStates: checklistStates,
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -182,9 +189,10 @@ bool _isGuideAsideLine(String line) {
 }
 
 class _GuideSpeechBubble extends StatelessWidget {
-  const _GuideSpeechBubble({required this.message});
+  const _GuideSpeechBubble({required this.message, this.checklistStates});
 
   final String message;
+  final Map<String, bool>? checklistStates;
 
   @override
   Widget build(BuildContext context) {
@@ -201,15 +209,19 @@ class _GuideSpeechBubble extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: _GuideSpeechMessage(message: message),
+      child: _GuideSpeechMessage(
+        message: message,
+        checklistStates: checklistStates,
+      ),
     );
   }
 }
 
 class _GuideSpeechMessage extends StatelessWidget {
-  const _GuideSpeechMessage({required this.message});
+  const _GuideSpeechMessage({required this.message, this.checklistStates});
 
   final String message;
+  final Map<String, bool>? checklistStates;
 
   static const circledDigits = <String, String>{'①': '1', '②': '2', '③': '3'};
 
@@ -234,6 +246,8 @@ class _GuideSpeechMessage extends StatelessWidget {
                     number: circledDigits[line.trimLeft()[0]]!,
                     text: line.trimLeft().substring(1).trimLeft(),
                     textStyle: textStyle,
+                    completed:
+                        checklistStates?[circledDigits[line.trimLeft()[0]]!],
                   ),
                 )
               : _isAsideLine(line)
@@ -275,11 +289,13 @@ class _GuideStepLine extends StatelessWidget {
     required this.number,
     required this.text,
     required this.textStyle,
+    this.completed,
   });
 
   final String number;
   final String text;
   final TextStyle textStyle;
+  final bool? completed;
 
   @override
   Widget build(BuildContext context) {
@@ -288,29 +304,44 @@ class _GuideStepLine extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          key: ValueKey('map-hint-step-badge-$number'),
-          width: 18,
-          height: 18,
-          margin: const EdgeInsets.only(top: 1.5, right: 7),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: stepBadgeColor,
-            border: Border.all(
-              color: palette.currentAccent.withValues(alpha: 0.38),
-              width: 1,
+        if (completed != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 1.5, right: 7),
+            child: Icon(
+              completed!
+                  ? Icons.check_box_rounded
+                  : Icons.check_box_outline_blank_rounded,
+              key: ValueKey(
+                'map-hint-check-$number-${completed! ? 'completed' : 'pending'}',
+              ),
+              color: textStyle.color,
+              size: 18,
+            ),
+          )
+        else
+          Container(
+            key: ValueKey('map-hint-step-badge-$number'),
+            width: 18,
+            height: 18,
+            margin: const EdgeInsets.only(top: 1.5, right: 7),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: stepBadgeColor,
+              border: Border.all(
+                color: palette.currentAccent.withValues(alpha: 0.38),
+                width: 1,
+              ),
+            ),
+            child: Text(
+              number,
+              style: textStyle.copyWith(
+                fontSize: 10.5,
+                height: 1,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
-          child: Text(
-            number,
-            style: textStyle.copyWith(
-              fontSize: 10.5,
-              height: 1,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
         Expanded(
           child: Text(
             text,

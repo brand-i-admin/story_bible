@@ -8,36 +8,20 @@ import '../../models/event_emotion_mark.dart';
 import '../../models/quiz_attempt_summary.dart';
 import '../../models/story_event.dart';
 import '../../models/user_companion_diary_entry.dart';
-import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/daily_exploration_selection.dart';
 import '../../utils/scene_asset_loader.dart';
+import '../../utils/today_activity_summary.dart';
 import '../map/story_event_marker_presentation.dart';
 import '../profile/companion_diary_entry_card.dart';
-import '../story_bottom_panel_style.dart';
 import '../story_map_panel.dart';
-import '../v2/map_hint_overlay.dart';
 import '../web_pointer_interceptor.dart';
 import 'home_journey_overlay.dart';
-
-class TodayHomePageController {
-  _TodayHomePageState? _state;
-
-  void showWelcomeGuide() => _state?._showWelcomeGuideAgain();
-
-  void _bind(_TodayHomePageState state) => _state = state;
-
-  void _unbind(_TodayHomePageState state) {
-    if (_state == state) {
-      _state = null;
-    }
-  }
-}
+import 'today_activity_header.dart';
 
 class TodayHomePage extends StatefulWidget {
   const TodayHomePage({
     super.key,
-    this.controller,
     required this.mapKey,
     required this.mapController,
     required this.events,
@@ -51,8 +35,8 @@ class TodayHomePage extends StatefulWidget {
     required this.diaryLoading,
     required this.diaryError,
     required this.bibleTargetLabel,
-    required this.todayStoryCompleted,
-    required this.bibleReadingCompleted,
+    required this.nickname,
+    required this.activitySummary,
     required this.colorForCharacter,
     required this.onOpenStory,
     required this.onSaveDiary,
@@ -64,7 +48,6 @@ class TodayHomePage extends StatefulWidget {
     required this.onOpenSearch,
   });
 
-  final TodayHomePageController? controller;
   final Key mapKey;
   final StoryMapPanelController mapController;
   final List<StoryEvent> events;
@@ -78,8 +61,8 @@ class TodayHomePage extends StatefulWidget {
   final bool diaryLoading;
   final String? diaryError;
   final String bibleTargetLabel;
-  final bool todayStoryCompleted;
-  final bool bibleReadingCompleted;
+  final String nickname;
+  final TodayActivitySummary activitySummary;
   final Color Function(String characterCode) colorForCharacter;
   final ValueChanged<StoryEvent> onOpenStory;
   final CompanionDiarySaveCallback? onSaveDiary;
@@ -95,19 +78,15 @@ class TodayHomePage extends StatefulWidget {
 }
 
 class _TodayHomePageState extends State<TodayHomePage> {
-  static const double _todayPanelCollapsedHeight = 64;
   final SceneAssetLoader _sceneAssetLoader = SceneAssetLoader();
   String? _currentEventId;
   String? _currentThumbnailEventId;
   String? _currentThumbnailUrl;
   int _thumbnailRequest = 0;
-  bool _panelExpanded = true;
-  bool _showWelcomeGuide = true;
 
   @override
   void initState() {
     super.initState();
-    widget.controller?._bind(this);
     _currentEventId = widget.recommendedEventId;
     unawaited(_loadCurrentThumbnail(_currentEventId));
   }
@@ -115,10 +94,6 @@ class _TodayHomePageState extends State<TodayHomePage> {
   @override
   void didUpdateWidget(covariant TodayHomePage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.controller != widget.controller) {
-      oldWidget.controller?._unbind(this);
-      widget.controller?._bind(this);
-    }
     if (oldWidget.recommendedEventId != widget.recommendedEventId) {
       _currentEventId = widget.recommendedEventId;
       unawaited(_loadCurrentThumbnail(_currentEventId));
@@ -129,30 +104,10 @@ class _TodayHomePageState extends State<TodayHomePage> {
     }
   }
 
-  @override
-  void dispose() {
-    widget.controller?._unbind(this);
-    super.dispose();
-  }
-
   void _selectCurrentEvent(String eventId) {
     if (_currentEventId == eventId) return;
     setState(() => _currentEventId = eventId);
     unawaited(_loadCurrentThumbnail(eventId));
-  }
-
-  void _togglePanel() {
-    setState(() => _panelExpanded = !_panelExpanded);
-  }
-
-  void _dismissWelcomeGuide() {
-    if (!_showWelcomeGuide) return;
-    setState(() => _showWelcomeGuide = false);
-  }
-
-  void _showWelcomeGuideAgain() {
-    if (_showWelcomeGuide || !mounted) return;
-    setState(() => _showWelcomeGuide = true);
   }
 
   Future<void> _loadCurrentThumbnail(String? eventId) async {
@@ -196,155 +151,137 @@ class _TodayHomePageState extends State<TodayHomePage> {
     }
     return LayoutBuilder(
       builder: (context, constraints) {
-        final overlayHeight = (constraints.maxHeight * 0.48)
-            .clamp(330.0, 445.0)
-            .toDouble();
-        final panelHeight = _panelExpanded
-            ? overlayHeight
-            : _todayPanelCollapsedHeight;
-        final topObscured = media.padding.top + _TodayHeaderAction.extent + 14;
+        final textScale = media.textScaler.scale(1);
+        final floatingOverlayExtent =
+            304.0 + ((textScale - 1) * 185).clamp(0.0, 76.0);
+        final activityLabelTop =
+            media.padding.top + TodayActivityHeader.mapObscuredExtent + 8;
+        final topObscured =
+            activityLabelTop + TodayActivityLabelRail.mapOverlayExtent;
         final bottomObscuredFraction = constraints.maxHeight <= 0
             ? 0.48
-            : (panelHeight / constraints.maxHeight).clamp(0.0, 0.75);
-        return Listener(
-          behavior: HitTestBehavior.translucent,
-          onPointerDown: (_) => _dismissWelcomeGuide(),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: StoryMapPanel(
-                  key: widget.mapKey,
-                  controller: widget.mapController,
-                  events: mapSelection.events,
-                  selectedEventId: currentEventId,
-                  onSelectEvent: _selectCurrentEvent,
-                  onCloseSelectedCallout: () {},
-                  onOpenDetail: (eventId) {
-                    final event = widget.events
-                        .where((entry) => entry.id == eventId)
-                        .firstOrNull;
-                    if (event != null) {
-                      widget.onOpenStory(event);
-                    }
-                  },
-                  colorForCharacter: widget.colorForCharacter,
-                  selectedCharacterCodes: const <String>{},
-                  eventEmotionMarks: widget.eventEmotionMarks,
-                  markerPresentation: StoryEventMarkerPresentation.dailyJourney(
-                    roles: mapSelection.markerRoles,
-                    thumbnailUrls: thumbnailUrls,
-                  ),
-                  mapGesturesEnabled: true,
-                  decorate: false,
-                  showSelectedCallout: false,
-                  animateReveal: false,
-                  fitEventIds: mapSelection.fitEventIds,
-                  fitAllZoomAdjust: 0.0,
-                  fitTightClusterMaxZoom: 9.0,
-                  showEventPath: true,
-                  topObscuredPixels: topObscured,
-                  bottomObscuredFraction: bottomObscuredFraction,
-                  showCharacterLegend: false,
+            : (floatingOverlayExtent / constraints.maxHeight).clamp(0.0, 0.68);
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: StoryMapPanel(
+                key: widget.mapKey,
+                controller: widget.mapController,
+                events: mapSelection.events,
+                selectedEventId: currentEventId,
+                onSelectEvent: _selectCurrentEvent,
+                onCloseSelectedCallout: () {},
+                onOpenDetail: (eventId) {
+                  final event = widget.events
+                      .where((entry) => entry.id == eventId)
+                      .firstOrNull;
+                  if (event != null) {
+                    widget.onOpenStory(event);
+                  }
+                },
+                colorForCharacter: widget.colorForCharacter,
+                selectedCharacterCodes: const <String>{},
+                eventEmotionMarks: widget.eventEmotionMarks,
+                markerPresentation: StoryEventMarkerPresentation.dailyJourney(
+                  roles: mapSelection.markerRoles,
+                  thumbnailUrls: thumbnailUrls,
                 ),
+                mapGesturesEnabled: true,
+                decorate: false,
+                showSelectedCallout: false,
+                animateReveal: false,
+                fitEventIds: mapSelection.fitEventIds,
+                fitAllZoomAdjust: 0.0,
+                fitTightClusterMaxZoom: 9.0,
+                showEventPath: true,
+                topObscuredPixels: topObscured,
+                bottomObscuredFraction: bottomObscuredFraction,
+                showCharacterLegend: false,
               ),
-              if (_showWelcomeGuide)
-                Positioned(
-                  top: media.padding.top + _TodayHeaderAction.extent + 14,
-                  left: 0,
-                  right: 0,
-                  bottom: panelHeight + 18,
-                  child: const IgnorePointer(
-                    child: MapHintOverlay(
-                      message:
-                          '환영합니다! 매일 3가지로 주님과 동행해요!\n'
-                          '① 이야기 탐험\n'
-                          '(최근 감정을 새긴 다음 이야기가 추천되요)\n'
-                          '② 신앙 다이어리\n'
-                          '③ 통독\n'
-                          "(기록은 '내정보'에 쌓여요)",
-                      avatarSize: 58,
-                    ),
-                  ),
-                ),
-              Positioned(
-                top: media.padding.top + 8,
-                left: 12,
-                right: 12,
-                child: WebPointerInterceptor(
-                  child: _TodayHeaderActions(
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: WebPointerInterceptor(
+                child: TodayActivityHeader(
+                  nickname: widget.nickname,
+                  actions: _TodayHeaderActions(
                     onOpenFontSettings: widget.onOpenFontSettings,
                     onOpenThemeSettings: widget.onOpenThemeSettings,
                     onOpenSearch: widget.onOpenSearch,
                   ),
                 ),
               ),
-              Positioned(
-                left: storyBottomPanelHorizontalMargin(constraints.maxWidth),
-                right: storyBottomPanelHorizontalMargin(constraints.maxWidth),
-                bottom: 0,
-                child: Listener(
-                  behavior: HitTestBehavior.opaque,
-                  onPointerDown: (_) {
-                    widget.mapController.suppressMapTaps(
-                      const Duration(milliseconds: 1200),
-                    );
-                    widget.mapController.suspendMapGestures();
-                  },
-                  onPointerMove: (_) {
-                    widget.mapController.suppressMapTaps();
-                    widget.mapController.suspendMapGestures();
-                  },
-                  onPointerUp: (_) {
-                    widget.mapController.suppressMapTaps(
-                      const Duration(milliseconds: 1200),
-                    );
-                    widget.mapController.clearMapGestureSuspension();
-                  },
-                  onPointerCancel: (_) {
-                    widget.mapController.suppressMapTaps(
-                      const Duration(milliseconds: 1200),
-                    );
-                    widget.mapController.clearMapGestureSuspension();
-                  },
-                  onPointerSignal: (_) =>
-                      widget.mapController.suppressMapTaps(),
-                  child: WebPointerInterceptor(
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 280),
-                      curve: Curves.easeOutCubic,
-                      height: panelHeight,
-                      child: HomeJourneyOverlay(
-                        events: widget.events,
-                        recommendedEventId: widget.recommendedEventId,
-                        currentEventId: currentEventId,
-                        eras: widget.eras,
-                        charactersByCode: widget.charactersByCode,
-                        eventEmotionMarks: widget.eventEmotionMarks,
-                        quizAttemptSummaries: widget.quizAttemptSummaries,
-                        isAuthenticated: widget.isAuthenticated,
-                        todayDiary: widget.todayDiary,
-                        diaryLoading: widget.diaryLoading,
-                        diaryError: widget.diaryError,
-                        bibleTargetLabel: widget.bibleTargetLabel,
-                        todayStoryCompleted: widget.todayStoryCompleted,
-                        bibleReadingCompleted: widget.bibleReadingCompleted,
-                        panelExpanded: _panelExpanded,
-                        onTogglePanel: _togglePanel,
-                        onOpenStory: widget.onOpenStory,
-                        onCurrentStoryChanged: (event) {
-                          _selectCurrentEvent(event.id);
-                        },
-                        onSaveDiary: widget.onSaveDiary,
-                        onDeleteDiary: widget.onDeleteDiary,
-                        onContinueBibleReading: widget.onContinueBibleReading,
-                        onOpenProfile: widget.onOpenProfile,
-                      ),
-                    ),
+            ),
+            Positioned(
+              top: activityLabelTop,
+              left: AppSpacing.x5,
+              right: AppSpacing.x5,
+              child: WebPointerInterceptor(
+                child: TodayActivityLabelRail(summary: widget.activitySummary),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 8,
+              child: Listener(
+                behavior: HitTestBehavior.opaque,
+                onPointerDown: (_) {
+                  widget.mapController.suppressMapTaps(
+                    const Duration(milliseconds: 1200),
+                  );
+                  widget.mapController.suspendMapGestures();
+                },
+                onPointerMove: (_) {
+                  widget.mapController.suppressMapTaps();
+                  widget.mapController.suspendMapGestures();
+                },
+                onPointerUp: (_) {
+                  widget.mapController.suppressMapTaps(
+                    const Duration(milliseconds: 1200),
+                  );
+                  widget.mapController.clearMapGestureSuspension();
+                },
+                onPointerCancel: (_) {
+                  widget.mapController.suppressMapTaps(
+                    const Duration(milliseconds: 1200),
+                  );
+                  widget.mapController.clearMapGestureSuspension();
+                },
+                onPointerSignal: (_) => widget.mapController.suppressMapTaps(),
+                child: WebPointerInterceptor(
+                  child: HomeJourneyOverlay(
+                    events: widget.events,
+                    recommendedEventId: widget.recommendedEventId,
+                    currentEventId: currentEventId,
+                    eras: widget.eras,
+                    charactersByCode: widget.charactersByCode,
+                    eventEmotionMarks: widget.eventEmotionMarks,
+                    quizAttemptSummaries: widget.quizAttemptSummaries,
+                    isAuthenticated: widget.isAuthenticated,
+                    todayDiary: widget.todayDiary,
+                    diaryLoading: widget.diaryLoading,
+                    diaryError: widget.diaryError,
+                    bibleTargetLabel: widget.bibleTargetLabel,
+                    todayStoryCompleted:
+                        widget.activitySummary.explorationCount > 0,
+                    bibleReadingCompleted:
+                        widget.activitySummary.bibleChapterCount > 0,
+                    onOpenStory: widget.onOpenStory,
+                    onCurrentStoryChanged: (event) {
+                      _selectCurrentEvent(event.id);
+                    },
+                    onSaveDiary: widget.onSaveDiary,
+                    onDeleteDiary: widget.onDeleteDiary,
+                    onContinueBibleReading: widget.onContinueBibleReading,
+                    onOpenProfile: widget.onOpenProfile,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
@@ -413,9 +350,8 @@ class _TodayHeaderAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
     return Material(
-      color: palette.primaryDeep.withValues(alpha: 0.88),
+      color: AppColors.ink800.withValues(alpha: 0.92),
       borderRadius: BorderRadius.circular(AppRadii.lg),
       child: InkWell(
         onTap: onTap,
