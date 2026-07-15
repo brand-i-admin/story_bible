@@ -37,6 +37,9 @@ class StoryTerrain3dMap extends StatefulWidget {
     required this.visibleEventCount,
     required this.orderedEventsActive,
     required this.eventEmotionMarks,
+    this.eventMarkerRoles = const {},
+    this.eventMarkerThumbnailUrls = const {},
+    this.mapGesturesEnabled = true,
     required this.regionPickerMode,
     this.countryBorderLines = const [],
     this.countryLabels = const [],
@@ -61,6 +64,9 @@ class StoryTerrain3dMap extends StatefulWidget {
   final int visibleEventCount;
   final bool orderedEventsActive;
   final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, String> eventMarkerRoles;
+  final Map<String, String> eventMarkerThumbnailUrls;
+  final bool mapGesturesEnabled;
   final bool regionPickerMode;
   final List<List<LatLng>> countryBorderLines;
   final List<StoryTerrainCountryLabel> countryLabels;
@@ -186,7 +192,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   static const _boundsEast = 64.0;
   static const _boundsNorth = 50.5;
   static const _initialLoadTimeoutDuration = Duration(seconds: 20);
-  static const _htmlRevision = 'event-pin-z-index-2026-06-02';
+  static const _htmlRevision = 'today-thumbnail-pin-2026-07-15';
   static const _homeIntroZoomOutDelta = 0.72;
   static final Set<Factory<OneSequenceGestureRecognizer>>
   _mapGestureRecognizers = <Factory<OneSequenceGestureRecognizer>>{
@@ -260,6 +266,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       widget.controller?._bind(this);
     }
     _loadHtmlIfNeeded();
+    if (oldWidget.mapGesturesEnabled != widget.mapGesturesEnabled) {
+      _syncGestureAvailability();
+    }
   }
 
   @override
@@ -363,6 +372,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           widget.onMapReady?.call();
           _flushPendingCameraPayload();
           _flushPendingOverlayPayload();
+          _syncGestureAvailability();
           break;
         case 'mapError':
           debugPrint('[Map3D] map error: ${decoded['message'] ?? decoded}');
@@ -440,6 +450,8 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
               )
               .toList()
             ..sort(),
+      'eventMarkerRoles': widget.eventMarkerRoles,
+      'eventMarkerThumbnailUrls': widget.eventMarkerThumbnailUrls,
     });
     if (!force && rendererSignature == _lastRendererSignature) {
       if (cameraSignature != _lastCameraSignature) {
@@ -771,6 +783,16 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     ''');
   }
 
+  void _syncGestureAvailability() {
+    if (!_mapReady) return;
+    final enabled = widget.mapGesturesEnabled ? 'true' : 'false';
+    _runMapJavaScript('''
+      if (window.storyBibleSetGesturesEnabled) {
+        window.storyBibleSetGesturesEnabled($enabled);
+      }
+    ''');
+  }
+
   Future<void> _runMapJavaScript(String script) {
     if (kIsWeb) {
       return _webController.runJavaScript('''
@@ -812,6 +834,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       'maxTileCacheZoomLevels': _useReducedAndroidRenderer ? 2 : null,
       'maxPitch': _useReducedAndroidRenderer ? 18 : 85,
       'lockPitch': _useReducedAndroidRenderer,
+      'mapGesturesEnabled': widget.mapGesturesEnabled,
       'pitch': _effectivePitch,
       'bearing': _effectiveBearing,
       'zoom': widget.zoom.clamp(_minZoom, _maxZoom).toDouble(),
@@ -915,6 +938,104 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       border-color: #fff1b8;
       box-shadow: 0 4px 10px rgba(39, 32, 20, 0.38), 0 0 0 5px rgba(250, 239, 216, 0.68);
     }
+    .story-event-marker.journey-role {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      color: #fffaf0;
+      border-color: rgba(255, 255, 255, 0.96);
+      font-size: 11px;
+      box-shadow: 0 4px 11px rgba(39, 32, 20, 0.30), 0 0 0 4px rgba(255, 248, 232, 0.60);
+    }
+    .story-event-marker.journey-previous {
+      background: #c7773d;
+      box-shadow: 0 4px 11px rgba(123, 65, 30, 0.34), 0 0 0 4px rgba(255, 232, 209, 0.62);
+    }
+    .story-event-marker.journey-next {
+      background: #2f8b82;
+      box-shadow: 0 4px 11px rgba(22, 91, 85, 0.34), 0 0 0 4px rgba(213, 245, 237, 0.64);
+    }
+    .story-event-marker .journey-label {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 5px);
+      min-width: 31px;
+      padding: 3px 6px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      color: #fff;
+      background: inherit;
+      border: 1.5px solid rgba(255, 255, 255, 0.96);
+      font-size: 8.5px;
+      font-weight: 900;
+      line-height: 1;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(39, 32, 20, 0.24);
+    }
+    .story-event-marker.journey-current {
+      width: 58px;
+      height: 58px;
+      padding: 3px;
+      transform: translateY(-23px);
+      color: #6048a8;
+      background: #f8f2ff;
+      border: 4px solid #8a72d6;
+      box-shadow: 0 8px 18px rgba(77, 54, 143, 0.38), 0 0 0 6px rgba(229, 218, 255, 0.72);
+      isolation: auto;
+    }
+    .story-event-marker.journey-current::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -11px;
+      width: 19px;
+      height: 19px;
+      z-index: -1;
+      transform: translateX(-50%) rotate(45deg);
+      border-radius: 0 0 4px 0;
+      background: #8a72d6;
+      box-shadow: 5px 5px 9px rgba(77, 54, 143, 0.25);
+    }
+    .story-event-marker .current-thumbnail {
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: relative;
+      z-index: 2;
+      border-radius: 999px;
+      object-fit: cover;
+      background: #eadffd;
+    }
+    .story-event-marker .current-thumbnail-fallback {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      place-items: center;
+      position: relative;
+      z-index: 2;
+      border-radius: 999px;
+      background: linear-gradient(145deg, #f8f2ff, #dacbf5);
+      font-size: 17px;
+    }
+    .story-event-marker .current-accent-badge {
+      position: absolute;
+      right: -13px;
+      top: -7px;
+      min-width: 31px;
+      height: 20px;
+      padding: 0 6px;
+      display: grid;
+      place-items: center;
+      z-index: 4;
+      border-radius: 999px;
+      color: #fff;
+      background: #f2a340;
+      border: 2px solid #fff8eb;
+      font-size: 8.5px;
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: 0 3px 8px rgba(136, 78, 20, 0.32);
+    }
     .story-event-marker.emotion {
       width: 28px;
       height: 28px;
@@ -965,6 +1086,22 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       font-weight: 900;
       line-height: 1;
       box-shadow: 0 1px 3px rgba(39, 32, 20, 0.26);
+    }
+    .story-event-marker .journey-emotion-badge {
+      position: absolute;
+      right: -7px;
+      top: -7px;
+      width: 15px;
+      height: 15px;
+      display: grid;
+      place-items: center;
+      z-index: 3;
+      border-radius: 999px;
+      background: #fff4d6;
+      border: 1px solid #d49a42;
+      font-size: 8px;
+      line-height: 1;
+      box-shadow: 0 1px 4px rgba(39, 32, 20, 0.24);
     }
     .story-map-stamp {
       position: absolute;
@@ -1143,7 +1280,8 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       maxPitch: Number(config.maxPitch || 85),
       minZoom: config.minZoom,
       maxZoom: config.maxZoom,
-      maxBounds: config.maxBounds
+      maxBounds: config.maxBounds,
+      interactive: Boolean(config.mapGesturesEnabled)
     };
     const maxTileCacheSize = numberOrNull(config.maxTileCacheSize);
     if (maxTileCacheSize !== null) {
@@ -1161,13 +1299,15 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         message: error && error.message ? error.message : String(error || 'unknown MapLibre error')
       });
     });
-    if (map.dragPan && map.dragPan.enable) {
-      map.dragPan.enable();
+    if (config.mapGesturesEnabled) {
+      if (map.dragPan && map.dragPan.enable) {
+        map.dragPan.enable();
+      }
+      if (map.touchZoomRotate && map.touchZoomRotate.enable) {
+        map.touchZoomRotate.enable();
+      }
     }
-    if (map.touchZoomRotate && map.touchZoomRotate.enable) {
-      map.touchZoomRotate.enable();
-    }
-    if (!config.lockPitch) {
+    if (config.mapGesturesEnabled && !config.lockPitch) {
       if (map.dragRotate && map.dragRotate.enable) {
         map.dragRotate.enable();
       }
@@ -1291,12 +1431,25 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         setHandlerEnabled(map.touchPitch, false);
       }
     };
+    let userGesturesEnabled = Boolean(config.mapGesturesEnabled);
     const resumeUserGestureHandlers = () => {
-      setUserGestureHandlersEnabled(true);
+      if (userGesturesEnabled) {
+        setUserGestureHandlersEnabled(true);
+      } else {
+        setUserGestureHandlersEnabled(false);
+      }
       if (config.lockPitch) {
         setHandlerEnabled(map.dragRotate, false);
         setHandlerEnabled(map.touchPitch, false);
       }
+    };
+    window.storyBibleSetGesturesEnabled = (enabled) => {
+      userGesturesEnabled = Boolean(enabled);
+      if (performance.now() < mapGesturesSuspendedUntil) {
+        setUserGestureHandlersEnabled(false);
+        return;
+      }
+      resumeUserGestureHandlers();
     };
     window.storyBibleClearMapGestureSuspension = () => {
       mapGesturesSuspendedUntil = 0;
@@ -1468,6 +1621,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     const eventMarkerZIndex = (id, properties) => {
       const label = Number(properties.label || 0);
       let z = 900 + (Number.isFinite(label) ? label : 0);
+      if (properties.journeyRole) z += 1800;
       if (properties.hasEmotion) z += 1300;
       if (properties.selected) z += 2200;
       if (highPriorityEventIds.has(id)) z += 5200;
@@ -1477,17 +1631,63 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       const id = String(properties.id || '');
       const selected = Boolean(properties.selected);
       const hasEmotion = Boolean(properties.hasEmotion);
+      const journeyRole = String(properties.journeyRole || '');
       const highPriority = highPriorityEventIds.has(id);
       root.classList.add('story-event-marker-root');
-      root.classList.toggle('high-priority', highPriority);
+      root.classList.toggle('high-priority', highPriority || Boolean(journeyRole));
       root.style.zIndex = String(eventMarkerZIndex(id, properties));
       element.className = [
         'story-event-marker',
-        selected ? 'selected' : '',
-        hasEmotion ? 'emotion' : ''
+        journeyRole ? 'journey-role' : '',
+        journeyRole ? `journey-\${journeyRole}` : '',
+        !journeyRole && selected ? 'selected' : '',
+        !journeyRole && hasEmotion ? 'emotion' : ''
       ].filter(Boolean).join(' ');
       clearElement(element);
-      if (hasEmotion && properties.emotionEmoji) {
+      if (journeyRole === 'current') {
+        const appendThumbnailFallback = () => {
+          if (element.querySelector('.current-thumbnail-fallback')) return;
+          const fallback = document.createElement('span');
+          fallback.className = 'current-thumbnail-fallback';
+          fallback.textContent = String(properties.label || '');
+          element.prepend(fallback);
+        };
+        const thumbnailUrl = String(properties.thumbnailUrl || '');
+        if (thumbnailUrl) {
+          const thumbnail = document.createElement('img');
+          thumbnail.className = 'current-thumbnail';
+          thumbnail.src = thumbnailUrl;
+          thumbnail.alt = '';
+          thumbnail.decoding = 'async';
+          thumbnail.addEventListener('error', () => {
+            thumbnail.remove();
+            appendThumbnailFallback();
+          });
+          element.appendChild(thumbnail);
+        } else {
+          appendThumbnailFallback();
+        }
+        const accent = document.createElement('span');
+        accent.className = 'current-accent-badge';
+        accent.textContent = '현재';
+        element.appendChild(accent);
+      } else if (journeyRole === 'previous' || journeyRole === 'next') {
+        const number = document.createElement('span');
+        number.textContent = String(properties.label || '');
+        element.appendChild(number);
+        const roleLabel = document.createElement('span');
+        roleLabel.className = 'journey-label';
+        roleLabel.textContent = journeyRole === 'previous' ? '이전' : '다음';
+        element.appendChild(roleLabel);
+      } else if (Boolean(properties.journeyMode) && hasEmotion) {
+        const number = document.createElement('span');
+        number.textContent = String(properties.label || '');
+        element.appendChild(number);
+        const emotionBadge = document.createElement('span');
+        emotionBadge.className = 'journey-emotion-badge';
+        emotionBadge.textContent = String(properties.emotionEmoji || '');
+        element.appendChild(emotionBadge);
+      } else if (hasEmotion && properties.emotionEmoji) {
         const emotion = document.createElement('span');
         emotion.textContent = properties.emotionEmoji;
         element.appendChild(emotion);
@@ -2460,6 +2660,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       final selected = event.id == widget.selectedEventId;
       final point = points[event.id] ?? event.latLng;
       final emotionMark = widget.eventEmotionMarks[event.id];
+      final markerRole = widget.eventMarkerRoles[event.id] ?? '';
+      final markerThumbnailUrl =
+          widget.eventMarkerThumbnailUrls[event.id] ?? '';
       final hasEmotion =
           emotionMark != null && emotionMark.emotionKey.isNotEmpty;
       features.add({
@@ -2472,6 +2675,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           'id': event.id,
           'title': event.title,
           'label': '${i + 1}',
+          'journeyRole': markerRole,
+          'journeyMode': widget.eventMarkerRoles.isNotEmpty,
+          'thumbnailUrl': markerThumbnailUrl,
           'selected': selected,
           'color': _eventColor(event),
           'hasEmotion': hasEmotion,

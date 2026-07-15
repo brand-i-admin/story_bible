@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/utils/scene_asset_loader.dart';
 
 void main() {
@@ -112,4 +113,38 @@ void main() {
       expect(loader.publicUrlForStoragePath('scene_01.png'), 'scene_01.png');
     });
   });
+
+  group('loadThumbnailDataUrlForEvent', () {
+    test('인덱스에 등록된 첫 장면을 지도 핀용 data URL로 로드한다', () async {
+      final thumbnail = await loader.loadThumbnailDataUrlForEvent(
+        _eventWithLocalThumbnail(),
+      );
+
+      expect(thumbnail, isNotNull);
+      expect(thumbnail, startsWith('data:image/jpeg;base64,'));
+    });
+  });
+}
+
+StoryEvent _eventWithLocalThumbnail() {
+  return const StoryEvent(
+    id: 'event-cain',
+    landmarkId: 'landmark-cain',
+    eraId: 'era-primeval',
+    title: '가인과 아벨: 들판의 비극',
+    summary: null,
+    storyScenes: [],
+    sceneCharacters: [],
+    startYear: null,
+    endYear: null,
+    timePrecision: 'approx',
+    storyIndex: 5,
+    rankInEra: 5,
+    globalRank: 5,
+    placeName: null,
+    lat: 31,
+    lng: 35,
+    characterCodes: [],
+    bibleRefs: [],
+  );
 }

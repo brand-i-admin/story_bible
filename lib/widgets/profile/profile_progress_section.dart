@@ -46,9 +46,7 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ProfileLeftPanelExt(this)._buildProfileStoryExplorationDashboard(
-          todayStoryActionCompleted: _hasStoryEmotionToday(state, today),
-        ),
+        ProfileLeftPanelExt(this)._buildProfileStoryExplorationDashboard(),
         const SizedBox(height: 10),
         ProfileDiaryFeatureCards(
           today: today,

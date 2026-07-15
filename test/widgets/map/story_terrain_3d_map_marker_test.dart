@@ -19,6 +19,35 @@ void main() {
       );
     });
 
+    test('오늘 지도 핀은 숫자·이전/다음 역할·현재 썸네일과 제스처 상태를 지원한다', () {
+      final panelSource = File(
+        'lib/widgets/story_map_panel.dart',
+      ).readAsStringSync();
+      final terrainSource = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(panelSource, contains('eventMarkerRoles'));
+      expect(panelSource, contains('eventMarkerThumbnailUrls'));
+      expect(panelSource, contains('fitEventIds'));
+      expect(panelSource, contains('mapGesturesEnabled'));
+      expect(terrainSource, contains('eventMarkerRoles'));
+      expect(terrainSource, contains('eventMarkerThumbnailUrls'));
+      expect(terrainSource, contains("'journeyRole'"));
+      expect(terrainSource, contains("'thumbnailUrl'"));
+      expect(terrainSource, contains("'journeyMode'"));
+      expect(terrainSource, contains('journey-current'));
+      expect(terrainSource, contains('journey-previous'));
+      expect(terrainSource, contains('journey-next'));
+      expect(terrainSource, contains('current-thumbnail'));
+      expect(terrainSource, contains("thumbnail.decoding = 'async';"));
+      expect(terrainSource, contains("thumbnail.addEventListener('error'"));
+      expect(terrainSource, contains("accent.textContent = '현재';"));
+      expect(terrainSource, isNot(contains(": '✦';")));
+      expect(terrainSource, contains('journey-emotion-badge'));
+      expect(terrainSource, contains('storyBibleSetGesturesEnabled'));
+    });
+
     test(
       'ordered reveal count is synced when all pins are shown immediately',
       () {
@@ -359,7 +388,12 @@ void main() {
       expect(homeSource, contains('void _suppressMapTaps(['));
       expect(homeSource, contains('void _suspendMapGestures(['));
       expect(homeSource, contains('void _clearMapGestureSuspension()'));
-      expect(homeSource, contains('Future<void> _openFontScaleSheet()'));
+      expect(
+        homeSource,
+        contains(
+          'Future<void> _openFontScaleSheet({DisplaySettingsSection? section})',
+        ),
+      );
       expect(
         homeSource,
         contains('const modalInputLockDuration = Duration(hours: 1);'),
@@ -548,7 +582,7 @@ void main() {
         expect(
           fontScaleSource,
           contains(
-            'builder: (_) => const WebPointerInterceptor(child: FontScaleBottomSheet())',
+            'WebPointerInterceptor(child: FontScaleBottomSheet(section: section))',
           ),
         );
         expect(pastorGateSource, contains('return WebPointerInterceptor('));

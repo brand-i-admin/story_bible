@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -37,6 +38,7 @@ class StoryMapPanel extends StatefulWidget {
     this.animateReveal = true,
     this.centerSelectedOnReady = false,
     this.fitAllEventsOnReady = false,
+    this.fitEventIds = const [],
     this.fitAllZoomAdjust = -0.95,
     this.selectedFocusZoom,
     this.initialCenter,
@@ -54,6 +56,9 @@ class StoryMapPanel extends StatefulWidget {
     this.showCharacterLegend = true,
     this.eventCountByLandmarkId,
     this.eventEmotionMarks = const {},
+    this.eventMarkerRoles = const {},
+    this.eventMarkerThumbnailUrls = const {},
+    this.mapGesturesEnabled = true,
     this.regionPickerMode = false,
     this.onMapInteraction,
   });
@@ -98,6 +103,12 @@ class StoryMapPanel extends StatefulWidget {
   final bool animateReveal;
   final bool centerSelectedOnReady;
   final bool fitAllEventsOnReady;
+
+  /// 이 사건들만 카메라 bounds 계산에 사용한다. 지도에는 [events] 전체를 계속
+  /// 표시하므로 오늘 화면에서 같은 시대 전체 핀을 유지한 채 이전·현재·다음만
+  /// 화면에 차도록 맞출 수 있다.
+  final List<String> fitEventIds;
+
   final double fitAllZoomAdjust;
   final double? selectedFocusZoom;
   final LatLng? initialCenter;
@@ -132,6 +143,16 @@ class StoryMapPanel extends StatefulWidget {
 
   /// 사용자가 지도 위에 새긴 감정. 번호 핀 옆의 작은 아이콘 배지로 표시한다.
   final Map<String, EventEmotionMark> eventEmotionMarks;
+
+  /// 사건 id별 오늘 탐험 역할 (`previous`·`current`·`next`). 역할이 없는 사건은
+  /// 같은 시대 안의 일반 번호 핀으로 표시한다.
+  final Map<String, String> eventMarkerRoles;
+
+  /// 현재 이야기 핀에 사용할 사건 썸네일 URL 또는 data URI.
+  final Map<String, String> eventMarkerThumbnailUrls;
+
+  /// false이면 핀 탭은 유지하되 지도 이동·확대·회전 제스처를 비활성화한다.
+  final bool mapGesturesEnabled;
 
   @override
   State<StoryMapPanel> createState() => _StoryMapPanelState();

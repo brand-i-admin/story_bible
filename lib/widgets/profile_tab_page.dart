@@ -97,6 +97,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
     required this.onOpenNotificationHistory,
     this.onExploreStoriesFromHome,
     this.onBackToHome,
+    this.embedded = false,
   });
 
   final void Function(String eventId) onStartQuiz;
@@ -112,6 +113,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
   final VoidCallback onOpenNotificationHistory;
   final VoidCallback? onExploreStoriesFromHome;
   final VoidCallback? onBackToHome;
+  final bool embedded;
 
   @override
   ConsumerState<ProfileTabPage> createState() => ProfileTabPageState();
@@ -1083,6 +1085,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     return SubPageScaffold(
       title: '프로필',
       compactBackOnly: true,
+      showBackButton: !widget.embedded,
       onBack: widget.onBackToHome,
       child: Stack(
         children: [

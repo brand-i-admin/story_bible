@@ -107,7 +107,20 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       if (!mounted) {
         return;
       }
-      if (widget.fitAllEventsOnReady) {
+      if (widget.fitEventIds.isNotEmpty) {
+        _focusEventIds(
+          widget.fitEventIds,
+          duration: const Duration(milliseconds: 360),
+        );
+        Future.delayed(const Duration(milliseconds: 180), () {
+          if (mounted) {
+            _focusEventIds(
+              widget.fitEventIds,
+              duration: const Duration(milliseconds: 240),
+            );
+          }
+        });
+      } else if (widget.fitAllEventsOnReady) {
         _focusAllEvents(duration: const Duration(milliseconds: 360));
         Future.delayed(const Duration(milliseconds: 180), () {
           if (mounted) {
@@ -152,12 +165,19 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       // `replayReveal()` 을 명시 호출할 때만 시간 순 reveal 이 돌아간다.
       _showAllPinsImmediately();
       if (_mapReady &&
-          (widget.centerSelectedOnReady || widget.fitAllEventsOnReady)) {
+          (widget.centerSelectedOnReady ||
+              widget.fitAllEventsOnReady ||
+              widget.fitEventIds.isNotEmpty)) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) {
             return;
           }
-          if (widget.fitAllEventsOnReady) {
+          if (widget.fitEventIds.isNotEmpty) {
+            _focusEventIds(
+              widget.fitEventIds,
+              duration: const Duration(milliseconds: 360),
+            );
+          } else if (widget.fitAllEventsOnReady) {
             _focusAllEvents(duration: const Duration(milliseconds: 360));
           } else {
             _centerSelectedEvent();
@@ -166,12 +186,22 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       }
     }
 
+    if (!listEquals(oldWidget.fitEventIds, widget.fitEventIds) && _mapReady) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || widget.fitEventIds.isEmpty) return;
+        _focusEventIds(
+          widget.fitEventIds,
+          duration: const Duration(milliseconds: 360),
+        );
+      });
+    }
+
     if (oldWidget.selectedEventId != widget.selectedEventId) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) {
           return;
         }
-        if (widget.fitAllEventsOnReady) {
+        if (widget.fitAllEventsOnReady || widget.fitEventIds.isNotEmpty) {
           return;
         }
         if (widget.centerSelectedOnReady) {
@@ -200,16 +230,28 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       }
     }
 
-    if ((oldWidget.bottomObscuredFraction - widget.bottomObscuredFraction)
-                .abs() >
-            0.015 &&
-        widget.selectedEventId != null &&
+    final obscuredAreaChanged =
+        (oldWidget.bottomObscuredFraction - widget.bottomObscuredFraction)
+            .abs() >
+        0.015;
+    if (obscuredAreaChanged &&
         !widget.fitAllEventsOnReady &&
-        !widget.centerSelectedOnReady) {
+        widget.fitEventIds.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) {
           return;
         }
+        _focusEventIds(
+          widget.fitEventIds,
+          duration: const Duration(milliseconds: 360),
+        );
+      });
+    } else if (obscuredAreaChanged &&
+        widget.selectedEventId != null &&
+        !widget.fitAllEventsOnReady &&
+        !widget.centerSelectedOnReady) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
         _focusSelectedEventIfNeeded(force: true);
       });
     }
@@ -268,6 +310,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                       : _visibleCount,
                   orderedEventsActive: _orderedEventsActive,
                   eventEmotionMarks: widget.eventEmotionMarks,
+                  eventMarkerRoles: widget.eventMarkerRoles,
+                  eventMarkerThumbnailUrls: widget.eventMarkerThumbnailUrls,
+                  mapGesturesEnabled: widget.mapGesturesEnabled,
                   regionPickerMode: widget.regionPickerMode,
                   countryBorderLines: _countryBorderLines3d,
                   countryLabels: _countryLabels3d,
@@ -717,12 +762,32 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
     Duration duration = const Duration(milliseconds: 360),
     double zoomBoost = 0.0,
   }) {
-    if (!_mapReady) {
-      return;
-    }
     final visibleEvents = widget.events
         .where((event) => event.hasCoordinate)
         .toList(growable: false);
+    _focusEvents(visibleEvents, duration: duration, zoomBoost: zoomBoost);
+  }
+
+  void _focusEventIds(
+    List<String> eventIds, {
+    Duration duration = const Duration(milliseconds: 360),
+    double zoomBoost = 0.0,
+  }) {
+    final ids = eventIds.toSet();
+    final visibleEvents = widget.events
+        .where((event) => ids.contains(event.id) && event.hasCoordinate)
+        .toList(growable: false);
+    _focusEvents(visibleEvents, duration: duration, zoomBoost: zoomBoost);
+  }
+
+  void _focusEvents(
+    List<StoryEvent> visibleEvents, {
+    required Duration duration,
+    required double zoomBoost,
+  }) {
+    if (!_mapReady) {
+      return;
+    }
     if (visibleEvents.isEmpty) {
       return;
     }

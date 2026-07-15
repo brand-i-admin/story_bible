@@ -689,97 +689,33 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     return bibleBooks.fold<int>(0, (sum, book) => sum + book.chapters);
   }
 
-  StoryEvent? _lastEmotionMarkedEvent({
-    required List<StoryEvent> events,
-    required Map<String, EventEmotionMark> marks,
-  }) {
-    if (events.isEmpty || marks.isEmpty) {
-      return null;
-    }
-    final eventById = {for (final event in events) event.id: event};
-    final sortedMarks = marks.values.toList()..sort(_compareEmotionMarksNewest);
-    for (final mark in sortedMarks) {
-      final event = eventById[mark.eventId];
-      if (event != null) {
-        return event;
-      }
-    }
-    return null;
-  }
-
-  List<_StoryJourneyDeckEntry> _profileStoryJourneyEntries({
-    required StoryEvent? current,
-    required List<StoryEvent> events,
-    required List<Era> eras,
-  }) {
-    final ordered = _sortEventsByEraThenIndex(events, eras);
-    if (ordered.isEmpty) return const [];
-    if (current == null) {
-      return [
-        for (final event in ordered) _StoryJourneyDeckEntry(event: event),
-      ];
-    }
-    final index = ordered.indexWhere((event) => event.id == current.id);
-    if (index < 0) return const [];
-    return [for (final event in ordered) _StoryJourneyDeckEntry(event: event)];
-  }
-
-  int _compareEmotionMarksNewest(EventEmotionMark a, EventEmotionMark b) {
-    final aTime = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-    final bTime = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-    final timeCompare = bTime.compareTo(aTime);
-    if (timeCompare != 0) {
-      return timeCompare;
-    }
-    return a.eventId.compareTo(b.eventId);
-  }
-
-  Widget _buildProfileStoryExplorationDashboard({
-    required bool todayStoryActionCompleted,
-  }) {
+  Widget _buildProfileStoryExplorationDashboard() {
     final state = ref.watch(storyControllerProvider);
     final events = _profileAllEvents.isNotEmpty
         ? _profileAllEvents
         : state.events;
-    final orderedJourneyEvents = _sortEventsByEraThenIndex(events, state.eras);
-    final lastEmotionEvent = _lastEmotionMarkedEvent(
-      events: orderedJourneyEvents,
-      marks: state.eventEmotionMarks,
-    );
-    final journeyEntries = _profileStoryJourneyEntries(
-      current: lastEmotionEvent,
-      events: orderedJourneyEvents,
-      eras: state.eras,
-    );
-    final charactersByCode = <String, Character>{
-      for (final character in _profileAllPeople) character.code: character,
-      for (final character in state.characters) character.code: character,
-    };
 
     return _ProfileStoryExplorationDashboard(
-      entries: journeyEntries,
-      initialSelectedEventId: lastEmotionEvent?.id,
-      eras: state.eras,
-      charactersByCode: charactersByCode,
-      eventEmotionMarks: state.eventEmotionMarks,
-      quizAttemptSummaries: state.quizAttemptSummaries,
       storyProgress: _profileStoryProgress(state),
       explorationLogCount:
           state.eventEmotionMarks.length + _profileCompanionDiaryEntries.length,
       savedStoryCount: state.savedEventIds.length,
       savedVerseCount: _profileSavedVersesCount,
-      todayStoryActionCompleted: todayStoryActionCompleted,
-      onExploreStoriesFromHome: widget.onExploreStoriesFromHome,
       onOpenStoryProgress: _openStoryProgressPage,
       onOpenExplorationLog: _openExplorationLogPage,
       onOpenSavedStories: _openSavedStoriesOverview,
       onOpenSavedVerses: _openSavedVersesPage,
-      onOpenStory: (target) {
-        widget.onOpenEventDetail(
-          target,
-          source: ProfileEventOpenSource.targetOnly,
-        );
-      },
+      traceSection: _ProfileExplorationTraceSection(
+        events: events,
+        eventEmotionMarks: state.eventEmotionMarks,
+        companionDiaryEntries: _profileCompanionDiaryEntries,
+        companionDiaryLoading: _profileCompanionDiaryLoading,
+        companionDiaryError: _profileCompanionDiaryError,
+        onOpenEventDetail: (event) => widget.onOpenEventDetail(
+          event,
+          source: ProfileEventOpenSource.detailOnly,
+        ),
+      ),
     );
   }
 
@@ -1159,9 +1095,6 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
           eventEmotionMarks: state.eventEmotionMarks,
           quizAttemptSummaries: state.quizAttemptSummaries,
           quizStats: quizStats,
-          companionDiaryEntries: _profileCompanionDiaryEntries,
-          companionDiaryLoading: _profileCompanionDiaryLoading,
-          companionDiaryError: _profileCompanionDiaryError,
           onOpenEventDetail: widget.onOpenEventDetail,
         ),
       ),
@@ -1720,42 +1653,26 @@ class _ProfileIconTabButton extends StatelessWidget {
 
 class _ProfileStoryExplorationDashboard extends StatelessWidget {
   const _ProfileStoryExplorationDashboard({
-    required this.entries,
-    required this.initialSelectedEventId,
-    required this.eras,
-    required this.charactersByCode,
-    required this.eventEmotionMarks,
-    required this.quizAttemptSummaries,
     required this.storyProgress,
     required this.explorationLogCount,
     required this.savedStoryCount,
     required this.savedVerseCount,
-    required this.todayStoryActionCompleted,
-    required this.onExploreStoriesFromHome,
     required this.onOpenStoryProgress,
     required this.onOpenExplorationLog,
     required this.onOpenSavedStories,
     required this.onOpenSavedVerses,
-    required this.onOpenStory,
+    required this.traceSection,
   });
 
-  final List<_StoryJourneyDeckEntry> entries;
-  final String? initialSelectedEventId;
-  final List<Era> eras;
-  final Map<String, Character> charactersByCode;
-  final Map<String, EventEmotionMark> eventEmotionMarks;
-  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
   final ({int completed, int total, double fraction}) storyProgress;
   final int explorationLogCount;
   final int savedStoryCount;
   final int savedVerseCount;
-  final bool todayStoryActionCompleted;
-  final VoidCallback? onExploreStoriesFromHome;
   final VoidCallback onOpenStoryProgress;
   final VoidCallback onOpenExplorationLog;
   final VoidCallback onOpenSavedStories;
   final VoidCallback onOpenSavedVerses;
-  final ValueChanged<StoryEvent> onOpenStory;
+  final Widget traceSection;
 
   @override
   Widget build(BuildContext context) {
@@ -1780,19 +1697,7 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
             onOpenSavedVerses: onOpenSavedVerses,
           ),
           const SizedBox(height: 10),
-          _ProfileStoryJourneyDeck(
-            entries: entries,
-            initialSelectedEventId: initialSelectedEventId,
-            eras: eras,
-            charactersByCode: charactersByCode,
-            eventEmotionMarks: eventEmotionMarks,
-            quizAttemptSummaries: quizAttemptSummaries,
-            todayStoryActionCompleted: todayStoryActionCompleted,
-            onExploreStoriesFromHome: onExploreStoriesFromHome,
-            onOpenStory: onOpenStory,
-          ),
-          const SizedBox(height: 7),
-          const _StoryJourneyGuideNote(),
+          traceSection,
         ],
       ),
     );
@@ -1882,7 +1787,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
             Expanded(
               child: _StoryExplorationSummaryCard(
                 key: const ValueKey('profile-story-summary-exploration-log'),
-                label: '기록',
+                label: '복습',
                 icon: Icons.history_rounded,
                 color: palette.currentAccentDeep,
                 onTap: onOpenExplorationLog,
@@ -2011,61 +1916,6 @@ class _StoryExplorationSummaryCard extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StoryJourneyGuideNote extends StatelessWidget {
-  const _StoryJourneyGuideNote();
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: Color.alphaBlend(
-            palette.currentAccent.withValues(alpha: 0.055),
-            palette.softSurface,
-          ),
-          borderRadius: BorderRadius.circular(999),
-        ),
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 6,
-          runSpacing: 3,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-              decoration: BoxDecoration(
-                color: palette.currentAccentDeep.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Text(
-                '참고',
-                style: TextStyle(
-                  color: palette.currentAccentDeep,
-                  fontSize: 10.2,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                ),
-              ),
-            ),
-            Text(
-              '카드를 눌러 탐험하세요! (완료조건: 감정 새기기)',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: palette.mutedText,
-                fontSize: 10.6,
-                fontWeight: FontWeight.w800,
-                height: 1.18,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -2231,9 +2081,6 @@ class _ProfileExplorationLogPage extends StatefulWidget {
     required this.eventEmotionMarks,
     required this.quizAttemptSummaries,
     required this.quizStats,
-    required this.companionDiaryEntries,
-    required this.companionDiaryLoading,
-    required this.companionDiaryError,
     required this.onOpenEventDetail,
   });
 
@@ -2244,9 +2091,6 @@ class _ProfileExplorationLogPage extends StatefulWidget {
   final Map<String, EventEmotionMark> eventEmotionMarks;
   final Map<String, QuizAttemptSummary> quizAttemptSummaries;
   final ProfileQuizStats quizStats;
-  final List<UserCompanionDiaryEntry> companionDiaryEntries;
-  final bool companionDiaryLoading;
-  final String? companionDiaryError;
   final ProfileEventDetailCallback onOpenEventDetail;
 
   @override
@@ -2256,96 +2100,10 @@ class _ProfileExplorationLogPage extends StatefulWidget {
 
 class _ProfileExplorationLogPageState
     extends State<_ProfileExplorationLogPage> {
-  DateTime _selectedLogDate = _profileDateOnly(toKst(DateTime.now()));
   _ProfileInlineReviewFilter? _selectedReviewFilter;
 
   void _openEventDetail(StoryEvent event) {
     widget.onOpenEventDetail(event, source: ProfileEventOpenSource.detailOnly);
-  }
-
-  Future<void> _openCompanionDiaryDetail(UserCompanionDiaryEntry entry) async {
-    await showDialog<void>(
-      context: context,
-      builder: (_) => CompanionDiaryEntryDetailDialog(entry: entry),
-    );
-  }
-
-  void _openEmotionMarksPopup({
-    required String title,
-    required List<EventEmotionMark> marks,
-    required Map<String, StoryEvent> eventById,
-    required String emptyMessage,
-  }) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) {
-        final palette = AppPaletteTheme.of(sheetContext);
-        final maxHeight = MediaQuery.sizeOf(sheetContext).height * 0.74;
-        return SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-            child: Container(
-              constraints: BoxConstraints(maxHeight: maxHeight),
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-              decoration: BoxDecoration(
-                color: palette.cardSurface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: palette.subtleBorder, width: 1),
-                boxShadow: AppShadows.lg,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.sectionTitle.copyWith(
-                            color: palette.text,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: '닫기',
-                        onPressed: () => Navigator.of(sheetContext).pop(),
-                        icon: const Icon(Icons.close_rounded),
-                        color: palette.mutedText,
-                      ),
-                    ],
-                  ),
-                  Divider(height: 10, color: palette.subtleBorder),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      child: ProfileEmotionMarksList(
-                        key: const ValueKey('emotion-marks-category-list'),
-                        marks: marks,
-                        eventById: eventById,
-                        emptyMessage: emptyMessage,
-                        loading: false,
-                        hasError: false,
-                        showTimestamp: true,
-                        onOpenEventDetail: (event) {
-                          Navigator.of(sheetContext).pop();
-                          if (!mounted) return;
-                          _openEventDetail(event);
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void _openReviewEventsPopup({
@@ -2453,32 +2211,6 @@ class _ProfileExplorationLogPageState
       _ProfileInlineReviewFilter.confused => '헷갈려요로 기록된 이야기가 없습니다.',
       null => '오답이나 헷갈려요를 누르면 이야기 카드가 나타납니다.',
     };
-  }
-
-  List<EventEmotionMark> _marksForDate(
-    List<EventEmotionMark> marks,
-    DateTime date,
-  ) {
-    final targetDate = _profileDateOnly(date);
-    return marks
-        .where(
-          (mark) => _profileSameDate(_profileMarkKstDate(mark), targetDate),
-        )
-        .toList(growable: false);
-  }
-
-  UserCompanionDiaryEntry? _companionDiaryForDate(DateTime date) {
-    final targetDate = _profileDateOnly(date);
-    UserCompanionDiaryEntry? selected;
-    for (final entry in widget.companionDiaryEntries) {
-      if (!_profileSameDate(entry.entryDate, targetDate)) {
-        continue;
-      }
-      if (selected == null || entry.updatedAt.isAfter(selected.updatedAt)) {
-        selected = entry;
-      }
-    }
-    return selected;
   }
 
   void _toggleReviewFilter(_ProfileInlineReviewFilter filter) {
@@ -2596,26 +2328,9 @@ class _ProfileExplorationLogPageState
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final eventById = {for (final event in widget.events) event.id: event};
-    final marks = widget.eventEmotionMarks.values.toList()
-      ..sort((a, b) {
-        final aTime = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final bTime = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final timeCompare = bTime.compareTo(aTime);
-        if (timeCompare != 0) {
-          return timeCompare;
-        }
-        return a.eventId.compareTo(b.eventId);
-      });
-    final selectedDateMarks = _marksForDate(marks, _selectedLogDate);
-    final selectedDateDiary = _companionDiaryForDate(_selectedLogDate);
-    final emotionCountsByKey = {
-      for (final option in EventEmotionOption.options)
-        option.key: marks.where((mark) => mark.emotionKey == option.key).length,
-    };
 
     return ParchmentListPageScaffold(
-      title: '기록',
+      title: '복습',
       child: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
         child: Container(
@@ -2627,48 +2342,202 @@ class _ProfileExplorationLogPageState
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildReviewSection(),
-              const _ProfileProgressPageDivider(),
-              _ExplorationTracePanel(
-                categoryRow: _EmotionCategoryRow(
-                  countsByKey: emotionCountsByKey,
-                  onOpenCategory: (option) {
-                    final categoryMarks = marks
-                        .where((mark) => mark.emotionKey == option.key)
-                        .toList(growable: false);
-                    _openEmotionMarksPopup(
-                      title: '${option.emoji} ${option.label} 코멘트',
-                      marks: categoryMarks,
-                      eventById: eventById,
-                      emptyMessage: '${option.label}로 새긴 코멘트가 없습니다.',
-                    );
-                  },
-                ),
-                calendar: ProfileEmotionDiary(
-                  eventEmotionMarks: widget.eventEmotionMarks,
-                  companionDiaryEntries: widget.companionDiaryEntries,
-                  companionDiaryLoading: widget.companionDiaryLoading,
-                  companionDiaryError: widget.companionDiaryError,
-                  showFeatureCards: false,
-                  onSelectedDateChanged: (date) {
-                    setState(() => _selectedLogDate = _profileDateOnly(date));
-                  },
-                ),
-                previewPanel: _EmotionMarksPreviewPanel(
-                  selectedDate: _selectedLogDate,
-                  marks: selectedDateMarks,
-                  selectedDateDiary: selectedDateDiary,
-                  companionDiaryLoading: widget.companionDiaryLoading,
-                  companionDiaryError: widget.companionDiaryError,
-                  eventById: eventById,
-                  onOpenEventDetail: _openEventDetail,
-                  onOpenCompanionDiaryDetail: _openCompanionDiaryDetail,
-                ),
-              ),
-            ],
+            children: [_buildReviewSection()],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ProfileExplorationTraceSection extends StatefulWidget {
+  const _ProfileExplorationTraceSection({
+    required this.events,
+    required this.eventEmotionMarks,
+    required this.companionDiaryEntries,
+    required this.companionDiaryLoading,
+    required this.companionDiaryError,
+    required this.onOpenEventDetail,
+  });
+
+  final List<StoryEvent> events;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+  final List<UserCompanionDiaryEntry> companionDiaryEntries;
+  final bool companionDiaryLoading;
+  final String? companionDiaryError;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
+
+  @override
+  State<_ProfileExplorationTraceSection> createState() =>
+      _ProfileExplorationTraceSectionState();
+}
+
+class _ProfileExplorationTraceSectionState
+    extends State<_ProfileExplorationTraceSection> {
+  DateTime _selectedDate = _profileDateOnly(toKst(DateTime.now()));
+
+  List<EventEmotionMark> _marksForDate(
+    List<EventEmotionMark> marks,
+    DateTime date,
+  ) {
+    final targetDate = _profileDateOnly(date);
+    return marks
+        .where(
+          (mark) => _profileSameDate(_profileMarkKstDate(mark), targetDate),
+        )
+        .toList(growable: false);
+  }
+
+  UserCompanionDiaryEntry? _companionDiaryForDate(DateTime date) {
+    final targetDate = _profileDateOnly(date);
+    UserCompanionDiaryEntry? selected;
+    for (final entry in widget.companionDiaryEntries) {
+      if (!_profileSameDate(entry.entryDate, targetDate)) {
+        continue;
+      }
+      if (selected == null || entry.updatedAt.isAfter(selected.updatedAt)) {
+        selected = entry;
+      }
+    }
+    return selected;
+  }
+
+  Future<void> _openCompanionDiaryDetail(UserCompanionDiaryEntry entry) async {
+    await showDialog<void>(
+      context: context,
+      builder: (_) => CompanionDiaryEntryDetailDialog(entry: entry),
+    );
+  }
+
+  void _openEmotionMarksPopup({
+    required String title,
+    required List<EventEmotionMark> marks,
+    required Map<String, StoryEvent> eventById,
+    required String emptyMessage,
+  }) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final palette = AppPaletteTheme.of(sheetContext);
+        final maxHeight = MediaQuery.sizeOf(sheetContext).height * 0.74;
+        return SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+            child: Container(
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+              decoration: BoxDecoration(
+                color: palette.cardSurface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: palette.subtleBorder, width: 1),
+                boxShadow: AppShadows.lg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.sectionTitle.copyWith(
+                            color: palette.text,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: '닫기',
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        icon: const Icon(Icons.close_rounded),
+                        color: palette.mutedText,
+                      ),
+                    ],
+                  ),
+                  Divider(height: 10, color: palette.subtleBorder),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      child: ProfileEmotionMarksList(
+                        key: const ValueKey('emotion-marks-category-list'),
+                        marks: marks,
+                        eventById: eventById,
+                        emptyMessage: emptyMessage,
+                        loading: false,
+                        hasError: false,
+                        showTimestamp: true,
+                        onOpenEventDetail: (event) {
+                          Navigator.of(sheetContext).pop();
+                          if (!mounted) return;
+                          widget.onOpenEventDetail(event);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final eventById = {for (final event in widget.events) event.id: event};
+    final marks = widget.eventEmotionMarks.values.toList()
+      ..sort((a, b) {
+        final aTime = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bTime = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final timeCompare = bTime.compareTo(aTime);
+        return timeCompare != 0 ? timeCompare : a.eventId.compareTo(b.eventId);
+      });
+    final selectedDateMarks = _marksForDate(marks, _selectedDate);
+    final selectedDateDiary = _companionDiaryForDate(_selectedDate);
+    final emotionCountsByKey = {
+      for (final option in EventEmotionOption.options)
+        option.key: marks.where((mark) => mark.emotionKey == option.key).length,
+    };
+
+    return _ExplorationTracePanel(
+      categoryRow: _EmotionCategoryRow(
+        countsByKey: emotionCountsByKey,
+        onOpenCategory: (option) {
+          final categoryMarks = marks
+              .where((mark) => mark.emotionKey == option.key)
+              .toList(growable: false);
+          _openEmotionMarksPopup(
+            title: '${option.emoji} ${option.label} 코멘트',
+            marks: categoryMarks,
+            eventById: eventById,
+            emptyMessage: '${option.label}로 새긴 코멘트가 없습니다.',
+          );
+        },
+      ),
+      calendar: ProfileEmotionDiary(
+        eventEmotionMarks: widget.eventEmotionMarks,
+        companionDiaryEntries: widget.companionDiaryEntries,
+        companionDiaryLoading: widget.companionDiaryLoading,
+        companionDiaryError: widget.companionDiaryError,
+        showFeatureCards: false,
+        onSelectedDateChanged: (date) {
+          setState(() => _selectedDate = _profileDateOnly(date));
+        },
+      ),
+      previewPanel: _EmotionMarksPreviewPanel(
+        selectedDate: _selectedDate,
+        marks: selectedDateMarks,
+        selectedDateDiary: selectedDateDiary,
+        companionDiaryLoading: widget.companionDiaryLoading,
+        companionDiaryError: widget.companionDiaryError,
+        eventById: eventById,
+        onOpenEventDetail: widget.onOpenEventDetail,
+        onOpenCompanionDiaryDetail: _openCompanionDiaryDetail,
       ),
     );
   }
@@ -3069,22 +2938,6 @@ class _ProfileLogEmptyMessage extends StatelessWidget {
           fontWeight: FontWeight.w700,
           height: 1.42,
         ),
-      ),
-    );
-  }
-}
-
-class _ProfileProgressPageDivider extends StatelessWidget {
-  const _ProfileProgressPageDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Divider(
-        height: 1,
-        thickness: 1,
-        color: AppPaletteTheme.of(context).subtleBorder.withValues(alpha: 0.72),
       ),
     );
   }

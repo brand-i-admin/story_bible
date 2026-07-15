@@ -31,6 +31,7 @@ class SceneAssetLoader {
   Map<String, String>? _sceneDirIndexByTitleCache;
   Map<String, String>? _sceneDirIndexBySourceCache;
   final Map<String, List<String>> _sceneAssetsCache = <String, List<String>>{};
+  final Map<String, String?> _thumbnailDataUrlCache = <String, String?>{};
 
   Future<List<String>> loadAssetManifest() async {
     // 정상 캐시(비어있지 않음)만 재사용. 빈 결과(에러로 인한 일시적 실패)는
@@ -163,6 +164,99 @@ class SceneAssetLoader {
     }
     final urlFor = publicUrlFor ?? publicUrlForStoragePath;
     return storagePaths.map(urlFor).toList(growable: false);
+  }
+
+  /// 지도 DOM 핀에서 바로 표시할 수 있는 첫 장면 URL을 반환한다.
+  ///
+  /// 로컬 Flutter asset은 WebView/iframe이 직접 읽을 수 없으므로 data URL로
+  /// 변환한다. 일부 플랫폼에서 AssetManifest 조회가 비어도 `index.json`의
+  /// 짧은 디렉토리명을 이용해 대표 파일을 직접 찾는다.
+  Future<String?> loadThumbnailDataUrlForEvent(
+    StoryEvent event, {
+    String Function(String storagePath)? publicUrlFor,
+  }) async {
+    if (_thumbnailDataUrlCache.containsKey(event.id)) {
+      return _thumbnailDataUrlCache[event.id];
+    }
+
+    String? result;
+    try {
+      final images = await loadForEvent(event, publicUrlFor: publicUrlFor);
+      if (images.isNotEmpty) {
+        result = await _thumbnailUrlForSource(images.first);
+      }
+      if (result == null) {
+        final indexedAsset = await _firstIndexedThumbnailAsset(event.title);
+        if (indexedAsset != null) {
+          result = await _thumbnailUrlForSource(indexedAsset);
+        }
+      }
+    } catch (_) {
+      result = null;
+    }
+    if (result != null) {
+      _thumbnailDataUrlCache[event.id] = result;
+    }
+    return result;
+  }
+
+  Future<String?> _thumbnailUrlForSource(String source) async {
+    final trimmed = source.trim();
+    if (trimmed.isEmpty) return null;
+    if (trimmed.startsWith('http://') ||
+        trimmed.startsWith('https://') ||
+        trimmed.startsWith('data:image/')) {
+      return trimmed;
+    }
+    try {
+      final data = await rootBundle.load(trimmed);
+      final bytes = data.buffer.asUint8List(
+        data.offsetInBytes,
+        data.lengthInBytes,
+      );
+      return 'data:${_thumbnailMimeType(trimmed)};base64,${base64Encode(bytes)}';
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<String?> _firstIndexedThumbnailAsset(String title) async {
+    await _loadSceneDirIndex();
+    final normalizedSource = sceneDirectoryNameForTitle(title);
+    final assetDir =
+        _sceneDirIndexByTitleCache?[title] ??
+        _sceneDirIndexBySourceCache?[normalizedSource];
+    if (assetDir == null || assetDir.isEmpty) return null;
+
+    const filenames = <String>[
+      'scene_01.jpg',
+      'scene_1.jpg',
+      'scene_01.jpeg',
+      'scene_1.jpeg',
+      'scene_01.png',
+      'scene_1.png',
+      'scene_01.webp',
+      'scene_1.webp',
+    ];
+    for (final filename in filenames) {
+      final candidate = 'assets/story_images_thumbs/$assetDir/$filename';
+      try {
+        await rootBundle.load(candidate);
+        return candidate;
+      } catch (_) {
+        // Try the next supported thumbnail filename.
+      }
+    }
+    return null;
+  }
+
+  String _thumbnailMimeType(String path) {
+    final lower = path.toLowerCase();
+    if (lower.endsWith('.webp')) return 'image/webp';
+    if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) {
+      return 'image/jpeg';
+    }
+    return 'image/png';
   }
 
   @visibleForTesting

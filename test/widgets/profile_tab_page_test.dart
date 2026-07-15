@@ -501,7 +501,7 @@ void main() {
     expect(find.widgetWithText(OutlinedButton, '취소'), findsNothing);
   });
 
-  testWidgets('프로필 진행 섹션은 이야기 탐험과 다이어리 카드를 보여준다', (tester) async {
+  testWidgets('프로필 진행 섹션은 탐험 흔적과 다이어리 카드를 보여준다', (tester) async {
     await _pumpProfileTab(
       tester,
       user: user,
@@ -586,7 +586,7 @@ void main() {
     }
   });
 
-  testWidgets('탐험 기록이 없으면 첫 이야기를 다음 이야기로 보여준다', (tester) async {
+  testWidgets('프로필에서는 이야기 카드 대신 탐험 달력과 흔적을 보여준다', (tester) async {
     final firstEvent = _profileEvent(id: 'event-first', title: '첫 이야기');
 
     when(() => auth.currentUser).thenReturn(user);
@@ -629,16 +629,12 @@ void main() {
       },
     );
 
-    expect(find.text('홈 화면에서 이야기를 탐험해보세요!'), findsNothing);
-    expect(find.text('다음 이야기'), findsOneWidget);
-    expect(find.text('첫 이야기'), findsOneWidget);
-
-    await tester.tap(find.text('첫 이야기'));
-    await tester.pump();
-
+    expect(find.text('탐험 달력과 흔적들'), findsOneWidget);
+    expect(find.text('다음 이야기'), findsNothing);
+    expect(find.text('첫 이야기'), findsNothing);
     expect(homeTapped, isFalse);
-    expect(openedEvent?.id, 'event-first');
-    expect(openedSource, ProfileEventOpenSource.targetOnly);
+    expect(openedEvent, isNull);
+    expect(openedSource, isNull);
   });
 
   testWidgets('좁은 프로필 화면은 기도 없이 독립 진행 카드를 overflow 없이 보여준다', (tester) async {
@@ -653,11 +649,11 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('기록'), findsOneWidget);
+    expect(find.text('복습'), findsOneWidget);
     expect(find.text('기도'), findsNothing);
     expect(find.text('신앙 다이어리'), findsWidgets);
-    expect(find.text('이야기 탐험'), findsWidgets);
-    final explorationTitle = find.text('이야기 탐험').last;
+    expect(find.text('이야기 탐험 요약'), findsOneWidget);
+    final explorationTitle = find.text('이야기 탐험 요약');
     final diaryCardTitle = find.text('신앙 다이어리').last;
     expect(
       tester.getTopLeft(explorationTitle).dy,
@@ -721,7 +717,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('아주크게에서 이야기 탐험 메인 카드 제목도 커진다', (tester) async {
+  testWidgets('아주크게에서도 탐험 달력과 흔적을 overflow 없이 보여준다', (tester) async {
     final recentEvent = _profileEvent(
       id: 'event-recent',
       title: '최근 탐험한 이야기',
@@ -775,9 +771,9 @@ void main() {
       textScale: 1.4,
     );
 
-    final titleFinder = find.text('고라의 반역: 권위에 맞서다');
+    final titleFinder = find.text('탐험 달력과 흔적들');
     expect(titleFinder, findsOneWidget);
-    expect(find.text('하나님이 세우신 권위 앞에서 마음을 돌아보는 이야기입니다.'), findsOneWidget);
+    expect(find.text('고라의 반역: 권위에 맞서다'), findsNothing);
     expect(
       MediaQuery.textScalerOf(tester.element(titleFinder)).scale(1),
       greaterThanOrEqualTo(1.3),
@@ -785,7 +781,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('이야기 탐험 양옆 카드는 인물 pill overflow 없이 렌더링된다', (tester) async {
+  testWidgets('탐험 흔적의 감정 카테고리는 큰 글자에서도 overflow 없이 렌더링된다', (tester) async {
     final recentEvent = _profileEvent(
       id: 'event-recent',
       title: '가나안 정탐: 믿음과 두려움의 갈림길',
@@ -852,7 +848,12 @@ void main() {
       textScale: 1.4,
     );
 
-    expect(find.text('고라의 반역: 권위에 맞서다'), findsOneWidget);
+    expect(find.text('탐험 달력과 흔적들'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('emotion-category-gratitude')),
+      findsOneWidget,
+    );
+    expect(find.text('고라의 반역: 권위에 맞서다'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -937,7 +938,7 @@ void main() {
 
     expect(find.text('이야기 탐험 요약'), findsOneWidget);
     expect(find.text('완료'), findsOneWidget);
-    expect(find.text('기록'), findsOneWidget);
+    expect(find.text('복습'), findsOneWidget);
     expect(find.text('저장'), findsOneWidget);
     expect(find.text('저장 이야기 개수'), findsNothing);
     expect(find.text('말씀'), findsOneWidget);
@@ -1318,7 +1319,7 @@ void main() {
     expect(progressGridTitle('미완료 이야기'), findsOneWidget);
   });
 
-  testWidgets('기록 페이지는 복습 항목을 제한된 인라인 카드와 팝업으로 보여준다', (tester) async {
+  testWidgets('복습 페이지는 복습 항목을 제한된 인라인 카드와 팝업으로 보여준다', (tester) async {
     final wrongEvents = [
       for (var index = 1; index <= 10; index++)
         _profileEvent(
@@ -1451,10 +1452,9 @@ void main() {
     expect(reviewPanelTitle('헷갈려요로 복습할 이야기'), findsOneWidget);
   });
 
-  testWidgets('기록 페이지는 선택 날짜 기록과 감정 카테고리 팝업을 보여준다', (tester) async {
+  testWidgets('복습 페이지에는 탐험 달력과 흔적들을 표시하지 않는다', (tester) async {
     final nowKst = DateTime.now().toUtc().add(const Duration(hours: 9));
     final selectedDate = DateTime(nowKst.year, nowKst.month, nowKst.day);
-    final selectedDateLabel = '${selectedDate.month}월 ${selectedDate.day}일 기록';
     final joyEvent = _profileEvent(
       id: 'event-joy',
       title: '기쁨으로 새긴 이야기',
@@ -1475,9 +1475,6 @@ void main() {
       title: '두려움으로 새긴 이야기',
       storyIndex: 4,
     );
-    StoryEvent? openedEmotionEvent;
-    ProfileEventOpenSource? openedEmotionSource;
-
     when(() => auth.currentUser).thenReturn(user);
     when(() => storyRepository.fetchEventsByEra('era-1')).thenAnswer(
       (_) async => [joyEvent, gratitudeEvent, comfortEvent, fearEvent],
@@ -1566,10 +1563,6 @@ void main() {
       storyRepository: storyRepository,
       userRepository: userRepository,
       supabaseClient: supabaseClient,
-      onOpenEventDetail: (event, {source}) {
-        openedEmotionEvent = event;
-        openedEmotionSource = source;
-      },
     );
 
     final explorationLogCard = find.byKey(
@@ -1580,74 +1573,17 @@ void main() {
     await tester.tap(explorationLogCard);
     await tester.pumpAndSettle();
 
-    final emotionList = find.byKey(const ValueKey('emotion-marks-review-list'));
-    Finder emotionListTitle(String title) {
-      return find.descendant(of: emotionList, matching: find.text(title));
-    }
-
-    expect(find.text('기록'), findsOneWidget);
-    expect(find.text('내가 새긴 감정들과 코멘트'), findsNothing);
+    expect(find.text('복습'), findsOneWidget);
     expect(find.text('복습 항목'), findsOneWidget);
-    expect(find.text('탐험 달력과 흔적들'), findsOneWidget);
-    expect(find.byKey(const ValueKey('emotion-filter-all')), findsNothing);
-    expect(find.byKey(const ValueKey('emotion-category-joy')), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('emotion-category-gratitude')),
-      findsOneWidget,
-    );
-    expect(find.text(selectedDateLabel), findsOneWidget);
-    expect(emotionListTitle('기쁨으로 새긴 이야기'), findsOneWidget);
-    expect(emotionListTitle('감사로 새긴 이야기'), findsOneWidget);
-    expect(emotionListTitle('위로로 새긴 이야기'), findsNothing);
-    expect(emotionListTitle('두려움으로 새긴 이야기'), findsNothing);
+    expect(find.text('탐험 달력과 흔적들'), findsNothing);
+    expect(find.byKey(const ValueKey('emotion-category-joy')), findsNothing);
     expect(
       find.byKey(const ValueKey('selected-date-companion-diary')),
-      findsOneWidget,
+      findsNothing,
     );
     expect(
       find.byKey(const ValueKey('selected-date-emotion-comments')),
-      findsOneWidget,
-    );
-    expect(find.text('감정과 코멘트'), findsOneWidget);
-    expect(find.text('오늘의 기록'), findsOneWidget);
-
-    final selectedDateDiary = find.byKey(
-      const ValueKey('selected-date-companion-diary'),
-    );
-    await tester.ensureVisible(selectedDateDiary);
-    await tester.pumpAndSettle();
-    await tester.tap(selectedDateDiary);
-    await tester.pumpAndSettle();
-
-    expect(find.text('신앙 다이어리 상세'), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('companion-diary-detail-body-diary-selected')),
-      findsOneWidget,
-    );
-
-    await tester.tap(find.byIcon(Icons.close_rounded).last);
-    await tester.pumpAndSettle();
-
-    await tester.tap(emotionListTitle('감사로 새긴 이야기'));
-    await tester.pumpAndSettle();
-
-    expect(openedEmotionEvent?.title, '감사로 새긴 이야기');
-    expect(openedEmotionSource, ProfileEventOpenSource.detailOnly);
-    expect(
-      find.byKey(const ValueKey('emotion-marks-review-list')),
-      findsOneWidget,
-    );
-
-    await tester.tap(find.byKey(const ValueKey('emotion-category-gratitude')));
-    await tester.pumpAndSettle();
-
-    expect(find.text('💛 감사 코멘트'), findsOneWidget);
-    final allEmotionList = find.byKey(
-      const ValueKey('emotion-marks-category-list'),
-    );
-    expect(
-      find.descendant(of: allEmotionList, matching: find.text('감사로 새긴 이야기')),
-      findsOneWidget,
+      findsNothing,
     );
   });
 }

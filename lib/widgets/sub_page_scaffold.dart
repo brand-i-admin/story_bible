@@ -16,12 +16,14 @@ class SubPageScaffold extends StatefulWidget {
     required this.title,
     required this.child,
     this.compactBackOnly = false,
+    this.showBackButton = true,
     this.onBack,
   });
 
   final String title;
   final Widget child;
   final bool compactBackOnly;
+  final bool showBackButton;
   final VoidCallback? onBack;
 
   @override
@@ -59,7 +61,7 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
             ),
           ),
           SafeArea(
-            child: widget.compactBackOnly
+            child: widget.compactBackOnly && widget.showBackButton
                 ? LayoutBuilder(
                     builder: (context, constraints) {
                       final maxX = math.max(
@@ -105,6 +107,11 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                         ],
                       );
                     },
+                  )
+                : widget.compactBackOnly
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: widget.child,
                   )
                 : Column(
                     children: [

@@ -70,11 +70,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     milliseconds: 650,
   );
   final StoryMapPanelController _mapPanelController = StoryMapPanelController();
+  final TodayHomePageController _todayHomePageController =
+      TodayHomePageController();
+  final GlobalKey _sharedMapKey = GlobalKey(debugLabel: 'shared-story-map');
   final ScrollController _selectionPanelScrollController = ScrollController();
   final GlobalKey<ProfileTabPageState> _profileTabKey =
       GlobalKey<ProfileTabPageState>();
   final SceneAssetLoader _sceneAssetLoader = SceneAssetLoader();
   ProviderSubscription<User?>? _authUserSubscription;
+  StoryRootTab _rootTab = StoryRootTab.today;
+  BibleReadingTarget? _bibleTabTarget;
+  int? _bibleTabVerseNo;
+  List<UserCompanionDiaryEntry> _homeDiaryEntries = const [];
+  bool _homeDiaryLoading = false;
+  String? _homeDiaryError;
   CharacterSortMode _characterSortMode = CharacterSortMode.eraOrder;
   String? _mapCelebrationEventId;
   String? _mapCelebrationStampLabel;
@@ -201,6 +210,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
     if (user == null) {
+      setState(() {
+        _homeDiaryEntries = const [];
+        _homeDiaryLoading = false;
+        _homeDiaryError = null;
+      });
       await ref
           .read(storyControllerProvider.notifier)
           .refreshCompletedEventIds();
@@ -215,6 +229,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       await ref
           .read(storyControllerProvider.notifier)
           .refreshCompletedEventIds();
+      await _loadHomeDiaryEntries(showLoading: false);
       // FCM 토큰 upsert — Firebase 미설정/권한 거부면 내부적으로 no-op.
       try {
         await PushService.instance.registerCurrentTokenIfAuthenticated();
@@ -224,6 +239,105 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     } catch (_) {
       // 인증 상태 변경 처리 실패는 무시 (재시도 기회 존재)
     }
+  }
+
+  Future<void> _loadHomeDiaryEntries({bool showLoading = true}) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      if (!mounted) return;
+      setState(() {
+        _homeDiaryEntries = const [];
+        _homeDiaryLoading = false;
+        _homeDiaryError = null;
+      });
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        if (showLoading) {
+          _homeDiaryLoading = true;
+        }
+        _homeDiaryError = null;
+      });
+    }
+    try {
+      final entries = await ref
+          .read(userRepositoryProvider)
+          .fetchCompanionDiaryEntries(userId: user.id);
+      if (!mounted) return;
+      setState(() {
+        _homeDiaryEntries = entries;
+        _homeDiaryLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _homeDiaryLoading = false;
+        _homeDiaryError = '신앙 다이어리를 불러오지 못했습니다.';
+      });
+    }
+  }
+
+  Future<UserCompanionDiaryEntry> _saveHomeDiaryEntry({
+    required DateTime entryDate,
+    required String title,
+    required String body,
+  }) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      throw StateError('로그인 정보를 찾을 수 없습니다.');
+    }
+    final saved = await ref
+        .read(userRepositoryProvider)
+        .upsertCompanionDiaryEntry(
+          userId: user.id,
+          entryDate: entryDate,
+          title: title,
+          body: body,
+        );
+    if (mounted) {
+      setState(() {
+        _homeDiaryEntries = _replaceHomeDiaryEntry(_homeDiaryEntries, saved);
+        _homeDiaryError = null;
+      });
+    }
+    return saved;
+  }
+
+  Future<void> _deleteHomeDiaryEntry(UserCompanionDiaryEntry entry) async {
+    final user = ref.read(signedInUserProvider);
+    if (user == null) {
+      throw StateError('로그인 정보를 찾을 수 없습니다.');
+    }
+    await ref
+        .read(userRepositoryProvider)
+        .deleteCompanionDiaryEntry(userId: user.id, entryDate: entry.entryDate);
+    if (!mounted) return;
+    setState(() {
+      _homeDiaryEntries = _homeDiaryEntries
+          .where((item) => item.id != entry.id)
+          .toList(growable: false);
+      _homeDiaryError = null;
+    });
+  }
+
+  List<UserCompanionDiaryEntry> _replaceHomeDiaryEntry(
+    List<UserCompanionDiaryEntry> entries,
+    UserCompanionDiaryEntry next,
+  ) {
+    final replaced =
+        entries
+            .where(
+              (entry) => !_sameHomeDiaryDate(entry.entryDate, next.entryDate),
+            )
+            .toList(growable: true)
+          ..add(next)
+          ..sort((a, b) => b.entryDate.compareTo(a.entryDate));
+    return replaced;
+  }
+
+  bool _sameHomeDiaryDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   static const List<Color> _draftSelectionPalette = <Color>[
@@ -565,7 +679,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       }
       return (
         message:
-            '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.\n(성경 구절 검색은 상단 🔍 클릭)',
+            '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.\n(성경 구절 검색은 오늘 탭의 🔍 클릭)',
         avatarSize: 70,
       );
     }
@@ -689,13 +803,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     _mapPanelController.clearMapGestureSuspension();
   }
 
-  Future<void> _openFontScaleSheet() async {
+  Future<void> _openFontScaleSheet({DisplaySettingsSection? section}) async {
     _handleMapInteraction();
     const modalInputLockDuration = Duration(hours: 1);
     _suppressMapTaps(modalInputLockDuration);
     _suspendMapGestures(modalInputLockDuration);
     try {
-      await showFontScaleSheet(context);
+      await showFontScaleSheet(context, section: section);
     } finally {
       _mapPanelController.clearMapTapSuppression();
       _mapPanelController.clearMapGestureSuspension();
@@ -1422,17 +1536,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
-  /// 웹 한정 "이야기 등록" 탭 핸들러.
-  /// - 비로그인: 안내 스낵바 → 프로필 탭으로 이동 (그쪽에 로그인 UI 있음)
-  /// - 로그인 + is_pastor=false: PastorGateDialog (메일 안내)
-  /// - 로그인 + is_pastor=true OR admin: ProposalBoardScreen 진입
+  /// 웹 한정 `이야기 등록` 진입점. 지도 탭에는 이 운영 기능만 유지한다.
   Future<void> _openProposalBoardOrGate() async {
     final user = ref.read(signedInUserProvider);
     if (user == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('먼저 로그인해주세요 (프로필 탭에서 로그인)')));
+      ).showSnackBar(const SnackBar(content: Text('먼저 로그인해주세요 (내정보에서 로그인)')));
       await _openProfileTab();
       return;
     }
@@ -1452,75 +1563,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (!mounted) {
       return;
     }
-    await Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => ProfileTabPage(
-          key: _profileTabKey,
-          onStartQuiz: _startQuiz,
-          onOpenEventDetail: (event, {source}) {
-            unawaited(
-              _openProfileEventDetailPage(
-                event,
-                source: source ?? ProfileEventOpenSource.general,
-              ),
-            );
-          },
-          onOpenBibleReader:
-              ({
-                int? initialBookNo,
-                int? initialChapterNo,
-                int? initialVerseNo,
-              }) async {
-                await _openBibleReaderPopup(
-                  initialBookNo: initialBookNo,
-                  initialChapterNo: initialChapterNo,
-                  initialVerseNo: initialVerseNo,
-                );
-              },
-          onExploreStoriesFromHome: _returnProfileToHomeIntroGuide,
-          onBackToHome: _resetProfileRouteToHomeIntroGuide,
-          onOpenAppPublications: _openAppPublications,
-          onNavigateNotification: _handleNotificationTap,
-          onOpenNotificationHistory: _openNotificationHistory,
-        ),
-      ),
-    );
-  }
-
-  void _returnProfileToHomeIntroGuide() {
-    if (!mounted) {
-      return;
-    }
-    final navigator = Navigator.of(context);
-    if (navigator.canPop()) {
-      navigator.pop();
-    }
-    _resetProfileRouteToHomeIntroGuide();
-  }
-
-  void _resetProfileRouteToHomeIntroGuide() {
-    if (!mounted) {
-      return;
-    }
-    _completeMapCelebration();
-    final ctl = ref.read(storyControllerProvider.notifier);
-    unawaited(ctl.setSelectedEra(null));
-    ctl.clearSelectionMode();
-    ctl.selectLandmark(null);
-    ctl.setSelectedTimelineUnits(const <String>{});
-    ctl.setDisplayedEvents(const <String>{});
-    setState(() {
-      _mode = null;
-      _selectionStep = 1;
-      _draftSelectedCharacterCodes = const <String>{};
-      _draftDisplayedEventIds = const <String>{};
-      _awaitingRevealComplete = false;
-      _revealInstantly = false;
-      _mapAnimationInputLocked = false;
-      _resetMapHint();
-    });
-    _animateSelectionPanelToStage(StorySelectionPanelStage.expanded);
-    _scheduleHomeIntroMapAffordance();
+    setState(() => _rootTab = StoryRootTab.profile);
   }
 
   Future<void> _openProfileEventDetailPage(
@@ -1530,6 +1573,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (source == ProfileEventOpenSource.detailOnly) {
       await _openEventDetailPage(event);
       return;
+    }
+    if (source == ProfileEventOpenSource.targetOnly) {
+      setState(() => _rootTab = StoryRootTab.map);
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
     }
     await _prepareHomeMapForProfileEvent(event, source: source);
     if (!mounted) {
@@ -2157,6 +2205,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       }
       if (!mounted) return;
 
+      if (_rootTab != StoryRootTab.map) {
+        setState(() => _rootTab = StoryRootTab.map);
+        await WidgetsBinding.instance.endOfFrame;
+        if (!mounted) return;
+      }
+
       final restoredFilter = _restoreHomeMapFilterSnapshot(
         filterSnapshot,
         event,
@@ -2533,13 +2587,175 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final body = switch (_rootTab) {
+      StoryRootTab.today => _buildTodayTab(),
+      StoryRootTab.bible => _buildBibleRootTab(),
+      StoryRootTab.map => _buildMapTab(context),
+      StoryRootTab.profile => _buildProfileRootTab(),
+    };
+    return Scaffold(
+      body: body,
+      bottomNavigationBar: StoryRootNavigationBar(
+        selectedTab: _rootTab,
+        onSelect: _selectRootTab,
+      ),
+    );
+  }
+
+  Widget _buildTodayTab() {
+    final state = ref.watch(storyControllerProvider);
+    final user = ref.watch(signedInUserProvider);
+    final catalogAsync = ref.watch(dailyExplorationCatalogProvider);
+    final events = catalogAsync.valueOrNull ?? const <StoryEvent>[];
+    final recommendedEventId = pickExplorationResumeEvent(
+      events: events,
+      eras: state.eras,
+      emotionUpdatedAtByEventId: {
+        for (final entry in state.eventEmotionMarks.entries)
+          entry.key: entry.value.updatedAt,
+      },
+    )?.id;
+    final today = toKst(DateTime.now());
+    final todayDiary = _homeDiaryEntries
+        .where((entry) => _sameHomeDiaryDate(entry.entryDate, today))
+        .firstOrNull;
+    final todayStoryCompleted = state.eventEmotionMarks.values.any((mark) {
+      final updatedAt = mark.updatedAt;
+      return updatedAt != null && _sameHomeDiaryDate(toKst(updatedAt), today);
+    });
+    final bibleReadingCompleted = state.completedBibleChapterReadAts.values.any(
+      (readAt) => readAt != null && _sameHomeDiaryDate(toKst(readAt), today),
+    );
+    final bibleTarget = nextBibleReadingTarget(state.completedBibleChapterKeys);
+    return TodayHomePage(
+      controller: _todayHomePageController,
+      mapKey: _sharedMapKey,
+      mapController: _mapPanelController,
+      events: events,
+      recommendedEventId: recommendedEventId,
+      eras: state.eras,
+      charactersByCode: {
+        for (final character in state.characters) character.code: character,
+      },
+      eventEmotionMarks: state.eventEmotionMarks,
+      quizAttemptSummaries: state.quizAttemptSummaries,
+      isAuthenticated: user != null,
+      todayDiary: todayDiary,
+      diaryLoading: _homeDiaryLoading,
+      diaryError: _homeDiaryError,
+      bibleTargetLabel: bibleReadingTargetLabel(bibleTarget),
+      todayStoryCompleted: todayStoryCompleted,
+      bibleReadingCompleted: bibleReadingCompleted,
+      colorForCharacter: ref
+          .read(storyControllerProvider.notifier)
+          .colorForCharacter,
+      onOpenStory: (event) => unawaited(_openTodayStory(event)),
+      onSaveDiary: user == null ? null : _saveHomeDiaryEntry,
+      onDeleteDiary: user == null ? null : _deleteHomeDiaryEntry,
+      onContinueBibleReading: () => _continueBibleReading(bibleTarget),
+      onOpenProfile: () => _selectRootTab(StoryRootTab.profile),
+      onOpenFontSettings: () =>
+          unawaited(_openFontScaleSheet(section: DisplaySettingsSection.font)),
+      onOpenThemeSettings: () =>
+          unawaited(_openFontScaleSheet(section: DisplaySettingsSection.theme)),
+      onOpenSearch: () => unawaited(_openBibleVerseSearch()),
+    );
+  }
+
+  Widget _buildBibleRootTab() {
+    final target = _bibleTabTarget;
+    return BibleReaderPage(
+      key: ValueKey(
+        'root-bible-${target?.bookNo ?? 1}-${target?.chapterNo ?? 1}-${_bibleTabVerseNo ?? 0}',
+      ),
+      embedded: true,
+      initialBookNo: target?.bookNo,
+      initialChapterNo: target?.chapterNo,
+      initialVerseNo: _bibleTabVerseNo,
+      onLoginRequired: _showLoginRequiredSnackBar,
+    );
+  }
+
+  Widget _buildProfileRootTab() {
+    return ProfileTabPage(
+      key: _profileTabKey,
+      embedded: true,
+      onStartQuiz: _startQuiz,
+      onOpenEventDetail: (event, {source}) {
+        unawaited(
+          _openProfileEventDetailPage(
+            event,
+            source: source ?? ProfileEventOpenSource.general,
+          ),
+        );
+      },
+      onOpenBibleReader:
+          ({
+            int? initialBookNo,
+            int? initialChapterNo,
+            int? initialVerseNo,
+          }) async {
+            setState(() {
+              _bibleTabTarget = (
+                bookNo: initialBookNo ?? oldTestamentFirstBookNo,
+                chapterNo: initialChapterNo ?? 1,
+              );
+              _bibleTabVerseNo = initialVerseNo;
+              _rootTab = StoryRootTab.bible;
+            });
+          },
+      onExploreStoriesFromHome: () => _selectRootTab(StoryRootTab.map),
+      onBackToHome: () => _selectRootTab(StoryRootTab.today),
+      onOpenAppPublications: _openAppPublications,
+      onNavigateNotification: _handleNotificationTap,
+      onOpenNotificationHistory: _openNotificationHistory,
+    );
+  }
+
+  void _selectRootTab(StoryRootTab tab) {
+    if (!mounted) {
+      return;
+    }
+    if (_rootTab == tab) {
+      if (tab == StoryRootTab.today) {
+        _todayHomePageController.showWelcomeGuide();
+      }
+      return;
+    }
+    setState(() => _rootTab = tab);
+    if (tab == StoryRootTab.today) {
+      unawaited(_loadHomeDiaryEntries(showLoading: false));
+    }
+    if (tab == StoryRootTab.map) {
+      _scheduleHomeIntroMapAffordance();
+    }
+  }
+
+  void _continueBibleReading(BibleReadingTarget? target) {
+    if (target == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('성경 전체 통독을 완료했어요.')));
+      return;
+    }
+    setState(() {
+      _bibleTabTarget = target;
+      _bibleTabVerseNo = null;
+      _rootTab = StoryRootTab.bible;
+    });
+  }
+
+  Future<void> _openTodayStory(StoryEvent event) async {
+    await ref.read(storyControllerProvider.notifier).selectEra(event.eraId);
+    if (!mounted) return;
+    await _openEventDetailPage(event);
+  }
+
+  Widget _buildMapTab(BuildContext context) {
     final state = ref.watch(storyControllerProvider);
     final controller = ref.read(storyControllerProvider.notifier);
     final dailyMissionEventAsync = ref.watch(dailyMissionEventProvider);
-    final dailyMissionStatusKnown = dailyMissionEventAsync.maybeWhen(
-      data: (event) => event != null,
-      orElse: () => false,
-    );
+    final dailyMissionStatusKnown = dailyMissionEventAsync.valueOrNull != null;
     final dailyMissionCompleted = dailyMissionEventAsync.maybeWhen(
       data: (event) =>
           event != null &&
@@ -2596,8 +2812,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       viewportSize: viewportSize,
       rawBottomInset: media.padding.bottom,
     );
-    // Toolbar (38) + 8 gap + chip bar (28) + 6 gap = 80. 약간 여유 두어 88.
-    final mapCalloutTopObscuredPixels = topInset + 88;
+    final mapCalloutTopObscuredPixels = topInset + 58;
     return Scaffold(
       body: PopScope<Object?>(
         canPop: !_mapAnimationInputLocked && !_canHandleHomeBack(state),
@@ -2614,6 +2829,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           children: [
             Positioned.fill(
               child: StoryMapPanel(
+                key: _sharedMapKey,
                 events: mapTimeline,
                 selectedEventId: state.selectedEventId,
                 onSelectEvent: _handleEventSelect,
@@ -2704,7 +2920,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                   constraints.maxHeight,
                 );
                 final isPhone = _isPhoneSheetLayoutForSize(viewportSize);
-                final sheetHorizontalMargin = isPhone ? 0.0 : 18.0;
+                final sheetHorizontalMargin = storyBottomPanelHorizontalMargin(
+                  constraints.maxWidth,
+                );
                 final sheetHeight =
                     constraints.maxHeight *
                     _sheetSizeForStage(viewportSize, _selectionPanelStage);
@@ -2870,7 +3088,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     ),
                     if (showRevealSkip)
                       Positioned(
-                        top: topInset + 96,
+                        top: topInset + 62,
                         right: isPhone ? 18 : 30,
                         bottom: bottomInset + sheetHeight + 24,
                         child: WebPointerInterceptor(
@@ -2896,11 +3114,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           ),
                         ),
                       ),
-                    // 세로 모드: 핵심 버튼 + 글자 크기/이야기등록을
-                    // 좌우 끝까지 가득 펼치고 horizontal scroll 로 추가 노출.
                     Positioned(
-                      left: 0,
-                      right: 0,
+                      left: 12,
+                      right: 12,
                       top: sideTop,
                       child: WebPointerInterceptor(
                         child: Listener(
@@ -2911,69 +3127,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           },
                           onPointerUp: (_) => _suppressMapTaps(),
                           onPointerCancel: (_) => _suppressMapTaps(),
-                          onPointerSignal: (_) => _suppressMapTaps(),
-                          child: SizedBox(
-                            height: topUtilityBarHeightFor(context),
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                return SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                  ),
-                                  child: ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      minWidth: math.max(
-                                        0,
-                                        constraints.maxWidth - 24,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        // "사건선택" 버튼 제거 (2026-05-08) — 하단 스크롤 패널이
-                                        // 항상 일부 보이므로 별도 토글 불필요.
-                                        topUtilityIconButton(
-                                          icon: Icons.search_rounded,
-                                          tooltip: '성경 구절로 이야기 찾기',
-                                          onTap: _openBibleVerseSearch,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        topUtilityButton(
-                                          label: '성경',
-                                          onTap: _openBibleReaderPopup,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        topMissionButton(
-                                          onTap: _openQuizTab,
-                                          dailyCompleted: dailyMissionCompleted,
-                                          dailyStatusKnown:
-                                              dailyMissionStatusKnown,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        topUtilityButton(
-                                          label: '프로필',
-                                          onTap: _openProfileTab,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        topFontScaleButton(
-                                          onTap: () =>
-                                              unawaited(_openFontScaleSheet()),
-                                        ),
-                                        if (kIsWeb) ...[
-                                          const SizedBox(width: 4),
-                                          topUtilityButton(
-                                            label: '이야기 등록',
-                                            onTap: _openProposalBoardOrGate,
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
+                          child: Row(
+                            children: [
+                              topMissionButton(
+                                onTap: _openQuizTab,
+                                dailyCompleted: dailyMissionCompleted,
+                                dailyStatusKnown: dailyMissionStatusKnown,
+                              ),
+                              if (kIsWeb) ...[
+                                const SizedBox(width: 4),
+                                topUtilityButton(
+                                  label: '이야기 등록',
+                                  onTap: _openProposalBoardOrGate,
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                       ),
@@ -2985,7 +3153,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                     // hit-test 로 전달되게 한다.
                     if (mapHint != null)
                       Positioned(
-                        top: topInset + 96,
+                        top: topInset + 62,
                         left: 0,
                         right: 0,
                         bottom: bottomInset + sheetHeight + 16,
@@ -3081,31 +3249,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   /// HomeIntroPanel / RegionPickPanel / RegionEventList 공용 wrapper.
   /// blackMap 에서는 양피지 표면 대신 어두운 지도 패널 표면을 사용한다.
   BoxDecoration _selectionSheetPanelDecoration(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          palette.softSurface,
-          palette.panelSurface,
-          palette.mutedSurface,
-        ],
-      ),
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
-      border: Border(
-        top: BorderSide(color: palette.panelBorder, width: 1.15),
-        left: BorderSide(color: palette.panelBorder, width: 1.15),
-        right: BorderSide(color: palette.panelBorder, width: 1.15),
-      ),
-      boxShadow: const [
-        BoxShadow(
-          color: Color(0x38000000),
-          blurRadius: 16,
-          offset: Offset(0, -2),
-        ),
-      ],
-    );
+    return storyBottomPanelDecoration(context);
   }
 
   /// 시트 헤더 — 가운데 핸들(인디케이터 + 단일 toggle 화살표) + 우측

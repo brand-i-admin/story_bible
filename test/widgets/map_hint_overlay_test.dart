@@ -199,7 +199,7 @@ void main() {
       null,
     );
     final introSize = await pumpAndAvatarSize(
-      '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.\n(성경 구절 검색은 상단 🔍 클릭)',
+      '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.\n(성경 구절 검색은 오늘 탭의 🔍 클릭)',
       70,
     );
 
@@ -227,7 +227,7 @@ void main() {
     expect(source, contains('avatarSize: mapHint.avatarSize ?? 48'));
     expect(source, contains('① 먼저 시대를 고르고'));
     expect(source, contains('② 시간 순·인물·장소 중 선택'));
-    expect(source, contains('(성경 구절 검색은 상단 🔍 클릭)'));
+    expect(source, contains('(성경 구절 검색은 오늘 탭의 🔍 클릭)'));
     expect(source, isNot(contains('⓪')));
     expect(source, contains('선택한 시대: \$label'));
     expect(source, contains('창조부터 바벨까지'));
