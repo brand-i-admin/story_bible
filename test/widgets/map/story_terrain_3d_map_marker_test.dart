@@ -4,6 +4,46 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('StoryTerrain3dMap event markers', () {
+    test('오늘과 지도는 같은 핀 렌더러에 명시적인 표현 모드만 전달한다', () {
+      final panelSource = File(
+        'lib/widgets/story_map_panel.dart',
+      ).readAsStringSync();
+      final terrainSource = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+      final todaySource = File(
+        'lib/widgets/home/today_home_page.dart',
+      ).readAsStringSync();
+      final presentationSource = File(
+        'lib/widgets/map/story_event_marker_presentation.dart',
+      ).readAsStringSync();
+
+      expect(
+        presentationSource,
+        contains('enum StoryEventMarkerPresentationMode'),
+      );
+      expect(
+        presentationSource,
+        contains('StoryEventMarkerPresentation.mapTimeline'),
+      );
+      expect(
+        presentationSource,
+        contains('StoryEventMarkerPresentation.dailyJourney'),
+      );
+      expect(
+        panelSource,
+        contains('StoryEventMarkerPresentation markerPresentation'),
+      );
+      expect(
+        terrainSource,
+        contains('widget.markerPresentation.isDailyJourney'),
+      );
+      expect(
+        todaySource,
+        contains('StoryEventMarkerPresentation.dailyJourney('),
+      );
+    });
+
     test('MapLibre marker root is separate from the circular pin button', () {
       final source = File(
         'lib/widgets/map/story_terrain_3d_map.dart',
@@ -17,6 +57,95 @@ void main() {
         source,
         isNot(contains('new maplibregl.Marker({\n            element,\n')),
       );
+    });
+
+    test('오늘 지도 핀은 숫자·이전/다음 역할·현재 썸네일과 제스처 상태를 지원한다', () {
+      final panelSource = File(
+        'lib/widgets/story_map_panel.dart',
+      ).readAsStringSync();
+      final terrainSource = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(panelSource, contains('markerPresentation'));
+      expect(
+        panelSource,
+        contains('StoryEventMarkerPresentation markerPresentation'),
+      );
+      expect(panelSource, contains('fitEventIds'));
+      expect(panelSource, contains('mapGesturesEnabled'));
+      expect(terrainSource, contains('markerPresentation'));
+      expect(
+        terrainSource,
+        contains('widget.markerPresentation.isDailyJourney'),
+      );
+      expect(terrainSource, contains("'journeyRole'"));
+      expect(terrainSource, contains("'thumbnailUrl'"));
+      expect(terrainSource, contains("'journeyMode'"));
+      expect(terrainSource, contains('journey-current'));
+      expect(terrainSource, contains('journey-previous'));
+      expect(terrainSource, contains('journey-next'));
+      expect(terrainSource, contains('current-thumbnail'));
+      expect(terrainSource, contains('width: 44px;'));
+      expect(terrainSource, contains('height: 44px;'));
+      expect(terrainSource, contains('clip-path: circle(50% at 50% 50%);'));
+      expect(terrainSource, contains("thumbnail.decoding = 'async';"));
+      expect(terrainSource, contains("thumbnail.addEventListener('error'"));
+      expect(terrainSource, contains("accent.textContent = '현재';"));
+      expect(terrainSource, isNot(contains(": '✦';")));
+      expect(terrainSource, contains('journey-emotion-badge'));
+      expect(terrainSource, contains('storyBibleSetGesturesEnabled'));
+    });
+
+    test('오늘 역할 핀은 현재 다음 이전 나머지 순으로 겹침 우선순위를 갖는다', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(source, contains("if (role === 'current') return 7600;"));
+      expect(source, contains("if (role === 'next') return 6200;"));
+      expect(source, contains("if (role === 'previous') return 4800;"));
+      expect(
+        source,
+        contains('const journeyPriority = journeyRoleZIndex(journeyRole);'),
+      );
+    });
+
+    test('오늘 지도에서도 완료 사건은 감정을 중앙에 두고 번호를 우측 아래에 표시한다', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(
+        source,
+        contains(
+          'const emotionPrimary = hasEmotion && '
+          'Boolean(properties.emotionEmoji);',
+        ),
+      );
+      expect(source, contains("emotionPrimary ? 'emotion' : ''"));
+      expect(source, contains('if (emotionPrimary) {'));
+      expect(source, contains("badge.className = 'order-badge';"));
+      expect(
+        source.indexOf('if (emotionPrimary) {'),
+        lessThan(source.indexOf("if (journeyRole === 'current') {")),
+      );
+    });
+
+    test('오늘 지도도 사건 사이 점선 경로를 명시적으로 켤 수 있다', () {
+      final panelSource = File(
+        'lib/widgets/story_map_panel.dart',
+      ).readAsStringSync();
+      final terrainSource = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(panelSource, contains('this.showEventPath = false'));
+      expect(panelSource, contains('final bool showEventPath;'));
+      expect(terrainSource, contains('final bool showEventPath;'));
+      expect(terrainSource, contains('if (!widget.showEventPath)'));
+      expect(terrainSource, contains("'showEventPath': widget.showEventPath"));
+      expect(terrainSource, contains("'line-dasharray': [1.2, 0.95]"));
     });
 
     test(
@@ -359,7 +488,12 @@ void main() {
       expect(homeSource, contains('void _suppressMapTaps(['));
       expect(homeSource, contains('void _suspendMapGestures(['));
       expect(homeSource, contains('void _clearMapGestureSuspension()'));
-      expect(homeSource, contains('Future<void> _openFontScaleSheet()'));
+      expect(
+        homeSource,
+        contains(
+          'Future<void> _openFontScaleSheet({DisplaySettingsSection? section})',
+        ),
+      );
       expect(
         homeSource,
         contains('const modalInputLockDuration = Duration(hours: 1);'),
@@ -548,7 +682,7 @@ void main() {
         expect(
           fontScaleSource,
           contains(
-            'builder: (_) => const WebPointerInterceptor(child: FontScaleBottomSheet())',
+            'WebPointerInterceptor(child: FontScaleBottomSheet(section: section))',
           ),
         );
         expect(pastorGateSource, contains('return WebPointerInterceptor('));

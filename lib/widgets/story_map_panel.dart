@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -14,6 +15,7 @@ import '../models/story_event.dart';
 import '../theme/tokens.dart';
 import '../utils/map_math.dart' as map_math;
 import 'map/map_tile_style.dart';
+import 'map/story_event_marker_presentation.dart';
 import 'map/story_terrain_3d_map.dart';
 import 'web_pointer_interceptor.dart';
 
@@ -37,7 +39,10 @@ class StoryMapPanel extends StatefulWidget {
     this.animateReveal = true,
     this.centerSelectedOnReady = false,
     this.fitAllEventsOnReady = false,
+    this.fitEventIds = const [],
     this.fitAllZoomAdjust = -0.95,
+    this.fitTightClusterMaxZoom = 7.15,
+    this.showEventPath = false,
     this.selectedFocusZoom,
     this.initialCenter,
     this.initialZoom,
@@ -54,6 +59,8 @@ class StoryMapPanel extends StatefulWidget {
     this.showCharacterLegend = true,
     this.eventCountByLandmarkId,
     this.eventEmotionMarks = const {},
+    this.markerPresentation = const StoryEventMarkerPresentation.mapTimeline(),
+    this.mapGesturesEnabled = true,
     this.regionPickerMode = false,
     this.onMapInteraction,
   });
@@ -98,7 +105,22 @@ class StoryMapPanel extends StatefulWidget {
   final bool animateReveal;
   final bool centerSelectedOnReady;
   final bool fitAllEventsOnReady;
+
+  /// 이 사건들만 카메라 bounds 계산에 사용한다. 지도에는 [events] 전체를 계속
+  /// 표시하므로 오늘 화면에서 같은 시대 전체 핀을 유지한 채 이전·현재·다음만
+  /// 화면에 차도록 맞출 수 있다.
+  final List<String> fitEventIds;
+
   final double fitAllZoomAdjust;
+
+  /// 좌표가 가까운 사건 묶음에 적용할 최대 자동 확대 배율. 일반 탐색은 넓은
+  /// 맥락을 유지하고, 오늘 화면은 이전·현재·다음 세 핀이 화면을 채우도록 더
+  /// 높은 값을 넘긴다.
+  final double fitTightClusterMaxZoom;
+
+  /// reveal/지역 선택 상태와 무관하게 사건 사이 점선 경로를 표시한다.
+  final bool showEventPath;
+
   final double? selectedFocusZoom;
   final LatLng? initialCenter;
   final double? initialZoom;
@@ -132,6 +154,12 @@ class StoryMapPanel extends StatefulWidget {
 
   /// 사용자가 지도 위에 새긴 감정. 번호 핀 옆의 작은 아이콘 배지로 표시한다.
   final Map<String, EventEmotionMark> eventEmotionMarks;
+
+  /// 지도/오늘이 공유하는 핀 렌더러에 화면별 표현 차이만 전달한다.
+  final StoryEventMarkerPresentation markerPresentation;
+
+  /// false이면 핀 탭은 유지하되 지도 이동·확대·회전 제스처를 비활성화한다.
+  final bool mapGesturesEnabled;
 
   @override
   State<StoryMapPanel> createState() => _StoryMapPanelState();

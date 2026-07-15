@@ -162,6 +162,8 @@ class RegionEventList extends StatelessWidget {
 
 /// 사건 썸네일 카드 — 홈의 RegionEventList 와 EventDetailPage 의 prev/next 카드
 /// 양쪽에서 재사용. orderNumber 가 null 이면 좌상단 동그라미 배지 미표시.
+enum StoryEventCardPresentation { mapTimeline, todayCurrent, todayAdjacent }
+
 class StoryEventThumbCard extends StatelessWidget {
   const StoryEventThumbCard({
     super.key,
@@ -177,15 +179,21 @@ class StoryEventThumbCard extends StatelessWidget {
     this.emotionKey,
     this.attemptSummary,
     this.orderNumber,
+    this.presentation = StoryEventCardPresentation.mapTimeline,
     this.showSummary = true,
     this.showCharacterPills = true,
-    this.forceOpaqueSurface = false,
-    this.expandSurface = false,
+    bool? forceOpaqueSurface,
+    bool? expandSurface,
     this.surfaceColorOverride,
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
     this.publicUrlForStoragePath,
-  });
+  }) : forceOpaqueSurface =
+           forceOpaqueSurface ??
+           presentation != StoryEventCardPresentation.mapTimeline,
+       expandSurface =
+           expandSurface ??
+           presentation != StoryEventCardPresentation.mapTimeline;
   final StoryEvent event;
   final Era? era;
   final Map<String, Character> charactersByCode;
@@ -196,6 +204,7 @@ class StoryEventThumbCard extends StatelessWidget {
   final String? emotionKey;
   final QuizAttemptSummary? attemptSummary;
   final int? orderNumber;
+  final StoryEventCardPresentation presentation;
   final bool showSummary;
   final bool showCharacterPills;
   final bool forceOpaqueSurface;
@@ -243,7 +252,8 @@ class StoryEventThumbCard extends StatelessWidget {
         if (orderNumber != null ||
             (emotionKey != null && emotionKey!.isNotEmpty))
           _OrderBadge(orderNumber: orderNumber, emotionKey: emotionKey),
-        if (selected) const _CurrentStoryBadge(),
+        if (selected && presentation == StoryEventCardPresentation.mapTimeline)
+          const _CurrentStoryBadge(),
       ],
     );
   }
@@ -269,6 +279,9 @@ class StoryEventThumbCard extends StatelessWidget {
         (completed
             ? palette.completedBorder
             : (selected ? palette.selectedBorder : palette.subtleBorder));
+    final borderWidth = presentation == StoryEventCardPresentation.mapTimeline
+        ? (selected ? 2.0 : 1.6)
+        : 1.0;
     return Material(
       color: surfaceColor,
       borderRadius: BorderRadius.circular(14),
@@ -276,9 +289,10 @@ class StoryEventThumbCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: Container(
+          key: ValueKey('story-card-surface-${presentation.name}-${event.id}'),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: borderColor, width: selected ? 2 : 1.6),
+            border: Border.all(color: borderColor, width: borderWidth),
           ),
           padding: expandSurface
               ? const EdgeInsets.fromLTRB(8, 10, 8, 7)
@@ -287,7 +301,8 @@ class StoryEventThumbCard extends StatelessWidget {
             builder: (context, constraints) {
               final body = _buildCardBody(context, theme);
               final textScale = MediaQuery.textScalerOf(context).scale(1);
-              if (textScale < 1.3 || !constraints.hasBoundedHeight) {
+              if ((!expandSurface && textScale < 1.3) ||
+                  !constraints.hasBoundedHeight) {
                 return body;
               }
               return ScrollConfiguration(
@@ -333,6 +348,7 @@ class StoryEventThumbCard extends StatelessWidget {
           event: event,
           loader: loader,
           size: thumbnailSize,
+          presentation: presentation,
           publicUrlForStoragePath: publicUrlForStoragePath,
         ),
         SizedBox(height: gapAfterThumbnail),
@@ -404,30 +420,39 @@ class _CardThumbnailFrame extends StatelessWidget {
     required this.event,
     required this.loader,
     required this.size,
+    required this.presentation,
     this.publicUrlForStoragePath,
   });
 
   final StoryEvent event;
   final SceneAssetLoader loader;
   final double size;
+  final StoryEventCardPresentation presentation;
   final String Function(String storagePath)? publicUrlForStoragePath;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    return ClipOval(
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: ColoredBox(
-          color: palette.mutedSurface,
-          child: _CardThumbnail(
-            event: event,
-            loader: loader,
-            publicUrlForStoragePath: publicUrlForStoragePath,
-          ),
-        ),
+    final thumbnail = ColoredBox(
+      color: palette.mutedSurface,
+      child: _CardThumbnail(
+        event: event,
+        loader: loader,
+        publicUrlForStoragePath: publicUrlForStoragePath,
       ),
+    );
+    if (presentation == StoryEventCardPresentation.mapTimeline) {
+      return ClipOval(
+        child: SizedBox(width: size, height: size, child: thumbnail),
+      );
+    }
+    final aspectRatio = presentation == StoryEventCardPresentation.todayCurrent
+        ? 16 / 9
+        : 1.0;
+    return ClipRRect(
+      key: ValueKey('story-thumbnail-frame-${presentation.name}-${event.id}'),
+      borderRadius: BorderRadius.circular(10),
+      child: AspectRatio(aspectRatio: aspectRatio, child: thumbnail),
     );
   }
 }

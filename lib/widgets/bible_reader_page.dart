@@ -38,6 +38,7 @@ class BibleReaderPage extends ConsumerStatefulWidget {
     this.highlightTarget,
     this.readingTargets = const <BibleNavigationTarget>[],
     this.onLoginRequired,
+    this.embedded = false,
   });
 
   final int? initialBookNo;
@@ -46,6 +47,7 @@ class BibleReaderPage extends ConsumerStatefulWidget {
   final BibleNavigationTarget? highlightTarget;
   final List<BibleNavigationTarget> readingTargets;
   final void Function(String message)? onLoginRequired;
+  final bool embedded;
 
   @override
   ConsumerState<BibleReaderPage> createState() => _BibleReaderPageState();
@@ -504,6 +506,7 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
     return SubPageScaffold(
       title: '성경',
       compactBackOnly: true,
+      showBackButton: !widget.embedded,
       child: Column(
         children: [
           _BibleReaderHeader(

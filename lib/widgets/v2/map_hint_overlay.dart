@@ -15,101 +15,125 @@ class MapHintOverlay extends StatelessWidget {
     required this.message,
     this.avatarSize = _guideAvatarSize,
     this.avatarAssetPath = 'assets/avatars_thumbs/guide.png',
+    this.checklistStates,
   });
 
   final String message;
   final double avatarSize;
   final String avatarAssetPath;
+  final Map<String, bool>? checklistStates;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final outerColor = _guideOuterColor(palette);
     final dismissBadgeColor = _guideDismissBadgeColor(palette);
-    return Center(
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 220),
-        margin: const EdgeInsets.symmetric(horizontal: 22),
-        constraints: const BoxConstraints(maxWidth: 410),
-        child: Container(
-          key: const ValueKey('map-hint-container'),
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
-          decoration: BoxDecoration(
-            color: outerColor,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: palette.utilityBorder.withValues(alpha: 0.58),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: palette.primaryDeep.withValues(alpha: 0.16),
-                blurRadius: 18,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Align(
-                alignment: Alignment.center,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final contentWidth = constraints.maxWidth.isFinite
+            ? (constraints.maxWidth - 44).clamp(1.0, 410.0).toDouble()
+            : 410.0;
+        return Center(
+          child: FittedBox(
+            key: const ValueKey('map-hint-scale-to-fit'),
+            fit: BoxFit.scaleDown,
+            child: SizedBox(
+              width: contentWidth,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
                 child: Container(
-                  key: const ValueKey('map-hint-dismiss-badge'),
+                  key: const ValueKey('map-hint-container'),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 4,
+                    horizontal: 15,
+                    vertical: 13,
                   ),
                   decoration: BoxDecoration(
-                    color: dismissBadgeColor,
-                    borderRadius: BorderRadius.circular(999),
+                    color: outerColor,
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(
-                      color: palette.currentAccent.withValues(alpha: 0.32),
+                      color: palette.utilityBorder.withValues(alpha: 0.58),
                       width: 1,
                     ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.hourglass_top_rounded,
-                        color: Colors.white,
-                        size: 13,
+                    boxShadow: [
+                      BoxShadow(
+                        color: palette.primaryDeep.withValues(alpha: 0.16),
+                        blurRadius: 18,
+                        offset: const Offset(0, 4),
                       ),
-                      SizedBox(width: 6),
-                      Text(
-                        '화면 아무데나 누르면 사라집니다',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w800,
-                          height: 1.2,
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          key: const ValueKey('map-hint-dismiss-badge'),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 9,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: dismissBadgeColor,
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: palette.currentAccent.withValues(
+                                alpha: 0.32,
+                              ),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.hourglass_top_rounded,
+                                color: Colors.white,
+                                size: 13,
+                              ),
+                              SizedBox(width: 6),
+                              Text(
+                                '화면 아무데나 누르면 사라집니다',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                      ),
+                      const SizedBox(height: 18),
+                      Row(
+                        key: const ValueKey('map-hint-message-row'),
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          _GuideAvatar(
+                            key: const ValueKey('map-hint-avatar'),
+                            assetPath: avatarAssetPath,
+                            size: avatarSize,
+                          ),
+                          const SizedBox(width: _guideAvatarGap),
+                          Expanded(
+                            child: _GuideSpeechBubble(
+                              message: message,
+                              checklistStates: checklistStates,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
-              Row(
-                key: const ValueKey('map-hint-message-row'),
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _GuideAvatar(
-                    key: const ValueKey('map-hint-avatar'),
-                    assetPath: avatarAssetPath,
-                    size: avatarSize,
-                  ),
-                  const SizedBox(width: _guideAvatarGap),
-                  Expanded(child: _GuideSpeechBubble(message: message)),
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -165,9 +189,10 @@ bool _isGuideAsideLine(String line) {
 }
 
 class _GuideSpeechBubble extends StatelessWidget {
-  const _GuideSpeechBubble({required this.message});
+  const _GuideSpeechBubble({required this.message, this.checklistStates});
 
   final String message;
+  final Map<String, bool>? checklistStates;
 
   @override
   Widget build(BuildContext context) {
@@ -184,15 +209,19 @@ class _GuideSpeechBubble extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: _GuideSpeechMessage(message: message),
+      child: _GuideSpeechMessage(
+        message: message,
+        checklistStates: checklistStates,
+      ),
     );
   }
 }
 
 class _GuideSpeechMessage extends StatelessWidget {
-  const _GuideSpeechMessage({required this.message});
+  const _GuideSpeechMessage({required this.message, this.checklistStates});
 
   final String message;
+  final Map<String, bool>? checklistStates;
 
   static const circledDigits = <String, String>{'①': '1', '②': '2', '③': '3'};
 
@@ -217,6 +246,8 @@ class _GuideSpeechMessage extends StatelessWidget {
                     number: circledDigits[line.trimLeft()[0]]!,
                     text: line.trimLeft().substring(1).trimLeft(),
                     textStyle: textStyle,
+                    completed:
+                        checklistStates?[circledDigits[line.trimLeft()[0]]!],
                   ),
                 )
               : _isAsideLine(line)
@@ -258,11 +289,13 @@ class _GuideStepLine extends StatelessWidget {
     required this.number,
     required this.text,
     required this.textStyle,
+    this.completed,
   });
 
   final String number;
   final String text;
   final TextStyle textStyle;
+  final bool? completed;
 
   @override
   Widget build(BuildContext context) {
@@ -271,29 +304,44 @@ class _GuideStepLine extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          key: ValueKey('map-hint-step-badge-$number'),
-          width: 18,
-          height: 18,
-          margin: const EdgeInsets.only(top: 1.5, right: 7),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: stepBadgeColor,
-            border: Border.all(
-              color: palette.currentAccent.withValues(alpha: 0.38),
-              width: 1,
+        if (completed != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 1.5, right: 7),
+            child: Icon(
+              completed!
+                  ? Icons.check_box_rounded
+                  : Icons.check_box_outline_blank_rounded,
+              key: ValueKey(
+                'map-hint-check-$number-${completed! ? 'completed' : 'pending'}',
+              ),
+              color: textStyle.color,
+              size: 18,
+            ),
+          )
+        else
+          Container(
+            key: ValueKey('map-hint-step-badge-$number'),
+            width: 18,
+            height: 18,
+            margin: const EdgeInsets.only(top: 1.5, right: 7),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: stepBadgeColor,
+              border: Border.all(
+                color: palette.currentAccent.withValues(alpha: 0.38),
+                width: 1,
+              ),
+            ),
+            child: Text(
+              number,
+              style: textStyle.copyWith(
+                fontSize: 10.5,
+                height: 1,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
-          child: Text(
-            number,
-            style: textStyle.copyWith(
-              fontSize: 10.5,
-              height: 1,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
         Expanded(
           child: Text(
             text,

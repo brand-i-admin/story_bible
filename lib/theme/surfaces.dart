@@ -10,7 +10,10 @@ import 'tokens.dart';
 class AppSurfaces {
   AppSurfaces._();
 
-  static BoxDecoration modal({AppColorPalette? palette}) {
+  static BoxDecoration modal({
+    AppColorPalette? palette,
+    bool showBorder = true,
+  }) {
     if (palette != null) {
       final darkPalette = palette == AppColorPalette.blackMap;
       final colors = darkPalette
@@ -32,7 +35,9 @@ class AppSurfaces {
           colors: colors,
         ),
         borderRadius: BorderRadius.circular(AppRadii.x4l),
-        border: Border.all(color: palette.subtleBorder, width: 1.2),
+        border: showBorder
+            ? Border.all(color: palette.subtleBorder, width: 1.2)
+            : null,
         boxShadow: AppShadows.xl,
       );
     }
@@ -43,7 +48,9 @@ class AppSurfaces {
         colors: [AppColors.parchmentLight, AppColors.parchmentWarm],
       ),
       borderRadius: BorderRadius.circular(AppRadii.x4l),
-      border: Border.all(color: AppColors.borderModalDialog, width: 1.2),
+      border: showBorder
+          ? Border.all(color: AppColors.borderModalDialog, width: 1.2)
+          : null,
       boxShadow: AppShadows.xl,
     );
   }

@@ -1,6 +1,6 @@
 # ARCHITECTURE — 이야기 성경 기술 아키텍처
 
-> 최종 수정: 2026-04-22 (Notifications + FCM 반영)
+> 최종 수정: 2026-07-15 (`오늘` 시대 순서·접이식 패널·환영 가이드 반영)
 
 ## 1. 시스템 구성도
 
@@ -80,7 +80,7 @@ supabaseClientProvider (Provider<SupabaseClient>)
 
 | 화면 | 파일 | 역할 |
 |------|------|------|
-| 메인 화면 | `screens/story_home_screen.dart` | 3열 레이아웃: 인물패널 + 지도 + 타임라인, 상단 bell 아이콘 |
+| 메인 화면 | `screens/story_home_screen.dart` | `오늘`·`성경`·`지도`·`내정보` 4탭 루트 셸. `오늘`은 정해진 구약 7시대→신약 3시대와 `rankInEra`로 탐험 덱을 만들고, 접이식 스크롤 패널·환영 가이드·일일 미완료 강조를 제공한다. `오늘`과 `지도`는 공유 `GlobalKey`로 하나의 `StoryMapPanel`/WebView 상태를 재부착해 3D 지형 재로딩을 피한다. |
 | 로그인 | `widgets/inline_login_prompt_card.dart` | 인라인 소셜 로그인 (카카오/Google/Apple) |
 | 구절 목록 | `screens/saved_verses_screen.dart` | 북마크 구절 관리 |
 | 법률 문서 | `screens/legal_documents_screen.dart` | 이용약관, 개인정보처리방침 |
@@ -175,15 +175,18 @@ state/ (비즈니스 로직)
 **UI 계층 (메인 화면 허브):**
 ```
 story_home_screen.dart (메인 화면 — 모든 것의 허브)
+  ├── StoryRootNavigationBar → 오늘/성경/지도/내정보 전환
+  ├── TodayHomePage          → 시대/사건 순 유한 카드 덱 + 현재 시대 번호 핀 + 접이식 패널/환영 가이드/일일 루틴
+  ├── BibleReaderPage        → embedded 성경 탭
   ├── StorySelectionPanel   → 시대→인물→사건 3단계 선택 (EraSelector 기능 통합)
   │     ├── selection/panel_chrome.dart     (part)
   │     ├── selection/step_chip.dart        (part)
   │     └── selection/selection_cards.dart  (part)
-  ├── StoryMapPanel         → StoryTerrain3dMap(MapLibre/OpenFreeMap 3D) + Flutter overlay
+  ├── StoryMapPanel         → Today/Map 공유 GlobalKey로 재부착되는 StoryTerrain3dMap(MapLibre/OpenFreeMap 3D) + 선택적 focusEventIds 카메라 bounds + Flutter overlay
   ├── WeeklyTabPage         → 주간 인물 학습
   │     ├── weekly/weekly_avatar.dart      (part)
   │     └── weekly/weekly_list_panel.dart  (part)
-  ├── ProfileTabPage        → 프로필 + 진행도
+  ├── ProfileTabPage        → embedded 내정보 + 진행도/탐험 흔적
   │     ├── profile/profile_left_panel.dart       (part)
   │     ├── profile/profile_right_panel.dart      (part)
   │     ├── profile/profile_helpers.dart          (part)

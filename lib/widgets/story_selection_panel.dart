@@ -14,6 +14,7 @@ import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import 'character_panel.dart';
 import 'event_timeline_row.dart';
+import 'story_bottom_panel_style.dart';
 
 // 패널 외곽/단계 UI/카드를 별도 파트 파일로 분리하여 가독성과 작업 단위를 유지.
 part 'selection/panel_chrome.dart';
@@ -174,7 +175,7 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
         final isCollapsedStub = constraints.maxHeight <= collapsedStubThreshold;
         final accentColor = _stageAccentColor(context, widget.panelStage);
         return ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
+          borderRadius: storyBottomPanelBorderRadius,
           child: DecoratedBox(
             decoration: _panelDecoration(context, accentColor),
             child: Stack(
@@ -263,34 +264,10 @@ class _StorySelectionPanelState extends State<StorySelectionPanel> {
   }
 
   BoxDecoration _panelDecoration(BuildContext context, Color accentColor) {
-    final palette = AppPaletteTheme.of(context);
-    final darkPanel = palette == AppColorPalette.blackMap;
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          palette.softSurface,
-          palette.panelSurface,
-          palette.mutedSurface,
-        ],
-      ),
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
-      border: Border.fromBorderSide(
-        BorderSide(
-          color: darkPanel
-              ? palette.utilityBorder.withValues(alpha: 0.44)
-              : Color.lerp(AppColors.borderFloating, accentColor, 0.52)!,
-          width: 1.15,
-        ),
-      ),
-      boxShadow: const [
-        BoxShadow(
-          color: Color(0x38000000),
-          blurRadius: 16,
-          offset: Offset(0, -2),
-        ),
-      ],
+    return storyBottomPanelDecoration(
+      context,
+      accentColor: accentColor,
+      includeBottomBorder: true,
     );
   }
 

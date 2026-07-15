@@ -13,6 +13,7 @@ Future<ProviderContainer> _pumpSheet(
   WidgetTester tester, {
   FontScale initial = FontScale.normal,
   AppColorPalette initialPalette = AppColorPalette.classic,
+  DisplaySettingsSection? section,
 }) async {
   SharedPreferences.setMockInitialValues(<String, Object>{
     'font_scale': initial.storageKey,
@@ -27,7 +28,9 @@ Future<ProviderContainer> _pumpSheet(
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: const MaterialApp(home: Scaffold(body: FontScaleBottomSheet())),
+      child: MaterialApp(
+        home: Scaffold(body: FontScaleBottomSheet(section: section)),
+      ),
     ),
   );
   return container;
@@ -49,6 +52,22 @@ void main() {
       expect(find.text('블랙 지도'), findsNothing);
       expect(find.text('파스텔'), findsOneWidget);
       expect(find.text('다크'), findsOneWidget);
+    });
+
+    testWidgets('오늘 헤더의 테마 버튼은 색 조합만 보여준다', (tester) async {
+      await _pumpSheet(tester, section: DisplaySettingsSection.theme);
+
+      expect(find.text('테마'), findsOneWidget);
+      expect(find.text('색 조합'), findsOneWidget);
+      expect(find.text('글자 크기'), findsNothing);
+    });
+
+    testWidgets('오늘 헤더의 큰글자 버튼은 글자 크기만 보여준다', (tester) async {
+      await _pumpSheet(tester, section: DisplaySettingsSection.font);
+
+      expect(find.text('큰글자'), findsOneWidget);
+      expect(find.text('색 조합'), findsNothing);
+      expect(find.text('글자 크기'), findsOneWidget);
     });
 
     testWidgets('색 조합 버튼 4개를 한 줄에 배치한다', (tester) async {

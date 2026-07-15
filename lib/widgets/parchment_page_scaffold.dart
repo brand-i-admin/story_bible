@@ -159,11 +159,13 @@ class ParchmentCard extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.all(16),
     this.color = AppColors.floatingSurfaceDefault,
+    this.showBorder = true,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final Color color;
+  final bool showBorder;
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +178,9 @@ class ParchmentCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: resolvedColor,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: palette.panelBorder, width: 1.15),
+        border: showBorder
+            ? Border.all(color: palette.panelBorder, width: 1.15)
+            : null,
         boxShadow: const [
           BoxShadow(
             color: Color(0x18000000),

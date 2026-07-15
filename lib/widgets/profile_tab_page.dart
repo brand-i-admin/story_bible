@@ -19,6 +19,8 @@ import '../models/quiz_attempt_summary.dart';
 import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
 import '../models/user_companion_diary_entry.dart';
+import '../screens/bible_progress_screen.dart';
+import '../screens/companion_diary_editor_screen.dart';
 import '../screens/legal_documents_screen.dart';
 import '../screens/saved_verses_screen.dart';
 import '../state/auth_providers.dart';
@@ -30,6 +32,7 @@ import '../theme/typography.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/kst_date.dart';
 import '../utils/scene_asset_loader.dart';
+import 'home/story_root_navigation_bar.dart';
 import 'inline_login_prompt_card.dart';
 import 'map/map_attribution_dialog.dart';
 import 'notification/notification_bell_button.dart';
@@ -37,6 +40,7 @@ import 'parchment_dialog.dart';
 import 'parchment_page_scaffold.dart';
 import 'profile/companion_diary_entry_card.dart';
 import 'profile/glowing_add_button.dart';
+import 'profile/profile_activity_badge.dart';
 import 'profile/profile_emotion_diary.dart';
 import 'profile/profile_event_review_grid.dart';
 import 'profile/profile_feature_flags.dart';
@@ -97,6 +101,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
     required this.onOpenNotificationHistory,
     this.onExploreStoriesFromHome,
     this.onBackToHome,
+    this.embedded = false,
   });
 
   final void Function(String eventId) onStartQuiz;
@@ -112,6 +117,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
   final VoidCallback onOpenNotificationHistory;
   final VoidCallback? onExploreStoriesFromHome;
   final VoidCallback? onBackToHome;
+  final bool embedded;
 
   @override
   ConsumerState<ProfileTabPage> createState() => ProfileTabPageState();
@@ -787,12 +793,9 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildProfileHeader(),
-                  const SizedBox(height: 6),
-                  _buildProfileProgressSection(
-                    profile: profile,
-                    scrollBody: false,
-                  ),
+                  _buildProfileHeader(profile),
+                  const SizedBox(height: 12),
+                  _buildProfileProgressSection(scrollBody: false),
                   if (showPrayerActivitySection) ...[
                     const SizedBox(height: 8),
                     _profileSectionsFrame(
@@ -820,18 +823,14 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildProfileHeader(),
-              const SizedBox(height: 6),
+              _buildProfileHeader(profile),
+              const SizedBox(height: 12),
               Expanded(
                 child: showPrayerActivitySection
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: _buildProfileProgressSection(
-                              profile: profile,
-                            ),
-                          ),
+                          Expanded(child: _buildProfileProgressSection()),
                           SizedBox(width: gap),
                           SizedBox(
                             width: leftWidth,
@@ -847,7 +846,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
                           ),
                         ],
                       )
-                    : _buildProfileProgressSection(profile: profile),
+                    : _buildProfileProgressSection(),
               ),
             ],
           ),
@@ -1080,9 +1079,14 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     });
     final state = ref.watch(storyControllerProvider);
     final isAuthenticated = ref.watch(signedInUserProvider) != null;
+    final palette = AppPaletteTheme.of(context);
     return SubPageScaffold(
-      title: '프로필',
+      title: '',
       compactBackOnly: true,
+      showBackButton: !widget.embedded,
+      compactTopPadding: 0,
+      topSurfaceColor: storyRootNavigationSurfaceColor(palette),
+      topSurfaceExtent: 48,
       onBack: widget.onBackToHome,
       child: Stack(
         children: [
@@ -1090,10 +1094,11 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             child: isAuthenticated
                 ? _buildProfileBody(state: state, isAuthenticated: true)
                 : ImageFiltered(
-                    imageFilter: ui.ImageFilter.blur(sigmaX: 4.5, sigmaY: 4.5),
+                    imageFilter: ui.ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
                     child: IgnorePointer(
+                      key: const ValueKey('profile-locked-content-blocker'),
                       child: Opacity(
-                        opacity: 0.9,
+                        opacity: 0.96,
                         child: _buildProfileBody(
                           state: state,
                           isAuthenticated: false,
@@ -1106,8 +1111,8 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             Positioned.fill(
               child: lockedPreviewOverlay(
                 child: InlineLoginPromptCard(
-                  title: '프로필을 보려면 로그인이 필요해요',
-                  description: '프로필, 저장한 이야기와 말씀, 공부 기록은 로그인 후 사용할 수 있어요.',
+                  title: '내정보를 보려면 로그인이 필요해요',
+                  description: '내정보, 저장한 이야기와 말씀, 공부 기록은 로그인 후 사용할 수 있어요.',
                   onSignedIn: () async {
                     if (!mounted) {
                       return;

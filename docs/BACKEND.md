@@ -550,6 +550,7 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `deleteSavedVerse(verseId)` | user_saved_verses DELETE | void |
 | `fetchCompanionDiaryEntries(userId)` | user_companion_diary_entries WHERE user_id ORDER BY entry_date DESC | `List<UserCompanionDiaryEntry>` |
 | `upsertCompanionDiaryEntry(...)` | UPSERT `user_companion_diary_entries` ON (user_id, entry_date) | `UserCompanionDiaryEntry` |
+| `companionDiaryUpdatedAtValue(now)` | 다이어리 `updated_at`을 명시적 UTC ISO 8601(`Z`) 문자열로 정규화 | `String` |
 | `deleteCompanionDiaryEntry(...)` | DELETE `user_companion_diary_entries` WHERE user_id AND entry_date | void |
 | `fetchIntercessoryPrayerPage(...)` | RPC list_intercessory_prayer_requests | `PagedResult<IntercessoryPrayerItem>` |
 | `addIntercessoryPrayerByShareId(shareId)` | RPC add_intercessory_prayer_by_share_id | `IntercessoryPrayerItem` |

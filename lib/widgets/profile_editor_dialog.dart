@@ -613,13 +613,14 @@ class _NicknameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return TextField(
       controller: controller,
       enabled: enabled,
       maxLength: 24,
       textInputAction: TextInputAction.next,
-      style: const TextStyle(
-        color: AppColors.ink600,
+      style: TextStyle(
+        color: palette.text,
         fontSize: 14,
         fontWeight: FontWeight.w800,
       ),

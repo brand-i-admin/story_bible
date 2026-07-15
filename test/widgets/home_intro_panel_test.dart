@@ -436,14 +436,17 @@ void main() {
     expect(source, contains('max: 0.38'));
   });
 
-  test('홈 상단 유틸리티 버튼 row는 좌측 정렬한다', () {
+  test('지도 탭 상단은 미션과 웹 이야기 등록만 유지한다', () {
     final source = File(
       'lib/screens/story_home_screen_state.dart',
     ).readAsStringSync();
 
-    expect(source, contains('constraints.maxWidth - 24'));
-    expect(source, contains('MainAxisAlignment.start'));
-    expect(source, contains('topUtilityBarHeightFor(context)'));
+    expect(source, contains('topMissionButton('));
+    expect(source, contains("label: '이야기 등록'"));
+    expect(source, isNot(contains("label: '성경'")));
+    expect(source, isNot(contains("label: '프로필'")));
+    expect(source, isNot(contains('topFontScaleButton(')));
+    expect(source, isNot(contains('icon: Icons.search_rounded')));
   });
 
   test('Android 폰은 시스템 inset 이 0이어도 하단 시트 여백을 보정한다', () {

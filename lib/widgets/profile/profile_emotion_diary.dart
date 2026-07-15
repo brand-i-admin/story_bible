@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import '../../models/event_emotion_mark.dart';
@@ -13,6 +11,7 @@ import '../../utils/kst_date.dart';
 import '../emotion_badge_icon.dart';
 import '../pulse_highlight.dart';
 import 'companion_diary_entry_card.dart';
+import 'profile_activity_badge.dart';
 import 'profile_companion_diary.dart';
 
 class ProfileBibleProgressSummary {
@@ -53,6 +52,7 @@ class ProfileEmotionDiary extends StatefulWidget {
   const ProfileEmotionDiary({
     super.key,
     required this.eventEmotionMarks,
+    this.completedBibleChapterReadAts = const <String, DateTime?>{},
     this.companionDiaryEntries = const <UserCompanionDiaryEntry>[],
     this.companionDiaryLoading = false,
     this.companionDiaryError,
@@ -68,6 +68,7 @@ class ProfileEmotionDiary extends StatefulWidget {
   });
 
   final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, DateTime?> completedBibleChapterReadAts;
   final List<UserCompanionDiaryEntry> companionDiaryEntries;
   final bool companionDiaryLoading;
   final String? companionDiaryError;
@@ -123,6 +124,9 @@ class _ProfileEmotionDiaryState extends State<ProfileEmotionDiary> {
     final companionDiaryByDate = _groupCompanionDiaryEntriesByDate(
       widget.companionDiaryEntries,
     );
+    final bibleReadingDates = _groupBibleReadingDates(
+      widget.completedBibleChapterReadAts.values,
+    );
 
     return _EmotionDiaryPanel(
       focusedMonth: _focusedMonth,
@@ -131,6 +135,7 @@ class _ProfileEmotionDiaryState extends State<ProfileEmotionDiary> {
       expanded: _expanded,
       marksByDate: marksByDate,
       companionDiaryByDate: companionDiaryByDate,
+      bibleReadingDates: bibleReadingDates,
       companionDiaryEntries: widget.companionDiaryEntries,
       todayCompanionDiary: companionDiaryByDate[_dateOnly(today)],
       companionDiaryLoading: widget.companionDiaryLoading,
@@ -202,6 +207,7 @@ class _EmotionDiaryPanel extends StatelessWidget {
     required this.expanded,
     required this.marksByDate,
     required this.companionDiaryByDate,
+    required this.bibleReadingDates,
     required this.companionDiaryEntries,
     required this.todayCompanionDiary,
     required this.companionDiaryLoading,
@@ -224,6 +230,7 @@ class _EmotionDiaryPanel extends StatelessWidget {
   final bool expanded;
   final Map<DateTime, List<EventEmotionMark>> marksByDate;
   final Map<DateTime, UserCompanionDiaryEntry> companionDiaryByDate;
+  final Set<DateTime> bibleReadingDates;
   final List<UserCompanionDiaryEntry> companionDiaryEntries;
   final UserCompanionDiaryEntry? todayCompanionDiary;
   final bool companionDiaryLoading;
@@ -333,10 +340,8 @@ class _EmotionDiaryPanel extends StatelessWidget {
                 final weekHeight = _calendarWeekRowHeight(
                   weekDates,
                   marksByDate,
-                );
-                final weekEmotionLineCount = _calendarWeekEmotionLineCount(
-                  weekDates,
-                  marksByDate,
+                  companionDiaryByDate,
+                  bibleReadingDates,
                 );
                 return SizedBox(
                   height: weekHeight,
@@ -355,7 +360,10 @@ class _EmotionDiaryPanel extends StatelessWidget {
                             hasCompanionDiary: companionDiaryByDate.containsKey(
                               _dateOnly(date),
                             ),
-                            compact: weekEmotionLineCount == 0,
+                            hasBibleReading: bibleReadingDates.contains(
+                              _dateOnly(date),
+                            ),
+                            compact: weekHeight == _emptyCalendarWeekHeight,
                             onTap: () => onSelectDate(date),
                           ),
                         ),
@@ -391,6 +399,7 @@ class ProfileDiaryFeatureCards extends StatelessWidget {
     required this.bibleProgress,
     required this.onOpenBibleProgress,
     required this.onContinueBibleReading,
+    this.profileSummaryMode = false,
   });
 
   final DateTime today;
@@ -403,15 +412,17 @@ class ProfileDiaryFeatureCards extends StatelessWidget {
   final ProfileBibleProgressSummary? bibleProgress;
   final VoidCallback? onOpenBibleProgress;
   final VoidCallback? onContinueBibleReading;
+  final bool profileSummaryMode;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
+      key: const ValueKey('profile-diary-feature-cards'),
       builder: (context, constraints) {
         final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
         final cardWidth = (constraints.maxWidth - 10) / 2;
         final expandTextForNarrowLargeText = largeText && cardWidth < 176;
-        const featureCardMinHeight = 158.0;
+        final featureCardMinHeight = profileSummaryMode ? 118.0 : 158.0;
         final diaryCard = CompanionDiaryFeatureCard(
           entryDate: today,
           entry: todayCompanionDiary,
@@ -422,6 +433,7 @@ class ProfileDiaryFeatureCards extends StatelessWidget {
           onDelete: onDeleteCompanionDiary,
           minHeight: featureCardMinHeight,
           expandTextForNarrowLargeText: expandTextForNarrowLargeText,
+          readOnlySummary: profileSummaryMode,
         );
         final bibleCard = _BibleProgressFeatureCard(
           summary: bibleProgress,
@@ -429,6 +441,7 @@ class ProfileDiaryFeatureCards extends StatelessWidget {
           onContinue: onContinueBibleReading,
           minHeight: featureCardMinHeight,
           expandTextForNarrowLargeText: expandTextForNarrowLargeText,
+          showContinueAction: !profileSummaryMode,
         );
         return IntrinsicHeight(
           child: Row(
@@ -452,6 +465,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
     required this.onContinue,
     required this.minHeight,
     required this.expandTextForNarrowLargeText,
+    required this.showContinueAction,
   });
 
   final ProfileBibleProgressSummary? summary;
@@ -459,6 +473,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
   final VoidCallback? onContinue;
   final double minHeight;
   final bool expandTextForNarrowLargeText;
+  final bool showContinueAction;
 
   @override
   Widget build(BuildContext context) {
@@ -503,27 +518,30 @@ class _BibleProgressFeatureCard extends StatelessWidget {
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 9,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: PulseHighlight(
-                    active: onContinue != null && !progress.completedToday,
-                    pulseCount: null,
-                    duration: const Duration(milliseconds: 2200),
-                    borderRadius: BorderRadius.circular(999),
-                    color: darkSurface ? AppColors.goldLight : AppColors.goldHi,
-                    child: _BibleContinueButton(
-                      onTap: onContinue,
-                      completedToday: progress.completedToday,
-                      readingAccent: readingAccent,
-                      darkSurface: darkSurface,
+              if (showContinueAction)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 9,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: PulseHighlight(
+                      active: onContinue != null && !progress.completedToday,
+                      pulseCount: null,
+                      duration: const Duration(milliseconds: 2200),
+                      borderRadius: BorderRadius.circular(999),
+                      color: darkSurface
+                          ? AppColors.goldLight
+                          : AppColors.goldHi,
+                      child: _BibleContinueButton(
+                        onTap: onContinue,
+                        completedToday: progress.completedToday,
+                        readingAccent: readingAccent,
+                        darkSurface: darkSurface,
+                      ),
                     ),
                   ),
                 ),
-              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -624,7 +642,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 64),
+                  if (showContinueAction) const SizedBox(height: 64),
                 ],
               ),
             ],
@@ -941,6 +959,7 @@ class _EmotionCalendarDayCell extends StatelessWidget {
     required this.today,
     required this.marks,
     required this.hasCompanionDiary,
+    required this.hasBibleReading,
     required this.compact,
     required this.onTap,
   });
@@ -951,6 +970,7 @@ class _EmotionCalendarDayCell extends StatelessWidget {
   final bool today;
   final List<EventEmotionMark> marks;
   final bool hasCompanionDiary;
+  final bool hasBibleReading;
   final bool compact;
   final VoidCallback onTap;
 
@@ -958,12 +978,6 @@ class _EmotionCalendarDayCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final inFocusedMonth = _isSameMonth(date, focusedMonth);
-    final visibleMarks = marks.length > _calendarVisibleEmotionMarksBeforeMore
-        ? marks.take(_calendarVisibleEmotionMarksBeforeMore).toList()
-        : marks;
-    final remainingCount = marks.length > _calendarVisibleEmotionMarksBeforeMore
-        ? marks.length - _calendarVisibleEmotionMarksBeforeMore
-        : 0;
     final textColor = selected
         ? palette.text
         : inFocusedMonth
@@ -998,22 +1012,20 @@ class _EmotionCalendarDayCell extends StatelessWidget {
                 today: today,
                 selected: selected,
                 color: textColor,
-                hasCompanionDiary: hasCompanionDiary,
                 dayNumberKey: ValueKey(
                   'emotion-calendar-day-number-${date.year}-${date.month}-${date.day}',
                 ),
-                markerKey: ValueKey(
-                  'companion-diary-marker-${date.year}-${date.month}-${date.day}',
-                ),
               ),
               if (!compact) ...[
-                const SizedBox(height: 5),
+                const SizedBox(height: 4),
                 Expanded(
                   child: Align(
                     alignment: Alignment.topCenter,
-                    child: _CalendarEmotionMarkGrid(
-                      visibleMarks: visibleMarks,
-                      remainingCount: remainingCount,
+                    child: _CalendarActivityMarkers(
+                      date: date,
+                      hasEmotion: marks.isNotEmpty,
+                      hasBibleReading: hasBibleReading,
+                      hasCompanionDiary: hasCompanionDiary,
                     ),
                   ),
                 ),
@@ -1026,38 +1038,69 @@ class _EmotionCalendarDayCell extends StatelessWidget {
   }
 }
 
-class _CalendarEmotionMarkGrid extends StatelessWidget {
-  const _CalendarEmotionMarkGrid({
-    required this.visibleMarks,
-    required this.remainingCount,
+class _CalendarActivityMarkers extends StatelessWidget {
+  const _CalendarActivityMarkers({
+    required this.date,
+    required this.hasEmotion,
+    required this.hasBibleReading,
+    required this.hasCompanionDiary,
   });
 
-  final List<EventEmotionMark> visibleMarks;
-  final int remainingCount;
+  final DateTime date;
+  final bool hasEmotion;
+  final bool hasBibleReading;
+  final bool hasCompanionDiary;
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        const spacing = 2.0;
-        final maxSlotSize =
-            (constraints.maxWidth -
-                spacing * (_calendarEmotionSlotsPerRow - 1)) /
-            _calendarEmotionSlotsPerRow;
-        final slotSize = math.min(18.0, math.max(12.0, maxSlotSize));
-
-        return Wrap(
-          alignment: WrapAlignment.center,
-          spacing: spacing,
-          runSpacing: spacing,
-          children: [
-            for (final mark in visibleMarks)
-              _TinyEmotionMarkBadge(mark: mark, size: slotSize),
-            if (remainingCount > 0)
-              _MoreEmotionMarkBadge(count: remainingCount, size: slotSize),
-          ],
-        );
-      },
+    final palette = AppPaletteTheme.of(context);
+    final activityCount = [
+      hasEmotion,
+      hasBibleReading,
+      hasCompanionDiary,
+    ].where((value) => value).length;
+    final dateKey = '${date.year}-${date.month}-${date.day}';
+    if (activityCount == 3) {
+      return Icon(
+        Icons.check_rounded,
+        key: ValueKey('calendar-all-actions-marker-$dateKey'),
+        size: 21,
+        color: palette.successBottom,
+      );
+    }
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.topCenter,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (hasEmotion)
+            ProfileActivityBadge(
+              key: ValueKey('calendar-emotion-marker-$dateKey'),
+              type: ProfileActivityBadgeType.emotion,
+              size: 16,
+              iconSize: 10,
+            ),
+          if (hasEmotion && (hasBibleReading || hasCompanionDiary))
+            const SizedBox(width: 3),
+          if (hasBibleReading)
+            ProfileActivityBadge(
+              key: ValueKey('bible-reading-marker-$dateKey'),
+              type: ProfileActivityBadgeType.bibleReading,
+              size: 16,
+              iconSize: 10,
+            ),
+          if (hasBibleReading && hasCompanionDiary) const SizedBox(width: 3),
+          if (hasCompanionDiary)
+            ProfileActivityBadge(
+              key: ValueKey('companion-diary-marker-$dateKey'),
+              type: ProfileActivityBadgeType.companionDiary,
+              size: 16,
+              iconSize: 10,
+            ),
+        ],
+      ),
     );
   }
 }
@@ -1068,18 +1111,14 @@ class _DayNumber extends StatelessWidget {
     required this.today,
     required this.selected,
     required this.color,
-    required this.hasCompanionDiary,
     required this.dayNumberKey,
-    required this.markerKey,
   });
 
   final int day;
   final bool today;
   final bool selected;
   final Color color;
-  final bool hasCompanionDiary;
   final Key dayNumberKey;
-  final Key markerKey;
 
   @override
   Widget build(BuildContext context) {
@@ -1091,50 +1130,13 @@ class _DayNumber extends StatelessWidget {
     );
     final content = SizedBox(
       key: dayNumberKey,
-      width: hasCompanionDiary
-          ? _calendarDayNumberWithMarkerWidth
-          : _calendarDayNumberSize,
+      width: _calendarDayNumberSize,
       height: _calendarDayNumberSize,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.center,
-        children: [
-          child,
-          if (hasCompanionDiary)
-            Positioned(
-              top: -2,
-              right: 0,
-              child: _CalendarCompanionDiaryMarker(key: markerKey),
-            ),
-        ],
-      ),
+      child: Center(child: child),
     );
     return SizedBox(
       height: _calendarDayNumberSize,
       child: Center(child: content),
-    );
-  }
-}
-
-class _CalendarCompanionDiaryMarker extends StatelessWidget {
-  const _CalendarCompanionDiaryMarker({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Container(
-      width: 13,
-      height: 13,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: palette.currentFill,
-        border: Border.all(color: palette.currentAccentDeep.withAlpha(0x66)),
-      ),
-      child: const FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text('📝', style: TextStyle(fontSize: 8.5, height: 1)),
-      ),
     );
   }
 }
@@ -1185,61 +1187,6 @@ class _DayNumberText extends StatelessWidget {
         border: Border.all(color: palette.currentAccentDeep, width: 1.1),
       ),
       child: Center(child: fittedText),
-    );
-  }
-}
-
-class _TinyEmotionMarkBadge extends StatelessWidget {
-  const _TinyEmotionMarkBadge({required this.mark, required this.size});
-
-  final EventEmotionMark mark;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: mark.emotionLabel,
-      child: EmotionBadgeIcon(
-        emotionKey: mark.emotionKey,
-        size: size,
-        iconSize: size * 0.58,
-        elevation: false,
-      ),
-    );
-  }
-}
-
-class _MoreEmotionMarkBadge extends StatelessWidget {
-  const _MoreEmotionMarkBadge({required this.count, required this.size});
-
-  final int count;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Container(
-      width: size,
-      height: size,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: palette.cardSurface,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: palette.subtleBorder, width: 0.8),
-      ),
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text(
-          '+$count',
-          maxLines: 1,
-          style: TextStyle(
-            color: palette.mutedText,
-            fontSize: 8.0,
-            fontWeight: FontWeight.w900,
-            height: 1,
-          ),
-        ),
-      ),
     );
   }
 }
@@ -1467,6 +1414,13 @@ Map<DateTime, UserCompanionDiaryEntry> _groupCompanionDiaryEntriesByDate(
   return grouped;
 }
 
+Set<DateTime> _groupBibleReadingDates(Iterable<DateTime?> readAts) {
+  return {
+    for (final readAt in readAts)
+      if (readAt != null) _dateOnly(toKst(readAt)),
+  };
+}
+
 DateTime _markKstDate(EventEmotionMark mark, {required DateTime nowUtc}) {
   final updatedAt = mark.updatedAt;
   if (updatedAt == null) {
@@ -1535,35 +1489,19 @@ bool _isSameMonth(DateTime a, DateTime b) {
 
 const double _emptyCalendarWeekHeight = 36;
 const double _oneLineCalendarWeekHeight = 56;
-const double _twoLineCalendarWeekHeight = 76;
 const double _calendarDayNumberSize = 24;
-const double _calendarDayNumberWithMarkerWidth = 32;
-const int _calendarEmotionSlotsPerRow = 2;
-const int _calendarMaxVisibleEmotionSlots = 4;
-const int _calendarVisibleEmotionMarksBeforeMore = 3;
 
 double _calendarWeekRowHeight(
   List<DateTime> weekDates,
   Map<DateTime, List<EventEmotionMark>> marksByDate,
+  Map<DateTime, UserCompanionDiaryEntry> companionDiaryByDate,
+  Set<DateTime> bibleReadingDates,
 ) {
-  return switch (_calendarWeekEmotionLineCount(weekDates, marksByDate)) {
-    0 => _emptyCalendarWeekHeight,
-    1 => _oneLineCalendarWeekHeight,
-    _ => _twoLineCalendarWeekHeight,
-  };
-}
-
-int _calendarWeekEmotionLineCount(
-  List<DateTime> weekDates,
-  Map<DateTime, List<EventEmotionMark>> marksByDate,
-) {
-  var maxVisibleSlots = 0;
-  for (final date in weekDates) {
-    final markCount = marksByDate[_dateOnly(date)]?.length ?? 0;
-    final visibleSlots = markCount >= _calendarMaxVisibleEmotionSlots
-        ? _calendarMaxVisibleEmotionSlots
-        : markCount;
-    maxVisibleSlots = math.max(maxVisibleSlots, visibleSlots);
-  }
-  return (maxVisibleSlots / _calendarEmotionSlotsPerRow).ceil().clamp(0, 2);
+  final hasRecord = weekDates.any((date) {
+    final day = _dateOnly(date);
+    return (marksByDate[day]?.isNotEmpty ?? false) ||
+        companionDiaryByDate.containsKey(day) ||
+        bibleReadingDates.contains(day);
+  });
+  return hasRecord ? _oneLineCalendarWeekHeight : _emptyCalendarWeekHeight;
 }

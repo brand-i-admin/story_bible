@@ -19,6 +19,8 @@ class AppPublicationsScreen extends ConsumerWidget {
     return ParchmentListPageScaffold(
       title: '공지사항과 사용법',
       child: ParchmentCard(
+        key: const ValueKey('app-publications-outer-surface'),
+        showBorder: false,
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
         child: RefreshIndicator(
           onRefresh: () async {
@@ -71,8 +73,7 @@ class AppPublicationsScreen extends ConsumerWidget {
               return ListView.separated(
                 padding: EdgeInsets.zero,
                 itemCount: items.length,
-                separatorBuilder: (_, __) =>
-                    Divider(height: 14, color: palette.subtleBorder),
+                separatorBuilder: (_, __) => const SizedBox(height: 6),
                 itemBuilder: (context, index) {
                   final publication = items[index];
                   return AppPublicationPreviewCard(

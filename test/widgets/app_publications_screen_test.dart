@@ -52,6 +52,30 @@ void main() {
     expect(find.text('가이드 및 튜토리얼'), findsOneWidget);
     expect(find.textContaining('처음 사용하신다면 홈에서 시대를 고른 뒤'), findsOneWidget);
     expect(find.byIcon(Icons.campaign_rounded), findsOneWidget);
+    final outerCard = tester.widget<Container>(
+      find
+          .descendant(
+            of: find.byKey(const ValueKey('app-publications-outer-surface')),
+            matching: find.byType(Container),
+          )
+          .first,
+    );
+    final decoration = outerCard.decoration! as BoxDecoration;
+    expect(decoration.border, isNull);
+    expect(find.byType(Divider), findsNothing);
+  });
+
+  testWidgets('개인정보 보호 페이지의 본문 외곽선을 표시하지 않는다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(theme: AppTheme.light(), home: const LegalDocumentsScreen()),
+    );
+    await tester.pump();
+
+    final panel = tester.widget<Container>(
+      find.byKey(const ValueKey('legal-documents-outer-surface')),
+    );
+    final decoration = panel.decoration! as BoxDecoration;
+    expect(decoration.border, isNull);
   });
 
   testWidgets('공지 항목을 누르면 상세 팝업에서 URL 줄을 자동 링크로 보여준다', (tester) async {

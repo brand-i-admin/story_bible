@@ -11,17 +11,25 @@ import 'web_pointer_interceptor.dart';
 /// 색 조합과 글자 크기 선택 바텀시트를 띄운다.
 ///
 /// 탭 시 즉시 전역 provider가 갱신되어 앱 전체 테마/텍스트가 다시 그려진다.
-Future<void> showFontScaleSheet(BuildContext context) {
+enum DisplaySettingsSection { theme, font }
+
+Future<void> showFontScaleSheet(
+  BuildContext context, {
+  DisplaySettingsSection? section,
+}) {
   return showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    builder: (_) => const WebPointerInterceptor(child: FontScaleBottomSheet()),
+    builder: (_) =>
+        WebPointerInterceptor(child: FontScaleBottomSheet(section: section)),
   );
 }
 
 class FontScaleBottomSheet extends ConsumerWidget {
-  const FontScaleBottomSheet({super.key});
+  const FontScaleBottomSheet({super.key, this.section});
+
+  final DisplaySettingsSection? section;
 
   static const String _previewText = '태초에 하나님이 천지를 창조하시니라 (창세기 1:1)';
 
@@ -29,6 +37,13 @@ class FontScaleBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final current = ref.watch(fontScaleProvider);
     final currentPalette = ref.watch(colorPaletteProvider);
+    final showTheme = section != DisplaySettingsSection.font;
+    final showFont = section != DisplaySettingsSection.theme;
+    final title = switch (section) {
+      DisplaySettingsSection.theme => '테마',
+      DisplaySettingsSection.font => '큰글자',
+      null => '색/글자 설정',
+    };
 
     return SafeArea(
       top: false,
@@ -45,7 +60,7 @@ class FontScaleBottomSheet extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                '색/글자 설정',
+                title,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -53,79 +68,84 @@ class FontScaleBottomSheet extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Text(
-                '색 조합',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                  color: currentPalette.text,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: AppColorPalette.values
-                    .map(
-                      (palette) => Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: _PaletteChoiceButton(
-                            palette: palette,
-                            surfacePalette: currentPalette,
-                            selected: palette == currentPalette,
-                            onTap: () => ref
-                                .read(colorPaletteProvider.notifier)
-                                .set(palette),
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '글자 크기',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                  color: currentPalette.text,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: currentPalette.cardSurface,
-                  border: Border.all(color: currentPalette.selectedBorder),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  _previewText,
+              if (showTheme) ...[
+                Text(
+                  '색 조합',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w900,
                     color: currentPalette.text,
-                    height: 1.4,
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: FontScale.values
-                    .map(
-                      (scale) => Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: _FontScaleChoiceButton(
-                            scale: scale,
-                            palette: currentPalette,
-                            selected: scale == current,
-                            onTap: () =>
-                                ref.read(fontScaleProvider.notifier).set(scale),
+                const SizedBox(height: 8),
+                Row(
+                  children: AppColorPalette.values
+                      .map(
+                        (palette) => Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: _PaletteChoiceButton(
+                              palette: palette,
+                              surfacePalette: currentPalette,
+                              selected: palette == currentPalette,
+                              onTap: () => ref
+                                  .read(colorPaletteProvider.notifier)
+                                  .set(palette),
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                    .toList(),
-              ),
+                      )
+                      .toList(),
+                ),
+              ],
+              if (showTheme && showFont) const SizedBox(height: 16),
+              if (showFont) ...[
+                Text(
+                  '글자 크기',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w900,
+                    color: currentPalette.text,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: currentPalette.cardSurface,
+                    border: Border.all(color: currentPalette.selectedBorder),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _previewText,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: currentPalette.text,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: FontScale.values
+                      .map(
+                        (scale) => Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: _FontScaleChoiceButton(
+                              scale: scale,
+                              palette: currentPalette,
+                              selected: scale == current,
+                              onTap: () => ref
+                                  .read(fontScaleProvider.notifier)
+                                  .set(scale),
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ],
               const SizedBox(height: 16),
               Align(
                 alignment: Alignment.center,

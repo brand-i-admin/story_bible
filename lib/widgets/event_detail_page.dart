@@ -122,6 +122,24 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
     );
   }
 
+  Future<bool> _openBibleReaderWithLoginGate(
+    List<BibleNavigationTarget> targets,
+  ) {
+    if (ref.read(signedInUserProvider) == null) {
+      _requestLogin('본문을 읽으려면 로그인이 필요해요.');
+      return Future.value(false);
+    }
+    return widget.onOpenBibleReader(targets);
+  }
+
+  void _startQuizWithLoginGate(String eventId) {
+    if (ref.read(signedInUserProvider) == null) {
+      _requestLogin('퀴즈를 풀려면 로그인이 필요해요.');
+      return;
+    }
+    widget.onStartQuiz(eventId);
+  }
+
   @override
   Widget build(BuildContext context) {
     final event = widget.event;
@@ -255,7 +273,8 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   }) {
     final palette = AppPaletteTheme.of(context);
     return DecoratedBox(
-      decoration: modalSurfaceDecoration(palette: palette),
+      key: const ValueKey('event-detail-outer-surface'),
+      decoration: borderlessModalSurfaceDecoration(palette: palette),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
         child: DefaultTextStyle(
@@ -479,8 +498,8 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
       emotionMark: emotionMark,
       lastScore: lastScore,
       attemptSummary: attemptSummary,
-      onOpenBibleReader: widget.onOpenBibleReader,
-      onStartQuiz: () => widget.onStartQuiz(event.id),
+      onOpenBibleReader: _openBibleReaderWithLoginGate,
+      onStartQuiz: () => _startQuizWithLoginGate(event.id),
       onEngraveEmotion: () => _openEmotionEngraving(event),
       onUndoBibleRead: () => _undoBibleRead(event.id),
       onUndoQuiz: () => _undoQuiz(event.id),

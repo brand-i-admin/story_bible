@@ -310,7 +310,8 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 430),
           child: Container(
-            decoration: modalSurfaceDecoration(palette: palette),
+            key: const ValueKey('delete-account-dialog-surface'),
+            decoration: borderlessModalSurfaceDecoration(palette: palette),
             padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
             child: SingleChildScrollView(
               child: Column(

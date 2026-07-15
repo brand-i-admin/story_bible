@@ -254,6 +254,30 @@ class StoryController extends Notifier<StoryState> {
     );
   }
 
+  /// 루트 지도 탭을 떠날 때 탐색 선택만 초기화한다.
+  ///
+  /// [clearEraSelection]과 달리 완료/본문/퀴즈 진행도는 유지해, 다른 탭이
+  /// 같은 [StoryState]에서 사용자 기록을 계속 표시할 수 있게 한다.
+  void clearMapExplorationSelection() {
+    state = state.copyWith(
+      loading: false,
+      clearSelectedEra: true,
+      clearSelectionMode: true,
+      clearSelectedLandmark: true,
+      characters: const [],
+      events: const [],
+      selectedCharacterCodes: const {},
+      selectedCharacterColors: const {},
+      selectedTimelineUnitCodes: const {},
+      displayedEventIds: const {},
+      searchQuery: '',
+      searchResults: const [],
+      isSearching: false,
+      clearSelectedEvent: true,
+      clearError: true,
+    );
+  }
+
   Future<void> selectEra(String eraId) async {
     if (state.selectedEraId == eraId && state.characters.isNotEmpty) {
       return;

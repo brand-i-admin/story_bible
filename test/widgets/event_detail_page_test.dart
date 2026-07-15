@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:story_bible/data/story_repository.dart';
+import 'package:story_bible/models/bible_ref.dart';
 import 'package:story_bible/models/character.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/state/auth_providers.dart';
@@ -74,6 +75,12 @@ void main() {
     expect(find.text('아론'), findsOneWidget);
     expect(tester.getSize(find.byType(CharacterAvatar).first).width, 31);
     expect(_avatarNames(tester), ['모세', '아론']);
+    final storySurface = tester.widget<DecoratedBox>(
+      find.byKey(const ValueKey('event-detail-outer-surface')),
+    );
+    final storyDecoration = storySurface.decoration as BoxDecoration;
+    expect(storyDecoration.border, isNull);
+    expect(storyDecoration.boxShadow, isNotEmpty);
     _expectAvatarsBesideBackgroundTitle(tester);
     _expectAvatarsDoNotOverlap(tester);
     verify(() => storyRepository.fetchCharactersByEra('era-exodus')).called(1);
@@ -109,6 +116,49 @@ void main() {
     _expectAvatarsBesideBackgroundTitle(tester);
     _expectAvatarsDoNotOverlap(tester);
   });
+
+  testWidgets('비로그인 사건 읽기와 퀴즈는 리더나 퀴즈 대신 로그인 팝업을 요청한다', (tester) async {
+    final loginMessages = <String>[];
+    var readerOpened = false;
+    var quizOpened = false;
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          storyRepositoryProvider.overrideWithValue(storyRepository),
+          signedInUserProvider.overrideWithValue(null),
+        ],
+        child: MaterialApp(
+          home: EventDetailPage(
+            event: _event(
+              bibleRefs: const [BibleRef(book: '출', from: '19:1', to: '19:1')],
+            ),
+            sceneAssetsFuture: Future.value(const []),
+            onLoginRequired: loginMessages.add,
+            onOpenBibleReader: (_) async {
+              readerOpened = true;
+              return false;
+            },
+            onStartQuiz: (_) => quizOpened = true,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('출 19:1 · 읽기'));
+    await tester.tap(find.text('출 19:1 · 읽기'));
+    await tester.pump();
+
+    expect(loginMessages, ['본문을 읽으려면 로그인이 필요해요.']);
+    expect(readerOpened, isFalse);
+
+    await tester.ensureVisible(find.text('퀴즈 시작'));
+    await tester.tap(find.text('퀴즈 시작'));
+    await tester.pump();
+
+    expect(loginMessages, ['본문을 읽으려면 로그인이 필요해요.', '퀴즈를 풀려면 로그인이 필요해요.']);
+    expect(quizOpened, isFalse);
+  });
 }
 
 List<String> _avatarNames(WidgetTester tester) {
@@ -143,7 +193,10 @@ Finder _summaryFinder() {
   return find.text('요약: 하나님은 백성에게 살아갈 길을 선포하신다.', findRichText: true);
 }
 
-StoryEvent _event({List<String> characterCodes = const ['aaron', 'moses']}) {
+StoryEvent _event({
+  List<String> characterCodes = const ['aaron', 'moses'],
+  List<BibleRef> bibleRefs = const [],
+}) {
   return StoryEvent(
     id: 'event-1',
     eraId: 'era-exodus',
@@ -163,6 +216,6 @@ StoryEvent _event({List<String> characterCodes = const ['aaron', 'moses']}) {
     lat: 28.5392,
     lng: 33.9756,
     characterCodes: characterCodes,
-    bibleRefs: const [],
+    bibleRefs: bibleRefs,
   );
 }

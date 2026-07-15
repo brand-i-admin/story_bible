@@ -331,7 +331,7 @@ class UserRepository {
           'entry_date': companionDiaryDateKey(entryDate),
           'title': normalizedTitle,
           'body': normalizedBody,
-          'updated_at': DateTime.now().toIso8601String(),
+          'updated_at': companionDiaryUpdatedAtValue(DateTime.now()),
         }, onConflict: 'user_id,entry_date')
         .select(_companionDiaryColumns)
         .single();
@@ -446,6 +446,9 @@ class UserRepository {
   String _contentTypeForExtension(String extension) =>
       contentTypeForImageExtension(extension);
 }
+
+String companionDiaryUpdatedAtValue(DateTime now) =>
+    now.toUtc().toIso8601String();
 
 /// 공백만 있거나 null인 문자열을 null로 정규화한다.
 @visibleForTesting

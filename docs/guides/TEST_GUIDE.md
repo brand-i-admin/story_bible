@@ -12,17 +12,17 @@
 | 영역 | 파일 수 | 정적 테스트 수 | 주요 책임 |
 |------|---------|----------------|-----------|
 | `test/` 루트 | 2 | 4 | 앱 smoke, 기본 widget scaffold |
-| `test/models/` | 15 | 89 | 불변 모델, `fromMap()`, enum/값 객체 변환 |
-| `test/data/` | 4 | 33 | Repository, Supabase row 변환, fallback |
-| `test/state/` | 3 | 25 | Riverpod provider/controller 상태 전환 |
-| `test/theme/` | 1 | 14 | 디자인 토큰 회귀 방지 |
-| `test/utils/` | 9 | 108 | 날짜, 지도 수학, asset loader, 선택 로직 |
-| `test/widgets/` | 27 | 141 | 주요 화면 조각, 다이얼로그, 프로필/지도 UI |
+| `test/models/` | 15 | 87 | 불변 모델, `fromMap()`, enum/값 객체 변환 |
+| `test/data/` | 7 | 43 | Repository, Supabase row 변환, fallback |
+| `test/state/` | 3 | 59 | Riverpod provider/controller 상태 전환 |
+| `test/theme/` | 1 | 18 | 디자인 토큰 회귀 방지 |
+| `test/utils/` | 11 | 143 | 날짜, 지도 수학, asset loader, 선택/통독 로직 |
+| `test/widgets/` | 34 | 241 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
 | `tools/**/test_*.py` | 13 | 93 | seed, lint, asset, docs, Supabase 도구 |
 
 Dart 쪽 정적 카운트는 `test/**/*.dart`의 `test()`/`testWidgets()` 호출 기준
-445개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안에서
-공유되는 테스트 그룹도 포함되므로 디렉토리별 단순 합보다 크다.
+595개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
+공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.
 
 ## 1. 기본 실행 명령
 
@@ -88,11 +88,12 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 |------|------|
 | `bible_book_meta_test.dart` | 성경 책 메타와 정렬 |
 | `daily_exploration_prompt_test.dart` | 오늘의 묵상 prompt 조합 |
-| `daily_exploration_selection_test.dart` | 날짜별 탐색 선택 안정성 |
+| `daily_exploration_selection_test.dart` | 날짜별 미션 선택, 최근 감정 기준 오늘 탐험 재개, 구약 7시대→신약 3시대/시대 내 사건 순서, 전체 처음·끝 위치 안정성 |
+| `bible_reading_progress_test.dart` | 마지막 통독 완료 위치 다음 장 계산과 표시 문구 |
 | `home_back_navigation_test.dart` | 홈 back navigation 정책 |
 | `kst_date_test.dart` | KST 기준 날짜 계산 |
 | `map_math_test.dart` | 지도 좌표/거리 계산 |
-| `scene_asset_loader_test.dart` | 장면 썸네일 로컬 우선, Storage fallback |
+| `scene_asset_loader_test.dart` | 장면 썸네일 로컬 우선, Storage fallback, 오늘 지도 핀 data URL/인덱스 복구 |
 | `system_insets_test.dart` | 안전영역 inset 계산 |
 | `weekly_selection_test.dart` | 주간 선택 로직 |
 
@@ -113,7 +114,7 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 | 퀴즈/제안 | `event_quiz_dialog_test.dart`, `proposal_quiz_editor_test.dart` |
 | 프로필 | `profile_*_test.dart`, `saved_verse_row_test.dart` |
 | 로그인 | `inline_login_prompt_card_test.dart` |
-| 접근성/공통 UI | `font_scale_bottom_sheet_test.dart`, `pulse_highlight_test.dart`, `story_home_styles_test.dart`, `emotion_badge_icon_test.dart` |
+| 접근성/공통 UI | `font_scale_bottom_sheet_test.dart`, `home_journey_overlay_test.dart`, `story_root_navigation_bar_test.dart`, `pulse_highlight_test.dart`, `story_home_styles_test.dart` |
 | 알림 | `notification_deep_link_test.dart` |
 
 새 위젯은 raw 색/spacing보다 `lib/theme/` 토큰을 먼저 쓰고, 테스트에서는 깨지기
