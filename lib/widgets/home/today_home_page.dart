@@ -12,6 +12,7 @@ import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/daily_exploration_selection.dart';
 import '../../utils/scene_asset_loader.dart';
+import '../map/story_event_marker_presentation.dart';
 import '../profile/companion_diary_entry_card.dart';
 import '../story_bottom_panel_style.dart';
 import '../story_map_panel.dart';
@@ -201,7 +202,7 @@ class _TodayHomePageState extends State<TodayHomePage> {
         final panelHeight = _panelExpanded
             ? overlayHeight
             : _todayPanelCollapsedHeight;
-        final topObscured = media.padding.top + 62;
+        final topObscured = media.padding.top + _TodayHeaderAction.extent + 14;
         final bottomObscuredFraction = constraints.maxHeight <= 0
             ? 0.48
             : (panelHeight / constraints.maxHeight).clamp(0.0, 0.75);
@@ -229,14 +230,18 @@ class _TodayHomePageState extends State<TodayHomePage> {
                   colorForCharacter: widget.colorForCharacter,
                   selectedCharacterCodes: const <String>{},
                   eventEmotionMarks: widget.eventEmotionMarks,
-                  eventMarkerRoles: mapSelection.markerRoles,
-                  eventMarkerThumbnailUrls: thumbnailUrls,
+                  markerPresentation: StoryEventMarkerPresentation.dailyJourney(
+                    roles: mapSelection.markerRoles,
+                    thumbnailUrls: thumbnailUrls,
+                  ),
                   mapGesturesEnabled: true,
                   decorate: false,
                   showSelectedCallout: false,
                   animateReveal: false,
                   fitEventIds: mapSelection.fitEventIds,
-                  fitAllZoomAdjust: -1.15,
+                  fitAllZoomAdjust: 0.0,
+                  fitTightClusterMaxZoom: 9.0,
+                  showEventPath: true,
                   topObscuredPixels: topObscured,
                   bottomObscuredFraction: bottomObscuredFraction,
                   showCharacterLegend: false,
@@ -244,15 +249,19 @@ class _TodayHomePageState extends State<TodayHomePage> {
               ),
               if (_showWelcomeGuide)
                 Positioned(
-                  top: media.padding.top + 72,
+                  top: media.padding.top + _TodayHeaderAction.extent + 14,
                   left: 0,
                   right: 0,
                   bottom: panelHeight + 18,
                   child: const IgnorePointer(
                     child: MapHintOverlay(
                       message:
-                          '환영합니다! 오늘도 주님과 동행해요.\n'
-                          '최근 감정 다음 이야기부터 이어지고, 오늘의 기록은 ‘내 정보’에 모여요.',
+                          '환영합니다! 매일 3가지로 주님과 동행해요!\n'
+                          '① 이야기 탐험\n'
+                          '(최근 감정을 새긴 다음 이야기가 추천되요)\n'
+                          '② 신앙 다이어리\n'
+                          '③ 통독\n'
+                          "(기록은 '내정보'에 쌓여요)",
                       avatarSize: 58,
                     ),
                   ),
@@ -364,23 +373,23 @@ class _TodayHeaderActions extends StatelessWidget {
           child: const Icon(
             Icons.search_rounded,
             color: Colors.white,
-            size: 25,
+            size: _TodayHeaderAction.iconSize,
           ),
         ),
-        const SizedBox(width: 7),
+        const SizedBox(width: 6),
         _TodayHeaderAction(
           label: '큰글자',
           onTap: onOpenFontSettings,
           child: const Text('Aa', style: TextStyle(color: Colors.white)),
         ),
-        const SizedBox(width: 7),
+        const SizedBox(width: 6),
         _TodayHeaderAction(
           label: '테마',
           onTap: onOpenThemeSettings,
           child: const Icon(
             Icons.palette_outlined,
             color: Colors.white,
-            size: 25,
+            size: _TodayHeaderAction.iconSize,
           ),
         ),
       ],
@@ -394,6 +403,9 @@ class _TodayHeaderAction extends StatelessWidget {
     required this.onTap,
     required this.child,
   });
+
+  static const double extent = 48;
+  static const double iconSize = 20;
 
   final String label;
   final VoidCallback onTap;
@@ -409,18 +421,18 @@ class _TodayHeaderAction extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadii.lg),
         child: SizedBox(
-          width: 58,
-          height: 58,
+          width: extent,
+          height: extent,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 28,
+                height: 21,
                 child: Center(
                   child: DefaultTextStyle(
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 23,
+                      fontSize: 18,
                       fontWeight: FontWeight.w800,
                       height: 1,
                     ),
@@ -428,12 +440,12 @@ class _TodayHeaderAction extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 1),
               Text(
                 label,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 10.5,
+                  fontSize: 9.2,
                   fontWeight: FontWeight.w800,
                   height: 1,
                 ),

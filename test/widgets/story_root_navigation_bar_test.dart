@@ -99,6 +99,38 @@ void main() {
     expect(decoration.boxShadow, isNull);
   });
 
+  testWidgets('하단 시스템 안전영역까지 네비게이션 표면색이 이어진다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(
+            size: Size(390, 844),
+            padding: EdgeInsets.only(bottom: 34),
+          ),
+          child: Scaffold(
+            bottomNavigationBar: StoryRootNavigationBar(
+              selectedTab: StoryRootTab.today,
+              onSelect: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      tester
+          .getSize(find.byKey(const ValueKey('root-navigation-content')))
+          .height,
+      68,
+    );
+    expect(
+      tester
+          .getSize(find.byKey(const ValueKey('root-navigation-surface')))
+          .height,
+      102,
+    );
+  });
+
   test('오늘 헤더는 찾기·큰글자·테마 순서와 흰색 단색 아이콘을 사용한다', () {
     final source = File(
       'lib/widgets/home/today_home_page.dart',
@@ -114,6 +146,21 @@ void main() {
     expect(source, contains("Text('Aa'"));
     expect(source, contains('Icons.palette_outlined'));
     expect(source, contains('color: Colors.white'));
+  });
+
+  test('오늘 헤더 유틸리티 버튼은 48px 터치 영역과 작은 아이콘을 사용한다', () {
+    final source = File(
+      'lib/widgets/home/today_home_page.dart',
+    ).readAsStringSync();
+    final actionSource = source.substring(
+      source.indexOf('class _TodayHeaderAction extends StatelessWidget'),
+    );
+
+    expect(actionSource, contains('static const double extent = 48;'));
+    expect(actionSource, contains('static const double iconSize = 20;'));
+    expect(actionSource, contains('width: extent'));
+    expect(actionSource, contains('height: extent'));
+    expect(source, contains('size: _TodayHeaderAction.iconSize'));
   });
 
   test('오늘과 지도 탭은 같은 3D 지도와 컨트롤러를 재사용하며 지도 제스처를 켠다', () {
@@ -140,14 +187,40 @@ void main() {
     ).readAsStringSync();
 
     expect(source, contains('MapHintOverlay('));
-    expect(source, contains('환영합니다! 오늘도 주님과 동행해요.'));
-    expect(source, contains('최근 감정 다음 이야기부터 이어지고'));
-    expect(source, isNot(contains('매일 이야기 탐험, 신앙 다이어리 작성, 통독')));
+    expect(source, contains('환영합니다! 매일 3가지로 주님과 동행해요!'));
+    expect(source, contains('① 이야기 탐험'));
+    expect(source, contains('(최근 감정을 새긴 다음 이야기가 추천되요)'));
+    expect(source, contains('② 신앙 다이어리'));
+    expect(source, contains('③ 통독'));
+    expect(source, contains("(기록은 '내정보'에 쌓여요)"));
     expect(source, contains('_showWelcomeGuide'));
     expect(source, contains('onPointerDown: (_) => _dismissWelcomeGuide()'));
     expect(source, contains('IgnorePointer('));
     expect(source, contains('AnimatedContainer('));
     expect(source, contains('_todayPanelCollapsedHeight'));
+  });
+
+  test('오늘 지도는 역할 핀 경로와 촘촘한 세 사건 전용 확대 상한을 사용한다', () {
+    final source = File(
+      'lib/widgets/home/today_home_page.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('showEventPath: true'));
+    expect(source, contains('fitTightClusterMaxZoom: 9.0'));
+    expect(source, contains('fitAllZoomAdjust: 0.0'));
+  });
+
+  test('루트 화면은 시스템 네비게이션 영역도 탭 표면색으로 맞춘다', () {
+    final source = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('AnnotatedRegion<SystemUiOverlayStyle>'));
+    expect(
+      source,
+      contains('systemNavigationBarColor: navigationSurfaceColor'),
+    );
+    expect(source, contains('systemNavigationBarContrastEnforced: false'));
   });
 
   test('오늘 패널은 지도 패널과 공유하는 표면과 모바일 배치를 쓴다', () {
@@ -179,5 +252,38 @@ void main() {
     expect(homeSource, contains('showWelcomeGuide()'));
     expect(todaySource, contains('class TodayHomePageController'));
     expect(todaySource, contains('void showWelcomeGuide()'));
+  });
+
+  test('지도 탭을 벗어나면 지도 탐색 선택을 첫 단계로 초기화한다', () {
+    final source = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+    final resetSource = source.substring(
+      source.indexOf('void _resetMapTabExploration()'),
+      source.indexOf('void _selectRootTab(StoryRootTab tab)'),
+    );
+    final selectTabSource = source.substring(
+      source.indexOf('void _selectRootTab(StoryRootTab tab)'),
+      source.indexOf('void _continueBibleReading('),
+    );
+
+    expect(
+      selectTabSource,
+      contains(
+        'final leavingMap = _rootTab == StoryRootTab.map && '
+        'tab != StoryRootTab.map;',
+      ),
+    );
+    expect(
+      selectTabSource,
+      contains('if (leavingMap) {\n      _resetMapTabExploration();'),
+    );
+    expect(resetSource, contains('controller.clearMapExplorationSelection();'));
+    expect(resetSource, contains('_selectionStep = 1;'));
+    expect(resetSource, contains('_mode = null;'));
+    expect(
+      resetSource,
+      contains('_selectionPanelStage = StorySelectionPanelStage.expanded;'),
+    );
   });
 }

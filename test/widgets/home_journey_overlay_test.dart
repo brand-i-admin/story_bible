@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +16,21 @@ void main() {
     _event(id: 'recommended', title: '오늘의 추천 이야기', rank: 2),
     _event(id: 'next', title: '다음 이야기', rank: 3),
   ];
+
+  test('오늘과 지도 타임라인은 같은 이야기 카드에 표현 모드만 다르게 전달한다', () {
+    final todaySource = File(
+      'lib/widgets/home/home_journey_overlay.dart',
+    ).readAsStringSync();
+    final timelineSource = File(
+      'lib/widgets/event_timeline_row.dart',
+    ).readAsStringSync();
+
+    expect(todaySource, contains('StoryEventThumbCard('));
+    expect(timelineSource, contains('StoryEventThumbCard('));
+    expect(todaySource, contains('StoryEventCardPresentation.todayCurrent'));
+    expect(todaySource, contains('StoryEventCardPresentation.todayAdjacent'));
+    expect(timelineSource, contains('StoryEventCardPresentation.mapTimeline'));
+  });
 
   testWidgets('추천 전후의 이야기 3개와 낮은 퀵 액션을 렌더한다', (tester) async {
     await tester.binding.setSurfaceSize(const Size(800, 900));
@@ -86,6 +103,61 @@ void main() {
           .active,
       isTrue,
     );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('좁은 폰에서도 이전·현재·다음 카드 전체가 보이고 양옆 카드는 더 낮다', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 780));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 445,
+            child: HomeJourneyOverlay(
+              events: events,
+              recommendedEventId: 'recommended',
+              currentEventId: 'recommended',
+              eras: const [_era],
+              charactersByCode: const {},
+              eventEmotionMarks: const {},
+              quizAttemptSummaries: const {},
+              isAuthenticated: true,
+              todayDiary: null,
+              diaryLoading: false,
+              diaryError: null,
+              bibleTargetLabel: '창세기 14장',
+              onOpenStory: (_) {},
+              onCurrentStoryChanged: (_) {},
+              onSaveDiary: _discardDiarySave,
+              onDeleteDiary: _discardDiaryDelete,
+              onContinueBibleReading: () {},
+              onOpenProfile: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 120));
+
+    final pageRect = tester.getRect(
+      find.byKey(const ValueKey('home-story-page-view')),
+    );
+    final previousRect = tester.getRect(
+      find.byKey(const ValueKey('home-story-task-highlight-previous')),
+    );
+    final currentRect = tester.getRect(
+      find.byKey(const ValueKey('home-story-task-highlight-recommended')),
+    );
+    final nextRect = tester.getRect(
+      find.byKey(const ValueKey('home-story-task-highlight-next')),
+    );
+
+    expect(previousRect.left, greaterThanOrEqualTo(pageRect.left - 0.5));
+    expect(nextRect.right, lessThanOrEqualTo(pageRect.right + 0.5));
+    expect(currentRect.height - previousRect.height, greaterThanOrEqualTo(30));
+    expect(currentRect.height - nextRect.height, greaterThanOrEqualTo(30));
     expect(tester.takeException(), isNull);
   });
 

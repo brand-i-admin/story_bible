@@ -10,7 +10,9 @@ import '../models/story_event.dart';
 import '../theme/app_color_palette.dart';
 import '../utils/scene_asset_loader.dart';
 import 'completion_celebration.dart';
-import 'v2/region_event_list.dart' show StoryEventThumbCard;
+
+import 'v2/region_event_list.dart'
+    show StoryEventCardPresentation, StoryEventThumbCard;
 
 double eventTimelineRowHeightFor(BuildContext context, {required double base}) {
   final textScale = MediaQuery.textScalerOf(context).scale(1);
@@ -279,6 +281,7 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
           emotionKey: widget.eventEmotionMarks[event.id]?.emotionKey,
           attemptSummary: widget.quizAttemptSummaries[event.id],
           orderNumber: widget.orderNumberBuilder?.call(event, idx) ?? idx + 1,
+          presentation: StoryEventCardPresentation.mapTimeline,
           loader: _loader,
           publicUrlForStoragePath: widget.publicUrlForStoragePath,
           onTap: () => widget.onTapEvent(event),

@@ -137,6 +137,75 @@ void main() {
     expect(firstStep.style?.fontSize, secondStep.style?.fontSize);
   });
 
+  testWidgets('오늘 환영 가이드는 세 가지 동행 항목과 두 참고 문구를 간결하게 표시한다', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: MapHintOverlay(
+            message:
+                '환영합니다! 매일 3가지로 주님과 동행해요!\n'
+                '① 이야기 탐험\n'
+                '(최근 감정을 새긴 다음 이야기가 추천되요)\n'
+                '② 신앙 다이어리\n'
+                '③ 통독\n'
+                "(기록은 '내정보'에 쌓여요)",
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('map-hint-step-badge-1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('map-hint-step-badge-2')), findsOneWidget);
+    expect(find.byKey(const ValueKey('map-hint-step-badge-3')), findsOneWidget);
+    expect(find.text('이야기 탐험'), findsOneWidget);
+    expect(find.text('신앙 다이어리'), findsOneWidget);
+    expect(find.text('통독'), findsOneWidget);
+    expect(find.text('(최근 감정을 새긴 다음 이야기가 추천되요)'), findsOneWidget);
+    expect(find.text("(기록은 '내정보'에 쌓여요)"), findsOneWidget);
+  });
+
+  testWidgets('오늘 환영 가이드는 낮은 지도 가시 영역에서도 overflow 없이 맞춰진다', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              key: ValueKey('welcome-guide-available-area'),
+              width: 360,
+              height: 210,
+              child: MapHintOverlay(
+                avatarSize: 58,
+                message:
+                    '환영합니다! 매일 3가지로 주님과 동행해요!\n'
+                    '① 이야기 탐험\n'
+                    '(최근 감정을 새긴 다음 이야기가 추천되요)\n'
+                    '② 신앙 다이어리\n'
+                    '③ 통독\n'
+                    "(기록은 '내정보'에 쌓여요)",
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('map-hint-scale-to-fit')), findsOneWidget);
+    final availableBottom = tester
+        .getBottomLeft(
+          find.byKey(const ValueKey('welcome-guide-available-area')),
+        )
+        .dy;
+    final guideBottom = tester
+        .getBottomLeft(find.byKey(const ValueKey('map-hint-container')))
+        .dy;
+    expect(guideBottom, lessThanOrEqualTo(availableBottom + 0.5));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('첫 안내 문구는 좁은 폰에서도 단계 줄 글자 크기를 맞춘다', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(

@@ -15,7 +15,9 @@ import '../parchment_dialog.dart';
 import '../profile/companion_diary_entry_card.dart';
 import '../pulse_highlight.dart';
 import '../story_bottom_panel_style.dart';
-import '../v2/region_event_list.dart' show StoryEventThumbCard;
+
+import '../v2/region_event_list.dart'
+    show StoryEventCardPresentation, StoryEventThumbCard;
 
 class HomeJourneyOverlay extends StatelessWidget {
   const HomeJourneyOverlay({
@@ -220,7 +222,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     _currentPage = _initialPage();
     _pageController = PageController(
       initialPage: _currentPage,
-      viewportFraction: 0.62,
+      viewportFraction: 0.32,
     );
   }
 
@@ -293,8 +295,19 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
               clipBehavior: Clip.none,
               itemCount: ordered.length + 2,
               onPageChanged: (page) {
-                setState(() => _currentPage = page);
-                final eventIndex = page - 1;
+                final nextPage = page.clamp(
+                  (_currentPage - 1).clamp(0, ordered.length + 1),
+                  (_currentPage + 1).clamp(0, ordered.length + 1),
+                );
+                setState(() => _currentPage = nextPage);
+                if (nextPage != page) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted && _pageController.hasClients) {
+                      _pageController.jumpToPage(nextPage);
+                    }
+                  });
+                }
+                final eventIndex = nextPage - 1;
                 if (eventIndex >= 0 && eventIndex < ordered.length) {
                   widget.onCurrentStoryChanged(ordered[eventIndex]);
                 }
@@ -381,10 +394,9 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
       emotionKey: widget.eventEmotionMarks[event.id]?.emotionKey,
       attemptSummary: widget.quizAttemptSummaries[event.id],
       orderNumber: event.storyIndex,
-      showSummary: isCurrent,
-      showCharacterPills: isCurrent,
-      forceOpaqueSurface: true,
-      expandSurface: true,
+      presentation: isCurrent
+          ? StoryEventCardPresentation.todayCurrent
+          : StoryEventCardPresentation.todayAdjacent,
       surfaceColorOverride: palette.cardSurface,
       loader: SceneAssetLoader(),
       onTap: () {
@@ -416,9 +428,9 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
           child: Padding(
             padding: EdgeInsets.fromLTRB(
               5,
-              isCurrent ? 0 : 12,
+              isCurrent ? 0 : 16,
               5,
-              isCurrent ? 0 : 12,
+              isCurrent ? 0 : 16,
             ),
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 180),

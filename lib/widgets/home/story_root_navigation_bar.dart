@@ -4,6 +4,10 @@ import '../../theme/app_color_palette.dart';
 
 enum StoryRootTab { today, bible, map, profile }
 
+Color storyRootNavigationSurfaceColor(AppColorPalette palette) {
+  return Color.alphaBlend(palette.panelSurface, palette.pageBottom);
+}
+
 class StoryRootNavigationBar extends StatelessWidget {
   const StoryRootNavigationBar({
     super.key,
@@ -17,49 +21,54 @@ class StoryRootNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    return SafeArea(
-      top: false,
-      child: Container(
-        key: const ValueKey('root-navigation-surface'),
-        height: 68,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: palette.panelSurface,
-          border: Border(
-            top: BorderSide(color: palette.subtleBorder, width: 1),
+    final surfaceColor = storyRootNavigationSurfaceColor(palette);
+    return Container(
+      key: const ValueKey('root-navigation-surface'),
+      decoration: BoxDecoration(color: surfaceColor),
+      child: SafeArea(
+        top: false,
+        child: Container(
+          key: const ValueKey('root-navigation-content'),
+          height: 68,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            border: Border(
+              top: BorderSide(color: palette.subtleBorder, width: 1),
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            _RootNavigationItem(
-              tab: StoryRootTab.today,
-              label: '오늘',
-              icon: Icons.home_rounded,
-              selected: selectedTab == StoryRootTab.today,
-              onTap: onSelect,
-            ),
-            _RootNavigationItem(
-              tab: StoryRootTab.bible,
-              label: '성경',
-              icon: Icons.menu_book_rounded,
-              selected: selectedTab == StoryRootTab.bible,
-              onTap: onSelect,
-            ),
-            _RootNavigationItem(
-              tab: StoryRootTab.map,
-              label: '지도',
-              icon: Icons.map_rounded,
-              selected: selectedTab == StoryRootTab.map,
-              onTap: onSelect,
-            ),
-            _RootNavigationItem(
-              tab: StoryRootTab.profile,
-              label: '내정보',
-              icon: Icons.person_rounded,
-              selected: selectedTab == StoryRootTab.profile,
-              onTap: onSelect,
-            ),
-          ],
+          child: Row(
+            children: [
+              _RootNavigationItem(
+                tab: StoryRootTab.today,
+                label: '오늘',
+                icon: Icons.home_rounded,
+                selected: selectedTab == StoryRootTab.today,
+                onTap: onSelect,
+              ),
+              _RootNavigationItem(
+                tab: StoryRootTab.bible,
+                label: '성경',
+                icon: Icons.menu_book_rounded,
+                selected: selectedTab == StoryRootTab.bible,
+                onTap: onSelect,
+              ),
+              _RootNavigationItem(
+                tab: StoryRootTab.map,
+                label: '지도',
+                icon: Icons.map_rounded,
+                selected: selectedTab == StoryRootTab.map,
+                onTap: onSelect,
+              ),
+              _RootNavigationItem(
+                tab: StoryRootTab.profile,
+                label: '내정보',
+                icon: Icons.person_rounded,
+                selected: selectedTab == StoryRootTab.profile,
+                onTap: onSelect,
+              ),
+            ],
+          ),
         ),
       ),
     );

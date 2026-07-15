@@ -409,6 +409,7 @@ void main() {
       when(
         () => mockRepo.fetchEras(),
       ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(() => mockRepo.fetchLandmarks()).thenAnswer((_) async => const []);
       when(
         () => mockRepo.fetchCharactersByEra(any()),
       ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
@@ -433,6 +434,71 @@ void main() {
       expect(state.characters, isEmpty);
       expect(state.events, isEmpty);
       expect(state.searchQuery, '');
+    });
+  });
+
+  group('StoryController.clearMapExplorationSelection', () {
+    test('지도 선택은 비우고 사용자 완료 기록은 유지', () async {
+      final user = _user(id: 'u1');
+      when(() => mockAuth.currentUser).thenReturn(user);
+      when(
+        () => mockRepo.fetchEras(),
+      ).thenAnswer((_) async => [_era(id: 'e1', code: 'old1')]);
+      when(() => mockRepo.fetchLandmarks()).thenAnswer((_) async => const []);
+      when(
+        () => mockRepo.fetchCharactersByEra('e1'),
+      ).thenAnswer((_) async => [_person(id: 'p1', name: 'A')]);
+      when(() => mockRepo.fetchEventsByEra('e1')).thenAnswer(
+        (_) async => [
+          _event(id: 'ev1', eraId: 'e1', characterCodes: ['p1']),
+        ],
+      );
+      when(() => mockRepo.fetchEventProgress(user.id)).thenAnswer(
+        (_) async => {
+          'ev1': (bibleRead: true, quizCompleted: true, completed: true),
+        },
+      );
+      when(() => mockRepo.fetchEventEmotionMarks(user.id)).thenAnswer(
+        (_) async => const {
+          'ev1': EventEmotionMark(
+            eventId: 'ev1',
+            emotionKey: 'joy',
+            emotionLabel: '기쁨',
+            emotionEmoji: '🌟',
+            note: '',
+            updatedAt: null,
+          ),
+        },
+      );
+      when(
+        () => mockRepo.fetchSavedEventIds(user.id),
+      ).thenAnswer((_) async => const {});
+      when(
+        () => mockRepo.fetchCompletedBibleChapterReadAts(user.id),
+      ).thenAnswer((_) async => const {});
+      when(
+        () => mockRepo.fetchQuizAttemptSummaries(user.id),
+      ).thenAnswer((_) async => const {});
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+      await controller.selectEra('e1');
+      controller.setSelectionMode(SelectionMode.character);
+      controller.toggleCharacter('p1');
+      controller.selectEvent('ev1');
+
+      controller.clearMapExplorationSelection();
+      final state = container.read(storyControllerProvider);
+      expect(state.selectedEraId, isNull);
+      expect(state.selectionMode, isNull);
+      expect(state.selectedEventId, isNull);
+      expect(state.selectedCharacterCodes, isEmpty);
+      expect(state.characters, isEmpty);
+      expect(state.events, isEmpty);
+      expect(state.completedEventIds, contains('ev1'));
+      expect(state.bibleReadEventIds, contains('ev1'));
+      expect(state.quizCompletedEventIds, contains('ev1'));
     });
   });
 

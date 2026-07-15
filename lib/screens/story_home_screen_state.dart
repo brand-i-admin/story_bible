@@ -2593,11 +2593,26 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       StoryRootTab.map => _buildMapTab(context),
       StoryRootTab.profile => _buildProfileRootTab(),
     };
-    return Scaffold(
-      body: body,
-      bottomNavigationBar: StoryRootNavigationBar(
-        selectedTab: _rootTab,
-        onSelect: _selectRootTab,
+    final palette = AppPaletteTheme.of(context);
+    final navigationSurfaceColor = storyRootNavigationSurfaceColor(palette);
+    final navigationIconBrightness =
+        ThemeData.estimateBrightnessForColor(navigationSurfaceColor) ==
+            Brightness.dark
+        ? Brightness.light
+        : Brightness.dark;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        systemNavigationBarColor: navigationSurfaceColor,
+        systemNavigationBarDividerColor: navigationSurfaceColor,
+        systemNavigationBarIconBrightness: navigationIconBrightness,
+        systemNavigationBarContrastEnforced: false,
+      ),
+      child: Scaffold(
+        body: body,
+        bottomNavigationBar: StoryRootNavigationBar(
+          selectedTab: _rootTab,
+          onSelect: _selectRootTab,
+        ),
       ),
     );
   }
@@ -2712,6 +2727,28 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
+  /// 지도 탭에서 만든 시대·방법·사건 선택은 다른 루트 탭까지 이어지지 않는다.
+  /// 다시 지도 탭을 열면 시대/방법 선택부터 새 탐험을 시작한다.
+  void _resetMapTabExploration() {
+    final controller = ref.read(storyControllerProvider.notifier);
+    controller.clearMapExplorationSelection();
+    _mapPanelController.clearMapTapSuppression();
+    _clearMapGestureSuspension();
+    if (_selectionPanelScrollController.hasClients) {
+      _selectionPanelScrollController.jumpTo(0);
+    }
+    _mode = null;
+    _selectionStep = 1;
+    _selectionPanelStage = StorySelectionPanelStage.expanded;
+    _selectionSheetExtent = _selectionSheetExpandedSize;
+    _draftSelectedCharacterCodes = const <String>{};
+    _draftDisplayedEventIds = const <String>{};
+    _awaitingRevealComplete = false;
+    _revealInstantly = false;
+    _mapAnimationInputLocked = false;
+    _resetMapHint();
+  }
+
   void _selectRootTab(StoryRootTab tab) {
     if (!mounted) {
       return;
@@ -2721,6 +2758,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _todayHomePageController.showWelcomeGuide();
       }
       return;
+    }
+    final leavingMap = _rootTab == StoryRootTab.map && tab != StoryRootTab.map;
+    if (leavingMap) {
+      _resetMapTabExploration();
     }
     setState(() => _rootTab = tab);
     if (tab == StoryRootTab.today) {

@@ -309,9 +309,9 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
                       ? _eventRevealCount
                       : _visibleCount,
                   orderedEventsActive: _orderedEventsActive,
+                  showEventPath: widget.showEventPath || _orderedEventsActive,
                   eventEmotionMarks: widget.eventEmotionMarks,
-                  eventMarkerRoles: widget.eventMarkerRoles,
-                  eventMarkerThumbnailUrls: widget.eventMarkerThumbnailUrls,
+                  markerPresentation: widget.markerPresentation,
                   mapGesturesEnabled: widget.mapGesturesEnabled,
                   regionPickerMode: widget.regionPickerMode,
                   countryBorderLines: _countryBorderLines3d,
@@ -820,7 +820,11 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
       9.0,
     );
     if (isTightlyClustered) {
-      fittedZoom = math.min(fittedZoom, 7.15);
+      final tightClusterMaxZoom = widget.fitTightClusterMaxZoom.clamp(
+        _minMapZoom,
+        _maxMapZoom,
+      );
+      fittedZoom = math.min(fittedZoom, tightClusterMaxZoom);
     }
     fittedZoom = (fittedZoom + zoomBoost).clamp(_minMapZoom, _maxMapZoom);
     final bottomGap = (widget.bottomObscuredFraction * _lastMapSize.height)

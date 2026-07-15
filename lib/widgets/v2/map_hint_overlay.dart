@@ -26,90 +26,107 @@ class MapHintOverlay extends StatelessWidget {
     final palette = AppPaletteTheme.of(context);
     final outerColor = _guideOuterColor(palette);
     final dismissBadgeColor = _guideDismissBadgeColor(palette);
-    return Center(
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 220),
-        margin: const EdgeInsets.symmetric(horizontal: 22),
-        constraints: const BoxConstraints(maxWidth: 410),
-        child: Container(
-          key: const ValueKey('map-hint-container'),
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
-          decoration: BoxDecoration(
-            color: outerColor,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: palette.utilityBorder.withValues(alpha: 0.58),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: palette.primaryDeep.withValues(alpha: 0.16),
-                blurRadius: 18,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Align(
-                alignment: Alignment.center,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final contentWidth = constraints.maxWidth.isFinite
+            ? (constraints.maxWidth - 44).clamp(1.0, 410.0).toDouble()
+            : 410.0;
+        return Center(
+          child: FittedBox(
+            key: const ValueKey('map-hint-scale-to-fit'),
+            fit: BoxFit.scaleDown,
+            child: SizedBox(
+              width: contentWidth,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
                 child: Container(
-                  key: const ValueKey('map-hint-dismiss-badge'),
+                  key: const ValueKey('map-hint-container'),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 4,
+                    horizontal: 15,
+                    vertical: 13,
                   ),
                   decoration: BoxDecoration(
-                    color: dismissBadgeColor,
-                    borderRadius: BorderRadius.circular(999),
+                    color: outerColor,
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(
-                      color: palette.currentAccent.withValues(alpha: 0.32),
+                      color: palette.utilityBorder.withValues(alpha: 0.58),
                       width: 1,
                     ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.hourglass_top_rounded,
-                        color: Colors.white,
-                        size: 13,
+                    boxShadow: [
+                      BoxShadow(
+                        color: palette.primaryDeep.withValues(alpha: 0.16),
+                        blurRadius: 18,
+                        offset: const Offset(0, 4),
                       ),
-                      SizedBox(width: 6),
-                      Text(
-                        '화면 아무데나 누르면 사라집니다',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w800,
-                          height: 1.2,
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          key: const ValueKey('map-hint-dismiss-badge'),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 9,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: dismissBadgeColor,
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: palette.currentAccent.withValues(
+                                alpha: 0.32,
+                              ),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.hourglass_top_rounded,
+                                color: Colors.white,
+                                size: 13,
+                              ),
+                              SizedBox(width: 6),
+                              Text(
+                                '화면 아무데나 누르면 사라집니다',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                      ),
+                      const SizedBox(height: 18),
+                      Row(
+                        key: const ValueKey('map-hint-message-row'),
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          _GuideAvatar(
+                            key: const ValueKey('map-hint-avatar'),
+                            assetPath: avatarAssetPath,
+                            size: avatarSize,
+                          ),
+                          const SizedBox(width: _guideAvatarGap),
+                          Expanded(child: _GuideSpeechBubble(message: message)),
+                        ],
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
-              Row(
-                key: const ValueKey('map-hint-message-row'),
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _GuideAvatar(
-                    key: const ValueKey('map-hint-avatar'),
-                    assetPath: avatarAssetPath,
-                    size: avatarSize,
-                  ),
-                  const SizedBox(width: _guideAvatarGap),
-                  Expanded(child: _GuideSpeechBubble(message: message)),
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

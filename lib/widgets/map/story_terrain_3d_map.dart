@@ -15,6 +15,7 @@ import '../../models/landmark.dart';
 import '../../models/story_event.dart';
 import '../../utils/map_math.dart' as map_math;
 import 'map_tile_style.dart';
+import 'story_event_marker_presentation.dart';
 
 import 'story_terrain_web_view_stub.dart'
     if (dart.library.html) 'story_terrain_web_view_web.dart';
@@ -36,9 +37,9 @@ class StoryTerrain3dMap extends StatefulWidget {
     required this.eventCountByLandmarkId,
     required this.visibleEventCount,
     required this.orderedEventsActive,
+    this.showEventPath = false,
     required this.eventEmotionMarks,
-    this.eventMarkerRoles = const {},
-    this.eventMarkerThumbnailUrls = const {},
+    this.markerPresentation = const StoryEventMarkerPresentation.mapTimeline(),
     this.mapGesturesEnabled = true,
     required this.regionPickerMode,
     this.countryBorderLines = const [],
@@ -63,9 +64,9 @@ class StoryTerrain3dMap extends StatefulWidget {
   final Map<String, int>? eventCountByLandmarkId;
   final int visibleEventCount;
   final bool orderedEventsActive;
+  final bool showEventPath;
   final Map<String, EventEmotionMark> eventEmotionMarks;
-  final Map<String, String> eventMarkerRoles;
-  final Map<String, String> eventMarkerThumbnailUrls;
+  final StoryEventMarkerPresentation markerPresentation;
   final bool mapGesturesEnabled;
   final bool regionPickerMode;
   final List<List<LatLng>> countryBorderLines;
@@ -192,7 +193,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   static const _boundsEast = 64.0;
   static const _boundsNorth = 50.5;
   static const _initialLoadTimeoutDuration = Duration(seconds: 20);
-  static const _htmlRevision = 'today-thumbnail-pin-2026-07-15';
+  static const _htmlRevision = 'today-journey-map-2026-07-15';
   static const _homeIntroZoomOutDelta = 0.72;
   static final Set<Factory<OneSequenceGestureRecognizer>>
   _mapGestureRecognizers = <Factory<OneSequenceGestureRecognizer>>{
@@ -434,6 +435,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           .toList(growable: false),
       'visibleEventCount': widget.visibleEventCount,
       'orderedEventsActive': widget.orderedEventsActive,
+      'showEventPath': widget.showEventPath,
       'regionPickerMode': widget.regionPickerMode,
       'selectedCharacters': widget.selectedCharacterCodes.toList()..sort(),
       'selectedCharacterColors':
@@ -450,8 +452,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
               )
               .toList()
             ..sort(),
-      'eventMarkerRoles': widget.eventMarkerRoles,
-      'eventMarkerThumbnailUrls': widget.eventMarkerThumbnailUrls,
+      'markerPresentationMode': widget.markerPresentation.mode.name,
+      'eventMarkerRoles': widget.markerPresentation.roles,
+      'eventMarkerThumbnailUrls': widget.markerPresentation.thumbnailUrls,
     });
     if (!force && rendererSignature == _lastRendererSignature) {
       if (cameraSignature != _lastCameraSignature) {
@@ -997,19 +1000,22 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       box-shadow: 5px 5px 9px rgba(77, 54, 143, 0.25);
     }
     .story-event-marker .current-thumbnail {
-      width: 100%;
-      height: 100%;
+      width: 44px;
+      height: 44px;
+      max-width: 44px;
+      max-height: 44px;
       display: block;
       position: relative;
       z-index: 2;
       border-radius: 999px;
+      clip-path: circle(50% at 50% 50%);
       object-fit: cover;
       background: #eadffd;
     }
     .story-event-marker .current-thumbnail-fallback {
       display: grid;
-      width: 100%;
-      height: 100%;
+      width: 44px;
+      height: 44px;
       place-items: center;
       position: relative;
       z-index: 2;
@@ -1620,11 +1626,21 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     };
     const eventMarkerZIndex = (id, properties) => {
       const label = Number(properties.label || 0);
-      let z = 900 + (Number.isFinite(label) ? label : 0);
-      if (properties.journeyRole) z += 1800;
-      if (properties.hasEmotion) z += 1300;
-      if (properties.selected) z += 2200;
-      if (highPriorityEventIds.has(id)) z += 5200;
+      const labelTiebreaker = Number.isFinite(label)
+        ? Math.max(0, Math.min(999, label))
+        : 0;
+      const journeyRole = String(properties.journeyRole || '');
+      const journeyRoleZIndex = (role) => {
+        if (role === 'current') return 7600;
+        if (role === 'next') return 6200;
+        if (role === 'previous') return 4800;
+        return 0;
+      };
+      const journeyPriority = journeyRoleZIndex(journeyRole);
+      let z = 900 + labelTiebreaker + journeyPriority;
+      if (!journeyRole && properties.hasEmotion) z += 1300;
+      if (!journeyRole && properties.selected) z += 2200;
+      if (highPriorityEventIds.has(id)) z += 10000;
       return z;
     };
     const setEventMarkerElement = (root, element, properties) => {
@@ -2660,9 +2676,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       final selected = event.id == widget.selectedEventId;
       final point = points[event.id] ?? event.latLng;
       final emotionMark = widget.eventEmotionMarks[event.id];
-      final markerRole = widget.eventMarkerRoles[event.id] ?? '';
-      final markerThumbnailUrl =
-          widget.eventMarkerThumbnailUrls[event.id] ?? '';
+      final markerRole = widget.markerPresentation.roleFor(event.id);
+      final markerThumbnailUrl = widget.markerPresentation.thumbnailUrlFor(
+        event.id,
+      );
       final hasEmotion =
           emotionMark != null && emotionMark.emotionKey.isNotEmpty;
       features.add({
@@ -2676,7 +2693,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           'title': event.title,
           'label': '${i + 1}',
           'journeyRole': markerRole,
-          'journeyMode': widget.eventMarkerRoles.isNotEmpty,
+          'journeyMode': widget.markerPresentation.isDailyJourney,
           'thumbnailUrl': markerThumbnailUrl,
           'selected': selected,
           'color': _eventColor(event),
@@ -2690,7 +2707,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   }
 
   Map<String, Object> _eventPathFeatureCollection() {
-    if (!widget.orderedEventsActive) {
+    if (!widget.showEventPath) {
       return {'type': 'FeatureCollection', 'features': const []};
     }
     final visibleEvents = _visibleCoordinateEvents();

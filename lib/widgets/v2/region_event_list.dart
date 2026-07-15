@@ -162,6 +162,8 @@ class RegionEventList extends StatelessWidget {
 
 /// 사건 썸네일 카드 — 홈의 RegionEventList 와 EventDetailPage 의 prev/next 카드
 /// 양쪽에서 재사용. orderNumber 가 null 이면 좌상단 동그라미 배지 미표시.
+enum StoryEventCardPresentation { mapTimeline, todayCurrent, todayAdjacent }
+
 class StoryEventThumbCard extends StatelessWidget {
   const StoryEventThumbCard({
     super.key,
@@ -177,15 +179,27 @@ class StoryEventThumbCard extends StatelessWidget {
     this.emotionKey,
     this.attemptSummary,
     this.orderNumber,
-    this.showSummary = true,
-    this.showCharacterPills = true,
-    this.forceOpaqueSurface = false,
-    this.expandSurface = false,
+    this.presentation = StoryEventCardPresentation.mapTimeline,
+    bool? showSummary,
+    bool? showCharacterPills,
+    bool? forceOpaqueSurface,
+    bool? expandSurface,
     this.surfaceColorOverride,
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
     this.publicUrlForStoragePath,
-  });
+  }) : showSummary =
+           showSummary ??
+           presentation != StoryEventCardPresentation.todayAdjacent,
+       showCharacterPills =
+           showCharacterPills ??
+           presentation != StoryEventCardPresentation.todayAdjacent,
+       forceOpaqueSurface =
+           forceOpaqueSurface ??
+           presentation != StoryEventCardPresentation.mapTimeline,
+       expandSurface =
+           expandSurface ??
+           presentation != StoryEventCardPresentation.mapTimeline;
   final StoryEvent event;
   final Era? era;
   final Map<String, Character> charactersByCode;
@@ -196,6 +210,7 @@ class StoryEventThumbCard extends StatelessWidget {
   final String? emotionKey;
   final QuizAttemptSummary? attemptSummary;
   final int? orderNumber;
+  final StoryEventCardPresentation presentation;
   final bool showSummary;
   final bool showCharacterPills;
   final bool forceOpaqueSurface;

@@ -13,6 +13,7 @@ import 'package:story_bible/models/event_emotion_mark.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
+import 'package:story_bible/state/story_state.dart';
 import 'package:story_bible/theme/tokens.dart';
 
 part 'story_controller_test_groups.dart';
