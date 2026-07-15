@@ -1647,6 +1647,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       const id = String(properties.id || '');
       const selected = Boolean(properties.selected);
       const hasEmotion = Boolean(properties.hasEmotion);
+      const emotionPrimary = hasEmotion && Boolean(properties.emotionEmoji);
       const journeyRole = String(properties.journeyRole || '');
       const highPriority = highPriorityEventIds.has(id);
       root.classList.add('story-event-marker-root');
@@ -1654,13 +1655,21 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       root.style.zIndex = String(eventMarkerZIndex(id, properties));
       element.className = [
         'story-event-marker',
-        journeyRole ? 'journey-role' : '',
-        journeyRole ? `journey-\${journeyRole}` : '',
+        journeyRole && !emotionPrimary ? 'journey-role' : '',
+        journeyRole && !emotionPrimary ? `journey-\${journeyRole}` : '',
         !journeyRole && selected ? 'selected' : '',
-        !journeyRole && hasEmotion ? 'emotion' : ''
+        emotionPrimary ? 'emotion' : ''
       ].filter(Boolean).join(' ');
       clearElement(element);
-      if (journeyRole === 'current') {
+      if (emotionPrimary) {
+        const emotion = document.createElement('span');
+        emotion.textContent = String(properties.emotionEmoji || '');
+        element.appendChild(emotion);
+        const badge = document.createElement('span');
+        badge.className = 'order-badge';
+        badge.textContent = String(properties.label || '');
+        element.appendChild(badge);
+      } else if (journeyRole === 'current') {
         const appendThumbnailFallback = () => {
           if (element.querySelector('.current-thumbnail-fallback')) return;
           const fallback = document.createElement('span');
@@ -1695,22 +1704,6 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
         roleLabel.className = 'journey-label';
         roleLabel.textContent = journeyRole === 'previous' ? '이전' : '다음';
         element.appendChild(roleLabel);
-      } else if (Boolean(properties.journeyMode) && hasEmotion) {
-        const number = document.createElement('span');
-        number.textContent = String(properties.label || '');
-        element.appendChild(number);
-        const emotionBadge = document.createElement('span');
-        emotionBadge.className = 'journey-emotion-badge';
-        emotionBadge.textContent = String(properties.emotionEmoji || '');
-        element.appendChild(emotionBadge);
-      } else if (hasEmotion && properties.emotionEmoji) {
-        const emotion = document.createElement('span');
-        emotion.textContent = properties.emotionEmoji;
-        element.appendChild(emotion);
-        const badge = document.createElement('span');
-        badge.className = 'order-badge';
-        badge.textContent = String(properties.label || '');
-        element.appendChild(badge);
       } else {
         element.textContent = String(properties.label || '');
       }

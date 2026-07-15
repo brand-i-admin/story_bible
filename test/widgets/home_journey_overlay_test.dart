@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:story_bible/models/character.dart';
 import 'package:story_bible/models/era.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/models/user_companion_diary_entry.dart';
@@ -106,7 +107,27 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('좁은 폰에서도 이전·현재·다음 카드 전체가 보이고 양옆 카드는 더 낮다', (tester) async {
+  testWidgets('현재 카드는 양옆보다 1.5배 넓고 모든 카드에 요약과 등장인물이 보인다', (tester) async {
+    final detailedEvents = [
+      _event(
+        id: 'previous',
+        title: '이전 이야기',
+        rank: 1,
+        characterCodes: const ['noah'],
+      ),
+      _event(
+        id: 'recommended',
+        title: '오늘의 추천 이야기',
+        rank: 2,
+        characterCodes: const ['noah'],
+      ),
+      _event(
+        id: 'next',
+        title: '다음 이야기',
+        rank: 3,
+        characterCodes: const ['noah'],
+      ),
+    ];
     await tester.binding.setSurfaceSize(const Size(390, 780));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -116,11 +137,11 @@ void main() {
           body: SizedBox(
             height: 445,
             child: HomeJourneyOverlay(
-              events: events,
+              events: detailedEvents,
               recommendedEventId: 'recommended',
               currentEventId: 'recommended',
               eras: const [_era],
-              charactersByCode: const {},
+              charactersByCode: const {'noah': _noah},
               eventEmotionMarks: const {},
               quizAttemptSummaries: const {},
               isAuthenticated: true,
@@ -154,14 +175,26 @@ void main() {
       find.byKey(const ValueKey('home-story-task-highlight-next')),
     );
 
-    expect(previousRect.left, greaterThanOrEqualTo(pageRect.left - 0.5));
-    expect(nextRect.right, lessThanOrEqualTo(pageRect.right + 0.5));
+    expect(currentRect.width / previousRect.width, closeTo(1.5, 0.02));
+    expect(nextRect.width, closeTo(previousRect.width, 0.5));
+    expect(
+      previousRect.intersect(pageRect).width,
+      greaterThan(previousRect.width * 0.75),
+    );
+    expect(
+      nextRect.intersect(pageRect).width,
+      greaterThan(nextRect.width * 0.75),
+    );
     expect(currentRect.height - previousRect.height, greaterThanOrEqualTo(30));
     expect(currentRect.height - nextRect.height, greaterThanOrEqualTo(30));
+    expect(find.text('이전 이야기 요약'), findsOneWidget);
+    expect(find.text('오늘의 추천 이야기 요약'), findsOneWidget);
+    expect(find.text('다음 이야기 요약'), findsOneWidget);
+    expect(find.text('노아'), findsNWidgets(3));
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('비로그인 다이어리 탭은 프로필 이동 버튼이 있는 안내 팝업을 연다', (tester) async {
+  testWidgets('비로그인 다이어리 탭은 내정보 이동 버튼이 있는 안내 팝업을 연다', (tester) async {
     var profileOpened = false;
     await tester.pumpWidget(
       MaterialApp(
@@ -195,9 +228,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
 
     expect(find.text('로그인이 필요해요'), findsOneWidget);
-    expect(find.text('프로필로 이동'), findsOneWidget);
+    expect(find.text('내정보로 이동'), findsOneWidget);
+    expect(find.text('내정보 화면에서 로그인한 뒤 다시 이용해 주세요.'), findsOneWidget);
 
-    await tester.tap(find.text('프로필로 이동'));
+    await tester.tap(find.text('내정보로 이동'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 350));
 
@@ -238,9 +272,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
 
     expect(find.text('로그인이 필요해요'), findsOneWidget);
-    expect(find.text('프로필로 이동'), findsOneWidget);
+    expect(find.text('내정보로 이동'), findsOneWidget);
+    expect(find.text('내정보 화면에서 로그인한 뒤 다시 이용해 주세요.'), findsOneWidget);
 
-    await tester.tap(find.text('프로필로 이동'));
+    await tester.tap(find.text('내정보로 이동'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 350));
 
@@ -582,6 +617,7 @@ StoryEvent _event({
   required String title,
   required int rank,
   String eraId = 'era-1',
+  List<String> characterCodes = const [],
 }) {
   return StoryEvent(
     id: id,
@@ -600,10 +636,20 @@ StoryEvent _event({
     placeName: '테스트 장소',
     lat: 31 + rank.toDouble(),
     lng: 35 + rank.toDouble(),
-    characterCodes: const [],
+    characterCodes: characterCodes,
     bibleRefs: const [],
   );
 }
+
+const _noah = Character(
+  id: 'character-noah',
+  code: 'noah',
+  name: '노아',
+  tagline: null,
+  description: null,
+  avatarUrl: null,
+  displayOrder: 1,
+);
 
 Future<UserCompanionDiaryEntry> _discardDiarySave({
   required DateTime entryDate,

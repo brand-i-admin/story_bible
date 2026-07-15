@@ -1536,6 +1536,22 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
   }
 
+  void _showEventLoginRequiredDialog(String message) {
+    if (!mounted) {
+      return;
+    }
+    unawaited(
+      showLoginRequiredDialog(
+        context: context,
+        message: message,
+        onOpenMyInfo: () {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          _selectRootTab(StoryRootTab.profile);
+        },
+      ),
+    );
+  }
+
   /// 웹 한정 `이야기 등록` 진입점. 지도 탭에는 이 운영 기능만 유지한다.
   Future<void> _openProposalBoardOrGate() async {
     final user = ref.read(signedInUserProvider);
@@ -2006,7 +2022,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         builder: (_) => EventDetailPage(
           event: event,
           sceneAssetsFuture: sceneAssetsFuture,
-          onLoginRequired: _showLoginRequiredSnackBar,
+          onLoginRequired: _showEventLoginRequiredDialog,
           onOpenBibleReader: (targets) async {
             if (!mounted) {
               return false;
@@ -2020,7 +2036,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             // 리더의 "읽기 완료"로 닫힌 경우에만 일반 사건 진행도에 저장.
             if (!mounted) return false;
             if (ref.read(signedInUserProvider) == null) {
-              _showLoginRequiredSnackBar('읽기 완료 처리를 하려면 로그인이 필요해요.');
+              _showEventLoginRequiredDialog('읽기 완료 처리를 하려면 로그인이 필요해요.');
               return false;
             }
             final notifier = ref.read(storyControllerProvider.notifier);
@@ -2102,7 +2118,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return EventDetailPage(
       event: event,
       sceneAssetsFuture: sceneAssetsFuture,
-      onLoginRequired: _showLoginRequiredSnackBar,
+      onLoginRequired: _showEventLoginRequiredDialog,
       onOpenBibleReader: (targets) async {
         if (!mounted) return false;
         final completedReading = await _openBibleReaderPopup(
@@ -2114,7 +2130,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         if (!mounted) return false;
         // 본문 읽기 완료 처리 — 일반 사건 진행도에 저장.
         if (ref.read(signedInUserProvider) == null) {
-          _showLoginRequiredSnackBar('읽기 완료 처리를 하려면 로그인이 필요해요.');
+          _showEventLoginRequiredDialog('읽기 완료 처리를 하려면 로그인이 필요해요.');
           return false;
         }
         final notifier = ref.read(storyControllerProvider.notifier);

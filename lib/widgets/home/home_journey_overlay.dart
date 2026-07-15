@@ -11,7 +11,7 @@ import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
 import '../../utils/daily_exploration_selection.dart';
 import '../../utils/scene_asset_loader.dart';
-import '../parchment_dialog.dart';
+import '../login_required_dialog.dart';
 import '../profile/companion_diary_entry_card.dart';
 import '../pulse_highlight.dart';
 import '../story_bottom_panel_style.dart';
@@ -261,7 +261,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     final palette = AppPaletteTheme.of(context);
     final ordered = _orderedEvents();
     final textScale = MediaQuery.textScalerOf(context).scale(1);
-    final deckHeight = 184.0 + ((textScale - 1) * 105).clamp(0.0, 54.0);
+    final deckHeight = 224.0 + ((textScale - 1) * 105).clamp(0.0, 54.0);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -420,7 +420,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
       color: AppColors.goldLight,
       child: card,
     );
-    return Stack(
+    final cardFrame = Stack(
       key: ValueKey('home-journey-card-${event.id}-$page'),
       clipBehavior: Clip.none,
       children: [
@@ -506,6 +506,31 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
             child: _HomeJourneyBoundaryBadge(label: rightBoundaryLabel),
           ),
       ],
+    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final baseWidth = constraints.maxWidth;
+        final expandedWidth = ((baseWidth - 10) * 1.5) + 10;
+        final horizontalShift = isCurrent
+            ? 0.0
+            : (expandedWidth - baseWidth) / 2 * (page < _currentPage ? -1 : 1);
+        final frameWidth = isCurrent ? expandedWidth : baseWidth;
+        return Transform.translate(
+          offset: Offset(horizontalShift, 0),
+          child: OverflowBox(
+            minWidth: frameWidth,
+            maxWidth: frameWidth,
+            minHeight: constraints.maxHeight,
+            maxHeight: constraints.maxHeight,
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: frameWidth,
+              height: constraints.maxHeight,
+              child: cardFrame,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -932,27 +957,10 @@ class _HomeQuickActions extends StatelessWidget {
     BuildContext context, {
     required String featureName,
   }) async {
-    await showDialog<void>(
+    await showLoginRequiredDialog(
       context: context,
-      builder: (dialogContext) => ParchmentDialog(
-        title: '로그인이 필요해요',
-        subtitle: '$featureName은 로그인 후 사용할 수 있어요.',
-        actions: [
-          ParchmentDialogActionButton(
-            label: '취소',
-            style: ParchmentDialogActionStyle.secondary,
-            onTap: () => Navigator.of(dialogContext).pop(),
-          ),
-          ParchmentDialogActionButton(
-            label: '프로필로 이동',
-            onTap: () {
-              Navigator.of(dialogContext).pop();
-              onOpenProfile();
-            },
-          ),
-        ],
-        child: const Text('프로필 화면에서 로그인한 뒤 다시 이용해 주세요.'),
-      ),
+      message: '$featureName은 로그인 후 사용할 수 있어요.',
+      onOpenMyInfo: onOpenProfile,
     );
   }
 }

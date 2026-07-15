@@ -111,6 +111,27 @@ void main() {
       );
     });
 
+    test('오늘 지도에서도 완료 사건은 감정을 중앙에 두고 번호를 우측 아래에 표시한다', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(
+        source,
+        contains(
+          'const emotionPrimary = hasEmotion && '
+          'Boolean(properties.emotionEmoji);',
+        ),
+      );
+      expect(source, contains("emotionPrimary ? 'emotion' : ''"));
+      expect(source, contains('if (emotionPrimary) {'));
+      expect(source, contains("badge.className = 'order-badge';"));
+      expect(
+        source.indexOf('if (emotionPrimary) {'),
+        lessThan(source.indexOf("if (journeyRole === 'current') {")),
+      );
+    });
+
     test('오늘 지도도 사건 사이 점선 경로를 명시적으로 켤 수 있다', () {
       final panelSource = File(
         'lib/widgets/story_map_panel.dart',

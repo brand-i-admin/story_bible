@@ -180,21 +180,15 @@ class StoryEventThumbCard extends StatelessWidget {
     this.attemptSummary,
     this.orderNumber,
     this.presentation = StoryEventCardPresentation.mapTimeline,
-    bool? showSummary,
-    bool? showCharacterPills,
+    this.showSummary = true,
+    this.showCharacterPills = true,
     bool? forceOpaqueSurface,
     bool? expandSurface,
     this.surfaceColorOverride,
     this.highlightedCharacterCodes = const <String>{},
     this.colorForHighlightedCharacter,
     this.publicUrlForStoragePath,
-  }) : showSummary =
-           showSummary ??
-           presentation != StoryEventCardPresentation.todayAdjacent,
-       showCharacterPills =
-           showCharacterPills ??
-           presentation != StoryEventCardPresentation.todayAdjacent,
-       forceOpaqueSurface =
+  }) : forceOpaqueSurface =
            forceOpaqueSurface ??
            presentation != StoryEventCardPresentation.mapTimeline,
        expandSurface =
@@ -302,7 +296,8 @@ class StoryEventThumbCard extends StatelessWidget {
             builder: (context, constraints) {
               final body = _buildCardBody(context, theme);
               final textScale = MediaQuery.textScalerOf(context).scale(1);
-              if (textScale < 1.3 || !constraints.hasBoundedHeight) {
+              if ((!expandSurface && textScale < 1.3) ||
+                  !constraints.hasBoundedHeight) {
                 return body;
               }
               return ScrollConfiguration(

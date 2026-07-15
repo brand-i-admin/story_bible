@@ -39,6 +39,7 @@ import '../widgets/event_quiz_dialog.dart';
 import '../widgets/font_scale_bottom_sheet.dart';
 import '../widgets/home/story_root_navigation_bar.dart';
 import '../widgets/home/today_home_page.dart';
+import '../widgets/login_required_dialog.dart';
 import '../widgets/notification/notification_deep_link.dart';
 import '../widgets/parchment_dialog.dart';
 import '../widgets/profile_tab_page.dart';
