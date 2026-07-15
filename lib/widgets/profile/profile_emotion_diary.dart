@@ -1061,11 +1061,20 @@ class _CalendarActivityMarkers extends StatelessWidget {
     ].where((value) => value).length;
     final dateKey = '${date.year}-${date.month}-${date.day}';
     if (activityCount == 3) {
-      return Icon(
-        Icons.check_rounded,
+      return Container(
         key: ValueKey('calendar-all-actions-marker-$dateKey'),
-        size: 21,
-        color: palette.successBottom,
+        width: 22,
+        height: 22,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: palette.successBottom,
+        ),
+        child: const Icon(
+          Icons.check_rounded,
+          size: 16,
+          color: AppColors.fgOnDark,
+        ),
       );
     }
     return FittedBox(

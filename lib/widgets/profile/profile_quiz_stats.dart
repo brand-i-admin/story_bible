@@ -18,6 +18,7 @@ class ProfileQuizStats {
   final Set<String> confusedEventIds;
 
   int get total => correct + wrong + confused;
+  int get reviewQuestionCount => wrong + confused;
   int get correctEventCount => correctEventIds.length;
   int get wrongEventCount => wrongEventIds.length;
   int get confusedEventCount => confusedEventIds.length;

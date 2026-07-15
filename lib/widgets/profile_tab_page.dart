@@ -159,6 +159,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   bool _signingOut = false;
   bool _deletingAccount = false;
   Timer? _profileKstMidnightTimer;
+  ProviderSubscription<User?>? _authUserSubscription;
 
   @override
   void initState() {
@@ -166,6 +167,15 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     _intercessoryPrayerScrollController.addListener(
       _handleIntercessoryPrayerScroll,
     );
+    _authUserSubscription = ref.listenManual<User?>(signedInUserProvider, (
+      previous,
+      next,
+    ) {
+      if (previous?.id == next?.id) {
+        return;
+      }
+      _handleProfileAuthUserChanged(next);
+    });
     _scheduleProfileKstMidnightRefresh();
     Future.microtask(() => _loadProfilePeople(forceRefresh: true));
   }
@@ -173,11 +183,47 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   @override
   void dispose() {
     _profileKstMidnightTimer?.cancel();
+    _authUserSubscription?.close();
     _intercessoryPrayerScrollController
       ..removeListener(_handleIntercessoryPrayerScroll)
       ..dispose();
     super.dispose();
   }
+
+  void _handleProfileAuthUserChanged(User? user) {
+    ref.read(storyControllerProvider.notifier).clearUserScopedData();
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _profileUser = null;
+      _profileContentTab = _ProfileContentTab.prayer;
+      _profileSavedEventsPreview = const [];
+      _profileSavedVersesPreview = const [];
+      _profileCompanionDiaryEntries = const [];
+      _profileSavedVersesCount = 0;
+      _profileSavedEventsLoading = false;
+      _profileSavedVersesLoading = false;
+      _profileCompanionDiaryLoading = false;
+      _profileSavedEventsError = null;
+      _profileSavedVersesError = null;
+      _profileCompanionDiaryError = null;
+      _intercessoryPrayerItems = const [];
+      _intercessoryPrayerLoading = false;
+      _intercessoryPrayerLoadingMore = false;
+      _intercessoryPrayerHasNextPage = false;
+      _intercessoryPrayerError = null;
+      _intercessoryPrayerPageIndex = 0;
+      _profileLoading = false;
+      _profileError = null;
+    });
+    if (user != null) {
+      unawaited(_loadProfilePeople(forceRefresh: true));
+    }
+  }
+
+  bool _isCurrentProfileUser(String userId) =>
+      ref.read(signedInUserProvider)?.id == userId;
 
   void _scheduleProfileKstMidnightRefresh() {
     _profileKstMidnightTimer?.cancel();
@@ -311,7 +357,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             pageIndex: nextPageIndex,
             pageSize: _intercessoryPrayerPageSize,
           );
-      if (!mounted) {
+      if (!mounted || !_isCurrentProfileUser(user.id)) {
         return;
       }
       final nextItems = loadMore
@@ -332,7 +378,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         _intercessoryPrayerLoadingMore = false;
       });
     } catch (error) {
-      if (!mounted) {
+      if (!mounted || !_isCurrentProfileUser(user.id)) {
         return;
       }
       setState(() {
@@ -368,6 +414,9 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
 
     try {
       await ref.read(storyControllerProvider.notifier).refreshSavedEventIds();
+      if (!_isCurrentProfileUser(user.id)) {
+        return;
+      }
       final savedIds = ref.read(storyControllerProvider).savedEventIds;
       final events = await ref
           .read(storyRepositoryProvider)
@@ -376,7 +425,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         events,
         ref.read(storyControllerProvider).eras,
       );
-      if (!mounted) {
+      if (!mounted || !_isCurrentProfileUser(user.id)) {
         return;
       }
       setState(() {
@@ -384,7 +433,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         _profileSavedEventsLoading = false;
       });
     } catch (error) {
-      if (!mounted) {
+      if (!mounted || !_isCurrentProfileUser(user.id)) {
         return;
       }
       setState(() {
@@ -426,10 +475,13 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             pageIndex: 0,
             pageSize: _profilePreviewPageSize,
           );
+      if (!_isCurrentProfileUser(user.id)) {
+        return;
+      }
       final totalCount = await ref
           .read(userRepositoryProvider)
           .countSavedVerses(userId: user.id);
-      if (!mounted) {
+      if (!mounted || !_isCurrentProfileUser(user.id)) {
         return;
       }
       setState(() {
@@ -438,7 +490,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         _profileSavedVersesLoading = false;
       });
     } catch (error) {
-      if (!mounted) {
+      if (!mounted || !_isCurrentProfileUser(user.id)) {
         return;
       }
       setState(() {
@@ -477,7 +529,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       final entries = await ref
           .read(userRepositoryProvider)
           .fetchCompanionDiaryEntries(userId: user.id);
-      if (!mounted) {
+      if (!mounted || !_isCurrentProfileUser(user.id)) {
         return;
       }
       setState(() {
@@ -485,7 +537,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         _profileCompanionDiaryLoading = false;
       });
     } catch (error) {
-      if (!mounted) {
+      if (!mounted || !_isCurrentProfileUser(user.id)) {
         return;
       }
       setState(() {
@@ -562,6 +614,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       _profileError = null;
     });
 
+    final requestedUserId = ref.read(signedInUserProvider)?.id;
     try {
       var state = ref.read(storyControllerProvider);
       if (state.eras.isEmpty) {
@@ -613,7 +666,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             .refreshCompletedBibleChapterKeys();
       }
 
-      if (!mounted) {
+      if (!mounted || ref.read(signedInUserProvider)?.id != requestedUserId) {
         return;
       }
       setState(() {
@@ -639,7 +692,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
         ]);
       }
     } catch (error) {
-      if (!mounted) {
+      if (!mounted || ref.read(signedInUserProvider)?.id != requestedUserId) {
         return;
       }
       setState(() {

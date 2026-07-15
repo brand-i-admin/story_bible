@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../theme/app_color_palette.dart';
@@ -5,6 +7,7 @@ import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
 import '../../utils/today_activity_summary.dart';
 import '../parchment_dialog.dart';
+import '../web_pointer_interceptor.dart';
 import 'story_root_navigation_bar.dart';
 
 class TodayActivityHeader extends StatelessWidget {
@@ -13,6 +16,7 @@ class TodayActivityHeader extends StatelessWidget {
     required this.nickname,
     required this.summary,
     this.actions,
+    this.onStreakDialogVisibilityChanged,
   });
 
   static const double mapObscuredExtent = 88;
@@ -20,6 +24,7 @@ class TodayActivityHeader extends StatelessWidget {
   final String nickname;
   final TodayActivitySummary summary;
   final Widget? actions;
+  final ValueChanged<bool>? onStreakDialogVisibilityChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +109,11 @@ class TodayActivityHeader extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 6),
-              TodayActivityLabelRail(summary: summary),
+              TodayActivityLabelRail(
+                summary: summary,
+                onStreakDialogVisibilityChanged:
+                    onStreakDialogVisibilityChanged,
+              ),
             ],
           ),
         ),
@@ -123,13 +132,19 @@ class TodayActivityHeader extends StatelessWidget {
 }
 
 class TodayActivityLabelRail extends StatelessWidget {
-  const TodayActivityLabelRail({super.key, required this.summary});
+  const TodayActivityLabelRail({
+    super.key,
+    required this.summary,
+    this.onStreakDialogVisibilityChanged,
+  });
 
   final TodayActivitySummary summary;
+  final ValueChanged<bool>? onStreakDialogVisibilityChanged;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final streakActive = summary.hasActivityToday && summary.streakDays > 0;
     return Row(
       key: const ValueKey('today-activity-label-rail'),
       children: [
@@ -138,6 +153,14 @@ class TodayActivityLabelRail extends StatelessWidget {
             icon: Icons.local_fire_department_rounded,
             text: '연속: ${summary.streakDays}일',
             accent: palette.currentAccentDeep,
+            completed: streakActive,
+            contentKey: const ValueKey('today-streak-label-content'),
+            completionOverlay: streakActive
+                ? _StreakFireCelebration(
+                    accent: palette.currentAccentDeep,
+                    streakDays: summary.streakDays,
+                  )
+                : null,
             onTap: () => _showStreakInfo(context),
           ),
         ),
@@ -147,6 +170,8 @@ class TodayActivityLabelRail extends StatelessWidget {
             icon: Icons.explore_rounded,
             text: '이야기: ${summary.explorationCount}개',
             accent: palette.regionAccent,
+            completed: summary.explorationCount > 0,
+            completionMarkKey: const ValueKey('today-story-completion-mark'),
           ),
         ),
         const SizedBox(width: AppSpacing.x1),
@@ -155,6 +180,8 @@ class TodayActivityLabelRail extends StatelessWidget {
             icon: Icons.edit_note_rounded,
             text: '다이어리: ${summary.hasDiary ? 'o' : 'x'}',
             accent: palette.successBottom,
+            completed: summary.hasDiary,
+            completionMarkKey: const ValueKey('today-diary-completion-mark'),
           ),
         ),
         const SizedBox(width: AppSpacing.x1),
@@ -163,34 +190,43 @@ class TodayActivityLabelRail extends StatelessWidget {
             icon: Icons.menu_book_rounded,
             text: '통독: ${summary.bibleChapterCount}장',
             accent: palette.primary,
+            completed: summary.bibleChapterCount > 0,
+            completionMarkKey: const ValueKey('today-bible-completion-mark'),
           ),
         ),
       ],
     );
   }
 
-  Future<void> _showStreakInfo(BuildContext context) {
-    return showDialog<void>(
-      context: context,
-      builder: (dialogContext) => const ParchmentDialog(
-        title: '연속일은 이렇게 계산해요',
-        subtitle: '한국시간 자정을 기준으로 하루 활동을 계산합니다.',
-        showCloseButton: true,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _StreakRuleRow(icon: '🧭', text: '탐험 완료 조건: 감정 새기기'),
-            SizedBox(height: 7),
-            _StreakRuleRow(icon: '📝', text: '다이어리 완료 조건: 작성 완료'),
-            SizedBox(height: 7),
-            _StreakRuleRow(icon: '📖', text: '통독 완료 조건: 1장 이상 읽음 처리'),
-            SizedBox(height: 12),
-            _StreakRuleSummary(),
-          ],
+  Future<void> _showStreakInfo(BuildContext context) async {
+    onStreakDialogVisibilityChanged?.call(true);
+    try {
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => const WebPointerInterceptor(
+          child: ParchmentDialog(
+            title: '연속일은 이렇게 계산해요',
+            subtitle: '한국시간 자정을 기준으로 하루 활동을 계산합니다.',
+            showCloseButton: true,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _StreakRuleRow(icon: '🧭', text: '탐험 완료 조건: 감정 새기기'),
+                SizedBox(height: 7),
+                _StreakRuleRow(icon: '📝', text: '다이어리 완료 조건: 작성 완료'),
+                SizedBox(height: 7),
+                _StreakRuleRow(icon: '📖', text: '통독 완료 조건: 1장 이상 읽음 처리'),
+                SizedBox(height: 12),
+                _StreakRuleSummary(),
+              ],
+            ),
+          ),
         ),
-      ),
-    );
+      );
+    } finally {
+      onStreakDialogVisibilityChanged?.call(false);
+    }
   }
 }
 
@@ -200,12 +236,20 @@ class _TodayActivityLabel extends StatelessWidget {
     required this.text,
     required this.accent,
     this.onTap,
+    this.completed = false,
+    this.completionMarkKey,
+    this.completionOverlay,
+    this.contentKey,
   });
 
   final IconData icon;
   final String text;
   final Color accent;
   final VoidCallback? onTap;
+  final bool completed;
+  final Key? completionMarkKey;
+  final Widget? completionOverlay;
+  final Key? contentKey;
 
   @override
   Widget build(BuildContext context) {
@@ -225,27 +269,136 @@ class _TodayActivityLabel extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadii.pill),
             border: Border.all(color: accent.withValues(alpha: 0.36)),
           ),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 12, color: accent),
-                const SizedBox(width: 2),
-                Text(
-                  text,
-                  maxLines: 1,
-                  softWrap: false,
-                  style: AppTextStyles.counter.copyWith(
-                    color: accent,
-                    fontSize: 10.2,
-                    fontWeight: FontWeight.w900,
-                    height: 1,
+          child: Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              Opacity(
+                key: contentKey,
+                opacity: completed ? 0.18 : 1,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, size: 12, color: accent),
+                      const SizedBox(width: 2),
+                      Text(
+                        text,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: AppTextStyles.counter.copyWith(
+                          color: accent,
+                          fontSize: 10.2,
+                          fontWeight: FontWeight.w900,
+                          height: 1,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              if (completed)
+                completionOverlay ??
+                    Icon(
+                      Icons.check_circle_rounded,
+                      key: completionMarkKey,
+                      size: 22,
+                      color: accent,
+                    ),
+            ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StreakFireCelebration extends StatefulWidget {
+  const _StreakFireCelebration({
+    required this.accent,
+    required this.streakDays,
+  });
+
+  final Color accent;
+  final int streakDays;
+
+  @override
+  State<_StreakFireCelebration> createState() => _StreakFireCelebrationState();
+}
+
+class _StreakFireCelebrationState extends State<_StreakFireCelebration>
+    with SingleTickerProviderStateMixin {
+  static const Duration _replayDelay = Duration(milliseconds: 900);
+  late final AnimationController _controller;
+  late final Animation<double> _scale;
+  Timer? _replayTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _scale =
+        TweenSequence<double>([
+          TweenSequenceItem(tween: Tween(begin: 1, end: 1.32), weight: 45),
+          TweenSequenceItem(tween: Tween(begin: 1.32, end: 1), weight: 55),
+        ]).animate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
+        );
+    _controller.addStatusListener(_handleAnimationStatus);
+    _controller.forward();
+  }
+
+  void _handleAnimationStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed) {
+      return;
+    }
+    _replayTimer?.cancel();
+    _replayTimer = Timer(_replayDelay, () {
+      if (mounted) {
+        _controller.forward(from: 0);
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _StreakFireCelebration oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.streakDays > oldWidget.streakDays) {
+      _replayTimer?.cancel();
+      _controller.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _replayTimer?.cancel();
+    _controller.removeStatusListener(_handleAnimationStatus);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      key: const ValueKey('today-streak-fire-celebration'),
+      width: 30,
+      height: 30,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) => Transform.scale(
+          key: const ValueKey('today-streak-fire-scale'),
+          scale: _scale.value,
+          child: child,
+        ),
+        child: Icon(
+          Icons.local_fire_department_rounded,
+          key: const ValueKey('today-streak-fire-icon'),
+          size: 26,
+          color: widget.accent,
         ),
       ),
     );

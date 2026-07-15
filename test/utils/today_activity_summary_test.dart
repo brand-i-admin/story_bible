@@ -36,6 +36,7 @@ void main() {
     expect(summary.explorationCount, 2);
     expect(summary.hasDiary, isTrue);
     expect(summary.bibleChapterCount, 2);
+    expect(summary.hasActivityToday, isTrue);
   });
 
   test('세 활동 중 하나라도 한 날짜를 합쳐 연속일을 계산한다', () {
@@ -84,6 +85,7 @@ void main() {
     );
 
     expect(summary.streakDays, 0);
+    expect(summary.hasActivityToday, isFalse);
   });
 }
 

@@ -172,7 +172,7 @@ void main() {
     expect(source, contains('size: _TodayHeaderAction.iconSize'));
   });
 
-  test('오늘과 지도 탭은 같은 3D 지도와 컨트롤러를 재사용하며 지도 제스처를 켠다', () {
+  test('오늘과 지도 탭은 같은 3D 지도를 재사용하고 숨겨진 탭에서는 제스처를 끈다', () {
     final homeSource = File(
       'lib/screens/story_home_screen_state.dart',
     ).readAsStringSync();
@@ -188,10 +188,59 @@ void main() {
     expect(homeSource, contains('_buildRetainedMapBody'));
     expect(homeSource, contains('IgnorePointer('));
     expect(homeSource, contains('TickerMode('));
-    expect(todaySource, contains('mapGesturesEnabled: true'));
-    expect(todaySource, isNot(contains('mapGesturesEnabled: false')));
+    expect(todaySource, contains('final bool mapGesturesEnabled;'));
+    expect(
+      todaySource,
+      contains('mapGesturesEnabled: widget.mapGesturesEnabled'),
+    );
+    expect(
+      homeSource,
+      contains('mapGesturesEnabled: _rootTab == StoryRootTab.today'),
+    );
+    expect(
+      homeSource,
+      contains('mapGesturesEnabled: _rootTab == StoryRootTab.map'),
+    );
     expect(todaySource, contains('suspendMapGestures'));
     expect(todaySource, contains('clearMapGestureSuspension'));
+    expect(
+      todaySource,
+      contains("key: const ValueKey('today-header-map-input-blocker')"),
+    );
+    expect(todaySource, contains('onStreakDialogVisibilityChanged:'));
+    expect(todaySource, contains('Duration(hours: 1)'));
+    expect(
+      homeSource,
+      contains(
+        'user == null\n        ? TodayActivitySummary.empty\n        : summarizeTodayActivity(',
+      ),
+    );
+  });
+
+  test('로그아웃과 계정 전환은 루트와 내정보에서 사용자 전용 캐시를 즉시 비운다', () {
+    final homeSource = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+    final profileSource = File(
+      'lib/widgets/profile_tab_page.dart',
+    ).readAsStringSync();
+
+    expect(
+      homeSource,
+      contains(
+        'ref.read(storyControllerProvider.notifier).clearUserScopedData();',
+      ),
+    );
+    expect(
+      profileSource,
+      contains('ref.listenManual<User?>(signedInUserProvider'),
+    );
+    expect(profileSource, contains('_handleProfileAuthUserChanged(next);'));
+    expect(profileSource, contains('_profileSavedVersesCount = 0;'));
+    expect(
+      profileSource,
+      contains('_profileCompanionDiaryEntries = const [];'),
+    );
   });
 
   test('오늘 화면은 일일 활동 헤더와 지도 위 플로팅 카드 덱을 제공한다', () {

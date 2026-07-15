@@ -353,10 +353,17 @@ class StoryEventThumbCard extends StatelessWidget {
         ),
         SizedBox(height: gapAfterThumbnail),
         _ThumbTitle(
+          textKey: ValueKey(
+            'story-card-title-${presentation.name}-${event.id}',
+          ),
           event: event,
           theme: theme,
           maxLines: titleMaxLines,
-          fontSize: deckCompact ? 11.2 : 12,
+          fontSize: deckCompact
+              ? presentation == StoryEventCardPresentation.todayCurrent
+                    ? 12.2
+                    : 11.2
+              : 12,
         ),
         SizedBox(height: gapAfterTitle),
         _ThumbMetaRow(placeName: event.placeName, yearLabel: _yearLabel()),
@@ -446,25 +453,30 @@ class _CardThumbnailFrame extends StatelessWidget {
         child: SizedBox(width: size, height: size, child: thumbnail),
       );
     }
-    final aspectRatio = presentation == StoryEventCardPresentation.todayCurrent
-        ? 16 / 9
-        : 1.0;
-    return ClipRRect(
-      key: ValueKey('story-thumbnail-frame-${presentation.name}-${event.id}'),
-      borderRadius: BorderRadius.circular(10),
-      child: AspectRatio(aspectRatio: aspectRatio, child: thumbnail),
+    final isTodayCurrent =
+        presentation == StoryEventCardPresentation.todayCurrent;
+    final aspectRatio = isTodayCurrent ? 8 / 5 : 1.0;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: isTodayCurrent ? 3 : 0),
+      child: ClipRRect(
+        key: ValueKey('story-thumbnail-frame-${presentation.name}-${event.id}'),
+        borderRadius: BorderRadius.circular(10),
+        child: AspectRatio(aspectRatio: aspectRatio, child: thumbnail),
+      ),
     );
   }
 }
 
 class _ThumbTitle extends StatelessWidget {
   const _ThumbTitle({
+    required this.textKey,
     required this.event,
     required this.theme,
     required this.maxLines,
     required this.fontSize,
   });
 
+  final Key textKey;
   final StoryEvent event;
   final ThemeData theme;
   final int? maxLines;
@@ -474,6 +486,7 @@ class _ThumbTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     return Text(
+      key: textKey,
       event.title,
       maxLines: maxLines,
       overflow: maxLines == null ? TextOverflow.visible : TextOverflow.ellipsis,

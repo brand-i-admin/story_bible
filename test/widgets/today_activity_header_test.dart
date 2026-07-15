@@ -9,22 +9,24 @@ import 'package:story_bible/widgets/home/today_activity_header.dart';
 
 void main() {
   testWidgets('오늘 인사와 KST 일일 활동 라벨을 표시한다', (tester) async {
+    final dialogVisibilityChanges = <bool>[];
     await tester.binding.setSurfaceSize(const Size(390, 780));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
           body: Column(
             children: [
               TodayActivityHeader(
                 nickname: '기도친구',
-                summary: TodayActivitySummary(
+                summary: const TodayActivitySummary(
                   streakDays: 5,
                   explorationCount: 3,
                   hasDiary: true,
                   bibleChapterCount: 4,
                 ),
+                onStreakDialogVisibilityChanged: dialogVisibilityChanges.add,
               ),
             ],
           ),
@@ -40,10 +42,41 @@ void main() {
     expect(find.text('이야기: 3개'), findsOneWidget);
     expect(find.text('다이어리: o'), findsOneWidget);
     expect(find.text('통독: 4장'), findsOneWidget);
-    expect(find.byIcon(Icons.local_fire_department_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.local_fire_department_rounded), findsNWidgets(2));
     expect(find.byIcon(Icons.explore_rounded), findsOneWidget);
     expect(find.byIcon(Icons.edit_note_rounded), findsOneWidget);
     expect(find.byIcon(Icons.menu_book_rounded), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('today-streak-fire-celebration')),
+      findsOneWidget,
+    );
+    final fadedStreakContent = tester.widget<Opacity>(
+      find.byKey(const ValueKey('today-streak-label-content')),
+    );
+    expect(fadedStreakContent.opacity, lessThanOrEqualTo(0.2));
+    final activeFire = tester.widget<Icon>(
+      find.byKey(const ValueKey('today-streak-fire-icon')),
+    );
+    expect(activeFire.size, greaterThanOrEqualTo(24));
+    expect(find.byIcon(Icons.auto_awesome_rounded), findsNothing);
+
+    await tester.pump(const Duration(milliseconds: 220));
+    final scaledFire = tester.widget<Transform>(
+      find.byKey(const ValueKey('today-streak-fire-scale')),
+    );
+    expect(scaledFire.transform.getMaxScaleOnAxis(), greaterThan(1));
+    expect(
+      find.byKey(const ValueKey('today-story-completion-mark')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('today-diary-completion-mark')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('today-bible-completion-mark')),
+      findsOneWidget,
+    );
 
     final headerRect = tester.getRect(
       find.byKey(const ValueKey('today-activity-header')),
@@ -86,14 +119,22 @@ void main() {
     expect(header.decoration, isNull);
     expect(tester.takeException(), isNull);
 
-    await tester.tap(find.text('연속: 5일'));
+    await tester.tap(
+      find.ancestor(of: find.text('연속: 5일'), matching: find.byType(InkWell)),
+    );
     await tester.pumpAndSettle();
 
+    expect(dialogVisibilityChanges, [true]);
     expect(find.text('연속일은 이렇게 계산해요'), findsOneWidget);
     expect(find.text('탐험 완료 조건: 감정 새기기'), findsOneWidget);
     expect(find.text('다이어리 완료 조건: 작성 완료'), findsOneWidget);
     expect(find.text('통독 완료 조건: 1장 이상 읽음 처리'), findsOneWidget);
     expect(find.text('세 가지 중 1개 이상 완료한 날이 연속일에 카운팅됩니다.'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.close_rounded));
+    await tester.pumpAndSettle();
+
+    expect(dialogVisibilityChanges, [true, false]);
   });
 
   testWidgets('비로그인 기본 이름과 초기화된 일일 활동을 표시한다', (tester) async {
@@ -118,5 +159,10 @@ void main() {
     expect(find.text('이야기: 0개'), findsOneWidget);
     expect(find.text('다이어리: x'), findsOneWidget);
     expect(find.text('통독: 0장'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('today-streak-fire-celebration')),
+      findsNothing,
+    );
+    expect(find.byIcon(Icons.check_circle_rounded), findsNothing);
   });
 }

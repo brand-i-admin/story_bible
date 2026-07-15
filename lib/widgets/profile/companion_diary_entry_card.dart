@@ -89,7 +89,7 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         date,
-                        maxLines: largeText ? 2 : 1,
+                        maxLines: largeText ? null : 1,
                         overflow: largeText
                             ? TextOverflow.visible
                             : TextOverflow.ellipsis,

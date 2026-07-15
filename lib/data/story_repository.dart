@@ -13,6 +13,9 @@ import '../models/story_event.dart';
 import '../utils/bible_book_meta.dart';
 import 'character_name_fallbacks.dart';
 
+@visibleForTesting
+String bibleChapterReadAtValue(DateTime now) => now.toUtc().toIso8601String();
+
 class StoryRepository {
   StoryRepository(this._client);
 
@@ -371,7 +374,7 @@ class StoryRepository {
     final maxChapter = bibleBooks[safeBookNo - 1].chapters;
     final safeChapterNo = chapterNo.clamp(1, maxChapter).toInt();
     if (isRead) {
-      final timestamp = DateTime.now().toIso8601String();
+      final timestamp = bibleChapterReadAtValue(DateTime.now());
       await _client.from('user_bible_chapter_progress').upsert({
         'user_id': userId,
         'translation': translation,
@@ -471,6 +474,17 @@ class StoryRepository {
     await _client
         .from('user_quiz_attempts')
         .upsert(summary.toMap(userId: userId), onConflict: 'user_id,event_id');
+  }
+
+  Future<void> deleteQuizAttempt({
+    required String userId,
+    required String eventId,
+  }) async {
+    await _client
+        .from('user_quiz_attempts')
+        .delete()
+        .eq('user_id', userId)
+        .eq('event_id', eventId);
   }
 
   Future<Map<String, EventEmotionMark>> fetchEventEmotionMarks(

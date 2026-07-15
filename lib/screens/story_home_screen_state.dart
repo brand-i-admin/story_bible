@@ -24,10 +24,12 @@ class _StoryDetailBackContext {
   const _StoryDetailBackContext({
     this.history = const <StoryEvent>[],
     this.returnToProfileOnRoot = false,
+    this.mapRootTab = StoryRootTab.map,
   });
 
   final List<StoryEvent> history;
   final bool returnToProfileOnRoot;
+  final StoryRootTab mapRootTab;
 
   bool get needsCustomBack => history.isNotEmpty || returnToProfileOnRoot;
   StoryEvent? get previousEvent => history.isEmpty ? null : history.last;
@@ -36,6 +38,7 @@ class _StoryDetailBackContext {
     return _StoryDetailBackContext(
       history: [...history, event],
       returnToProfileOnRoot: returnToProfileOnRoot,
+      mapRootTab: mapRootTab,
     );
   }
 
@@ -46,6 +49,7 @@ class _StoryDetailBackContext {
     return _StoryDetailBackContext(
       history: history.sublist(0, history.length - 1),
       returnToProfileOnRoot: returnToProfileOnRoot,
+      mapRootTab: mapRootTab,
     );
   }
 }
@@ -88,6 +92,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   CharacterSortMode _characterSortMode = CharacterSortMode.eraOrder;
   String? _mapCelebrationEventId;
   String? _mapCelebrationStampLabel;
+  String? _todayCelebrationEventId;
   int _mapCelebrationNonce = 0;
   Completer<void>? _mapCelebrationCompleter;
   bool _mapAnimationInputLocked = false;
@@ -135,6 +140,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       if (previousId == nextId) {
         return;
       }
+      ref.read(storyControllerProvider.notifier).clearUserScopedData();
       _handleAuthUserChanged(next);
     });
     Future.microtask(() {
@@ -235,9 +241,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         _homeDiaryLoading = false;
         _homeDiaryError = null;
       });
-      await ref
-          .read(storyControllerProvider.notifier)
-          .refreshCompletedEventIds();
       return;
     }
 
@@ -245,13 +248,15 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       final profile = await ref
           .read(userRepositoryProvider)
           .ensureSignedInUser(user);
-      if (!mounted) {
+      if (!mounted || ref.read(signedInUserProvider)?.id != user.id) {
         return;
       }
       setState(() => _todayNickname = profile.nickname);
-      await ref
-          .read(storyControllerProvider.notifier)
-          .refreshCompletedEventIds();
+      final storyController = ref.read(storyControllerProvider.notifier);
+      await storyController.refreshCompletedEventIds();
+      await storyController.refreshQuizAttemptSummaries();
+      await storyController.refreshSavedEventIds();
+      await storyController.refreshCompletedBibleChapterKeys();
       await _loadHomeDiaryEntries(showLoading: false);
       // FCM 토큰 upsert — Firebase 미설정/권한 거부면 내부적으로 no-op.
       try {
@@ -287,7 +292,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       final entries = await ref
           .read(userRepositoryProvider)
           .fetchCompanionDiaryEntries(userId: user.id);
-      if (!mounted) return;
+      if (!mounted || ref.read(signedInUserProvider)?.id != user.id) return;
       setState(() {
         _homeDiaryEntries = entries;
         _homeDiaryLoading = false;
@@ -313,7 +318,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       final profile = await ref
           .read(userRepositoryProvider)
           .fetchUserProfile(user.id);
-      if (!mounted) {
+      if (!mounted || ref.read(signedInUserProvider)?.id != user.id) {
         return;
       }
       setState(() => _todayNickname = profile.nickname);
@@ -2250,7 +2255,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     _StoryDetailBackContext backContext = const _StoryDetailBackContext(),
   }) async {
     if (!mounted || _mapAnimationInputLocked) return;
-    final filterSnapshot = _captureHomeMapFilterSnapshot(event);
+    final mapRootTab = backContext.mapRootTab;
+    final filterSnapshot = mapRootTab == StoryRootTab.map
+        ? _captureHomeMapFilterSnapshot(event)
+        : null;
     _setMapAnimationInputLocked(true);
     try {
       _completeMapCelebration();
@@ -2265,43 +2273,54 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       }
       if (!mounted) return;
 
-      if (_rootTab != StoryRootTab.map) {
-        setState(() => _rootTab = StoryRootTab.map);
+      if (_rootTab != mapRootTab ||
+          (mapRootTab == StoryRootTab.today &&
+              _todayCelebrationEventId != event.id)) {
+        setState(() {
+          _rootTab = mapRootTab;
+          _retainedMapRootTab = mapRootTab;
+          _todayCelebrationEventId = mapRootTab == StoryRootTab.today
+              ? event.id
+              : null;
+        });
         await WidgetsBinding.instance.endOfFrame;
         if (!mounted) return;
       }
 
-      final restoredFilter = _restoreHomeMapFilterSnapshot(
-        filterSnapshot,
-        event,
-      );
-      if (!restoredFilter) {
-        await _prepareHomeMapForProfileEvent(
-          event,
-          source: ProfileEventOpenSource.general,
-        );
-        if (!mounted) return;
-      }
+      if (mapRootTab == StoryRootTab.map) {
+        final restoredFilter =
+            filterSnapshot != null &&
+            _restoreHomeMapFilterSnapshot(filterSnapshot, event);
+        if (!restoredFilter) {
+          await _prepareHomeMapForProfileEvent(
+            event,
+            source: ProfileEventOpenSource.general,
+          );
+          if (!mounted) return;
+        }
 
-      final notifier = ref.read(storyControllerProvider.notifier);
-      final state = ref.read(storyControllerProvider);
-      notifier.selectEvent(event.id);
-      if (!state.displayedEventIds.contains(event.id)) {
-        notifier.setDisplayedEvents({...state.displayedEventIds, event.id});
-      }
+        final notifier = ref.read(storyControllerProvider.notifier);
+        final state = ref.read(storyControllerProvider);
+        notifier.selectEvent(event.id);
+        if (!state.displayedEventIds.contains(event.id)) {
+          notifier.setDisplayedEvents({...state.displayedEventIds, event.id});
+        }
 
-      setState(() {
-        _draftDisplayedEventIds = {..._draftDisplayedEventIds, event.id};
-        _selectionStep = 3;
-        _selectionPanelStage = StorySelectionPanelStage.collapsed;
-        _selectionSheetExtent = _sheetSizeForStage(
-          MediaQuery.sizeOf(context),
-          StorySelectionPanelStage.collapsed,
-        );
-        _mapHintDismissed = true;
-        _mapCelebrationEventId = null;
-        _mapCelebrationStampLabel = null;
-      });
+        setState(() {
+          _draftDisplayedEventIds = {..._draftDisplayedEventIds, event.id};
+          _selectionStep = 3;
+          _selectionPanelStage = StorySelectionPanelStage.collapsed;
+          _selectionSheetExtent = _sheetSizeForStage(
+            MediaQuery.sizeOf(context),
+            StorySelectionPanelStage.collapsed,
+          );
+          _mapHintDismissed = true;
+          _mapCelebrationEventId = null;
+          _mapCelebrationStampLabel = null;
+        });
+      } else if (_todayCelebrationEventId != event.id) {
+        setState(() => _todayCelebrationEventId = event.id);
+      }
 
       await WidgetsBinding.instance.endOfFrame;
       await Future<void>.delayed(_emotionMapPreStampDelay);
@@ -2336,6 +2355,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       await Future<void>.delayed(_emotionMapPostStampDelay);
       if (!mounted) return;
 
+      if (mapRootTab == StoryRootTab.today &&
+          _todayCelebrationEventId == event.id) {
+        setState(() => _todayCelebrationEventId = null);
+      }
+
       _setMapAnimationInputLocked(false);
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
@@ -2347,6 +2371,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         ),
       );
     } finally {
+      if (mounted && _todayCelebrationEventId == event.id) {
+        setState(() => _todayCelebrationEventId = null);
+      }
       _setMapAnimationInputLocked(false);
     }
   }
@@ -2727,21 +2754,27 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     )?.id;
     final now = DateTime.now();
     final today = toKst(now);
-    final todayDiary = _homeDiaryEntries
-        .where((entry) => _sameHomeDiaryDate(entry.entryDate, today))
-        .firstOrNull;
-    final activitySummary = summarizeTodayActivity(
-      now: now,
-      emotionMarks: state.eventEmotionMarks,
-      diaryEntries: _homeDiaryEntries,
-      bibleChapterReadAts: state.completedBibleChapterReadAts,
-    );
+    final todayDiary = user == null
+        ? null
+        : _homeDiaryEntries
+              .where((entry) => _sameHomeDiaryDate(entry.entryDate, today))
+              .firstOrNull;
+    final activitySummary = user == null
+        ? TodayActivitySummary.empty
+        : summarizeTodayActivity(
+            now: now,
+            emotionMarks: state.eventEmotionMarks,
+            diaryEntries: _homeDiaryEntries,
+            bibleChapterReadAts: state.completedBibleChapterReadAts,
+          );
     final bibleTarget = nextBibleReadingTarget(state.completedBibleChapterKeys);
     return TodayHomePage(
       mapKey: _sharedMapKey,
       mapController: _mapPanelController,
+      mapGesturesEnabled: _rootTab == StoryRootTab.today,
       events: events,
       recommendedEventId: recommendedEventId,
+      currentEventOverrideId: _todayCelebrationEventId,
       eras: state.eras,
       charactersByCode: {
         for (final character in state.characters) character.code: character,
@@ -2886,7 +2919,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Future<void> _openTodayStory(StoryEvent event) async {
     await ref.read(storyControllerProvider.notifier).selectEra(event.eraId);
     if (!mounted) return;
-    await _openEventDetailPage(event);
+    await _openEventDetailPage(
+      event,
+      backContext: const _StoryDetailBackContext(
+        mapRootTab: StoryRootTab.today,
+      ),
+    );
   }
 
   Widget _buildMapTab(BuildContext context) {
@@ -2977,6 +3015,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 selectedCharacterCodes: state.selectedCharacterCodes,
                 eventEmotionMarks: state.eventEmotionMarks,
                 controller: _mapPanelController,
+                mapGesturesEnabled: _rootTab == StoryRootTab.map,
                 initialCenter: mapCenter,
                 initialZoom: mapZoom,
                 topObscuredPixels: mapCalloutTopObscuredPixels,

@@ -41,6 +41,7 @@ void main() {
       expect(stats.correct, 3);
       expect(stats.wrong, 1);
       expect(stats.confused, 2);
+      expect(stats.reviewQuestionCount, 3);
       expect(stats.total, 6);
       expect(stats.correctEventCount, 2);
       expect(stats.wrongEventCount, 1);

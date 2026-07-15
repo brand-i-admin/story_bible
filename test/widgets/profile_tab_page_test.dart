@@ -19,6 +19,7 @@ import 'package:story_bible/models/saved_bible_verse.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/models/user_companion_diary_entry.dart';
 import 'package:story_bible/screens/bible_progress_screen.dart';
+import 'package:story_bible/screens/saved_verses_screen.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/notification_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
@@ -377,6 +378,119 @@ void main() {
       find.byKey(const ValueKey('profile-locked-content-blocker')),
     );
     expect(blocker.ignoring, isTrue);
+  });
+
+  testWidgets('로그아웃 전환은 복습·저장·말씀·통독과 프로필 캐시를 즉시 비운다', (tester) async {
+    final authUserStateProvider = StateProvider<User?>((ref) => user);
+    final savedVerse = SavedBibleVerse(
+      id: 'saved-logout',
+      userId: user.id,
+      translation: '개역개정',
+      bookNo: 1,
+      bookName: '창세기',
+      chapterNo: 1,
+      verseNo: 1,
+      verseText: '태초에 하나님이 천지를 창조하시니라',
+      createdAt: now,
+    );
+    when(() => auth.currentUser).thenReturn(user);
+    when(
+      () => storyRepository.fetchEventProgress(user.id),
+    ).thenAnswer((_) async => const {});
+    when(
+      () => storyRepository.fetchEventEmotionMarks(user.id),
+    ).thenAnswer((_) async => const {});
+    when(() => storyRepository.fetchQuizAttemptSummaries(user.id)).thenAnswer(
+      (_) async => {
+        'review-event': _profileQuizAttemptSummary(
+          'review-event',
+          wrongCount: 2,
+          confusedCount: 1,
+        ),
+      },
+    );
+    when(
+      () => storyRepository.fetchSavedEventIds(user.id),
+    ).thenAnswer((_) async => const {'saved-event'});
+    when(
+      () => storyRepository.fetchCompletedBibleChapterReadAts(user.id),
+    ).thenAnswer((_) async => {'1:1': DateTime.now().toUtc()});
+    when(
+      () => userRepository.fetchSavedVersesPage(
+        userId: user.id,
+        pageIndex: 0,
+        pageSize: 5,
+      ),
+    ).thenAnswer(
+      (_) async => PagedResult<SavedBibleVerse>(
+        items: [savedVerse],
+        pageIndex: 0,
+        pageSize: 5,
+        hasNextPage: false,
+      ),
+    );
+    when(
+      () => userRepository.countSavedVerses(userId: user.id),
+    ).thenAnswer((_) async => 1);
+
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      authUserStateProvider: authUserStateProvider,
+      viewSize: const Size(430, 932),
+    );
+
+    Finder summaryValue(String key, String value) => find.descendant(
+      of: find.byKey(ValueKey(key)),
+      matching: find.text(value),
+    );
+
+    expect(find.text('기도친구'), findsOneWidget);
+    expect(
+      summaryValue('profile-story-summary-exploration-log', '3개'),
+      findsOneWidget,
+    );
+    expect(
+      summaryValue('profile-story-summary-saved-stories', '1개'),
+      findsOneWidget,
+    );
+    expect(
+      summaryValue('profile-story-summary-saved-verses', '1개'),
+      findsOneWidget,
+    );
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(ProfileTabPage)),
+    );
+    expect(container.read(storyControllerProvider).completedBibleChapterKeys, {
+      '1:1',
+    });
+
+    when(() => auth.currentUser).thenReturn(null);
+    container.read(authUserStateProvider.notifier).state = null;
+    await tester.pumpAndSettle();
+
+    expect(find.text('기도친구'), findsNothing);
+    expect(find.text('내 프로필'), findsOneWidget);
+    expect(
+      summaryValue('profile-story-summary-exploration-log', '0개'),
+      findsOneWidget,
+    );
+    expect(
+      summaryValue('profile-story-summary-saved-stories', '0개'),
+      findsOneWidget,
+    );
+    expect(
+      summaryValue('profile-story-summary-saved-verses', '0개'),
+      findsOneWidget,
+    );
+    final signedOutState = container.read(storyControllerProvider);
+    expect(signedOutState.quizAttemptSummaries, isEmpty);
+    expect(signedOutState.savedEventIds, isEmpty);
+    expect(signedOutState.completedBibleChapterKeys, isEmpty);
+    expect(signedOutState.completedBibleChapterReadAts, isEmpty);
   });
 
   testWidgets('블랙 테마 프로필 수정에서 현재 닉네임은 밝은 글자로 보인다', (tester) async {
@@ -1050,9 +1164,19 @@ void main() {
     when(
       () => userRepository.fetchCompanionDiaryEntries(userId: user.id),
     ).thenAnswer((_) async => [_profileDiaryEntry('diary-1', userId: user.id)]);
-    when(
-      () => storyRepository.fetchQuizAttemptSummaries(user.id),
-    ).thenAnswer((_) async => const {});
+    when(() => storyRepository.fetchQuizAttemptSummaries(user.id)).thenAnswer(
+      (_) async => {
+        'review-event-1': _profileQuizAttemptSummary(
+          'review-event-1',
+          wrongCount: 2,
+          confusedCount: 1,
+        ),
+        'review-event-2': _profileQuizAttemptSummary(
+          'review-event-2',
+          confusedCount: 2,
+        ),
+      },
+    );
     when(
       () => storyRepository.fetchCompletedBibleChapterKeys(user.id),
     ).thenAnswer((_) async => const <String>{});
@@ -1103,7 +1227,13 @@ void main() {
     expect(find.text('저장 이야기 개수'), findsNothing);
     expect(find.text('말씀'), findsOneWidget);
     expect(find.text('1개'), findsWidgets);
-    expect(find.text('2개'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('profile-story-summary-exploration-log')),
+        matching: find.text('5개'),
+      ),
+      findsOneWidget,
+    );
 
     await tester.tap(
       find.byKey(const ValueKey('profile-story-summary-saved-stories')),
@@ -1188,6 +1318,9 @@ void main() {
   });
 
   testWidgets('저장한 말씀 요약 카드는 저장 말씀 페이지로 이동한다', (tester) async {
+    int? openedBookNo;
+    int? openedChapterNo;
+    int? openedVerseNo;
     final savedVerse = SavedBibleVerse(
       id: 'saved-1',
       userId: user.id,
@@ -1238,6 +1371,12 @@ void main() {
       storyRepository: storyRepository,
       userRepository: userRepository,
       supabaseClient: supabaseClient,
+      onOpenBibleReader:
+          ({initialBookNo, initialChapterNo, initialVerseNo}) async {
+            openedBookNo = initialBookNo;
+            openedChapterNo = initialChapterNo;
+            openedVerseNo = initialVerseNo;
+          },
     );
 
     await tester.tap(
@@ -1246,6 +1385,15 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('저장한 성경 구절'), findsOneWidget);
+
+    await tester.tap(find.text('태초에 하나님이 천지를 창조하시니라'));
+    await tester.pumpAndSettle();
+
+    expect(openedBookNo, 1);
+    expect(openedChapterNo, 1);
+    expect(openedVerseNo, 1);
+    expect(find.byType(SavedVersesScreen), findsNothing);
+    expect(find.text('이야기 탐험 요약'), findsOneWidget);
   });
 
   testWidgets('통독 진행률 페이지에서 장을 누르면 해당 장 성경 리더를 연다', (tester) async {
@@ -1963,6 +2111,7 @@ Future<void> _pumpProfileTab(
   bool tickerEnabled = false,
   bool settleAfterPump = true,
   bool authenticated = true,
+  StateProvider<User?>? authUserStateProvider,
   VoidCallback? onExploreStoriesFromHome,
   ProfileEventDetailCallback? onOpenEventDetail,
 }) async {
@@ -1979,7 +2128,11 @@ Future<void> _pumpProfileTab(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        signedInUserProvider.overrideWithValue(authenticated ? user : null),
+        signedInUserProvider.overrideWith(
+          (ref) => authUserStateProvider == null
+              ? (authenticated ? user : null)
+              : ref.watch(authUserStateProvider),
+        ),
         storyRepositoryProvider.overrideWithValue(storyRepository),
         userRepositoryProvider.overrideWithValue(userRepository),
         notificationRepositoryProvider.overrideWithValue(

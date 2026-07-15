@@ -38,6 +38,7 @@ final storyControllerProvider = NotifierProvider<StoryController, StoryState>(
 
 class StoryController extends Notifier<StoryState> {
   Timer? _searchDebounce;
+  int _userScopeRevision = 0;
 
   StoryRepository get _repo => ref.read(storyRepositoryProvider);
 
@@ -45,6 +46,7 @@ class StoryController extends Notifier<StoryState> {
   StoryState build() => const StoryState(loading: true);
 
   Future<void> initialize() async {
+    final userScopeRevision = _userScopeRevision;
     try {
       state = state.copyWith(loading: true, clearError: true);
       final eras = await _repo.fetchEras();
@@ -107,20 +109,37 @@ class StoryController extends Notifier<StoryState> {
       }
 
       final hasOldTestament = eras.any((era) => _eraTestament(era) == 'old');
+      final useFetchedUserData = userScopeRevision == _userScopeRevision;
       state = state.copyWith(
         loading: false,
         eras: eras,
         characters: const [],
         events: const [],
-        completedEventIds: completedEventIds,
-        bibleReadEventIds: _bibleReadIdsFromProgress(eventProgress),
-        quizCompletedEventIds: _quizCompletedIdsFromProgress(eventProgress),
-        lastQuizScores: _scoresFromAttempts(quizAttemptSummaries),
-        quizAttemptSummaries: quizAttemptSummaries,
-        eventEmotionMarks: eventEmotionMarks,
-        savedEventIds: savedEventIds,
-        completedBibleChapterKeys: bibleChapterProgress.keys,
-        completedBibleChapterReadAts: bibleChapterProgress.readAts,
+        completedEventIds: useFetchedUserData
+            ? completedEventIds
+            : state.completedEventIds,
+        bibleReadEventIds: useFetchedUserData
+            ? _bibleReadIdsFromProgress(eventProgress)
+            : state.bibleReadEventIds,
+        quizCompletedEventIds: useFetchedUserData
+            ? _quizCompletedIdsFromProgress(eventProgress)
+            : state.quizCompletedEventIds,
+        lastQuizScores: useFetchedUserData
+            ? _scoresFromAttempts(quizAttemptSummaries)
+            : state.lastQuizScores,
+        quizAttemptSummaries: useFetchedUserData
+            ? quizAttemptSummaries
+            : state.quizAttemptSummaries,
+        eventEmotionMarks: useFetchedUserData
+            ? eventEmotionMarks
+            : state.eventEmotionMarks,
+        savedEventIds: useFetchedUserData ? savedEventIds : state.savedEventIds,
+        completedBibleChapterKeys: useFetchedUserData
+            ? bibleChapterProgress.keys
+            : state.completedBibleChapterKeys,
+        completedBibleChapterReadAts: useFetchedUserData
+            ? bibleChapterProgress.readAts
+            : state.completedBibleChapterReadAts,
         selectedEraId: null,
         selectedCharacterCodes: const {},
         selectedCharacterColors: const {},
@@ -279,6 +298,7 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Future<void> selectEra(String eraId) async {
+    final userScopeRevision = _userScopeRevision;
     if (state.selectedEraId == eraId && state.characters.isNotEmpty) {
       return;
     }
@@ -333,19 +353,36 @@ class StoryController extends Notifier<StoryState> {
             _fetchQuizAttemptSummariesForCurrentUser,
             const <String, QuizAttemptSummary>{},
           );
+      final useFetchedUserData = userScopeRevision == _userScopeRevision;
       state = state.copyWith(
         loading: false,
         characters: characters,
         events: events,
-        completedEventIds: completedEventIds,
-        bibleReadEventIds: _bibleReadIdsFromProgress(eventProgress),
-        quizCompletedEventIds: _quizCompletedIdsFromProgress(eventProgress),
-        lastQuizScores: _scoresFromAttempts(quizAttemptSummaries),
-        quizAttemptSummaries: quizAttemptSummaries,
-        eventEmotionMarks: eventEmotionMarks,
-        savedEventIds: savedEventIds,
-        completedBibleChapterKeys: bibleChapterProgress.keys,
-        completedBibleChapterReadAts: bibleChapterProgress.readAts,
+        completedEventIds: useFetchedUserData
+            ? completedEventIds
+            : state.completedEventIds,
+        bibleReadEventIds: useFetchedUserData
+            ? _bibleReadIdsFromProgress(eventProgress)
+            : state.bibleReadEventIds,
+        quizCompletedEventIds: useFetchedUserData
+            ? _quizCompletedIdsFromProgress(eventProgress)
+            : state.quizCompletedEventIds,
+        lastQuizScores: useFetchedUserData
+            ? _scoresFromAttempts(quizAttemptSummaries)
+            : state.lastQuizScores,
+        quizAttemptSummaries: useFetchedUserData
+            ? quizAttemptSummaries
+            : state.quizAttemptSummaries,
+        eventEmotionMarks: useFetchedUserData
+            ? eventEmotionMarks
+            : state.eventEmotionMarks,
+        savedEventIds: useFetchedUserData ? savedEventIds : state.savedEventIds,
+        completedBibleChapterKeys: useFetchedUserData
+            ? bibleChapterProgress.keys
+            : state.completedBibleChapterKeys,
+        completedBibleChapterReadAts: useFetchedUserData
+            ? bibleChapterProgress.readAts
+            : state.completedBibleChapterReadAts,
         selectedCharacterCodes: selectedCharacterCodes,
         selectedCharacterColors: _assignSelectedColors(selectedCharacterCodes),
         selectedTimelineUnitCodes: const {},
@@ -482,10 +519,33 @@ class StoryController extends Notifier<StoryState> {
     state = state.copyWith(completedEventIds: nextCompleted);
   }
 
+  /// 로그아웃 또는 계정 전환 시 메모리에 남아 있는 사용자 전용 데이터를 지운다.
+  ///
+  /// 시대/이야기/지도 선택처럼 공개 데이터와 탐색 상태는 유지하고, Supabase의
+  /// 사용자 테이블에서 읽어 온 진행도·퀴즈·저장·통독 데이터만 초기화한다.
+  void clearUserScopedData() {
+    _userScopeRevision++;
+    state = state.copyWith(
+      completedEventIds: const <String>{},
+      bibleReadEventIds: const <String>{},
+      quizCompletedEventIds: const <String>{},
+      lastQuizScores: const <String, ({int correct, int total})>{},
+      quizAttemptSummaries: const <String, QuizAttemptSummary>{},
+      eventEmotionMarks: const <String, EventEmotionMark>{},
+      savedEventIds: const <String>{},
+      completedBibleChapterKeys: const <String>{},
+      completedBibleChapterReadAts: const <String, DateTime?>{},
+    );
+  }
+
   Future<void> refreshCompletedEventIds() async {
+    final userScopeRevision = _userScopeRevision;
     try {
       final eventProgress = await _fetchEventProgressForCurrentUser();
       final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
+      if (userScopeRevision != _userScopeRevision) {
+        return;
+      }
       state = state.copyWith(
         completedEventIds: _completedIdsFromProgress(
           eventProgress,
@@ -501,8 +561,12 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Future<void> refreshQuizAttemptSummaries() async {
+    final userScopeRevision = _userScopeRevision;
     try {
       final summaries = await _fetchQuizAttemptSummariesForCurrentUser();
+      if (userScopeRevision != _userScopeRevision) {
+        return;
+      }
       state = state.copyWith(
         quizAttemptSummaries: summaries,
         lastQuizScores: _scoresFromAttempts(summaries),
@@ -513,9 +577,13 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Future<void> refreshEventEmotionMarks() async {
+    final userScopeRevision = _userScopeRevision;
     try {
       final eventProgress = await _fetchEventProgressForCurrentUser();
       final eventEmotionMarks = await _fetchEventEmotionMarksForCurrentUser();
+      if (userScopeRevision != _userScopeRevision) {
+        return;
+      }
       state = state.copyWith(
         eventEmotionMarks: eventEmotionMarks,
         completedEventIds: _completedIdsFromProgress(
@@ -529,8 +597,12 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Future<void> refreshSavedEventIds() async {
+    final userScopeRevision = _userScopeRevision;
     try {
       final savedEventIds = await _fetchSavedEventIdsForCurrentUser();
+      if (userScopeRevision != _userScopeRevision) {
+        return;
+      }
       if (_characterSetsEqual(savedEventIds, state.savedEventIds)) {
         return;
       }
@@ -541,9 +613,13 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Future<void> refreshCompletedBibleChapterKeys() async {
+    final userScopeRevision = _userScopeRevision;
     try {
       final progress =
           await _fetchCompletedBibleChapterProgressForCurrentUser();
+      if (userScopeRevision != _userScopeRevision) {
+        return;
+      }
       state = state.copyWith(
         completedBibleChapterKeys: progress.keys,
         completedBibleChapterReadAts: progress.readAts,
@@ -575,7 +651,7 @@ class StoryController extends Notifier<StoryState> {
     final nextReadAts = {...previousReadAts};
     if (isRead) {
       next.add(key);
-      nextReadAts[key] = DateTime.now();
+      nextReadAts[key] = DateTime.now().toUtc();
     } else {
       next.remove(key);
       nextReadAts.remove(key);
@@ -676,6 +752,8 @@ class StoryController extends Notifier<StoryState> {
         selectedAnswers: selectedAnswers,
       );
       nextAttempts[eventId] = attemptSummary;
+    } else if (!isCompleted) {
+      nextAttempts.remove(eventId);
     }
     state = state.copyWith(
       quizCompletedEventIds: next,
@@ -685,6 +763,8 @@ class StoryController extends Notifier<StoryState> {
     final user = ref.read(supabaseClientProvider).auth.currentUser;
     if (user != null && attemptSummary != null) {
       await _repo.upsertQuizAttempt(userId: user.id, summary: attemptSummary);
+    } else if (user != null && !isCompleted) {
+      await _repo.deleteQuizAttempt(userId: user.id, eventId: eventId);
     }
     if (user != null) {
       await _repo.upsertEventProgress(

@@ -19,6 +19,8 @@ import '../pulse_highlight.dart';
 import '../v2/region_event_list.dart'
     show StoryEventCardPresentation, StoryEventThumbCard;
 
+const _homeJourneyMissingBoundaryLabel = '이야기\n없음';
+
 class HomeJourneyOverlay extends StatelessWidget {
   const HomeJourneyOverlay({
     super.key,
@@ -157,6 +159,12 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     super.didUpdateWidget(oldWidget);
     final events = _orderedEvents();
     if (events.isEmpty || widget.currentEventId == null) return;
+    final showingBoundaryHint =
+        _currentPage == 0 || _currentPage == events.length + 1;
+    if (showingBoundaryHint &&
+        oldWidget.currentEventId == widget.currentEventId) {
+      return;
+    }
     final visibleEventIndex = _currentPage - 1;
     if (visibleEventIndex >= 0 &&
         visibleEventIndex < events.length &&
@@ -212,41 +220,100 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
         else
           SizedBox(
             height: deckHeight,
-            child: PageView.builder(
-              key: const ValueKey('home-story-page-view'),
-              controller: _pageController,
-              physics: const PageScrollPhysics(),
-              clipBehavior: Clip.none,
-              itemCount: ordered.length + 2,
-              onPageChanged: (page) {
-                final nextPage = page.clamp(
-                  (_currentPage - 1).clamp(0, ordered.length + 1),
-                  (_currentPage + 1).clamp(0, ordered.length + 1),
-                );
-                setState(() => _currentPage = nextPage);
-                if (nextPage != page) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted && _pageController.hasClients) {
-                      _pageController.jumpToPage(nextPage);
-                    }
-                  });
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final eraById = {for (final era in widget.eras) era.id: era};
+                final currentEventIndex = _currentPage - 1;
+                String? leftBoundaryLabel;
+                String? rightBoundaryLabel;
+                if (currentEventIndex >= 0 &&
+                    currentEventIndex < ordered.length) {
+                  final currentEvent = ordered[currentEventIndex];
+                  leftBoundaryLabel = _boundaryLabel(
+                    adjacent: currentEventIndex > 0
+                        ? ordered[currentEventIndex - 1]
+                        : null,
+                    current: currentEvent,
+                    eraById: eraById,
+                    missingLabel: _homeJourneyMissingBoundaryLabel,
+                  );
+                  rightBoundaryLabel = _boundaryLabel(
+                    adjacent: currentEventIndex + 1 < ordered.length
+                        ? ordered[currentEventIndex + 1]
+                        : null,
+                    current: currentEvent,
+                    eraById: eraById,
+                    missingLabel: _homeJourneyMissingBoundaryLabel,
+                  );
                 }
-                final eventIndex = nextPage - 1;
-                if (eventIndex >= 0 && eventIndex < ordered.length) {
-                  widget.onCurrentStoryChanged(ordered[eventIndex]);
-                }
-              },
-              itemBuilder: (context, page) {
-                if (page == 0 || page == ordered.length + 1) {
-                  return const _HomeExplorationSortHintCard();
-                }
-                final eventIndex = page - 1;
-                return _buildCard(
-                  context: context,
-                  events: ordered,
-                  eventIndex: eventIndex,
-                  page: page,
-                  deckHeight: deckHeight,
+                final boundaryInset = (constraints.maxWidth * 0.26 - 26.5)
+                    .clamp(0.0, double.infinity)
+                    .toDouble();
+                return Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned.fill(
+                      child: PageView.builder(
+                        key: const ValueKey('home-story-page-view'),
+                        controller: _pageController,
+                        physics: const PageScrollPhysics(),
+                        clipBehavior: Clip.none,
+                        itemCount: ordered.length + 2,
+                        onPageChanged: (page) {
+                          final nextPage = page.clamp(
+                            (_currentPage - 1).clamp(0, ordered.length + 1),
+                            (_currentPage + 1).clamp(0, ordered.length + 1),
+                          );
+                          setState(() => _currentPage = nextPage);
+                          if (nextPage != page) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (mounted && _pageController.hasClients) {
+                                _pageController.jumpToPage(nextPage);
+                              }
+                            });
+                          }
+                          final eventIndex = nextPage - 1;
+                          if (eventIndex >= 0 && eventIndex < ordered.length) {
+                            widget.onCurrentStoryChanged(ordered[eventIndex]);
+                          }
+                        },
+                        itemBuilder: (context, page) {
+                          if (page == 0 || page == ordered.length + 1) {
+                            return _buildSortHintPage(page: page);
+                          }
+                          final eventIndex = page - 1;
+                          return _buildCard(
+                            context: context,
+                            events: ordered,
+                            eventIndex: eventIndex,
+                            page: page,
+                          );
+                        },
+                      ),
+                    ),
+                    if (leftBoundaryLabel != null)
+                      Positioned(
+                        key: const ValueKey(
+                          'home-journey-left-boundary-overlay',
+                        ),
+                        left: boundaryInset,
+                        top: (deckHeight - 38) / 2,
+                        child: _HomeJourneyBoundaryBadge(
+                          label: leftBoundaryLabel,
+                        ),
+                      ),
+                    if (rightBoundaryLabel != null)
+                      Positioned(
+                        key: const ValueKey(
+                          'home-journey-right-boundary-overlay',
+                        ),
+                        right: boundaryInset,
+                        top: (deckHeight - 38) / 2,
+                        child: _HomeJourneyBoundaryBadge(
+                          label: rightBoundaryLabel,
+                        ),
+                      ),
+                  ],
                 );
               },
             ),
@@ -274,12 +341,41 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     return index + 1;
   }
 
+  Widget _buildSortHintPage({required int page}) {
+    final isCurrent = page == _currentPage;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final baseWidth = constraints.maxWidth;
+        final expandedWidth = ((baseWidth - 10) * 1.5) + 10;
+        final horizontalShift = isCurrent
+            ? 0.0
+            : ((expandedWidth - baseWidth) / 2 - 10.5) *
+                  (page < _currentPage ? -1 : 1);
+        final frameWidth = isCurrent ? expandedWidth : baseWidth;
+        return Transform.translate(
+          offset: Offset(horizontalShift, 0),
+          child: OverflowBox(
+            minWidth: frameWidth,
+            maxWidth: frameWidth,
+            minHeight: constraints.maxHeight,
+            maxHeight: constraints.maxHeight,
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: frameWidth,
+              height: constraints.maxHeight,
+              child: _HomeExplorationSortHintCard(isCurrent: isCurrent),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildCard({
     required BuildContext context,
     required List<StoryEvent> events,
     required int eventIndex,
     required int page,
-    required double deckHeight,
   }) {
     final event = events[eventIndex];
     final isCurrent = page == _currentPage;
@@ -292,24 +388,6 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
         : '다음 이야기';
     final palette = AppPaletteTheme.of(context);
     final eraById = {for (final era in widget.eras) era.id: era};
-    final previous = eventIndex > 0 ? events[eventIndex - 1] : null;
-    final next = eventIndex + 1 < events.length ? events[eventIndex + 1] : null;
-    final leftBoundaryLabel = isCurrent
-        ? _boundaryLabel(
-            adjacent: previous,
-            current: event,
-            eraById: eraById,
-            missingLabel: '이전 이야기 없음',
-          )
-        : null;
-    final rightBoundaryLabel = isCurrent
-        ? _boundaryLabel(
-            adjacent: next,
-            current: event,
-            eraById: eraById,
-            missingLabel: '다음 이야기 없음',
-          )
-        : null;
     final card = StoryEventThumbCard(
       event: event,
       era: eraById[event.eraId],
@@ -420,18 +498,6 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
             ),
           ),
         ),
-        if (leftBoundaryLabel != null)
-          Positioned(
-            left: -29,
-            top: (deckHeight - 38) / 2,
-            child: _HomeJourneyBoundaryBadge(label: leftBoundaryLabel),
-          ),
-        if (rightBoundaryLabel != null)
-          Positioned(
-            right: -29,
-            top: (deckHeight - 38) / 2,
-            child: _HomeJourneyBoundaryBadge(label: rightBoundaryLabel),
-          ),
         if (isCurrent)
           Positioned(
             left: 12,
@@ -497,11 +563,11 @@ class _HomeJourneyBoundaryBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final isEraTransition = label.contains('\n');
+    final isMissingBoundary = label == _homeJourneyMissingBoundaryLabel;
     return Container(
-      key: isEraTransition
-          ? const ValueKey('home-journey-era-boundary-badge')
-          : const ValueKey('home-journey-missing-boundary-badge'),
+      key: isMissingBoundary
+          ? const ValueKey('home-journey-missing-boundary-badge')
+          : const ValueKey('home-journey-era-boundary-badge'),
       width: 64,
       constraints: const BoxConstraints(minHeight: 38),
       alignment: Alignment.center,
@@ -536,14 +602,24 @@ class _HomeJourneyBoundaryBadge extends StatelessWidget {
 }
 
 class _HomeExplorationSortHintCard extends StatelessWidget {
-  const _HomeExplorationSortHintCard();
+  const _HomeExplorationSortHintCard({required this.isCurrent});
+
+  final bool isCurrent;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 38, 10, 0),
+      key: isCurrent
+          ? const ValueKey('home-exploration-sort-hint-current')
+          : null,
+      padding: EdgeInsets.fromLTRB(
+        isCurrent ? 5 : 10,
+        isCurrent ? 0 : 38,
+        isCurrent ? 5 : 10,
+        0,
+      ),
       child: Container(
         key: const ValueKey('home-exploration-sort-hint-card'),
         padding: EdgeInsets.symmetric(
@@ -559,6 +635,15 @@ class _HomeExplorationSortHintCard extends StatelessWidget {
           border: Border.all(
             color: palette.regionAccent.withValues(alpha: 0.28),
           ),
+          boxShadow: isCurrent
+              ? [
+                  BoxShadow(
+                    color: palette.currentAccent.withValues(alpha: 0.25),
+                    blurRadius: 18,
+                    spreadRadius: 2,
+                  ),
+                ]
+              : null,
         ),
         child: LayoutBuilder(
           builder: (context, constraints) => FittedBox(
@@ -589,7 +674,7 @@ class _HomeExplorationSortHintCard extends StatelessWidget {
                   ),
                   SizedBox(height: largeText ? 3 : 6),
                   Text(
-                    '지도 탭에서 사건에 직접 감정을 새기면\n그 사건 기준으로 탐험 정렬이 바뀌어요.',
+                    '사건에 감정을 새기면\n그 사건 기준으로\n이야기 정렬이 바뀌어요',
                     key: const ValueKey('home-exploration-sort-hint-body'),
                     textAlign: TextAlign.center,
                     style: TextStyle(

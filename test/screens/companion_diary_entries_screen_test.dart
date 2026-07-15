@@ -84,6 +84,43 @@ void main() {
       lessThan(12),
     );
   });
+
+  testWidgets('아주 큰 글자에서도 날짜와 KST 시간을 줄임표 없이 모두 표시한다', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final entry = UserCompanionDiaryEntry(
+      id: 'very-large-entry',
+      userId: 'user-1',
+      entryDate: DateTime(2026, 7, 14),
+      title: '그래도 오전부터',
+      body: '하나님과 함께 걸었습니다.',
+      createdAt: DateTime.utc(2026, 7, 14, 16, 30),
+      updatedAt: DateTime.utc(2026, 7, 14, 16, 30),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: MediaQuery(
+          data: const MediaQueryData(
+            size: Size(390, 844),
+            textScaler: TextScaler.linear(1.4),
+          ),
+          child: CompanionDiaryEntriesScreen(
+            entries: [entry],
+            now: DateTime.utc(2026, 7, 15),
+          ),
+        ),
+      ),
+    );
+
+    final timestamp = find.text('7월 14일 화요일 · 오전 1:30');
+    expect(timestamp, findsOneWidget);
+    final timestampText = tester.widget<Text>(timestamp);
+    expect(timestampText.maxLines, isNull);
+    expect(timestampText.overflow, isNot(TextOverflow.ellipsis));
+    expect(tester.takeException(), isNull);
+  });
 }
 
 UserCompanionDiaryEntry _entry(String id, DateTime date, String title) {

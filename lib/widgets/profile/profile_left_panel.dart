@@ -411,14 +411,14 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     required Widget featureSection,
   }) {
     final state = ref.watch(storyControllerProvider);
+    final quizStats = buildProfileQuizStats(state.quizAttemptSummaries);
     final events = _profileAllEvents.isNotEmpty
         ? _profileAllEvents
         : state.events;
 
     return _ProfileStoryExplorationDashboard(
       storyProgress: _profileStoryProgress(state),
-      explorationLogCount:
-          state.eventEmotionMarks.length + _profileCompanionDiaryEntries.length,
+      reviewQuestionCount: quizStats.reviewQuestionCount,
       savedStoryCount: state.savedEventIds.length,
       savedVerseCount: _profileSavedVersesCount,
       onOpenStoryProgress: _openStoryProgressPage,
@@ -1123,7 +1123,7 @@ class _ProfileIconTabButton extends StatelessWidget {
 class _ProfileStoryExplorationDashboard extends StatelessWidget {
   const _ProfileStoryExplorationDashboard({
     required this.storyProgress,
-    required this.explorationLogCount,
+    required this.reviewQuestionCount,
     required this.savedStoryCount,
     required this.savedVerseCount,
     required this.onOpenStoryProgress,
@@ -1135,7 +1135,7 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
   });
 
   final ({int completed, int total, double fraction}) storyProgress;
-  final int explorationLogCount;
+  final int reviewQuestionCount;
   final int savedStoryCount;
   final int savedVerseCount;
   final VoidCallback onOpenStoryProgress;
@@ -1161,7 +1161,7 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
           ),
           child: _StoryExplorationSummarySection(
             storyProgress: storyProgress,
-            explorationLogCount: explorationLogCount,
+            reviewQuestionCount: reviewQuestionCount,
             savedStoryCount: savedStoryCount,
             savedVerseCount: savedVerseCount,
             onOpenStoryProgress: onOpenStoryProgress,
@@ -1182,7 +1182,7 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
 class _StoryExplorationSummarySection extends StatelessWidget {
   const _StoryExplorationSummarySection({
     required this.storyProgress,
-    required this.explorationLogCount,
+    required this.reviewQuestionCount,
     required this.savedStoryCount,
     required this.savedVerseCount,
     required this.onOpenStoryProgress,
@@ -1192,7 +1192,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
   });
 
   final ({int completed, int total, double fraction}) storyProgress;
-  final int explorationLogCount;
+  final int reviewQuestionCount;
   final int savedStoryCount;
   final int savedVerseCount;
   final VoidCallback onOpenStoryProgress;
@@ -1266,7 +1266,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
                 icon: Icons.history_rounded,
                 color: palette.currentAccentDeep,
                 onTap: onOpenExplorationLog,
-                value: countValue(explorationLogCount),
+                value: countValue(reviewQuestionCount),
               ),
             ),
             const SizedBox(width: 5),

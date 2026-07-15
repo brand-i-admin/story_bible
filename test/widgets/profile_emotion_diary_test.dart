@@ -984,6 +984,19 @@ void main() {
       find.byKey(const ValueKey('calendar-all-actions-marker-2026-6-10')),
       findsOneWidget,
     );
+    final allActionsMarker = tester.widget<Container>(
+      find.byKey(const ValueKey('calendar-all-actions-marker-2026-6-10')),
+    );
+    final allActionsDecoration = allActionsMarker.decoration! as BoxDecoration;
+    expect(allActionsDecoration.shape, BoxShape.circle);
+    expect(allActionsDecoration.color, AppColorPalette.classic.successBottom);
+    final allActionsIcon = tester.widget<Icon>(
+      find.descendant(
+        of: find.byKey(const ValueKey('calendar-all-actions-marker-2026-6-10')),
+        matching: find.byIcon(Icons.check_rounded),
+      ),
+    );
+    expect(allActionsIcon.color, AppColors.fgOnDark);
     expect(
       find.byKey(const ValueKey('calendar-emotion-marker-2026-6-10')),
       findsNothing,

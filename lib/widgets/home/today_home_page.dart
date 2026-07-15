@@ -26,8 +26,10 @@ class TodayHomePage extends StatefulWidget {
     super.key,
     required this.mapKey,
     required this.mapController,
+    required this.mapGesturesEnabled,
     required this.events,
     required this.recommendedEventId,
+    this.currentEventOverrideId,
     required this.eras,
     required this.charactersByCode,
     required this.eventEmotionMarks,
@@ -52,8 +54,10 @@ class TodayHomePage extends StatefulWidget {
 
   final Key mapKey;
   final StoryMapPanelController mapController;
+  final bool mapGesturesEnabled;
   final List<StoryEvent> events;
   final String? recommendedEventId;
+  final String? currentEventOverrideId;
   final List<Era> eras;
   final Map<String, Character> charactersByCode;
   final Map<String, EventEmotionMark> eventEmotionMarks;
@@ -80,6 +84,7 @@ class TodayHomePage extends StatefulWidget {
 }
 
 class _TodayHomePageState extends State<TodayHomePage> {
+  static const Duration _modalMapInputLockDuration = Duration(hours: 1);
   final SceneAssetLoader _sceneAssetLoader = SceneAssetLoader();
   String? _currentEventId;
   String? _currentThumbnailEventId;
@@ -90,19 +95,28 @@ class _TodayHomePageState extends State<TodayHomePage> {
   void initState() {
     super.initState();
     _currentEventId = widget.recommendedEventId;
-    unawaited(_loadCurrentThumbnail(_currentEventId));
+    unawaited(
+      _loadCurrentThumbnail(widget.currentEventOverrideId ?? _currentEventId),
+    );
   }
 
   @override
   void didUpdateWidget(covariant TodayHomePage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    var selectionChanged = false;
     if (oldWidget.recommendedEventId != widget.recommendedEventId) {
       _currentEventId = widget.recommendedEventId;
-      unawaited(_loadCurrentThumbnail(_currentEventId));
+      selectionChanged = true;
     } else if (_currentEventId == null ||
         widget.events.every((event) => event.id != _currentEventId)) {
       _currentEventId = widget.recommendedEventId;
-      unawaited(_loadCurrentThumbnail(_currentEventId));
+      selectionChanged = true;
+    }
+    if (selectionChanged ||
+        oldWidget.currentEventOverrideId != widget.currentEventOverrideId) {
+      unawaited(
+        _loadCurrentThumbnail(widget.currentEventOverrideId ?? _currentEventId),
+      );
     }
   }
 
@@ -110,6 +124,17 @@ class _TodayHomePageState extends State<TodayHomePage> {
     if (_currentEventId == eventId) return;
     setState(() => _currentEventId = eventId);
     unawaited(_loadCurrentThumbnail(eventId));
+  }
+
+  void _setStreakDialogMapInputBlocked(bool blocked) {
+    if (blocked) {
+      widget.mapController.suppressMapTaps(_modalMapInputLockDuration);
+      widget.mapController.suspendMapGestures(_modalMapInputLockDuration);
+      return;
+    }
+    widget.mapController.clearMapTapSuppression();
+    widget.mapController.suppressMapTaps(const Duration(milliseconds: 1200));
+    widget.mapController.clearMapGestureSuspension();
   }
 
   Future<void> _loadCurrentThumbnail(String? eventId) async {
@@ -141,7 +166,10 @@ class _TodayHomePageState extends State<TodayHomePage> {
     final mapSelection = explorationMapSelectionFor(
       events: widget.events,
       eras: widget.eras,
-      currentEventId: _currentEventId ?? widget.recommendedEventId,
+      currentEventId:
+          widget.currentEventOverrideId ??
+          _currentEventId ??
+          widget.recommendedEventId,
     );
     final currentEvent = mapSelection.position?.current;
     final currentEventId = currentEvent?.id;
@@ -186,7 +214,7 @@ class _TodayHomePageState extends State<TodayHomePage> {
                   roles: mapSelection.markerRoles,
                   thumbnailUrls: thumbnailUrls,
                 ),
-                mapGesturesEnabled: true,
+                mapGesturesEnabled: widget.mapGesturesEnabled,
                 decorate: false,
                 showSelectedCallout: false,
                 animateReveal: false,
@@ -203,14 +231,54 @@ class _TodayHomePageState extends State<TodayHomePage> {
               top: 0,
               left: 0,
               right: 0,
-              child: WebPointerInterceptor(
-                child: TodayActivityHeader(
-                  nickname: widget.nickname,
-                  summary: widget.activitySummary,
-                  actions: _TodayHeaderActions(
-                    onOpenFontSettings: widget.onOpenFontSettings,
-                    onOpenThemeSettings: widget.onOpenThemeSettings,
-                    onOpenSearch: widget.onOpenSearch,
+              child: Listener(
+                key: const ValueKey('today-header-map-input-blocker'),
+                behavior: HitTestBehavior.opaque,
+                onPointerDown: (_) {
+                  widget.mapController.suppressMapTaps(
+                    const Duration(milliseconds: 1200),
+                  );
+                  widget.mapController.suspendMapGestures(
+                    const Duration(milliseconds: 1200),
+                  );
+                },
+                onPointerMove: (_) {
+                  widget.mapController.suppressMapTaps();
+                  widget.mapController.suspendMapGestures(
+                    const Duration(milliseconds: 1200),
+                  );
+                },
+                onPointerUp: (_) {
+                  widget.mapController.suppressMapTaps(
+                    const Duration(milliseconds: 1200),
+                  );
+                  widget.mapController.clearMapGestureSuspension();
+                },
+                onPointerCancel: (_) {
+                  widget.mapController.suppressMapTaps(
+                    const Duration(milliseconds: 1200),
+                  );
+                  widget.mapController.clearMapGestureSuspension();
+                },
+                onPointerSignal: (_) {
+                  widget.mapController.suppressMapTaps(
+                    const Duration(milliseconds: 1200),
+                  );
+                  widget.mapController.suspendMapGestures(
+                    const Duration(milliseconds: 1200),
+                  );
+                },
+                child: WebPointerInterceptor(
+                  child: TodayActivityHeader(
+                    nickname: widget.nickname,
+                    summary: widget.activitySummary,
+                    onStreakDialogVisibilityChanged:
+                        _setStreakDialogMapInputBlocked,
+                    actions: _TodayHeaderActions(
+                      onOpenFontSettings: widget.onOpenFontSettings,
+                      onOpenThemeSettings: widget.onOpenThemeSettings,
+                      onOpenSearch: widget.onOpenSearch,
+                    ),
                   ),
                 ),
               ),

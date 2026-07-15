@@ -441,7 +441,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
           onOpenVerse: (verse) async {
             if (!mounted) return;
             _focusSavedVerse(verse);
-            Navigator.of(context).pop();
           },
         ),
       ),

@@ -123,6 +123,10 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
     }
     try {
       await onOpenVerse(verse);
+      if (!mounted) {
+        return;
+      }
+      Navigator.of(context).pop();
     } catch (error) {
       if (!mounted) {
         return;

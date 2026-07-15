@@ -278,6 +278,24 @@ void main() {
     expect(currentRect.height - previousRect.height, greaterThanOrEqualTo(36));
     expect(currentRect.height - nextRect.height, greaterThanOrEqualTo(36));
 
+    final previousTitle = tester.widget<Text>(
+      find.byKey(const ValueKey('story-card-title-todayAdjacent-previous')),
+    );
+    final currentTitle = tester.widget<Text>(
+      find.byKey(const ValueKey('story-card-title-todayCurrent-recommended')),
+    );
+    final nextTitle = tester.widget<Text>(
+      find.byKey(const ValueKey('story-card-title-todayAdjacent-next')),
+    );
+    expect(
+      currentTitle.style!.fontSize,
+      greaterThan(previousTitle.style!.fontSize!),
+    );
+    expect(
+      currentTitle.style!.fontSize,
+      greaterThan(nextTitle.style!.fontSize!),
+    );
+
     for (final (presentation, eventId) in [
       ('todayAdjacent', 'previous'),
       ('todayCurrent', 'recommended'),
@@ -297,8 +315,9 @@ void main() {
     expect(nextThumbnailRect.width, closeTo(nextThumbnailRect.height, 1));
     expect(
       currentThumbnailRect.width / currentThumbnailRect.height,
-      closeTo(16 / 9, 0.08),
+      closeTo(8 / 5, 0.06),
     );
+    expect(currentRect.width - currentThumbnailRect.width, greaterThan(20));
     expect(find.text('이전 이야기 요약'), findsNothing);
     expect(find.text('오늘의 추천 이야기 요약'), findsNothing);
     expect(find.text('다음 이야기 요약'), findsNothing);
@@ -560,11 +579,8 @@ void main() {
       ),
     );
 
-    expect(find.text('이전 이야기 없음'), findsOneWidget);
-    expect(
-      find.text('지도 탭에서 사건에 직접 감정을 새기면\n그 사건 기준으로 탐험 정렬이 바뀌어요.'),
-      findsWidgets,
-    );
+    expect(find.text('이야기\n없음'), findsOneWidget);
+    expect(find.text('사건에 감정을 새기면\n그 사건 기준으로\n이야기 정렬이 바뀌어요'), findsWidgets);
   });
 
   testWidgets('마지막 이야기를 완료하면 마지막 카드가 현재로 남고 안내 카드와 하단이 맞는다', (tester) async {
@@ -601,13 +617,42 @@ void main() {
 
     expect(find.text('오늘의 이야기'), findsNothing);
     expect(find.text('현재 이야기'), findsOneWidget);
+    expect(find.text('이야기\n없음'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('home-journey-right-boundary-overlay')),
+        matching: find.byKey(
+          const ValueKey('home-journey-missing-boundary-badge'),
+        ),
+      ),
+      findsOneWidget,
+    );
     final currentCard = tester.getRect(
       find.byKey(const ValueKey('home-journey-card-surface-frame-next')),
     );
-    final hintCard = tester.getRect(
+    final adjacentHintCard = tester.getRect(
       find.byKey(const ValueKey('home-exploration-sort-hint-card')),
     );
-    expect(hintCard.bottom, closeTo(currentCard.bottom, 0.1));
+    expect(adjacentHintCard.bottom, closeTo(currentCard.bottom, 0.1));
+
+    await tester.drag(
+      find.byKey(const ValueKey('home-story-page-view')),
+      const Offset(-420, 0),
+    );
+    await tester.pump(const Duration(milliseconds: 350));
+
+    final currentHintCard = tester.getRect(
+      find.byKey(const ValueKey('home-exploration-sort-hint-card')),
+    );
+    final adjacentLastCard = tester.getRect(
+      find.byKey(const ValueKey('home-journey-card-surface-frame-next')),
+    );
+    expect(
+      find.byKey(const ValueKey('home-exploration-sort-hint-current')),
+      findsOneWidget,
+    );
+    expect(currentHintCard.width, greaterThan(adjacentHintCard.width * 1.4));
+    expect(currentHintCard.width, greaterThan(adjacentLastCard.width * 1.4));
   });
 
   testWidgets('좁은 실제 기기 폭에서 보통과 아주큰 탐험 정렬 안내가 넘치지 않는다', (tester) async {
@@ -721,7 +766,7 @@ void main() {
     );
 
     expect(find.text('원역사\n이동'), findsOneWidget);
-    expect(find.text('다음 이야기 없음'), findsOneWidget);
+    expect(find.text('이야기\n없음'), findsOneWidget);
     final boundaryBadge = tester.widget<Container>(
       find.byKey(const ValueKey('home-journey-era-boundary-badge')),
     );
@@ -743,7 +788,7 @@ void main() {
       AppColorPalette.blackMap.utilitySelectedBackground.withValues(alpha: 1),
     );
     expect(
-      tester.widget<Text>(find.text('다음 이야기 없음')).style?.color,
+      tester.widget<Text>(find.text('이야기\n없음')).style?.color,
       AppColors.fgOnDark,
     );
   });

@@ -169,4 +169,13 @@ void main() {
       );
     });
   });
+
+  test('통독 읽음 시각은 시간대가 명확한 UTC ISO 문자열로 저장한다', () {
+    final value = bibleChapterReadAtValue(
+      DateTime.parse('2026-07-15T22:57:00+09:00'),
+    );
+
+    expect(value, '2026-07-15T13:57:00.000Z');
+    expect(DateTime.parse(value).isUtc, isTrue);
+  });
 }

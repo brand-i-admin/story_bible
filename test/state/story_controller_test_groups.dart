@@ -8,6 +8,7 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(_fallbackEmotionMark);
+    registerFallbackValue(_fallbackQuizAttemptSummary);
   });
 
   setUp(() {
@@ -118,6 +119,101 @@ void main() {
       expect(state.eras, eras);
       expect(state.completedEventIds, isEmpty);
       expect(state.quizAttemptSummaries, isEmpty);
+    });
+  });
+
+  group('StoryController.clearUserScopedData', () {
+    test('로그아웃 시 공개 이야기 데이터는 유지하고 모든 사용자 기록을 비운다', () async {
+      final user = _user(id: 'u1');
+      final eras = [_era(id: 'era1', code: 'era_primeval')];
+      when(() => mockAuth.currentUser).thenReturn(user);
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
+      when(() => mockRepo.fetchLandmarks()).thenAnswer((_) async => const []);
+      when(() => mockRepo.fetchEventProgress(user.id)).thenAnswer(
+        (_) async => {
+          'e1': (bibleRead: true, quizCompleted: true, completed: true),
+        },
+      );
+      when(() => mockRepo.fetchEventEmotionMarks(user.id)).thenAnswer(
+        (_) async => const {
+          'e1': EventEmotionMark(
+            eventId: 'e1',
+            emotionKey: 'joy',
+            emotionLabel: '기쁨',
+            emotionEmoji: '🌟',
+            note: '',
+            updatedAt: null,
+          ),
+        },
+      );
+      when(
+        () => mockRepo.fetchSavedEventIds(user.id),
+      ).thenAnswer((_) async => const {'e1'});
+      when(
+        () => mockRepo.fetchCompletedBibleChapterReadAts(user.id),
+      ).thenAnswer((_) async => {'1:1': DateTime.utc(2026, 7, 15, 14)});
+      when(() => mockRepo.fetchQuizAttemptSummaries(user.id)).thenAnswer(
+        (_) async => const {
+          'e1': QuizAttemptSummary(
+            eventId: 'e1',
+            correctCount: 1,
+            totalCount: 3,
+            wrongCount: 1,
+            confusedCount: 1,
+            selectedAnswers: [0, 1, 3],
+            updatedAt: null,
+          ),
+        },
+      );
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      await controller.initialize();
+
+      final signedInState = container.read(storyControllerProvider);
+      expect(signedInState.completedEventIds, {'e1'});
+      expect(signedInState.bibleReadEventIds, {'e1'});
+      expect(signedInState.quizCompletedEventIds, {'e1'});
+      expect(signedInState.lastQuizScores, contains('e1'));
+      expect(signedInState.quizAttemptSummaries, contains('e1'));
+      expect(signedInState.eventEmotionMarks, contains('e1'));
+      expect(signedInState.savedEventIds, {'e1'});
+      expect(signedInState.completedBibleChapterKeys, {'1:1'});
+      expect(signedInState.completedBibleChapterReadAts, contains('1:1'));
+
+      controller.clearUserScopedData();
+
+      final signedOutState = container.read(storyControllerProvider);
+      expect(signedOutState.eras, eras);
+      expect(signedOutState.completedEventIds, isEmpty);
+      expect(signedOutState.bibleReadEventIds, isEmpty);
+      expect(signedOutState.quizCompletedEventIds, isEmpty);
+      expect(signedOutState.lastQuizScores, isEmpty);
+      expect(signedOutState.quizAttemptSummaries, isEmpty);
+      expect(signedOutState.eventEmotionMarks, isEmpty);
+      expect(signedOutState.savedEventIds, isEmpty);
+      expect(signedOutState.completedBibleChapterKeys, isEmpty);
+      expect(signedOutState.completedBibleChapterReadAts, isEmpty);
+    });
+
+    test('로그아웃 전에 시작한 사용자 조회가 늦게 끝나도 기록을 되살리지 않는다', () async {
+      final user = _user(id: 'u1');
+      final pendingSavedEvents = Completer<Set<String>>();
+      when(() => mockAuth.currentUser).thenReturn(user);
+      when(
+        () => mockRepo.fetchSavedEventIds(user.id),
+      ).thenAnswer((_) => pendingSavedEvents.future);
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      final refresh = controller.refreshSavedEventIds();
+      await untilCalled(() => mockRepo.fetchSavedEventIds(user.id));
+
+      controller.clearUserScopedData();
+      pendingSavedEvents.complete({'old-user-event'});
+      await refresh;
+
+      expect(container.read(storyControllerProvider).savedEventIds, isEmpty);
     });
   });
 
@@ -762,6 +858,56 @@ void main() {
       );
       verify(
         () => mockRepo.deleteEventEmotionMark(userId: 'u1', eventId: 'e1'),
+      ).called(1);
+    });
+  });
+
+  group('StoryController quiz attempts', () {
+    test('퀴즈 완료 취소는 저장된 결과와 버튼 표시용 상태를 모두 초기화한다', () async {
+      when(() => mockAuth.currentUser).thenReturn(_user(id: 'u1'));
+      when(
+        () => mockRepo.upsertQuizAttempt(
+          userId: 'u1',
+          summary: any(named: 'summary'),
+        ),
+      ).thenAnswer((_) async {});
+      when(
+        () => mockRepo.deleteQuizAttempt(userId: 'u1', eventId: 'e1'),
+      ).thenAnswer((_) async {});
+      when(
+        () => mockRepo.upsertEventProgress(
+          userId: 'u1',
+          eventId: 'e1',
+          isBibleRead: any(named: 'isBibleRead'),
+          isQuizCompleted: any(named: 'isQuizCompleted'),
+          isCompleted: any(named: 'isCompleted'),
+        ),
+      ).thenAnswer((_) async {});
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+
+      await controller.setQuizCompleted(
+        eventId: 'e1',
+        isCompleted: true,
+        correct: 1,
+        total: 3,
+        confusedCount: 1,
+        selectedAnswers: const [0, 3, 1],
+      );
+      expect(
+        container.read(storyControllerProvider).quizAttemptSummaries['e1'],
+        isNotNull,
+      );
+
+      await controller.setQuizCompleted(eventId: 'e1', isCompleted: false);
+
+      final state = container.read(storyControllerProvider);
+      expect(state.quizCompletedEventIds, isNot(contains('e1')));
+      expect(state.lastQuizScores, isNot(contains('e1')));
+      expect(state.quizAttemptSummaries, isNot(contains('e1')));
+      verify(
+        () => mockRepo.deleteQuizAttempt(userId: 'u1', eventId: 'e1'),
       ).called(1);
     });
   });

@@ -21,6 +21,9 @@ class TodayActivitySummary {
   final int explorationCount;
   final bool hasDiary;
   final int bibleChapterCount;
+
+  bool get hasActivityToday =>
+      explorationCount > 0 || hasDiary || bibleChapterCount > 0;
 }
 
 TodayActivitySummary summarizeTodayActivity({

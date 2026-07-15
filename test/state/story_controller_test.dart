@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +12,7 @@ import 'package:story_bible/data/user_repository.dart';
 import 'package:story_bible/models/character.dart';
 import 'package:story_bible/models/era.dart';
 import 'package:story_bible/models/event_emotion_mark.dart';
+import 'package:story_bible/models/quiz_attempt_summary.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
@@ -32,6 +35,16 @@ const _fallbackEmotionMark = EventEmotionMark(
   emotionLabel: '기쁨',
   emotionEmoji: '🌟',
   note: '',
+  updatedAt: null,
+);
+
+const _fallbackQuizAttemptSummary = QuizAttemptSummary(
+  eventId: 'fallback',
+  correctCount: 0,
+  totalCount: 0,
+  wrongCount: 0,
+  confusedCount: 0,
+  selectedAnswers: <int?>[],
   updatedAt: null,
 );
 

@@ -421,6 +421,16 @@ created_at timestamptz, updated_at timestamptz
 - 성경 리더에서 구절을 눌러 저장 버튼을 누르면 optional 묵상 코멘트를 함께 저장한다. 빈 코멘트도 저장 가능한 정상 상태다.
 - 파랑/노랑 하이라이트는 같은 row의 `highlight_color`에 저장한다. 하이라이트만 지정한 row는 `is_saved=false`로 저장한 성경 구절 전체보기 화면에 표시되며, 저장 버튼을 누르면 같은 row가 `is_saved=true`로 갱신된다. 같은 색을 다시 눌러 해제할 때 `is_saved=false` row는 삭제하고, `is_saved=true` row는 `highlight_color`만 null로 되돌린다.
 
+#### `user_bible_chapter_progress`
+```sql
+user_id uuid FK→auth.users, translation text,
+book_no int, chapter_no int, read_at timestamptz,
+created_at timestamptz, updated_at timestamptz,
+UNIQUE(user_id, translation, book_no, chapter_no)
+```
+- 장 단위 통독 읽음 기록이다. 앱은 `read_at`과 `updated_at`을 시간대 표식이 있는 UTC ISO 8601(`Z`) 문자열로 저장하고, 오늘 활동과 프로필 달력은 조회값을 KST로 변환해 날짜를 결정한다.
+- 본인만 read/write/delete 가능한 RLS를 사용한다.
+
 #### `user_saved_events` (2026-05-26)
 ```sql
 user_id uuid FK→auth.users, event_id uuid FK→events,
@@ -453,6 +463,7 @@ UNIQUE (user_id, event_id)
 ```
 - 이야기별 최근 퀴즈 풀이 결과. "헷갈렸어요" 선택과 오답을 프로필/사건 카드의 복습 신호로 보여 주기 위한 본인 전용 기록.
 - 매일/주간 미션에서 푼 결과도 같은 사건 학습 기록으로 저장된다.
+- 사건 상세에서 퀴즈 `완료 취소`를 누르면 해당 row를 삭제하고, `user_event_progress.is_quiz_completed=false`와 앱의 최근 점수/요약 상태를 함께 초기화한다.
 - RLS: 본인만 read/write.
 
 ### 2.3 검색/ML (향후)
@@ -520,11 +531,14 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `searchEventsByText(query)` | 전체 `events_ordered` + persons name lookup → 숨김 era 제외 → 클라이언트 가중치 검색 | `List<StoryEvent>` (상위 20) |
 | `fetchQuizQuestions(eventId)` | `quiz_questions` WHERE event_id | `List<QuizQuestion>` |
 | `fetchBibleVersesByChapter(...)` | `bible_verses` WHERE book_no, chapter_no | `List<BibleVerse>` |
+| `fetchCompletedBibleChapterReadAts(userId)` | `user_bible_chapter_progress`의 `read_at`/`updated_at` 조회 | `Map<book:chapter, DateTime?>` |
+| `setBibleChapterRead(...)` | 읽음이면 UTC `Z` 시각으로 UPSERT, 취소면 DELETE | void |
 | `fetchCompletedEventIds(userId)` | `user_event_progress` WHERE is_completed | `Set<String>` |
 | `fetchEventProgress(userId)` | `user_event_progress` WHERE user_id | `Map<eventId, read/quiz/completed>` |
 | `upsertEventProgress({userId, eventId, isBibleRead, isQuizCompleted, isCompleted})` | UPSERT `user_event_progress` ON (user_id, event_id) | void |
 | `fetchQuizAttemptSummaries(userId)` | `user_quiz_attempts` WHERE user_id ORDER BY updated_at DESC | `Map<eventId, QuizAttemptSummary>` |
 | `upsertQuizAttempt(...)` | UPSERT `user_quiz_attempts` ON (user_id, event_id) | void |
+| `deleteQuizAttempt(...)` | DELETE `user_quiz_attempts` WHERE user_id AND event_id | void |
 | `fetchEventEmotionMarks(userId)` | `user_event_emotion_marks` WHERE user_id ORDER BY updated_at DESC | `Map<eventId, EventEmotionMark>` |
 | `upsertEventEmotionMark(...)` | UPSERT `user_event_emotion_marks` ON (user_id, event_id) | void |
 | `deleteEventEmotionMark(...)` | DELETE `user_event_emotion_marks` WHERE user_id AND event_id | void |
@@ -576,6 +590,8 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 | `signInWithKakao()` | Kakao 로그인. 모바일 OAuth는 인앱 브라우저/Safari View Controller 계열 launch mode 사용 |
 | `signOut()` | 로그아웃 |
 | `deleteCurrentAccount(...)` | `delete-account` Edge Function 호출 후 로컬 세션 정리 |
+
+로그아웃 후에는 사용자 테이블 RLS가 새 조회를 차단하는 것과 별개로, 로그인 중 조회해 둔 앱 메모리도 즉시 정리한다. 인증 사용자 ID 변경 시 `StoryController`의 `user_event_progress`·`user_quiz_attempts`·`user_event_emotion_marks`·`user_saved_events`·`user_bible_chapter_progress` 파생 상태와 `ProfileTabPage`의 프로필/저장 말씀/다이어리 미리보기 캐시를 모두 비운다. 인증 전환 전에 시작된 비동기 조회 결과도 revision/user ID 검증에 실패하면 버려 다른 계정이나 비로그인 화면에 노출하지 않는다.
 
 계정 삭제 확인 아이디는 이메일 → `user_profiles.share_id` → Auth UUID 순서로 표시하며,
 동일 값이 Edge Function 에 전달되어 서버에서도 한 번 더 검증된다.
