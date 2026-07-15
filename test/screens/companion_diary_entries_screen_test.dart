@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:story_bible/models/user_companion_diary_entry.dart';
 import 'package:story_bible/screens/companion_diary_entries_screen.dart';
 import 'package:story_bible/theme/app_theme.dart';
+import 'package:story_bible/widgets/profile/companion_diary_entry_card.dart';
 
 void main() {
   testWidgets('신앙 다이어리 목록은 이번 달 기록일과 연속일, 전체·이번달 필터를 보여준다', (tester) async {
@@ -50,6 +51,38 @@ void main() {
     expect(find.text('7월 13일 기록'), findsOneWidget);
     expect(find.text('7월 12일 기록'), findsOneWidget);
     expect(find.text('6월 기록'), findsNothing);
+  });
+
+  testWidgets('날짜와 KST 시간을 카드 안 제목 오른쪽에 표시한다', (tester) async {
+    final entry = UserCompanionDiaryEntry(
+      id: 'kst-entry',
+      userId: 'user-1',
+      entryDate: DateTime(2026, 7, 14),
+      title: '새벽 기도',
+      body: '기도 내용',
+      createdAt: DateTime.utc(2026, 7, 14, 16, 30),
+      updatedAt: DateTime.utc(2026, 7, 14, 16, 30),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: CompanionDiaryEntriesScreen(
+          entries: [entry],
+          now: DateTime.utc(2026, 7, 15),
+        ),
+      ),
+    );
+
+    final card = find.byType(CompanionDiaryEntryPreviewCard);
+    final timestamp = find.text('7월 14일 화요일 · 오전 1:30');
+    expect(timestamp, findsOneWidget);
+    expect(find.ancestor(of: timestamp, matching: card), findsOneWidget);
+    expect(
+      (tester.getCenter(timestamp).dy - tester.getCenter(find.text('새벽 기도')).dy)
+          .abs(),
+      lessThan(12),
+    );
   });
 }
 

@@ -374,7 +374,6 @@ class _VerseSearchResultsWithMap extends StatelessWidget {
         emptyText: emptyText,
         padding: const EdgeInsets.fromLTRB(2, 0, 2, 28),
         crossAxisCount: compactCrossAxisCount,
-        mainAxisExtent: 226,
         scrollable: false,
       );
     }
@@ -401,7 +400,6 @@ class _VerseSearchResultsWithMap extends StatelessWidget {
       emptyText: emptyText,
       padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
       crossAxisCount: 1,
-      mainAxisExtent: 226,
       scrollable: true,
     );
 
@@ -845,20 +843,26 @@ class _VerseButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 140),
-            alignment: Alignment.center,
-            color: selected ? palette.selectionFill : Colors.transparent,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                '$verseNo',
-                maxLines: 1,
-                style: TextStyle(
-                  color: selected ? palette.primaryDeep : palette.mutedText,
-                  fontSize: AppFontSizes.body,
-                  fontWeight: selected ? FontWeight.w900 : FontWeight.w800,
-                  height: 1,
+          child: Padding(
+            padding: selected
+                ? const EdgeInsets.only(left: 3, top: 3)
+                : EdgeInsets.zero,
+            child: AnimatedContainer(
+              key: ValueKey('verse-search-selection-fill-$verseNo'),
+              duration: const Duration(milliseconds: 140),
+              alignment: Alignment.center,
+              color: selected ? palette.selectionFill : Colors.transparent,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '$verseNo',
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: selected ? palette.primaryDeep : palette.mutedText,
+                    fontSize: AppFontSizes.body,
+                    fontWeight: selected ? FontWeight.w900 : FontWeight.w800,
+                    height: 1,
+                  ),
                 ),
               ),
             ),

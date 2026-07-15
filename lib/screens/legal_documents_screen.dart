@@ -24,6 +24,7 @@ class LegalDocumentsScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(48, 18, 20, 18),
                     child: Container(
+                      key: const ValueKey('legal-documents-outer-surface'),
                       decoration: _panelDecoration(palette),
                       padding: const EdgeInsets.fromLTRB(24, 22, 24, 22),
                       child: ListView(
@@ -526,7 +527,6 @@ BoxDecoration _panelDecoration(AppColorPalette palette) {
       colors: [palette.panelSurface, palette.mutedSurface],
     ),
     borderRadius: BorderRadius.circular(28),
-    border: Border.all(color: palette.panelBorder, width: 1.2),
     boxShadow: [
       BoxShadow(
         color: Colors.black.withValues(

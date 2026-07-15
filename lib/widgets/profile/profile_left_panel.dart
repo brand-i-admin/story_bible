@@ -225,17 +225,6 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            '내정보',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.sectionTitle.copyWith(
-              color: palette.text,
-              fontSize: 21,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          const SizedBox(width: 10),
           Expanded(
             child: Tooltip(
               message: '프로필 수정',
@@ -260,7 +249,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                             softWrap: true,
                             style: TextStyle(
                               color: palette.text,
-                              fontSize: 13.5,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
@@ -297,6 +286,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   Widget _buildProfileBodyShell({required Widget child}) {
     final palette = AppPaletteTheme.of(context);
     return Container(
+      key: const ValueKey('profile-body-shell'),
       decoration: BoxDecoration(
         color: _profileBodyShellSurface(palette),
         borderRadius: BorderRadius.circular(24),
@@ -443,6 +433,8 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         companionDiaryEntries: _profileCompanionDiaryEntries,
         companionDiaryLoading: _profileCompanionDiaryLoading,
         companionDiaryError: _profileCompanionDiaryError,
+        onSaveCompanionDiary: _saveCompanionDiaryEntry,
+        onDeleteCompanionDiary: _deleteCompanionDiaryEntry,
         onOpenEventDetail: (event) => widget.onOpenEventDetail(
           event,
           source: ProfileEventOpenSource.detailOnly,
@@ -919,97 +911,12 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
     );
   }
 
-  Widget _buildEventGroupsByEra({
-    required List<StoryEvent> events,
-    required StoryState state,
-    bool compact = false,
-    ProfileEventDetailCallback? onOpenEventDetail,
-  }) {
+  Future<void> _openSavedStoriesOverview() async {
+    final state = ref.read(storyControllerProvider);
     final charactersByCode = <String, Character>{
       for (final character in _profileAllPeople) character.code: character,
       for (final character in state.characters) character.code: character,
     };
-    final loader = SceneAssetLoader();
-    final eventsByEra = <String, List<StoryEvent>>{};
-    for (final event in events) {
-      eventsByEra.putIfAbsent(event.eraId, () => <StoryEvent>[]).add(event);
-    }
-    for (final eraEvents in eventsByEra.values) {
-      eraEvents.sort((a, b) {
-        final storyOrder = a.storyIndex.compareTo(b.storyIndex);
-        if (storyOrder != 0) {
-          return storyOrder;
-        }
-        return a.globalRank.compareTo(b.globalRank);
-      });
-    }
-    final orderedEraIds = eventsByEra.keys.toList()
-      ..sort((a, b) {
-        final ao = state.eras
-            .where((era) => era.id == a)
-            .map((era) => era.displayOrder)
-            .firstOrNull;
-        final bo = state.eras
-            .where((era) => era.id == b)
-            .map((era) => era.displayOrder)
-            .firstOrNull;
-        return (ao ?? 1 << 30).compareTo(bo ?? 1 << 30);
-      });
-
-    return ListView.separated(
-      padding: EdgeInsets.fromLTRB(2, compact ? 0 : 6, 2, 12),
-      itemCount: orderedEraIds.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final eraId = orderedEraIds[index];
-        final era = state.eras.where((entry) => entry.id == eraId).firstOrNull;
-        final eraEvents = eventsByEra[eraId] ?? const <StoryEvent>[];
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _ProfileEraSectionLabel(
-              label: era == null ? '시대 미상' : era.name,
-              count: eraEvents.length,
-            ),
-            const SizedBox(height: 8),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(4, compact ? 4 : 8, 4, 2),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                mainAxisExtent: compact ? 226 : 242,
-              ),
-              itemCount: eraEvents.length,
-              itemBuilder: (context, eventIndex) {
-                final event = eraEvents[eventIndex];
-                return StoryEventThumbCard(
-                  event: event,
-                  era: era,
-                  charactersByCode: charactersByCode,
-                  selected: false,
-                  completed: state.completedEventIds.contains(event.id),
-                  emotionKey: state.eventEmotionMarks[event.id]?.emotionKey,
-                  attemptSummary: state.quizAttemptSummaries[event.id],
-                  loader: loader,
-                  onTap: () {
-                    final openDetail =
-                        onOpenEventDetail ?? widget.onOpenEventDetail;
-                    openDetail(event);
-                  },
-                );
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _openSavedStoriesOverview() async {
-    final state = ref.read(storyControllerProvider);
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => ParchmentListPageScaffold(
@@ -1029,14 +936,19 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                       ),
                     ),
                   )
-                : _buildEventGroupsByEra(
+                : ProfileEventReviewGrid(
+                    key: const ValueKey('saved-stories-review-grid'),
                     events: _profileSavedEventsPreview,
-                    state: state,
-                    onOpenEventDetail: (event, {source}) =>
-                        widget.onOpenEventDetail(
-                          event,
-                          source: ProfileEventOpenSource.detailOnly,
-                        ),
+                    eras: state.eras,
+                    charactersByCode: charactersByCode,
+                    completedEventIds: state.completedEventIds,
+                    eventEmotionMarks: state.eventEmotionMarks,
+                    quizAttemptSummaries: state.quizAttemptSummaries,
+                    padding: EdgeInsets.zero,
+                    onOpenEventDetail: (event) => widget.onOpenEventDetail(
+                      event,
+                      source: ProfileEventOpenSource.detailOnly,
+                    ),
                   ),
           ),
         ),
@@ -1245,6 +1157,7 @@ class _ProfileStoryExplorationDashboard extends StatelessWidget {
           decoration: BoxDecoration(
             color: _profileStoryExplorationSurface(palette),
             borderRadius: BorderRadius.circular(22),
+            boxShadow: AppShadows.sm,
           ),
           child: _StoryExplorationSummarySection(
             storyProgress: storyProgress,
@@ -1569,7 +1482,7 @@ class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
       _StoryProgressFilter.incomplete => '미완료 이야기가 없습니다.',
     };
     return ParchmentListPageScaffold(
-      title: '탐험한 이야기',
+      title: '완료',
       child: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
         child: Container(
@@ -1610,19 +1523,18 @@ class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
                 },
               ),
               const SizedBox(height: 10),
-              SizedBox(
-                height: 520,
-                child: ProfileEventReviewGrid(
-                  key: const ValueKey('story-progress-review-grid'),
-                  events: filteredEvents,
-                  eras: widget.eras,
-                  charactersByCode: widget.charactersByCode,
-                  completedEventIds: widget.completedEventIds,
-                  eventEmotionMarks: widget.eventEmotionMarks,
-                  quizAttemptSummaries: widget.quizAttemptSummaries,
-                  emptyText: filteredEmptyText,
-                  onOpenEventDetail: _openEventDetail,
-                ),
+              ProfileEventReviewGrid(
+                key: const ValueKey('story-progress-review-grid'),
+                events: filteredEvents,
+                eras: widget.eras,
+                charactersByCode: widget.charactersByCode,
+                completedEventIds: widget.completedEventIds,
+                eventEmotionMarks: widget.eventEmotionMarks,
+                quizAttemptSummaries: widget.quizAttemptSummaries,
+                emptyText: filteredEmptyText,
+                padding: EdgeInsets.zero,
+                scrollable: false,
+                onOpenEventDetail: _openEventDetail,
               ),
             ],
           ),
@@ -1663,6 +1575,7 @@ class _ProfileExplorationLogPage extends StatefulWidget {
 class _ProfileExplorationLogPageState
     extends State<_ProfileExplorationLogPage> {
   _ProfileInlineReviewFilter? _selectedReviewFilter;
+  String? _selectedEmotionKey;
 
   void _openEventDetail(StoryEvent event) {
     widget.onOpenEventDetail(event, source: ProfileEventOpenSource.detailOnly);
@@ -1784,159 +1697,114 @@ class _ProfileExplorationLogPageState
     });
   }
 
-  Widget _buildInlineReviewEvents() {
-    final palette = AppPaletteTheme.of(context);
-    final selectedFilter = _selectedReviewFilter;
-    final selectedEvents = _reviewEventsForFilter(selectedFilter);
-    final previewEvents = selectedEvents.take(9).toList(growable: false);
-    final hasMore = selectedEvents.length > previewEvents.length;
-    final emptyText = _emptyTextForReviewFilter(selectedFilter);
-    return selectedFilter == null
-        ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
-            child: Text(
-              emptyText,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: palette.mutedText,
-                fontSize: 12.6,
-                fontWeight: FontWeight.w800,
-                height: 1.45,
-              ),
-            ),
-          )
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ProfileEventReviewGrid(
-                key: ValueKey(
-                  'exploration-log-review-grid-${selectedFilter.name}',
-                ),
-                events: previewEvents,
-                eras: widget.eras,
-                charactersByCode: widget.charactersByCode,
-                completedEventIds: widget.completedEventIds,
-                eventEmotionMarks: widget.eventEmotionMarks,
-                quizAttemptSummaries: widget.quizAttemptSummaries,
+  Widget _buildInlineEventCards({
+    required String gridKeyPrefix,
+    required String openAllKeyPrefix,
+    required String? filterKey,
+    required List<StoryEvent> events,
+    required String emptyText,
+    required String openAllTitle,
+  }) {
+    final previewEvents = events.take(9).toList(growable: false);
+    final hasMore = events.length > previewEvents.length;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ProfileEventReviewGrid(
+          key: ValueKey('$gridKeyPrefix-${filterKey ?? 'none'}'),
+          events: previewEvents,
+          eras: widget.eras,
+          charactersByCode: widget.charactersByCode,
+          completedEventIds: widget.completedEventIds,
+          eventEmotionMarks: widget.eventEmotionMarks,
+          quizAttemptSummaries: widget.quizAttemptSummaries,
+          emptyText: emptyText,
+          padding: EdgeInsets.zero,
+          scrollable: false,
+          onOpenEventDetail: _openEventDetail,
+        ),
+        if (hasMore) ...[
+          const SizedBox(height: 4),
+          Align(
+            alignment: Alignment.center,
+            child: TextButton(
+              key: ValueKey('$openAllKeyPrefix-$filterKey'),
+              onPressed: () => _openReviewEventsPopup(
+                title: openAllTitle,
+                events: events,
                 emptyText: emptyText,
-                padding: EdgeInsets.zero,
-                scrollable: false,
-                onOpenEventDetail: _openEventDetail,
               ),
-              if (hasMore) ...[
-                const SizedBox(height: 4),
-                Align(
-                  alignment: Alignment.center,
-                  child: TextButton(
-                    key: ValueKey(
-                      'exploration-log-review-open-all-${selectedFilter.name}',
-                    ),
-                    onPressed: () => _openReviewEventsPopup(
-                      title: _reviewTitleForFilter(selectedFilter),
-                      events: selectedEvents,
-                      emptyText: emptyText,
-                    ),
-                    style: TextButton.styleFrom(
-                      visualDensity: VisualDensity.compact,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 5,
-                      ),
-                      foregroundColor: palette.currentAccentDeep,
-                      textStyle: const TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    child: const Text('전체 보기'),
-                  ),
+              style: TextButton.styleFrom(
+                visualDensity: VisualDensity.compact,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 5,
                 ),
-              ],
-            ],
-          );
-  }
-
-  void _openEmotionCategoryPopup(EventEmotionOption option) {
-    final eventById = {for (final event in widget.events) event.id: event};
-    final marks =
-        widget.eventEmotionMarks.values
-            .where((mark) => mark.emotionKey == option.key)
-            .toList(growable: false)
-          ..sort((a, b) {
-            final aTime = a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-            final bTime = b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-            return bTime.compareTo(aTime);
-          });
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) {
-        final palette = AppPaletteTheme.of(sheetContext);
-        return SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-            child: Container(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.74,
+                foregroundColor: AppPaletteTheme.of(context).currentAccentDeep,
+                textStyle: const TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-              decoration: BoxDecoration(
-                color: palette.cardSurface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: palette.subtleBorder, width: 1),
-                boxShadow: AppShadows.lg,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          '${option.emoji} ${option.label} 코멘트',
-                          style: AppTextStyles.sectionTitle.copyWith(
-                            color: palette.text,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: '닫기',
-                        onPressed: () => Navigator.of(sheetContext).pop(),
-                        icon: const Icon(Icons.close_rounded),
-                        color: palette.mutedText,
-                      ),
-                    ],
-                  ),
-                  Divider(height: 10, color: palette.subtleBorder),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      child: ProfileEmotionMarksList(
-                        key: const ValueKey('emotion-marks-category-list'),
-                        marks: marks,
-                        eventById: eventById,
-                        emptyMessage: '${option.label}로 새긴 코멘트가 없습니다.',
-                        loading: false,
-                        hasError: false,
-                        showTimestamp: true,
-                        onOpenEventDetail: (event) {
-                          Navigator.of(sheetContext).pop();
-                          if (mounted) {
-                            _openEventDetail(event);
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              child: const Text('전체 보기'),
             ),
           ),
-        );
-      },
+        ],
+      ],
+    );
+  }
+
+  Widget _buildInlineReviewEvents() {
+    final selectedFilter = _selectedReviewFilter;
+    final selectedEvents = _reviewEventsForFilter(selectedFilter);
+    return _buildInlineEventCards(
+      gridKeyPrefix: 'exploration-log-review-grid',
+      openAllKeyPrefix: 'exploration-log-review-open-all',
+      filterKey: selectedFilter?.name,
+      events: selectedEvents,
+      emptyText: _emptyTextForReviewFilter(selectedFilter),
+      openAllTitle: selectedFilter == null
+          ? '복습 이야기'
+          : _reviewTitleForFilter(selectedFilter),
+    );
+  }
+
+  List<StoryEvent> _emotionEventsForKey(String? emotionKey) {
+    if (emotionKey == null) {
+      return const <StoryEvent>[];
+    }
+    final eventIds = widget.eventEmotionMarks.entries
+        .where((entry) => entry.value.emotionKey == emotionKey)
+        .map((entry) => entry.key)
+        .toSet();
+    return widget.events
+        .where((event) => eventIds.contains(event.id))
+        .toList(growable: false);
+  }
+
+  void _toggleEmotionCategory(EventEmotionOption option) {
+    setState(() {
+      _selectedEmotionKey = _selectedEmotionKey == option.key
+          ? null
+          : option.key;
+    });
+  }
+
+  Widget _buildInlineEmotionEvents() {
+    final selectedKey = _selectedEmotionKey;
+    final option = EventEmotionOption.options
+        .where((entry) => entry.key == selectedKey)
+        .firstOrNull;
+    return _buildInlineEventCards(
+      gridKeyPrefix: 'exploration-log-emotion-grid',
+      openAllKeyPrefix: 'exploration-log-emotion-open-all',
+      filterKey: selectedKey,
+      events: _emotionEventsForKey(selectedKey),
+      emptyText: option == null
+          ? '감정을 누르면 이야기 카드가 나타납니다.'
+          : '${option.label}로 새긴 이야기가 없습니다.',
+      openAllTitle: option == null ? '감정 이야기' : '${option.label} 이야기',
     );
   }
 
@@ -1973,8 +1841,11 @@ class _ProfileExplorationLogPageState
           const SizedBox(height: 9),
           _EmotionCategoryRow(
             countsByKey: countsByKey,
-            onOpenCategory: _openEmotionCategoryPopup,
+            selectedKey: _selectedEmotionKey,
+            onOpenCategory: _toggleEmotionCategory,
           ),
+          Divider(height: 18, color: palette.subtleBorder),
+          _buildInlineEmotionEvents(),
         ],
       ),
     );
@@ -2050,6 +1921,8 @@ class _ProfileExplorationTraceSection extends StatefulWidget {
     required this.companionDiaryEntries,
     required this.companionDiaryLoading,
     required this.companionDiaryError,
+    required this.onSaveCompanionDiary,
+    required this.onDeleteCompanionDiary,
     required this.onOpenEventDetail,
   });
 
@@ -2059,6 +1932,8 @@ class _ProfileExplorationTraceSection extends StatefulWidget {
   final List<UserCompanionDiaryEntry> companionDiaryEntries;
   final bool companionDiaryLoading;
   final String? companionDiaryError;
+  final CompanionDiarySaveCallback onSaveCompanionDiary;
+  final CompanionDiaryDeleteCallback onDeleteCompanionDiary;
   final ValueChanged<StoryEvent> onOpenEventDetail;
 
   @override
@@ -2129,10 +2004,69 @@ class _ProfileExplorationTraceSectionState
   }
 
   Future<void> _openCompanionDiaryDetail(UserCompanionDiaryEntry entry) async {
-    await showDialog<void>(
+    final action = await showDialog<CompanionDiaryDetailAction>(
       context: context,
-      builder: (_) => CompanionDiaryEntryDetailDialog(entry: entry),
+      builder: (dialogContext) => CompanionDiaryEntryDetailDialog(
+        entry: entry,
+        onEdit: () =>
+            Navigator.of(dialogContext).pop(CompanionDiaryDetailAction.edit),
+        onDelete: () =>
+            Navigator.of(dialogContext).pop(CompanionDiaryDetailAction.delete),
+      ),
     );
+    if (!mounted) {
+      return;
+    }
+    if (action == CompanionDiaryDetailAction.edit) {
+      final draft = await openCompanionDiaryEditorPage(
+        context,
+        entryDate: entry.entryDate,
+        initialEntry: entry,
+      );
+      if (draft == null) {
+        return;
+      }
+      try {
+        await widget.onSaveCompanionDiary(
+          entryDate: entry.entryDate,
+          title: draft.title,
+          body: draft.body,
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('신앙 다이어리를 수정했어요.')));
+        }
+      } catch (error) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('신앙 다이어리를 저장하지 못했습니다.\n$error')),
+          );
+        }
+      }
+    } else if (action == CompanionDiaryDetailAction.delete) {
+      final confirmed = await showCompanionDiaryDeleteConfirmDialog(
+        context,
+        entry,
+      );
+      if (!confirmed) {
+        return;
+      }
+      try {
+        await widget.onDeleteCompanionDiary(entry);
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('신앙 다이어리를 삭제했어요.')));
+        }
+      } catch (error) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('삭제하지 못했습니다.\n$error')));
+        }
+      }
+    }
   }
 
   @override
@@ -2262,9 +2196,7 @@ class _EmotionMarksPreviewPanel extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         if (!hasEmotionMarks && !hasDiaryMessage && !hasBibleReadings)
-          const _ProfileLogEmptyMessage(
-            message: "'오늘' '성경' '지도' 탭으로 이동하여 기록을 남겨보세요",
-          )
+          const _ProfileLogNavigationHint()
         else ...[
           if (hasEmotionMarks)
             _SelectedDateEmotionSummary(
@@ -2487,10 +2419,12 @@ String _bibleReadingLabel(({int bookNo, int chapterNo}) reading) {
 class _EmotionCategoryRow extends StatelessWidget {
   const _EmotionCategoryRow({
     required this.countsByKey,
+    required this.selectedKey,
     required this.onOpenCategory,
   });
 
   final Map<String, int> countsByKey;
+  final String? selectedKey;
   final ValueChanged<EventEmotionOption> onOpenCategory;
 
   @override
@@ -2507,6 +2441,7 @@ class _EmotionCategoryRow extends StatelessWidget {
               child: _EmotionCategoryButton(
                 option: EventEmotionOption.options[index],
                 count: countsByKey[EventEmotionOption.options[index].key] ?? 0,
+                selected: selectedKey == EventEmotionOption.options[index].key,
                 onTap: () => onOpenCategory(EventEmotionOption.options[index]),
               ),
             ),
@@ -2520,11 +2455,13 @@ class _EmotionCategoryButton extends StatelessWidget {
   const _EmotionCategoryButton({
     required this.option,
     required this.count,
+    required this.selected,
     required this.onTap,
   });
 
   final EventEmotionOption option;
   final int count;
+  final bool selected;
   final VoidCallback onTap;
 
   @override
@@ -2534,7 +2471,7 @@ class _EmotionCategoryButton extends StatelessWidget {
       message: option.label,
       child: Material(
         color: Color.alphaBlend(
-          palette.currentAccent.withValues(alpha: 0.06),
+          palette.currentAccent.withValues(alpha: selected ? 0.18 : 0.06),
           palette.cardSurface,
         ),
         borderRadius: BorderRadius.circular(12),
@@ -2547,7 +2484,12 @@ class _EmotionCategoryButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: palette.subtleBorder, width: 0.8),
+              border: Border.all(
+                color: selected
+                    ? palette.currentAccentDeep.withValues(alpha: 0.62)
+                    : palette.subtleBorder,
+                width: selected ? 1.2 : 0.8,
+              ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -2715,6 +2657,78 @@ class _ProfileLogEmptyMessage extends StatelessWidget {
           height: 1.42,
         ),
       ),
+    );
+  }
+}
+
+class _ProfileLogNavigationHint extends StatelessWidget {
+  const _ProfileLogNavigationHint();
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final style = TextStyle(
+      color: palette.mutedText,
+      fontSize: 12.4,
+      fontWeight: FontWeight.w700,
+      height: 1.42,
+    );
+    return Padding(
+      key: const ValueKey('profile-log-navigation-hint'),
+      padding: const EdgeInsets.symmetric(vertical: 13),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 7,
+        runSpacing: 4,
+        children: [
+          _ProfileLogNavigationLabel(
+            iconKey: const ValueKey('profile-log-nav-today'),
+            icon: Icons.home_rounded,
+            label: '오늘',
+            style: style,
+          ),
+          _ProfileLogNavigationLabel(
+            iconKey: const ValueKey('profile-log-nav-bible'),
+            icon: Icons.menu_book_rounded,
+            label: '성경',
+            style: style,
+          ),
+          _ProfileLogNavigationLabel(
+            iconKey: const ValueKey('profile-log-nav-map'),
+            icon: Icons.map_rounded,
+            label: '지도',
+            style: style,
+          ),
+          Text('탭으로 이동하여 기록을 남겨보세요', style: style),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileLogNavigationLabel extends StatelessWidget {
+  const _ProfileLogNavigationLabel({
+    required this.iconKey,
+    required this.icon,
+    required this.label,
+    required this.style,
+  });
+
+  final Key iconKey;
+  final IconData icon;
+  final String label;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, key: iconKey, size: 15, color: style.color),
+        const SizedBox(width: 2),
+        Text(label, style: style),
+      ],
     );
   }
 }
@@ -3867,34 +3881,6 @@ class _ProfileQuizStatItem extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(13),
         child: content,
-      ),
-    );
-  }
-}
-
-class _ProfileEraSectionLabel extends StatelessWidget {
-  const _ProfileEraSectionLabel({required this.label, required this.count});
-
-  final String label;
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        color: palette.selectionFill,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: palette.subtleBorder, width: 1),
-      ),
-      child: Text(
-        '$label · $count개',
-        style: TextStyle(
-          color: palette.text,
-          fontSize: 11.5,
-          fontWeight: FontWeight.w900,
-        ),
       ),
     );
   }

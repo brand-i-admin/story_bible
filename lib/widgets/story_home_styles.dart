@@ -32,6 +32,10 @@ BoxDecoration modalSurfaceDecoration({AppColorPalette? palette}) {
   return AppSurfaces.modal(palette: palette);
 }
 
+BoxDecoration borderlessModalSurfaceDecoration({AppColorPalette? palette}) {
+  return AppSurfaces.modal(palette: palette, showBorder: false);
+}
+
 BoxDecoration floatingPanelDecoration({
   Color? color,
   AppColorPalette? palette,
@@ -1193,7 +1197,7 @@ Widget bibleMoveButton({required VoidCallback onTap}) {
 
 Widget lockedPreviewOverlay({required Widget child}) {
   return Container(
-    color: const Color(0x2EF3E6D0),
+    color: const Color(0x16F3E6D0),
     alignment: Alignment.center,
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

@@ -422,7 +422,7 @@ class ProfileDiaryFeatureCards extends StatelessWidget {
         final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
         final cardWidth = (constraints.maxWidth - 10) / 2;
         final expandTextForNarrowLargeText = largeText && cardWidth < 176;
-        final featureCardMinHeight = profileSummaryMode ? 138.0 : 158.0;
+        final featureCardMinHeight = profileSummaryMode ? 118.0 : 158.0;
         final diaryCard = CompanionDiaryFeatureCard(
           entryDate: today,
           entry: todayCompanionDiary,

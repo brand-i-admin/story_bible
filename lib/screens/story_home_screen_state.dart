@@ -77,6 +77,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   final SceneAssetLoader _sceneAssetLoader = SceneAssetLoader();
   ProviderSubscription<User?>? _authUserSubscription;
   StoryRootTab _rootTab = StoryRootTab.today;
+  StoryRootTab _retainedMapRootTab = StoryRootTab.today;
   BibleReadingTarget? _bibleTabTarget;
   int? _bibleTabVerseNo;
   List<UserCompanionDiaryEntry> _homeDiaryEntries = const [];
@@ -2646,25 +2647,27 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final body = switch (_rootTab) {
-      StoryRootTab.today => _buildTodayTab(),
-      StoryRootTab.bible => _buildBibleRootTab(),
-      StoryRootTab.map => _buildMapTab(context),
-      StoryRootTab.profile => _buildProfileRootTab(),
-    };
+    final body = _buildRetainedMapBody(context);
     final palette = AppPaletteTheme.of(context);
     final navigationSurfaceColor = storyRootNavigationSurfaceColor(palette);
+    final navigationSurfaceBrightness = ThemeData.estimateBrightnessForColor(
+      navigationSurfaceColor,
+    );
     final navigationIconBrightness =
-        ThemeData.estimateBrightnessForColor(navigationSurfaceColor) ==
-            Brightness.dark
+        navigationSurfaceBrightness == Brightness.dark
         ? Brightness.light
         : Brightness.dark;
-    final showCreamTodayHeader = _rootTab == StoryRootTab.today;
+    final showRootHeaderSurface =
+        _rootTab == StoryRootTab.today || _rootTab == StoryRootTab.profile;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: showCreamTodayHeader ? AppColors.parchmentLight : null,
-        statusBarIconBrightness: showCreamTodayHeader ? Brightness.dark : null,
-        statusBarBrightness: showCreamTodayHeader ? Brightness.light : null,
+        statusBarColor: showRootHeaderSurface ? navigationSurfaceColor : null,
+        statusBarIconBrightness: showRootHeaderSurface
+            ? navigationIconBrightness
+            : null,
+        statusBarBrightness: showRootHeaderSurface
+            ? navigationSurfaceBrightness
+            : null,
         systemNavigationBarColor: navigationSurfaceColor,
         systemNavigationBarDividerColor: navigationSurfaceColor,
         systemNavigationBarIconBrightness: navigationIconBrightness,
@@ -2677,6 +2680,35 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           onSelect: _selectRootTab,
         ),
       ),
+    );
+  }
+
+  Widget _buildRetainedMapBody(BuildContext context) {
+    final visibleMapTab = switch (_rootTab) {
+      StoryRootTab.today => StoryRootTab.today,
+      StoryRootTab.map => StoryRootTab.map,
+      _ => _retainedMapRootTab,
+    };
+    final mapBody = visibleMapTab == StoryRootTab.today
+        ? _buildTodayTab()
+        : _buildMapTab(context);
+    final foregroundBody = switch (_rootTab) {
+      StoryRootTab.bible => _buildBibleRootTab(),
+      StoryRootTab.profile => _buildProfileRootTab(),
+      _ => null,
+    };
+    if (foregroundBody == null) {
+      return mapBody;
+    }
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        IgnorePointer(
+          ignoring: true,
+          child: TickerMode(enabled: false, child: mapBody),
+        ),
+        foregroundBody,
+      ],
     );
   }
 
@@ -2822,7 +2854,12 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (leavingMap) {
       _resetMapTabExploration();
     }
-    setState(() => _rootTab = tab);
+    setState(() {
+      _rootTab = tab;
+      if (tab == StoryRootTab.today || tab == StoryRootTab.map) {
+        _retainedMapRootTab = tab;
+      }
+    });
     if (tab == StoryRootTab.today) {
       unawaited(_loadHomeDiaryEntries(showLoading: false));
       unawaited(_loadTodayNickname());

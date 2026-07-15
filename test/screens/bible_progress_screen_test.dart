@@ -33,6 +33,15 @@ void main() {
     );
     expect(find.byType(Dialog), findsNothing);
 
+    final gridRect = tester.getRect(
+      find.byKey(const ValueKey('bible-progress-grid')),
+    );
+    final firstCompletedFillRect = tester.getRect(
+      find.byKey(const ValueKey('bible-progress-chapter-fill-3')),
+    );
+    expect(firstCompletedFillRect.left, greaterThan(gridRect.left));
+    expect(firstCompletedFillRect.top, greaterThan(gridRect.top));
+
     await tester.tap(find.byKey(const ValueKey('bible-progress-chapter-2')));
     await tester.pumpAndSettle();
 

@@ -23,6 +23,10 @@ import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/notification_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/state/story_state.dart';
+import 'package:story_bible/theme/app_color_palette.dart';
+import 'package:story_bible/theme/app_theme.dart';
+import 'package:story_bible/widgets/home/story_root_navigation_bar.dart';
+import 'package:story_bible/widgets/inline_login_prompt_card.dart';
 import 'package:story_bible/widgets/parchment_page_scaffold.dart';
 import 'package:story_bible/widgets/profile_editor_dialog.dart';
 import 'package:story_bible/widgets/profile_tab_page.dart';
@@ -299,7 +303,7 @@ void main() {
     final headerIdentity = find.byKey(
       const ValueKey('profile-header-identity'),
     );
-    expect(find.text('내정보'), findsOneWidget);
+    expect(find.text('내정보'), findsNothing);
     expect(find.text('기도친구'), findsOneWidget);
     expect(headerIdentity, findsOneWidget);
     expect(find.textContaining('샬롬!'), findsNothing);
@@ -308,6 +312,7 @@ void main() {
       find.descendant(of: headerIdentity, matching: find.text('기도친구')),
     );
     expect(nicknameText.overflow, TextOverflow.visible);
+    expect(nicknameText.style?.fontSize, 15);
 
     await tester.tap(headerIdentity);
     await tester.pumpAndSettle();
@@ -319,6 +324,76 @@ void main() {
     expect(find.text('기도제목'), findsNothing);
     expect(find.byIcon(Icons.add_photo_alternate_rounded), findsWidgets);
     expect(find.byIcon(Icons.check_rounded), findsWidgets);
+  });
+
+  testWidgets('내정보 상단은 루트 네비게이션과 같은 표면색을 쓴다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+    );
+
+    final surfaceFinder = find.byKey(const ValueKey('sub-page-top-surface'));
+    expect(surfaceFinder, findsOneWidget);
+    final surface = tester.widget<ColoredBox>(surfaceFinder);
+    final palette = AppPaletteTheme.of(tester.element(surfaceFinder));
+    expect(surface.color, storyRootNavigationSurfaceColor(palette));
+  });
+
+  testWidgets('내정보 본문 쉘은 헤더와 겹치지 않게 아래에 배치한다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      viewSize: const Size(430, 932),
+    );
+
+    final header = find.byKey(const ValueKey('profile-header-identity'));
+    final bodyShell = find.byKey(const ValueKey('profile-body-shell'));
+    expect(bodyShell, findsOneWidget);
+    expect(
+      tester.getRect(bodyShell).top - tester.getRect(header).bottom,
+      greaterThanOrEqualTo(10),
+    );
+  });
+
+  testWidgets('로그아웃 미리보기는 배경 정보를 보여주되 입력을 차단한다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      authenticated: false,
+      viewSize: const Size(430, 932),
+    );
+
+    expect(find.byType(InlineLoginPromptCard), findsOneWidget);
+    final blocker = tester.widget<IgnorePointer>(
+      find.byKey(const ValueKey('profile-locked-content-blocker')),
+    );
+    expect(blocker.ignoring, isTrue);
+  });
+
+  testWidgets('블랙 테마 프로필 수정에서 현재 닉네임은 밝은 글자로 보인다', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        child: MaterialApp(
+          theme: AppTheme.light(palette: AppColorPalette.blackMap),
+          home: Scaffold(
+            body: ProfileEditorDialog(initialProfile: profile, userId: user.id),
+          ),
+        ),
+      ),
+    );
+
+    final nicknameField = tester.widget<TextField>(find.byType(TextField));
+    expect(nicknameField.controller?.text, profile.nickname);
+    expect(nicknameField.style?.color, AppColorPalette.blackMap.text);
   });
 
   testWidgets('내정보 헤더는 긴 닉네임도 말줄임표 없이 모두 표시한다', (tester) async {
@@ -466,6 +541,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('ABC1234'), findsWidgets);
+    final dialogSurface = tester.widget<Container>(
+      find.byKey(const ValueKey('delete-account-dialog-surface')),
+    );
+    final dialogDecoration = dialogSurface.decoration! as BoxDecoration;
+    expect(dialogDecoration.border, isNull);
+    expect(dialogDecoration.boxShadow, isNotEmpty);
     final disabledButton = tester.widget<FilledButton>(
       find.widgetWithText(FilledButton, '계정 삭제'),
     );
@@ -601,6 +682,20 @@ void main() {
       tester.getCenter(diaryBadge).dy,
       moreOrLessEquals(tester.getCenter(diaryCard).dy, epsilon: 1.0),
     );
+
+    await tester.ensureVisible(diaryCard);
+    await tester.pumpAndSettle();
+    await tester.tap(diaryCard);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-edit-button')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('companion-diary-detail-delete-button')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('프로필에서는 이야기 탐험 요약과 다이어리를 독립 레이어로 보여준다', (tester) async {
@@ -665,6 +760,10 @@ void main() {
         diaryLayerContainer.decoration! as BoxDecoration;
     expect(diaryLayerDecoration.border, isNull);
     expect(diaryLayerDecoration.boxShadow, isNotEmpty);
+    final summaryLayerContainer = tester.widget<Container>(summaryLayer);
+    final summaryLayerDecoration =
+        summaryLayerContainer.decoration! as BoxDecoration;
+    expect(summaryLayerDecoration.boxShadow, isNotEmpty);
     expect(
       tester.getTopLeft(summaryLayer).dy,
       lessThan(tester.getTopLeft(featureCards).dy),
@@ -733,6 +832,7 @@ void main() {
       const ValueKey('companion-diary-feature-card'),
     );
     final bibleCard = find.byKey(const ValueKey('bible-progress-feature-card'));
+    expect(tester.getSize(diaryCard).height, lessThan(138));
     expect(tester.getSize(diaryCard).height, lessThan(204));
     expect(
       tester.getSize(diaryCard).height,
@@ -769,7 +869,7 @@ void main() {
       const ValueKey('companion-diary-feature-card'),
     );
     final bibleCard = find.byKey(const ValueKey('bible-progress-feature-card'));
-    expect(tester.getSize(diaryCard).height, greaterThanOrEqualTo(138));
+    expect(tester.getSize(diaryCard).height, greaterThanOrEqualTo(118));
     expect(
       tester.getSize(diaryCard).height,
       closeTo(tester.getSize(bibleCard).height, 0.1),
@@ -1012,6 +1112,10 @@ void main() {
 
     expect(find.text('저장한 이야기'), findsWidgets);
     expect(find.byType(ParchmentListPageScaffold), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('saved-stories-review-grid')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('프로필 첫 진입은 기존 컨트롤러 상태가 비어 있어도 완료 이야기 수를 새로 읽는다', (tester) async {
@@ -1356,6 +1460,8 @@ void main() {
     await tester.tap(storyProgressCard);
     await tester.pumpAndSettle();
 
+    expect(find.text('탐험한 이야기'), findsNothing);
+    expect(find.text('완료'), findsWidgets);
     final progressGrid = find.byKey(
       const ValueKey('story-progress-review-grid'),
     );
@@ -1706,6 +1812,14 @@ void main() {
       find.byKey(const ValueKey('emotion-category-gratitude')),
       findsOneWidget,
     );
+    await tester.tap(find.byKey(const ValueKey('emotion-category-gratitude')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('exploration-log-emotion-grid-gratitude')),
+      findsOneWidget,
+    );
+    expect(find.text('감사로 새긴 이야기'), findsOneWidget);
+    expect(find.byType(BottomSheet), findsNothing);
 
     final categoryDecoration =
         tester.widget<Container>(categoryCard).decoration! as BoxDecoration;
@@ -1738,7 +1852,45 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    expect(find.text("'오늘' '성경' '지도' 탭으로 이동하여 기록을 남겨보세요"), findsOneWidget);
+    final hint = find.byKey(const ValueKey('profile-log-navigation-hint'));
+    expect(hint, findsOneWidget);
+    expect(
+      find.descendant(
+        of: hint,
+        matching: find.byKey(const ValueKey('profile-log-nav-today')),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: hint,
+        matching: find.byKey(const ValueKey('profile-log-nav-bible')),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: hint,
+        matching: find.byKey(const ValueKey('profile-log-nav-map')),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: hint, matching: find.text('오늘')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: hint, matching: find.text('성경')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: hint, matching: find.text('지도')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: hint, matching: find.text('탭으로 이동하여 기록을 남겨보세요')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('선택 날짜 통독 기록은 권 장을 가운데점으로 잇고 초과분은 상세에서 보여준다', (tester) async {
@@ -1810,6 +1962,7 @@ Future<void> _pumpProfileTab(
   double textScale = 1.0,
   bool tickerEnabled = false,
   bool settleAfterPump = true,
+  bool authenticated = true,
   VoidCallback? onExploreStoriesFromHome,
   ProfileEventDetailCallback? onOpenEventDetail,
 }) async {
@@ -1826,7 +1979,7 @@ Future<void> _pumpProfileTab(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        signedInUserProvider.overrideWithValue(user),
+        signedInUserProvider.overrideWithValue(authenticated ? user : null),
         storyRepositoryProvider.overrideWithValue(storyRepository),
         userRepositoryProvider.overrideWithValue(userRepository),
         notificationRepositoryProvider.overrideWithValue(

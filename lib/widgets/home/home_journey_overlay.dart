@@ -13,6 +13,7 @@ import '../../utils/daily_exploration_selection.dart';
 import '../../utils/scene_asset_loader.dart';
 import '../login_required_dialog.dart';
 import '../profile/companion_diary_entry_card.dart';
+import '../profile/profile_event_review_grid.dart';
 import '../pulse_highlight.dart';
 
 import '../v2/region_event_list.dart'
@@ -283,8 +284,9 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     final event = events[eventIndex];
     final isCurrent = page == _currentPage;
     final isRecommended = event.id == widget.recommendedEventId;
+    final isTodayStory = isRecommended && !widget.todayStoryCompleted;
     final label = isCurrent
-        ? (isRecommended ? '오늘의 이야기' : '현재 이야기')
+        ? (isTodayStory ? '오늘의 이야기' : '현재 이야기')
         : page < _currentPage
         ? '이전 이야기'
         : '다음 이야기';
@@ -352,15 +354,16 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
         Positioned.fill(
           child: Padding(
             padding: EdgeInsets.fromLTRB(
-              5,
-              isCurrent ? 0 : 14,
-              5,
-              isCurrent ? 0 : 14,
+              isCurrent ? 5 : 10,
+              isCurrent ? 0 : 38,
+              isCurrent ? 5 : 10,
+              0,
             ),
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 180),
               opacity: isCurrent ? 1 : 0.72,
               child: DecoratedBox(
+                key: ValueKey('home-journey-card-surface-frame-${event.id}'),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: isCurrent
@@ -379,39 +382,38 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
                   fit: StackFit.expand,
                   children: [
                     highlightedCard,
-                    if (!isCurrent || isRecommended)
-                      Positioned(
-                        left: 8,
-                        top: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 7,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isCurrent
-                                ? palette.currentAccentDeep
-                                : palette.cardSurface.withValues(alpha: 0.94),
-                            borderRadius: BorderRadius.circular(999),
-                            border: Border.all(
-                              color: palette.currentAccent.withValues(
-                                alpha: 0.35,
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            label,
-                            style: TextStyle(
-                              color: isCurrent
-                                  ? AppColors.fgOnDark
-                                  : palette.currentAccentDeep,
-                              fontSize: 9.8,
-                              fontWeight: FontWeight.w900,
-                              height: 1,
+                    Positioned(
+                      left: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isCurrent
+                              ? palette.currentAccentDeep
+                              : palette.cardSurface.withValues(alpha: 0.94),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: palette.currentAccent.withValues(
+                              alpha: 0.35,
                             ),
                           ),
                         ),
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            color: isCurrent
+                                ? AppColors.fgOnDark
+                                : palette.currentAccentDeep,
+                            fontSize: 9.8,
+                            fontWeight: FontWeight.w900,
+                            height: 1,
+                          ),
+                        ),
                       ),
+                    ),
                   ],
                 ),
               ),
@@ -430,6 +432,17 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
             top: (deckHeight - 38) / 2,
             child: _HomeJourneyBoundaryBadge(label: rightBoundaryLabel),
           ),
+        if (isCurrent)
+          Positioned(
+            left: 12,
+            right: 12,
+            top: -30,
+            child: ProfileEventEraDivider(
+              key: ValueKey('home-current-era-divider-${event.eraId}'),
+              eraId: event.eraId,
+              label: eraById[event.eraId]?.name ?? '시대 미상',
+            ),
+          ),
       ],
     );
     return LayoutBuilder(
@@ -438,7 +451,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
         final expandedWidth = ((baseWidth - 10) * 1.5) + 10;
         final horizontalShift = isCurrent
             ? 0.0
-            : ((expandedWidth - baseWidth) / 2 - 6) *
+            : ((expandedWidth - baseWidth) / 2 - 10.5) *
                   (page < _currentPage ? -1 : 1);
         final frameWidth = isCurrent ? expandedWidth : baseWidth;
         return Transform.translate(
@@ -484,19 +497,31 @@ class _HomeJourneyBoundaryBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final isEraTransition = label.contains('\n');
     return Container(
+      key: isEraTransition
+          ? const ValueKey('home-journey-era-boundary-badge')
+          : null,
       width: 64,
       constraints: const BoxConstraints(minHeight: 38),
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       decoration: BoxDecoration(
-        color: palette.panelSurface.withValues(alpha: 0.96),
+        color: isEraTransition
+            ? palette.currentFill
+            : palette.panelSurface.withValues(alpha: 0.96),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: palette.currentAccent.withValues(alpha: 0.5)),
+        border: Border.all(
+          color: palette.currentAccent.withValues(
+            alpha: isEraTransition ? 0.78 : 0.5,
+          ),
+        ),
         boxShadow: [
           BoxShadow(
-            color: palette.primaryDeep.withValues(alpha: 0.15),
-            blurRadius: 8,
+            color:
+                (isEraTransition ? palette.currentAccent : palette.primaryDeep)
+                    .withValues(alpha: isEraTransition ? 0.22 : 0.15),
+            blurRadius: isEraTransition ? 10 : 8,
             offset: const Offset(0, 3),
           ),
         ],
@@ -522,10 +547,15 @@ class _HomeExplorationSortHintCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(5, 12, 5, 12),
+      padding: const EdgeInsets.fromLTRB(10, 38, 10, 0),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        key: const ValueKey('home-exploration-sort-hint-card'),
+        padding: EdgeInsets.symmetric(
+          horizontal: largeText ? 8 : 14,
+          vertical: largeText ? 8 : 12,
+        ),
         decoration: BoxDecoration(
           color: Color.alphaBlend(
             palette.regionAccent.withValues(alpha: 0.10),
@@ -539,25 +569,33 @@ class _HomeExplorationSortHintCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_location_alt_rounded, color: palette.regionAccent),
-            const SizedBox(height: 8),
+            Icon(
+              Icons.add_location_alt_rounded,
+              color: palette.regionAccent,
+              size: largeText ? 20 : 24,
+            ),
+            SizedBox(height: largeText ? 4 : 8),
             Text(
               '탐험 정렬 안내',
+              maxLines: 2,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color: palette.text,
-                fontSize: 12.5,
+                fontSize: largeText ? 11 : 12.5,
                 fontWeight: FontWeight.w900,
+                height: 1.15,
               ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: largeText ? 3 : 6),
             Text(
               '지도 탭에서 사건에 직접 감정을 새기면\n그 사건 기준으로 탐험 정렬이 바뀌어요.',
+              key: const ValueKey('home-exploration-sort-hint-body'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: palette.mutedText,
-                fontSize: 10.5,
+                fontSize: largeText ? 9.4 : 10.5,
                 fontWeight: FontWeight.w800,
-                height: 1.35,
+                height: largeText ? 1.28 : 1.35,
               ),
             ),
           ],
@@ -640,7 +678,7 @@ class _HomeQuickActions extends StatelessWidget {
       return '오늘 기록을 불러오는 중이에요.';
     }
     if (entry == null) {
-      return '오늘의 동행을 기록해 보세요.';
+      return '오늘을 기록해보세요';
     }
     return '${entry.title}\n${entry.body}';
   }
@@ -925,11 +963,10 @@ class _HomeQuickActionCta extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadii.pill),
             border: Border.all(color: accent.withValues(alpha: 0.42)),
           ),
-          child: _HomeQuickActionRipple(
+          child: _HomeQuickActionLabel(
             effectId: effectId,
             label: label,
             accent: accent,
-            active: active,
           ),
         ),
       ),
@@ -937,136 +974,60 @@ class _HomeQuickActionCta extends StatelessWidget {
   }
 }
 
-class _HomeQuickActionRipple extends StatefulWidget {
-  const _HomeQuickActionRipple({
+class _HomeQuickActionLabel extends StatelessWidget {
+  const _HomeQuickActionLabel({
     required this.effectId,
     required this.label,
     required this.accent,
-    required this.active,
   });
 
   final String effectId;
   final String label;
   final Color accent;
-  final bool active;
-
-  @override
-  State<_HomeQuickActionRipple> createState() => _HomeQuickActionRippleState();
-}
-
-class _HomeQuickActionRippleState extends State<_HomeQuickActionRipple>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1900),
-    );
-    if (widget.active) {
-      _controller.repeat();
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant _HomeQuickActionRipple oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.active == oldWidget.active) return;
-    if (widget.active) {
-      _controller.repeat();
-    } else {
-      _controller
-        ..stop()
-        ..value = 0;
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    final label = Text(
-      widget.label,
-      key: ValueKey(
-        'home-quick-action-label-${widget.label.replaceAll(' ', '-')}',
-      ),
-      maxLines: 1,
-      overflow: TextOverflow.visible,
-      style: TextStyle(
-        color: widget.accent,
-        fontSize: 11.6,
-        fontWeight: FontWeight.w900,
-        height: 1.1,
-      ),
-    );
-    if (!widget.active) return label;
-    return AnimatedBuilder(
-      animation: _controller,
-      child: label,
-      builder: (context, child) {
-        return Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.centerLeft,
-          children: [
-            Positioned(
-              left: -8,
-              top: -8,
-              bottom: -8,
-              width: 32,
-              child: IgnorePointer(
-                child: CustomPaint(
-                  key: ValueKey('home-${widget.effectId}-quick-action-ripple'),
-                  painter: _HomeQuickActionRipplePainter(
-                    progress: _controller.value,
-                    color: widget.accent,
-                  ),
-                ),
-              ),
+    final isDiary = label.startsWith('+');
+    final actionText = label.replaceFirst(isDiary ? '+' : '→', '').trimLeft();
+    return Semantics(
+      label: label,
+      excludeSemantics: true,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            key: ValueKey('home-$effectId-quick-action-symbol-ring'),
+            width: 18,
+            height: 18,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+              border: Border.all(color: accent.withValues(alpha: 0.58)),
             ),
-            child!,
-          ],
-        );
-      },
+            child: Icon(
+              isDiary ? Icons.add_rounded : Icons.arrow_forward_rounded,
+              size: 14,
+              color: accent,
+            ),
+          ),
+          const SizedBox(width: 3),
+          Text(
+            actionText,
+            key: ValueKey(
+              'home-quick-action-label-${label.replaceAll(' ', '-')}',
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.visible,
+            style: TextStyle(
+              color: accent,
+              fontSize: 11.6,
+              fontWeight: FontWeight.w900,
+              height: 1.1,
+            ),
+          ),
+        ],
+      ),
     );
-  }
-}
-
-class _HomeQuickActionRipplePainter extends CustomPainter {
-  const _HomeQuickActionRipplePainter({
-    required this.progress,
-    required this.color,
-  });
-
-  final double progress;
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    void paintRipple(double phase) {
-      final curved = Curves.easeOutCubic.transform(phase);
-      final paint = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.25
-        ..color = color.withValues(alpha: (1 - phase) * 0.58);
-      canvas.drawCircle(
-        size.center(Offset.zero),
-        4 + (size.shortestSide * 0.38 * curved),
-        paint,
-      );
-    }
-
-    paintRipple(progress);
-    paintRipple((progress + 0.5) % 1);
-  }
-
-  @override
-  bool shouldRepaint(covariant _HomeQuickActionRipplePainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.color != color;
   }
 }

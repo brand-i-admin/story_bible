@@ -8,6 +8,8 @@ import 'package:story_bible/models/character.dart';
 import 'package:story_bible/models/era.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/models/user_companion_diary_entry.dart';
+import 'package:story_bible/theme/app_color_palette.dart';
+import 'package:story_bible/theme/app_theme.dart';
 import 'package:story_bible/theme/tokens.dart';
 import 'package:story_bible/widgets/home/home_journey_overlay.dart';
 import 'package:story_bible/widgets/pulse_highlight.dart';
@@ -68,6 +70,25 @@ void main() {
     expect(find.text('신앙 다이어리 & 통독'), findsNothing);
     expect(find.text('이전 이야기'), findsWidgets);
     expect(find.text('오늘의 추천 이야기'), findsOneWidget);
+    expect(find.text('오늘의 이야기'), findsOneWidget);
+    expect(find.text('현재 이야기'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('home-current-era-divider-era-1')),
+      findsOneWidget,
+    );
+    final previousRect = tester.getRect(
+      find.byKey(const ValueKey('home-journey-card-surface-frame-previous')),
+    );
+    final currentRect = tester.getRect(
+      find.byKey(const ValueKey('home-journey-card-surface-frame-recommended')),
+    );
+    final nextRect = tester.getRect(
+      find.byKey(const ValueKey('home-journey-card-surface-frame-next')),
+    );
+    expect(previousRect.bottom, closeTo(currentRect.bottom, 0.1));
+    expect(nextRect.bottom, closeTo(currentRect.bottom, 0.1));
+    expect(currentRect.left - previousRect.right, inInclusiveRange(3, 5));
+    expect(nextRect.left - currentRect.right, inInclusiveRange(3, 5));
     expect(find.text('다음 이야기'), findsWidgets);
     expect(
       find.byKey(const ValueKey('home-story-section-header')),
@@ -83,10 +104,10 @@ void main() {
     );
     expect(find.text('신앙 다이어리'), findsOneWidget);
     expect(find.byIcon(Icons.edit_note_rounded), findsOneWidget);
-    expect(find.text('+ 기록하기'), findsOneWidget);
+    expect(find.text('기록하기'), findsOneWidget);
     expect(find.text('통독 이어읽기'), findsOneWidget);
     expect(find.text('창세기 14장'), findsOneWidget);
-    expect(find.text('→ 이어읽기'), findsOneWidget);
+    expect(find.text('이어읽기'), findsOneWidget);
     expect(
       tester
           .widget<PulseHighlight>(
@@ -113,11 +134,11 @@ void main() {
     );
     expect(
       find.byKey(const ValueKey('home-diary-quick-action-ripple')),
-      findsOneWidget,
+      findsNothing,
     );
     expect(
       find.byKey(const ValueKey('home-bible-quick-action-ripple')),
-      findsOneWidget,
+      findsNothing,
     );
     for (final effectId in ['diary', 'bible']) {
       final cta = tester.widget<Container>(
@@ -126,6 +147,24 @@ void main() {
       final decoration = cta.decoration! as BoxDecoration;
       expect(decoration.borderRadius, BorderRadius.circular(AppRadii.pill));
       expect(decoration.border, isNotNull);
+
+      final symbolRing = tester.widget<Container>(
+        find.byKey(ValueKey('home-$effectId-quick-action-symbol-ring')),
+      );
+      final symbolDecoration = symbolRing.decoration! as BoxDecoration;
+      expect(symbolDecoration.shape, BoxShape.circle);
+      expect(symbolDecoration.border, isNotNull);
+      final symbol = find.descendant(
+        of: find.byKey(ValueKey('home-$effectId-quick-action-symbol-ring')),
+        matching: find.byType(Icon),
+      );
+      expect(symbol, findsOneWidget);
+      expect(
+        tester.getCenter(symbol),
+        tester.getCenter(
+          find.byKey(ValueKey('home-$effectId-quick-action-symbol-ring')),
+        ),
+      );
     }
     expect(
       find.ancestor(
@@ -225,7 +264,8 @@ void main() {
       find.byKey(const ValueKey('story-thumbnail-frame-todayAdjacent-next')),
     );
 
-    expect(currentRect.width / previousRect.width, closeTo(1.5, 0.02));
+    expect(currentRect.width, closeTo(172, 2));
+    expect(currentRect.width / previousRect.width, greaterThan(1.6));
     expect(nextRect.width, closeTo(previousRect.width, 0.5));
     final previousVisibleFraction =
         previousRect.intersect(pageRect).width / previousRect.width;
@@ -235,8 +275,21 @@ void main() {
     expect(nextVisibleFraction, greaterThan(0.7));
     expect(currentRect.left - previousRect.right, inInclusiveRange(0, 12));
     expect(nextRect.left - currentRect.right, inInclusiveRange(0, 12));
-    expect(currentRect.height - previousRect.height, greaterThanOrEqualTo(24));
-    expect(currentRect.height - nextRect.height, greaterThanOrEqualTo(24));
+    expect(currentRect.height - previousRect.height, greaterThanOrEqualTo(36));
+    expect(currentRect.height - nextRect.height, greaterThanOrEqualTo(36));
+
+    for (final (presentation, eventId) in [
+      ('todayAdjacent', 'previous'),
+      ('todayCurrent', 'recommended'),
+      ('todayAdjacent', 'next'),
+    ]) {
+      final surface = tester.widget<Container>(
+        find.byKey(ValueKey('story-card-surface-$presentation-$eventId')),
+      );
+      final decoration = surface.decoration! as BoxDecoration;
+      final border = decoration.border! as Border;
+      expect(border.top.width, 1);
+    }
     expect(
       previousThumbnailRect.width,
       closeTo(previousThumbnailRect.height, 1),
@@ -403,6 +456,8 @@ void main() {
           .active,
       isFalse,
     );
+    expect(find.text('오늘의 이야기'), findsNothing);
+    expect(find.text('현재 이야기'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('home-diary-quick-action-cta-glow')),
       findsNothing,
@@ -417,7 +472,7 @@ void main() {
     );
     expect(find.byIcon(Icons.edit_note_rounded), findsOneWidget);
     expect(find.text('오늘의 감사\n함께하심을 기억합니다.'), findsOneWidget);
-    expect(find.text('+ 기록하기'), findsNothing);
+    expect(find.text('기록하기'), findsNothing);
     await tester.tap(find.byKey(const ValueKey('home-diary-quick-action')));
     await tester.pumpAndSettle();
 
@@ -512,6 +567,105 @@ void main() {
     );
   });
 
+  testWidgets('마지막 이야기를 완료하면 마지막 카드가 현재로 남고 안내 카드와 하단이 맞는다', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(800, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: HomeJourneyOverlay(
+            events: events,
+            recommendedEventId: 'next',
+            currentEventId: 'next',
+            eras: const [_era],
+            charactersByCode: const {},
+            eventEmotionMarks: const {},
+            quizAttemptSummaries: const {},
+            isAuthenticated: true,
+            todayDiary: null,
+            diaryLoading: false,
+            diaryError: null,
+            bibleTargetLabel: '창세기 14장',
+            todayStoryCompleted: true,
+            onOpenStory: (_) {},
+            onCurrentStoryChanged: (_) {},
+            onSaveDiary: _discardDiarySave,
+            onDeleteDiary: _discardDiaryDelete,
+            onContinueBibleReading: () {},
+            onOpenProfile: () {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('오늘의 이야기'), findsNothing);
+    expect(find.text('현재 이야기'), findsOneWidget);
+    final currentCard = tester.getRect(
+      find.byKey(const ValueKey('home-journey-card-surface-frame-next')),
+    );
+    final hintCard = tester.getRect(
+      find.byKey(const ValueKey('home-exploration-sort-hint-card')),
+    );
+    expect(hintCard.bottom, closeTo(currentCard.bottom, 0.1));
+  });
+
+  testWidgets('아주큰 글자에서도 첫 이야기 앞 탐험 정렬 안내가 넘치지 않는다', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(430, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(
+            size: Size(430, 900),
+            textScaler: TextScaler.linear(1.4),
+          ),
+          child: Scaffold(
+            body: SizedBox(
+              height: 445,
+              child: HomeJourneyOverlay(
+                events: events,
+                recommendedEventId: 'previous',
+                currentEventId: 'previous',
+                eras: const [_era],
+                charactersByCode: const {},
+                eventEmotionMarks: const {},
+                quizAttemptSummaries: const {},
+                isAuthenticated: true,
+                todayDiary: null,
+                diaryLoading: false,
+                diaryError: null,
+                bibleTargetLabel: '창세기 14장',
+                onOpenStory: (_) {},
+                onCurrentStoryChanged: (_) {},
+                onSaveDiary: _discardDiarySave,
+                onDeleteDiary: _discardDiaryDelete,
+                onContinueBibleReading: () {},
+                onOpenProfile: () {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 120));
+
+    final hintCard = find.byKey(
+      const ValueKey('home-exploration-sort-hint-card'),
+    );
+    final hintBody = find.byKey(
+      const ValueKey('home-exploration-sort-hint-body'),
+    );
+    expect(hintCard, findsOneWidget);
+    expect(hintBody, findsOneWidget);
+    expect(
+      tester.getRect(hintBody).bottom,
+      lessThanOrEqualTo(tester.getRect(hintCard).bottom),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('다른 시대로 넘어가는 카드 사이에는 시대 이동 라벨이 보인다', (tester) async {
     final boundaryEvents = [
       _event(
@@ -532,6 +686,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        theme: AppTheme.light(palette: AppColorPalette.blackMap),
         home: Scaffold(
           body: HomeJourneyOverlay(
             events: boundaryEvents,
@@ -559,6 +714,15 @@ void main() {
 
     expect(find.text('원역사\n이동'), findsOneWidget);
     expect(find.text('다음 이야기 없음'), findsOneWidget);
+    final boundaryBadge = tester.widget<Container>(
+      find.byKey(const ValueKey('home-journey-era-boundary-badge')),
+    );
+    final boundaryDecoration = boundaryBadge.decoration! as BoxDecoration;
+    expect(boundaryDecoration.color, AppColorPalette.blackMap.currentFill);
+    expect(
+      tester.widget<Text>(find.text('원역사\n이동')).style?.color,
+      AppColorPalette.blackMap.text,
+    );
   });
 
   testWidgets('이야기 덱은 하단 패널 표면이나 접기 핸들을 만들지 않는다', (tester) async {
@@ -651,12 +815,12 @@ void main() {
       find.byKey(const ValueKey('home-bible-quick-action')),
       findsOneWidget,
     );
-    final diarySubtitle = tester.widget<Text>(find.text('오늘의 동행을 기록해 보세요.'));
+    final diarySubtitle = tester.widget<Text>(find.text('오늘을 기록해보세요'));
     expect(diarySubtitle.overflow, TextOverflow.visible);
     expect(diarySubtitle.maxLines, greaterThanOrEqualTo(2));
     final diaryCard = find.byKey(const ValueKey('home-diary-quick-action'));
     expect(
-      tester.getRect(find.text('오늘의 동행을 기록해 보세요.')).bottom,
+      tester.getRect(find.text('오늘을 기록해보세요')).bottom,
       lessThanOrEqualTo(tester.getRect(diaryCard).bottom),
     );
     expect(tester.takeException(), isNull);

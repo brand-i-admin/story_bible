@@ -273,7 +273,8 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
   }) {
     final palette = AppPaletteTheme.of(context);
     return DecoratedBox(
-      decoration: modalSurfaceDecoration(palette: palette),
+      key: const ValueKey('event-detail-outer-surface'),
+      decoration: borderlessModalSurfaceDecoration(palette: palette),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
         child: DefaultTextStyle(

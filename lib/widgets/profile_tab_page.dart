@@ -20,6 +20,7 @@ import '../models/saved_bible_verse.dart';
 import '../models/story_event.dart';
 import '../models/user_companion_diary_entry.dart';
 import '../screens/bible_progress_screen.dart';
+import '../screens/companion_diary_editor_screen.dart';
 import '../screens/legal_documents_screen.dart';
 import '../screens/saved_verses_screen.dart';
 import '../state/auth_providers.dart';
@@ -31,6 +32,7 @@ import '../theme/typography.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/kst_date.dart';
 import '../utils/scene_asset_loader.dart';
+import 'home/story_root_navigation_bar.dart';
 import 'inline_login_prompt_card.dart';
 import 'map/map_attribution_dialog.dart';
 import 'notification/notification_bell_button.dart';
@@ -792,7 +794,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildProfileHeader(profile),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 12),
                   _buildProfileProgressSection(scrollBody: false),
                   if (showPrayerActivitySection) ...[
                     const SizedBox(height: 8),
@@ -822,7 +824,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildProfileHeader(profile),
-              const SizedBox(height: 6),
+              const SizedBox(height: 12),
               Expanded(
                 child: showPrayerActivitySection
                     ? Row(
@@ -1077,10 +1079,14 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     });
     final state = ref.watch(storyControllerProvider);
     final isAuthenticated = ref.watch(signedInUserProvider) != null;
+    final palette = AppPaletteTheme.of(context);
     return SubPageScaffold(
-      title: '내정보',
+      title: '',
       compactBackOnly: true,
       showBackButton: !widget.embedded,
+      compactTopPadding: 0,
+      topSurfaceColor: storyRootNavigationSurfaceColor(palette),
+      topSurfaceExtent: 48,
       onBack: widget.onBackToHome,
       child: Stack(
         children: [
@@ -1088,10 +1094,11 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             child: isAuthenticated
                 ? _buildProfileBody(state: state, isAuthenticated: true)
                 : ImageFiltered(
-                    imageFilter: ui.ImageFilter.blur(sigmaX: 4.5, sigmaY: 4.5),
+                    imageFilter: ui.ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
                     child: IgnorePointer(
+                      key: const ValueKey('profile-locked-content-blocker'),
                       child: Opacity(
-                        opacity: 0.9,
+                        opacity: 0.96,
                         child: _buildProfileBody(
                           state: state,
                           isAuthenticated: false,

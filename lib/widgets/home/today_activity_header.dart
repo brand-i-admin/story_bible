@@ -5,13 +5,20 @@ import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
 import '../../utils/today_activity_summary.dart';
 import '../parchment_dialog.dart';
+import 'story_root_navigation_bar.dart';
 
 class TodayActivityHeader extends StatelessWidget {
-  const TodayActivityHeader({super.key, required this.nickname, this.actions});
+  const TodayActivityHeader({
+    super.key,
+    required this.nickname,
+    required this.summary,
+    this.actions,
+  });
 
-  static const double mapObscuredExtent = 64;
+  static const double mapObscuredExtent = 88;
 
   final String nickname;
+  final TodayActivitySummary summary;
   final Widget? actions;
 
   @override
@@ -20,7 +27,7 @@ class TodayActivityHeader extends StatelessWidget {
     final displayNickname = nickname.trim().isEmpty ? '사용자' : nickname.trim();
     return Container(
       key: const ValueKey('today-activity-header'),
-      color: AppColors.parchmentLight,
+      color: storyRootNavigationSurfaceColor(palette),
       child: SafeArea(
         bottom: false,
         child: Padding(
@@ -30,59 +37,74 @@ class TodayActivityHeader extends StatelessWidget {
             AppSpacing.x5,
             AppSpacing.x3,
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text.rich(
-                        key: const ValueKey('today-activity-greeting-line'),
-                        TextSpan(
-                          children: [
-                            TextSpan(text: '샬롬 👋 ', style: _greetingStyle()),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text.rich(
+                            key: const ValueKey('today-activity-greeting-line'),
                             TextSpan(
-                              text: displayNickname,
-                              style: _greetingStyle().copyWith(
-                                color: palette.currentAccentDeep,
-                                fontSize: 21.5,
-                                fontWeight: FontWeight.w900,
-                              ),
+                              children: [
+                                TextSpan(
+                                  text: '샬롬 👋 ',
+                                  style: _greetingStyle(palette),
+                                ),
+                                TextSpan(
+                                  text: displayNickname,
+                                  style: _greetingStyle(palette).copyWith(
+                                    color: palette.currentAccentDeep,
+                                    fontSize: 14.2,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: '님,',
+                                  style: _greetingStyle(palette),
+                                ),
+                              ],
                             ),
-                            TextSpan(text: '님,', style: _greetingStyle()),
-                          ],
+                            maxLines: 1,
+                          ),
                         ),
-                        maxLines: 1,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.x1),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '오늘도 주님과 함께 걸어볼까요!',
-                        key: const ValueKey('today-activity-invitation-line'),
-                        maxLines: 1,
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.ink500,
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w800,
-                          height: 1.15,
+                        const SizedBox(height: AppSpacing.x1),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '오늘도 주님과 함께 걸어볼까요!',
+                            key: const ValueKey(
+                              'today-activity-invitation-line',
+                            ),
+                            maxLines: 1,
+                            style: AppTextStyles.body.copyWith(
+                              color: palette.mutedText,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w800,
+                              height: 1.15,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
+                  ),
+                  if (actions != null) ...[
+                    const SizedBox(width: AppSpacing.x3),
+                    actions!,
                   ],
-                ),
+                ],
               ),
-              if (actions != null) ...[
-                const SizedBox(width: AppSpacing.x3),
-                actions!,
-              ],
+              const SizedBox(height: 6),
+              TodayActivityLabelRail(summary: summary),
             ],
           ),
         ),
@@ -90,20 +112,18 @@ class TodayActivityHeader extends StatelessWidget {
     );
   }
 
-  TextStyle _greetingStyle() {
+  TextStyle _greetingStyle(AppColorPalette palette) {
     return AppTextStyles.body.copyWith(
-      color: AppColors.ink900,
-      fontSize: 19.2,
+      color: palette.text,
+      fontSize: 13.5,
       fontWeight: FontWeight.w900,
-      height: 1.05,
+      height: 1.15,
     );
   }
 }
 
 class TodayActivityLabelRail extends StatelessWidget {
   const TodayActivityLabelRail({super.key, required this.summary});
-
-  static const double mapOverlayExtent = 46;
 
   final TodayActivitySummary summary;
 
@@ -115,7 +135,8 @@ class TodayActivityLabelRail extends StatelessWidget {
       children: [
         Expanded(
           child: _TodayActivityLabel(
-            text: '🔥 연속: ${summary.streakDays}일',
+            icon: Icons.local_fire_department_rounded,
+            text: '연속: ${summary.streakDays}일',
             accent: palette.currentAccentDeep,
             onTap: () => _showStreakInfo(context),
           ),
@@ -123,21 +144,24 @@ class TodayActivityLabelRail extends StatelessWidget {
         const SizedBox(width: AppSpacing.x1),
         Expanded(
           child: _TodayActivityLabel(
-            text: '🧭 탐험 ${summary.explorationCount}개',
+            icon: Icons.explore_rounded,
+            text: '이야기: ${summary.explorationCount}개',
             accent: palette.regionAccent,
           ),
         ),
         const SizedBox(width: AppSpacing.x1),
         Expanded(
           child: _TodayActivityLabel(
-            text: '📝 다이어리 ${summary.hasDiary ? 'o' : 'x'}',
+            icon: Icons.edit_note_rounded,
+            text: '다이어리: ${summary.hasDiary ? 'o' : 'x'}',
             accent: palette.successBottom,
           ),
         ),
         const SizedBox(width: AppSpacing.x1),
         Expanded(
           child: _TodayActivityLabel(
-            text: '📖 통독 ${summary.bibleChapterCount}장',
+            icon: Icons.menu_book_rounded,
+            text: '통독: ${summary.bibleChapterCount}장',
             accent: palette.primary,
           ),
         ),
@@ -172,11 +196,13 @@ class TodayActivityLabelRail extends StatelessWidget {
 
 class _TodayActivityLabel extends StatelessWidget {
   const _TodayActivityLabel({
+    required this.icon,
     required this.text,
     required this.accent,
     this.onTap,
   });
 
+  final IconData icon;
   final String text;
   final Color accent;
   final VoidCallback? onTap;
@@ -201,16 +227,23 @@ class _TodayActivityLabel extends StatelessWidget {
           ),
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(
-              text,
-              maxLines: 1,
-              softWrap: false,
-              style: AppTextStyles.counter.copyWith(
-                color: accent,
-                fontSize: 10.2,
-                fontWeight: FontWeight.w900,
-                height: 1,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 12, color: accent),
+                const SizedBox(width: 2),
+                Text(
+                  text,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: AppTextStyles.counter.copyWith(
+                    color: accent,
+                    fontSize: 10.2,
+                    fontWeight: FontWeight.w900,
+                    height: 1,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

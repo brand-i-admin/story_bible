@@ -252,7 +252,8 @@ class StoryEventThumbCard extends StatelessWidget {
         if (orderNumber != null ||
             (emotionKey != null && emotionKey!.isNotEmpty))
           _OrderBadge(orderNumber: orderNumber, emotionKey: emotionKey),
-        if (selected) const _CurrentStoryBadge(),
+        if (selected && presentation == StoryEventCardPresentation.mapTimeline)
+          const _CurrentStoryBadge(),
       ],
     );
   }
@@ -278,6 +279,9 @@ class StoryEventThumbCard extends StatelessWidget {
         (completed
             ? palette.completedBorder
             : (selected ? palette.selectedBorder : palette.subtleBorder));
+    final borderWidth = presentation == StoryEventCardPresentation.mapTimeline
+        ? (selected ? 2.0 : 1.6)
+        : 1.0;
     return Material(
       color: surfaceColor,
       borderRadius: BorderRadius.circular(14),
@@ -285,9 +289,10 @@ class StoryEventThumbCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: Container(
+          key: ValueKey('story-card-surface-${presentation.name}-${event.id}'),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: borderColor, width: selected ? 2 : 1.6),
+            border: Border.all(color: borderColor, width: borderWidth),
           ),
           padding: expandSurface
               ? const EdgeInsets.fromLTRB(8, 10, 8, 7)

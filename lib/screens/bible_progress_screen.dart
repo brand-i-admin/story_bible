@@ -209,6 +209,7 @@ class _BibleChapterProgressGrid extends StatelessWidget {
         final rowCount = (chapterCount / columns).ceil();
         final palette = AppPaletteTheme.of(context);
         return ClipRRect(
+          key: const ValueKey('bible-progress-grid'),
           borderRadius: BorderRadius.circular(AppRadii.lg),
           child: DecoratedBox(
             decoration: BoxDecoration(
@@ -279,35 +280,41 @@ class _BibleChapterGridCell extends StatelessWidget {
       child: InkWell(
         key: ValueKey('bible-progress-chapter-$chapter'),
         onTap: () => onTap(chapter),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 140),
-          alignment: Alignment.center,
-          color: completed ? palette.successFill : null,
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '$chapter',
-                  style: TextStyle(
-                    color: completed
-                        ? palette.successBottom
-                        : palette.mutedText,
-                    fontSize: AppFontSizes.body,
-                    fontWeight: completed ? FontWeight.w900 : FontWeight.w800,
-                    height: 1,
+        child: Padding(
+          padding: completed
+              ? const EdgeInsets.only(left: 3, top: 3)
+              : EdgeInsets.zero,
+          child: AnimatedContainer(
+            key: ValueKey('bible-progress-chapter-fill-$chapter'),
+            duration: const Duration(milliseconds: 140),
+            alignment: Alignment.center,
+            color: completed ? palette.successFill : null,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$chapter',
+                    style: TextStyle(
+                      color: completed
+                          ? palette.successBottom
+                          : palette.mutedText,
+                      fontSize: AppFontSizes.body,
+                      fontWeight: completed ? FontWeight.w900 : FontWeight.w800,
+                      height: 1,
+                    ),
                   ),
-                ),
-                if (completed) ...[
-                  const SizedBox(width: AppSpacing.x2),
-                  Icon(
-                    Icons.check_circle_rounded,
-                    size: 14,
-                    color: palette.successBottom,
-                  ),
+                  if (completed) ...[
+                    const SizedBox(width: AppSpacing.x2),
+                    Icon(
+                      Icons.check_circle_rounded,
+                      size: 14,
+                      color: palette.successBottom,
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

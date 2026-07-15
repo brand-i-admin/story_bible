@@ -75,6 +75,12 @@ void main() {
     expect(find.text('아론'), findsOneWidget);
     expect(tester.getSize(find.byType(CharacterAvatar).first).width, 31);
     expect(_avatarNames(tester), ['모세', '아론']);
+    final storySurface = tester.widget<DecoratedBox>(
+      find.byKey(const ValueKey('event-detail-outer-surface')),
+    );
+    final storyDecoration = storySurface.decoration as BoxDecoration;
+    expect(storyDecoration.border, isNull);
+    expect(storyDecoration.boxShadow, isNotEmpty);
     _expectAvatarsBesideBackgroundTitle(tester);
     _expectAvatarsDoNotOverlap(tester);
     verify(() => storyRepository.fetchCharactersByEra('era-exodus')).called(1);

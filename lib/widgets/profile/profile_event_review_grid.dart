@@ -23,7 +23,6 @@ class ProfileEventReviewGrid extends StatelessWidget {
     this.emptyText = '보여줄 이야기가 없습니다.',
     this.padding = const EdgeInsets.fromLTRB(2, 0, 2, 12),
     this.crossAxisCount = 3,
-    this.mainAxisExtent = 226,
     this.scrollable = true,
   });
 
@@ -37,7 +36,6 @@ class ProfileEventReviewGrid extends StatelessWidget {
   final String emptyText;
   final EdgeInsetsGeometry padding;
   final int crossAxisCount;
-  final double mainAxisExtent;
   final bool scrollable;
 
   @override
@@ -76,37 +74,20 @@ class ProfileEventReviewGrid extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             for (final entry in eventsByEra.entries) ...[
-              _ProfileEventEraDivider(
+              ProfileEventEraDivider(
+                eraId: entry.key,
                 label: eraById[entry.key]?.name ?? '시대 미상',
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(2, 8, 2, 14),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    mainAxisExtent: mainAxisExtent,
-                  ),
-                  itemCount: entry.value.length,
-                  itemBuilder: (context, index) {
-                    final event = entry.value[index];
-                    return StoryEventThumbCard(
-                      event: event,
-                      era: eraById[event.eraId],
-                      charactersByCode: charactersByCode,
-                      selected: false,
-                      completed: completedEventIds.contains(event.id),
-                      emotionKey: eventEmotionMarks[event.id]?.emotionKey,
-                      attemptSummary: quizAttemptSummaries[event.id],
-                      orderNumber: event.storyIndex,
-                      loader: loader,
-                      onTap: () => onOpenEventDetail(event),
-                    );
-                  },
-                ),
+              _ProfileEventWrap(
+                events: entry.value,
+                eraById: eraById,
+                charactersByCode: charactersByCode,
+                completedEventIds: completedEventIds,
+                eventEmotionMarks: eventEmotionMarks,
+                quizAttemptSummaries: quizAttemptSummaries,
+                crossAxisCount: crossAxisCount,
+                loader: loader,
+                onOpenEventDetail: onOpenEventDetail,
               ),
             ],
           ],
@@ -114,45 +95,27 @@ class ProfileEventReviewGrid extends StatelessWidget {
       );
     }
 
-    return Padding(
+    return ListView(
       padding: padding,
-      child: CustomScrollView(
-        slivers: [
-          for (final entry in eventsByEra.entries) ...[
-            SliverToBoxAdapter(
-              child: _ProfileEventEraDivider(
-                label: eraById[entry.key]?.name ?? '시대 미상',
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(2, 8, 2, 14),
-              sliver: SliverGrid(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  mainAxisExtent: mainAxisExtent,
-                ),
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final event = entry.value[index];
-                  return StoryEventThumbCard(
-                    event: event,
-                    era: eraById[event.eraId],
-                    charactersByCode: charactersByCode,
-                    selected: false,
-                    completed: completedEventIds.contains(event.id),
-                    emotionKey: eventEmotionMarks[event.id]?.emotionKey,
-                    attemptSummary: quizAttemptSummaries[event.id],
-                    orderNumber: event.storyIndex,
-                    loader: loader,
-                    onTap: () => onOpenEventDetail(event),
-                  );
-                }, childCount: entry.value.length),
-              ),
-            ),
-          ],
+      children: [
+        for (final entry in eventsByEra.entries) ...[
+          ProfileEventEraDivider(
+            eraId: entry.key,
+            label: eraById[entry.key]?.name ?? '시대 미상',
+          ),
+          _ProfileEventWrap(
+            events: entry.value,
+            eraById: eraById,
+            charactersByCode: charactersByCode,
+            completedEventIds: completedEventIds,
+            eventEmotionMarks: eventEmotionMarks,
+            quizAttemptSummaries: quizAttemptSummaries,
+            crossAxisCount: crossAxisCount,
+            loader: loader,
+            onOpenEventDetail: onOpenEventDetail,
+          ),
         ],
-      ),
+      ],
     );
   }
 
@@ -181,9 +144,76 @@ class ProfileEventReviewGrid extends StatelessWidget {
   }
 }
 
-class _ProfileEventEraDivider extends StatelessWidget {
-  const _ProfileEventEraDivider({required this.label});
+class _ProfileEventWrap extends StatelessWidget {
+  const _ProfileEventWrap({
+    required this.events,
+    required this.eraById,
+    required this.charactersByCode,
+    required this.completedEventIds,
+    required this.eventEmotionMarks,
+    required this.quizAttemptSummaries,
+    required this.crossAxisCount,
+    required this.loader,
+    required this.onOpenEventDetail,
+  });
 
+  final List<StoryEvent> events;
+  final Map<String, Era> eraById;
+  final Map<String, Character> charactersByCode;
+  final Set<String> completedEventIds;
+  final Map<String, EventEmotionMark> eventEmotionMarks;
+  final Map<String, QuizAttemptSummary> quizAttemptSummaries;
+  final int crossAxisCount;
+  final SceneAssetLoader loader;
+  final ValueChanged<StoryEvent> onOpenEventDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    const spacing = 10.0;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 5, 2, 6),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width =
+              (constraints.maxWidth - spacing * (crossAxisCount - 1)) /
+              crossAxisCount;
+          return Wrap(
+            spacing: spacing,
+            runSpacing: spacing,
+            children: [
+              for (final event in events)
+                SizedBox(
+                  width: width,
+                  child: StoryEventThumbCard(
+                    event: event,
+                    era: eraById[event.eraId],
+                    charactersByCode: charactersByCode,
+                    selected: false,
+                    completed: completedEventIds.contains(event.id),
+                    emotionKey: eventEmotionMarks[event.id]?.emotionKey,
+                    attemptSummary: quizAttemptSummaries[event.id],
+                    orderNumber: event.storyIndex,
+                    showSummary: false,
+                    loader: loader,
+                    onTap: () => onOpenEventDetail(event),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ProfileEventEraDivider extends StatelessWidget {
+  const ProfileEventEraDivider({
+    super.key,
+    required this.eraId,
+    required this.label,
+  });
+
+  final String eraId;
   final String label;
 
   @override
@@ -191,7 +221,8 @@ class _ProfileEventEraDivider extends StatelessWidget {
     final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(2, 8, 2, 0),
+      key: key == null ? ValueKey('profile-event-era-divider-$eraId') : null,
+      padding: const EdgeInsets.fromLTRB(2, 4, 2, 0),
       child: Row(
         children: [
           Expanded(child: Divider(color: palette.subtleBorder, height: 1)),

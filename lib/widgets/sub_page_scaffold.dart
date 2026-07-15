@@ -17,6 +17,9 @@ class SubPageScaffold extends StatefulWidget {
     required this.child,
     this.compactBackOnly = false,
     this.showBackButton = true,
+    this.compactTopPadding = 4,
+    this.topSurfaceColor,
+    this.topSurfaceExtent = 0,
     this.onBack,
   });
 
@@ -24,6 +27,9 @@ class SubPageScaffold extends StatefulWidget {
   final Widget child;
   final bool compactBackOnly;
   final bool showBackButton;
+  final double compactTopPadding;
+  final Color? topSurfaceColor;
+  final double topSurfaceExtent;
   final VoidCallback? onBack;
 
   @override
@@ -60,6 +66,18 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
               ),
             ),
           ),
+          if (widget.topSurfaceColor != null && widget.topSurfaceExtent > 0)
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              height:
+                  MediaQuery.paddingOf(context).top + widget.topSurfaceExtent,
+              child: ColoredBox(
+                key: const ValueKey('sub-page-top-surface'),
+                color: widget.topSurfaceColor!,
+              ),
+            ),
           SafeArea(
             child: widget.compactBackOnly && widget.showBackButton
                 ? LayoutBuilder(
@@ -81,7 +99,9 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                         children: [
                           Positioned.fill(
                             child: Padding(
-                              padding: const EdgeInsets.only(top: 4),
+                              padding: EdgeInsets.only(
+                                top: widget.compactTopPadding,
+                              ),
                               child: widget.child,
                             ),
                           ),
@@ -110,7 +130,7 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                   )
                 : widget.compactBackOnly
                 ? Padding(
-                    padding: const EdgeInsets.only(top: 4),
+                    padding: EdgeInsets.only(top: widget.compactTopPadding),
                     child: widget.child,
                   )
                 : Column(

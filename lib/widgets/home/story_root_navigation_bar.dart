@@ -29,14 +29,9 @@ class StoryRootNavigationBar extends StatelessWidget {
         top: false,
         child: Container(
           key: const ValueKey('root-navigation-content'),
-          height: 68,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: surfaceColor,
-            border: Border(
-              top: BorderSide(color: palette.subtleBorder, width: 1),
-            ),
-          ),
+          height: 60,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(color: surfaceColor),
           child: Row(
             children: [
               _RootNavigationItem(

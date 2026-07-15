@@ -8,6 +8,7 @@ import '../../models/event_emotion_mark.dart';
 import '../../models/quiz_attempt_summary.dart';
 import '../../models/story_event.dart';
 import '../../models/user_companion_diary_entry.dart';
+import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/daily_exploration_selection.dart';
 import '../../utils/scene_asset_loader.dart';
@@ -17,6 +18,7 @@ import '../profile/companion_diary_entry_card.dart';
 import '../story_map_panel.dart';
 import '../web_pointer_interceptor.dart';
 import 'home_journey_overlay.dart';
+import 'story_root_navigation_bar.dart';
 import 'today_activity_header.dart';
 
 class TodayHomePage extends StatefulWidget {
@@ -154,10 +156,8 @@ class _TodayHomePageState extends State<TodayHomePage> {
         final textScale = media.textScaler.scale(1);
         final floatingOverlayExtent =
             304.0 + ((textScale - 1) * 185).clamp(0.0, 76.0);
-        final activityLabelTop =
-            media.padding.top + TodayActivityHeader.mapObscuredExtent + 8;
         final topObscured =
-            activityLabelTop + TodayActivityLabelRail.mapOverlayExtent;
+            media.padding.top + TodayActivityHeader.mapObscuredExtent + 8;
         final bottomObscuredFraction = constraints.maxHeight <= 0
             ? 0.48
             : (floatingOverlayExtent / constraints.maxHeight).clamp(0.0, 0.68);
@@ -206,20 +206,13 @@ class _TodayHomePageState extends State<TodayHomePage> {
               child: WebPointerInterceptor(
                 child: TodayActivityHeader(
                   nickname: widget.nickname,
+                  summary: widget.activitySummary,
                   actions: _TodayHeaderActions(
                     onOpenFontSettings: widget.onOpenFontSettings,
                     onOpenThemeSettings: widget.onOpenThemeSettings,
                     onOpenSearch: widget.onOpenSearch,
                   ),
                 ),
-              ),
-            ),
-            Positioned(
-              top: activityLabelTop,
-              left: AppSpacing.x5,
-              right: AppSpacing.x5,
-              child: WebPointerInterceptor(
-                child: TodayActivityLabelRail(summary: widget.activitySummary),
               ),
             ),
             Positioned(
@@ -309,7 +302,6 @@ class _TodayHeaderActions extends StatelessWidget {
           onTap: onOpenSearch,
           child: const Icon(
             Icons.search_rounded,
-            color: Colors.white,
             size: _TodayHeaderAction.iconSize,
           ),
         ),
@@ -317,7 +309,7 @@ class _TodayHeaderActions extends StatelessWidget {
         _TodayHeaderAction(
           label: '큰글자',
           onTap: onOpenFontSettings,
-          child: const Text('Aa', style: TextStyle(color: Colors.white)),
+          child: const Text('Aa'),
         ),
         const SizedBox(width: 6),
         _TodayHeaderAction(
@@ -325,7 +317,6 @@ class _TodayHeaderActions extends StatelessWidget {
           onTap: onOpenThemeSettings,
           child: const Icon(
             Icons.palette_outlined,
-            color: Colors.white,
             size: _TodayHeaderAction.iconSize,
           ),
         ),
@@ -341,8 +332,8 @@ class _TodayHeaderAction extends StatelessWidget {
     required this.child,
   });
 
-  static const double extent = 48;
-  static const double iconSize = 20;
+  static const double extent = 40;
+  static const double iconSize = 17;
 
   final String label;
   final VoidCallback onTap;
@@ -350,12 +341,23 @@ class _TodayHeaderAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final foreground = palette.primaryDeep;
+    final navigationSurface = storyRootNavigationSurfaceColor(palette);
+    final background = Color.alphaBlend(
+      palette.primary.withValues(alpha: 0.10),
+      navigationSurface,
+    );
     return Material(
-      color: AppColors.ink800.withValues(alpha: 0.92),
-      borderRadius: BorderRadius.circular(AppRadii.lg),
+      color: background,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        side: BorderSide(color: palette.primary.withValues(alpha: 0.20)),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         child: SizedBox(
           width: extent,
           height: extent,
@@ -363,24 +365,26 @@ class _TodayHeaderAction extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 21,
+                height: 18,
                 child: Center(
-                  child: DefaultTextStyle(
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      height: 1,
+                  child: IconTheme(
+                    data: IconThemeData(color: foreground, size: iconSize),
+                    child: DefaultTextStyle(
+                      style: TextStyle(
+                        color: foreground,
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w800,
+                        height: 1,
+                      ),
+                      child: child,
                     ),
-                    child: child,
                   ),
                 ),
               ),
-              const SizedBox(height: 1),
               Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: foreground,
                   fontSize: 9.2,
                   fontWeight: FontWeight.w800,
                   height: 1,

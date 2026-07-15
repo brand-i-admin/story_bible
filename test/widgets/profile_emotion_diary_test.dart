@@ -576,7 +576,7 @@ void _companionDiaryWidgetTests() {
       tester.getTopLeft(find.byType(CompanionDiaryEntryPreviewCard)).dx,
       lessThan(24),
     );
-    expect(find.text('6월 9일 화요일'), findsOneWidget);
+    expect(find.text('6월 9일 화요일 · 오전 10:00'), findsOneWidget);
     expect(find.text('광야의 감사'), findsOneWidget);
     expect(find.text('작은 공급을 놓치지 않기로 했습니다.'), findsOneWidget);
     expect(find.byType(CompanionDiaryEntryPreviewCard), findsOneWidget);

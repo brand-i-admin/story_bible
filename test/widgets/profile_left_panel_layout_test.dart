@@ -14,7 +14,7 @@ void main() {
       'lib/widgets/profile/profile_helpers.dart',
     ).readAsStringSync();
 
-    expect(source, contains("'내정보'"));
+    expect(source, isNot(contains("Text(\n            '내정보'")));
     expect(source, contains("tooltip: '공지사항과 사용법'"));
     expect(source, contains('Icons.campaign_rounded'));
     expect(source, contains('onTap: widget.onOpenAppPublications'));
@@ -91,6 +91,13 @@ void main() {
     expect(profileSource, contains('RefreshIndicator('));
     expect(profileSource, contains('onRefresh: _refreshProfilePage'));
     expect(profileSource, contains('AlwaysScrollableScrollPhysics'));
+    expect(profileSource, contains('sigmaX: 1.5'));
+    expect(profileSource, contains('sigmaY: 1.5'));
+    expect(profileSource, contains('opacity: 0.96'));
+    expect(
+      profileSource,
+      contains("ValueKey('profile-locked-content-blocker')"),
+    );
     expect(profileSource, contains('final VoidCallback? onBackToHome;'));
     expect(profileSource, contains('onBack: widget.onBackToHome'));
     expect(leftPanelSource, contains('BibleProgressScreen('));
@@ -301,7 +308,7 @@ void main() {
     expect(pageSource, contains('isHiddenEraCode(era.code)'));
     expect(pageSource, contains('_sortEventsByEraThenIndex('));
     expect(source, contains("const _ProfileProgressPageSectionTitle("));
-    expect(source, contains("title: '탐험한 이야기'"));
+    expect(source, contains("title: '완료'"));
     expect(source, contains("title: '복습'"));
     expect(source, contains("'복습 항목'"));
     expect(source, contains("label: '다이어리'"));
@@ -340,7 +347,10 @@ void main() {
     expect(source, contains('_SelectedDateDiarySummary'));
     expect(source, contains("ValueKey('selected-date-emotion-comments')"));
     expect(source, contains("ValueKey('selected-date-companion-diary')"));
-    expect(source, contains("'오늘' '성경' '지도' 탭으로 이동하여 기록을 남겨보세요"));
+    expect(source, contains('_ProfileLogNavigationHint'));
+    expect(source, contains('Icons.home_rounded'));
+    expect(source, contains('Icons.menu_book_rounded'));
+    expect(source, contains('Icons.map_rounded'));
     expect(source, isNot(contains("ValueKey('emotion-filter-all')")));
     expect(source, isNot(contains('selectedKeys.isEmpty')));
     expect(source, isNot(contains('_EmotionFilterChips')));
@@ -373,7 +383,13 @@ void main() {
     expect(source, isNot(contains('Icons.north_east_rounded')));
     expect(source, contains('onTap: null'));
     expect(source, contains('_selectedReviewFilter == filter ? null : filter'));
-    expect(source, contains('exploration-log-review-open-all-'));
+    expect(
+      source,
+      contains("openAllKeyPrefix: 'exploration-log-review-open-all'"),
+    );
+    expect(source, contains("gridKeyPrefix: 'exploration-log-emotion-grid'"));
+    expect(source, contains('_buildInlineEventCards('));
+    expect(source, isNot(contains('_openEmotionCategoryPopup')));
     expect(source, contains("ValueKey('exploration-log-review-all-grid')"));
     expect(source, contains('events: previewEvents'));
     expect(source, contains("label: '정답'"));
@@ -415,6 +431,7 @@ void main() {
     expect(source, isNot(contains("replaceFirst('/', ' / ')")));
     expect(source, isNot(contains("valueSuffix: '장'")));
     expect(source, isNot(contains("'퀴즈를 풀면 기록이 쌓여요.'")));
+    expect(source, contains('boxShadow: AppShadows.sm'));
   });
 
   test('다크 테마에서 주요 프로필과 탐험 표면은 팔레트를 사용한다', () {
@@ -509,7 +526,7 @@ void main() {
     expect(dailyMissionSource, contains('_dailyMissionCardSurface'));
     expect(
       eventDetailSource,
-      contains('modalSurfaceDecoration(palette: palette)'),
+      contains('borderlessModalSurfaceDecoration(palette: palette)'),
     );
     expect(
       stylesSource,
@@ -566,13 +583,14 @@ void main() {
     expect(source, contains('filteredEvents'));
   });
 
-  test('저장한 이야기 미리보기는 썸네일 카드 높이를 확보한다', () {
+  test('저장한 이야기 전체보기는 공용 3열 복습 그리드를 사용한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();
 
-    expect(source, contains('return 228;'));
-    expect(source, contains('EdgeInsets.fromLTRB(2, 8, 20, 8)'));
+    expect(source, contains("ValueKey('saved-stories-review-grid')"));
+    expect(source, contains('ProfileEventReviewGrid('));
+    expect(source, isNot(contains('_buildEventGroupsByEra(')));
   });
 
   test('시대 선택 칩은 공용으로 다이어리 역할색을 사용한다', () {
@@ -638,7 +656,7 @@ void main() {
     expect(
       emotionSource,
       contains(
-        'final featureCardMinHeight = profileSummaryMode ? 138.0 : 158.0',
+        'final featureCardMinHeight = profileSummaryMode ? 118.0 : 158.0',
       ),
     );
     expect(emotionSource, contains('minHeight: featureCardMinHeight'));

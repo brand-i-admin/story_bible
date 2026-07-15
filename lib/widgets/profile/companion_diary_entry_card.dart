@@ -61,23 +61,6 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (date != null && date.isNotEmpty) ...[
-                Text(
-                  date,
-                  maxLines: largeText ? 2 : 1,
-                  overflow: largeText
-                      ? TextOverflow.visible
-                      : TextOverflow.ellipsis,
-                  softWrap: true,
-                  style: TextStyle(
-                    color: dateColor,
-                    fontSize: 11.6,
-                    fontWeight: FontWeight.w900,
-                    height: 1.25,
-                  ),
-                ),
-                const SizedBox(height: 7),
-              ],
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -101,6 +84,26 @@ class CompanionDiaryEntryPreviewCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (date != null && date.isNotEmpty) ...[
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        date,
+                        maxLines: largeText ? 2 : 1,
+                        overflow: largeText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        softWrap: true,
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: dateColor,
+                          fontSize: 11.2,
+                          fontWeight: FontWeight.w900,
+                          height: 1.25,
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
               const SizedBox(height: 7),

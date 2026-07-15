@@ -93,10 +93,15 @@ void main() {
       find.byKey(const ValueKey('root-navigation-surface')),
     );
     final decoration = surface.decoration! as BoxDecoration;
+    final content = tester.widget<Container>(
+      find.byKey(const ValueKey('root-navigation-content')),
+    );
+    final contentDecoration = content.decoration! as BoxDecoration;
 
     expect(surface.margin, isNull);
     expect(decoration.borderRadius, isNull);
     expect(decoration.boxShadow, isNull);
+    expect(contentDecoration.border, isNull);
   });
 
   testWidgets('하단 시스템 안전영역까지 네비게이션 표면색이 이어진다', (tester) async {
@@ -121,17 +126,17 @@ void main() {
       tester
           .getSize(find.byKey(const ValueKey('root-navigation-content')))
           .height,
-      68,
+      60,
     );
     expect(
       tester
           .getSize(find.byKey(const ValueKey('root-navigation-surface')))
           .height,
-      102,
+      94,
     );
   });
 
-  test('오늘 헤더는 찾기·큰글자·테마 순서와 흰색 단색 아이콘을 사용한다', () {
+  test('오늘 헤더는 찾기·큰글자·테마 순서와 팔레트 기반 아이콘을 사용한다', () {
     final source = File(
       'lib/widgets/home/today_home_page.dart',
     ).readAsStringSync();
@@ -145,10 +150,12 @@ void main() {
     expect(source, contains('Icons.search_rounded'));
     expect(source, contains("Text('Aa'"));
     expect(source, contains('Icons.palette_outlined'));
-    expect(source, contains('color: Colors.white'));
+    expect(source, contains('final palette = AppPaletteTheme.of(context);'));
+    expect(source, contains('color: foreground'));
+    expect(source, isNot(contains('color: AppColors.ink800')));
   });
 
-  test('오늘 헤더 유틸리티 버튼은 48px 터치 영역과 작은 아이콘을 사용한다', () {
+  test('오늘 헤더 유틸리티 버튼은 40px 영역과 더 작은 아이콘을 사용한다', () {
     final source = File(
       'lib/widgets/home/today_home_page.dart',
     ).readAsStringSync();
@@ -156,10 +163,12 @@ void main() {
       source.indexOf('class _TodayHeaderAction extends StatelessWidget'),
     );
 
-    expect(actionSource, contains('static const double extent = 48;'));
-    expect(actionSource, contains('static const double iconSize = 20;'));
+    expect(actionSource, contains('static const double extent = 40;'));
+    expect(actionSource, contains('static const double iconSize = 17;'));
+    expect(actionSource, contains('fontSize: 9.2'));
     expect(actionSource, contains('width: extent'));
     expect(actionSource, contains('height: extent'));
+    expect(actionSource, contains('palette.primary.withValues(alpha: 0.20)'));
     expect(source, contains('size: _TodayHeaderAction.iconSize'));
   });
 
@@ -175,6 +184,10 @@ void main() {
     expect(homeSource, contains('mapKey: _sharedMapKey'));
     expect(homeSource, contains('mapController: _mapPanelController'));
     expect(homeSource, contains('key: _sharedMapKey'));
+    expect(homeSource, contains('StoryRootTab _retainedMapRootTab'));
+    expect(homeSource, contains('_buildRetainedMapBody'));
+    expect(homeSource, contains('IgnorePointer('));
+    expect(homeSource, contains('TickerMode('));
     expect(todaySource, contains('mapGesturesEnabled: true'));
     expect(todaySource, isNot(contains('mapGesturesEnabled: false')));
     expect(todaySource, contains('suspendMapGestures'));
@@ -217,10 +230,15 @@ void main() {
       contains('systemNavigationBarColor: navigationSurfaceColor'),
     );
     expect(source, contains('systemNavigationBarContrastEnforced: false'));
-    expect(source, contains('statusBarColor: showCreamTodayHeader'));
-    expect(source, contains('AppColors.parchmentLight'));
-    expect(source, contains('statusBarIconBrightness: showCreamTodayHeader'));
-    expect(source, contains('statusBarBrightness: showCreamTodayHeader'));
+    expect(source, contains('showRootHeaderSurface'));
+    expect(source, contains('StoryRootTab.profile'));
+    expect(source, contains('statusBarColor: showRootHeaderSurface'));
+    expect(source, contains('? navigationSurfaceColor'));
+    expect(source, contains('statusBarIconBrightness: showRootHeaderSurface'));
+    expect(source, contains('? navigationIconBrightness'));
+    expect(source, contains('statusBarBrightness: showRootHeaderSurface'));
+    expect(source, contains('? navigationSurfaceBrightness'));
+    expect(source, isNot(contains('AppColors.parchmentLight')));
   });
 
   test('오늘 카드 덱은 지도 하단 패널 표면에서 분리되어 공중에 뜬다', () {

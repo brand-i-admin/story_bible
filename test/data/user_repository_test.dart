@@ -78,5 +78,12 @@ void main() {
       expect(companionDiaryDateKey(DateTime(2026, 6, 3, 22)), '2026-06-03');
       expect(companionDiaryDateKey(DateTime(2026, 12, 25)), '2026-12-25');
     });
+
+    test('동행 일지 수정 시각은 UTC ISO 문자열로 저장', () {
+      final value = companionDiaryUpdatedAtValue(DateTime(2026, 7, 15, 10, 20));
+
+      expect(value, endsWith('Z'));
+      expect(DateTime.parse(value).isUtc, isTrue);
+    });
   });
 }

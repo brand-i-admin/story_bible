@@ -91,24 +91,11 @@ class _CompanionDiaryEntriesScreenState
                         const SizedBox(height: AppSpacing.x6),
                     itemBuilder: (context, index) {
                       final entry = visibleEntries[index];
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            _formatDiaryDateHeader(entry.entryDate),
-                            style: AppTextStyles.h3.copyWith(
-                              color: AppPaletteTheme.of(context).text,
-                              fontSize: 15.5,
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.x3),
-                          CompanionDiaryEntryPreviewCard(
-                            entry: entry,
-                            dateLabel: _formatDiaryTime(entry.updatedAt),
-                            maxBodyLines: 2,
-                            onTap: () => _openDetail(context, entry),
-                          ),
-                        ],
+                      return CompanionDiaryEntryPreviewCard(
+                        entry: entry,
+                        dateLabel: _formatDiaryDateTime(entry),
+                        maxBodyLines: 2,
+                        onTap: () => _openDetail(context, entry),
                       );
                     },
                   ),
@@ -472,12 +459,12 @@ String _formatDiaryDateHeader(DateTime date) {
   return '${date.month}월 ${date.day}일 ${weekdays[date.weekday - 1]}요일';
 }
 
-String _formatDiaryTime(DateTime date) {
-  final local = toKst(date);
+String _formatDiaryDateTime(UserCompanionDiaryEntry entry) {
+  final local = toKst(entry.updatedAt);
   final period = local.hour < 12 ? '오전' : '오후';
   final hour = local.hour % 12 == 0 ? 12 : local.hour % 12;
   final minute = local.minute.toString().padLeft(2, '0');
-  return '$period $hour:$minute';
+  return '${_formatDiaryDateHeader(entry.entryDate)} · $period $hour:$minute';
 }
 
 int _compareEntriesNewestFirst(
