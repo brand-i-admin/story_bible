@@ -78,6 +78,24 @@ void main() {
     expect(decoration.border, isNull);
   });
 
+  testWidgets('개인정보 처리방침은 Firebase 분석·진단과 작성 내용 제외를 안내한다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(theme: AppTheme.light(), home: const LegalDocumentsScreen()),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('개인정보 처리방침'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('감정 메모, 신앙 다이어리 제목·본문, 기도제목'), findsOneWidget);
+    await tester.drag(find.byType(ListView).last, const Offset(0, -1200));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Google Firebase Analytics 및 Crashlytics'),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('공지 항목을 누르면 상세 팝업에서 URL 줄을 자동 링크로 보여준다', (tester) async {
     await tester.pumpWidget(_wrap([_publication()]));
     await tester.pump();

@@ -65,13 +65,14 @@ class DefaultFirebaseOptions {
     projectId: 'story-bible-491907',
     storageBucket: 'story-bible-491907.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCpuJHVGQ9SHBPJ_Y050QGcMBDdfFS6v-0',
     appId: '1:196457947669:ios:d79e3acc88e573e86f641c',
     messagingSenderId: '196457947669',
     projectId: 'story-bible-491907',
     storageBucket: 'story-bible-491907.firebasestorage.app',
+    androidClientId:
+        '196457947669-v0qhnho460ik0esjo0ioq0fa89g745hb.apps.googleusercontent.com',
     iosBundleId: 'com.storybible.app',
   );
 }

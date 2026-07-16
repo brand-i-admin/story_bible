@@ -57,6 +57,29 @@ scripts/build_android_real.sh --build-number=42
 scripts/build_ios_dev.sh --export-method=ad-hoc
 ```
 
+## Firebase Analytics / Crashlytics
+
+- `run_dev.sh`: 개발 통계와 오류를 운영 콘솔에 섞지 않도록 수집하지 않습니다.
+- `run_real.sh`: 기본 디버그 실행이므로 수집하지 않습니다. Firebase 연결을 실제로
+  점검하는 한 번의 실행에만
+  `scripts/run_real.sh --dart-define=FIREBASE_MONITORING_ENABLED=true`를 사용합니다.
+  Crashlytics 최초 연결 테스트는 여기에
+  `--dart-define=CRASHLYTICS_TEST_CRASH=true`도 붙이면 디버그 앱이 의도적으로
+  한 번 종료됩니다. 같은 기기에서 테스트 crash 플래그 없이 다시 실행하면 보고서가
+  전송됩니다. 이 플래그는 디버그 빌드에서만 동작합니다.
+  비정상 종료 없이 비치명 오류 배관만 확인하려면 대신
+  `--dart-define=CRASHLYTICS_TEST_NON_FATAL=true`를 붙입니다. 두 테스트 플래그는
+  동시에 사용하지 않고, 확인 뒤에는 둘 다 제거합니다.
+- `build_android_real.sh` / `build_ios_real.sh`: `ENV=real` 릴리스 빌드이므로 Analytics와
+  모바일 Crashlytics가 자동 활성화됩니다. 별도 인자나 스크립트 수정은 필요 없습니다.
+- Flutter Web 릴리스는 Analytics만 활성화되며 Crashlytics는 지원 대상에서 제외합니다.
+
+기능 이벤트 테스트 실행에서는 터미널의
+`[monitoring] Analytics event=<이벤트 이름>` 로그를 먼저 확인합니다. 현재 기록하는
+이벤트는 `story_opened`, `quiz_completed`, `emotion_mark_saved`,
+`story_completed`, `diary_entry_saved`, `bible_chapter_completed`,
+`account_created`이며, 저장형 이벤트는 서버 저장 성공 뒤에만 전송합니다.
+
 ## Notes
 
 - 모든 스크립트는 Flutter 호출 전에 `flutter clean`과 `flutter pub get`을 실행한 뒤, 본 호출은 `--no-pub`으로 진행합니다.

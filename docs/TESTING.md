@@ -280,16 +280,17 @@ flutter test test/golden/
 - 골든 이미지는 OS/Flutter 버전에 따라 렌더링이 미묘하게 다를 수 있음 → CI에서는 특정 Flutter 버전 고정 필요.
 - `.gitignore`에 `test/golden/failures/` 추가 (실패 diff 이미지 제외).
 
-## 10. 테스트 현황 (2026-04-22)
+## 10. 테스트 현황 (2026-07-16)
 
 | 영역 | 파일 수 | 테스트 수 | 커버리지 |
 |------|---------|----------|---------|
-| 모델 fromMap/로직 | 16 | 100+ | ✅ 전체 모델 완전 (QuizAttemptSummary, EventEmotionMark 포함) |
-| 상태 (Controller + State) | 2 | 38 | ✅ 주요 메소드 27개 + copyWith 11개 |
-| 리포지토리 순수 함수 | 2 | 29 | ✅ @visibleForTesting 전부 |
-| 유틸 순수 함수 | 4 | 70 | ✅ 전 함수 완전 |
-| 위젯 | 2+ | 15+ | CharacterAvatar + NotificationDeepLink 파서 |
-| 기본 | 1 | 1 | sanity |
-| **합계 (최근 기준)** | **21+** | **214** | — |
+| 모델 fromMap/로직 | 15 | 87 | Supabase row와 불변 모델 계약 |
+| 상태 (Controller + State) | 3 | 63 | Riverpod 상태 전환과 사용자 기록 동기화 |
+| 리포지토리 | 7 | 45 | Supabase 쿼리, row 변환, fallback |
+| 서비스 | 3 | 16 | Firebase 이벤트·개인정보·수집 정책 |
+| 유틸 | 12 | 147 | 날짜, 지도, 에셋, 선택·통독 순수 로직 |
+| 화면·위젯·테마 | 40 | 298 | 화면 입력과 주요 UI·디자인 토큰 |
+| 기본 | 2 | 4 | 앱 smoke와 scaffold |
+| **합계 (정적 호출 기준)** | **82** | **660** | — |
 
 > 정확한 수치는 `flutter test` 실행 시 마지막 줄 `All tests passed!` 앞의 카운트로 확인.

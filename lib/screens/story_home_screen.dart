@@ -15,6 +15,8 @@ import '../models/landmark.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
 import '../models/user_companion_diary_entry.dart';
+import '../services/app_analytics_event.dart';
+import '../services/app_monitoring_service.dart';
 import '../services/push_service.dart';
 import '../state/auth_providers.dart';
 import '../state/daily_mission_provider.dart';

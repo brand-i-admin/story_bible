@@ -23,6 +23,8 @@ import '../screens/bible_progress_screen.dart';
 import '../screens/companion_diary_editor_screen.dart';
 import '../screens/legal_documents_screen.dart';
 import '../screens/saved_verses_screen.dart';
+import '../services/app_analytics_event.dart';
+import '../services/app_monitoring_service.dart';
 import '../state/auth_providers.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
@@ -556,15 +558,31 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     if (user == null) {
       throw StateError('로그인 정보를 찾을 수 없습니다.');
     }
+    final isUpdate = _profileCompanionDiaryEntries.any(
+      (entry) => _isSameCompanionDiaryDate(entry.entryDate, entryDate),
+    );
 
-    final saved = await ref
-        .read(userRepositoryProvider)
-        .upsertCompanionDiaryEntry(
-          userId: user.id,
-          entryDate: entryDate,
-          title: title,
-          body: body,
-        );
+    late final UserCompanionDiaryEntry saved;
+    try {
+      saved = await ref
+          .read(userRepositoryProvider)
+          .upsertCompanionDiaryEntry(
+            userId: user.id,
+            entryDate: entryDate,
+            title: title,
+            body: body,
+          );
+    } catch (error, stackTrace) {
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'Companion diary save failed',
+      );
+      rethrow;
+    }
+    await AppMonitoringService.instance.logAnalyticsEvent(
+      AppAnalyticsEvent.diaryEntrySaved(isUpdate: isUpdate),
+    );
     if (mounted) {
       setState(() {
         _profileCompanionDiaryEntries = _replaceCompanionDiaryEntry(

@@ -7,7 +7,7 @@ class LegalDocumentsScreen extends StatelessWidget {
 
   static const _operatorName = 'Story Bible';
   static const _contactEmail = 'admin@brand-i.net';
-  static const _effectiveDate = '2026-05-15';
+  static const _effectiveDate = '2026-07-16';
 
   @override
   Widget build(BuildContext context) {
@@ -635,9 +635,9 @@ const _termsDocument = _LegalDocument(
 const _privacyDocument = _LegalDocument(
   title: '개인정보 처리방침',
   summary:
-      'Story Bible(이야기 성경)에서 로그인, 프로필 저장, 이야기와 말씀 저장, 기도제목 공유 기능을 제공하는 과정에서 처리되는 개인정보 기준을 안내합니다.',
-  effectiveDate: '2026-05-15',
-  updatedDate: '2026-05-15',
+      'Story Bible(이야기 성경)에서 계정 기능과 학습 기록을 제공하고 서비스 이용 현황 및 오류를 확인하는 과정에서 처리되는 정보의 기준을 안내합니다.',
+  effectiveDate: '2026-07-16',
+  updatedDate: '2026-07-16',
   contactEmail: 'admin@brand-i.net',
   sections: [
     _LegalSection(
@@ -645,12 +645,15 @@ const _privacyDocument = _LegalDocument(
       paragraphs: [
         '소셜 로그인 시 Apple, Google 또는 Kakao로부터 이용자가 동의한 범위의 계정 식별 정보, 이메일, 공개 프로필 정보가 제공될 수 있습니다.',
         '앱에서는 닉네임, 프로필 사진, 기도제목, 저장한 이야기와 말씀, 퀴즈 진행 기록, 공유받은 기도제목 목록을 저장할 수 있습니다.',
+        '서비스 이용 현황과 오류 확인을 위해 앱 인스턴스 식별자, 기기·운영체제·앱 버전 정보, 앱 실행 및 화면·기능 이용 기록, 충돌·오류 로그와 스택 트레이스가 자동 수집될 수 있습니다.',
+        '감정 메모, 신앙 다이어리 제목·본문, 기도제목과 같은 이용자 작성 내용은 분석 이벤트나 오류 보고서에 별도로 첨부하지 않습니다.',
       ],
     ),
     _LegalSection(
       title: '2. 이용 목적',
       paragraphs: [
-        '계정 생성 및 로그인 유지, 프로필 표시, 이야기와 말씀 저장, 기도제목 공유, 학습 진행 상황 저장, 서비스 안정성 확보를 위해 개인정보를 처리합니다.',
+        '계정 생성 및 로그인 유지, 프로필 표시, 이야기와 말씀 저장, 기도제목 공유, 학습 진행 상황 저장을 위해 개인정보를 처리합니다.',
+        '앱 이용 현황 분석, 재방문 및 기능 이용 통계 확인, 충돌·오류 원인 파악과 서비스 안정성 개선을 위해 진단 및 이용 기록을 처리합니다.',
       ],
     ),
     _LegalSection(
@@ -665,6 +668,7 @@ const _privacyDocument = _LegalDocument(
       paragraphs: [
         '운영자는 원칙적으로 개인정보를 제3자에게 판매하거나 임의 제공하지 않습니다.',
         '서비스 운영을 위해 Supabase를 데이터베이스 및 저장소 인프라로 사용하며, Apple/Google/Kakao 로그인 시 해당 인증 사업자를 이용합니다.',
+        '앱 이용 분석과 오류 진단을 위해 Google Firebase Analytics 및 Crashlytics를 사용합니다. Crashlytics는 지원되는 모바일 플랫폼에서만 사용합니다.',
       ],
     ),
     _LegalSection(

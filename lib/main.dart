@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'firebase_options.dart';
+import 'services/app_monitoring_service.dart';
 import 'services/push_service.dart';
 import 'state/font_scale_providers.dart';
 
@@ -20,23 +21,39 @@ const _supabaseAnonKey = String.fromEnvironment(
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final supabaseConfig = _resolveSupabaseConfig();
+  var firebaseReady = false;
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    firebaseReady = true;
+    await AppMonitoringService.instance.initialize(
+      runtimeEnvironment: _runtimeEnv,
+    );
+  } catch (error) {
+    debugPrint('[firebase] Firebase 비활성 상태로 진행합니다: $error');
+  }
 
+  final supabaseConfig = _resolveSupabaseConfig();
   await Supabase.initialize(
     url: supabaseConfig.url,
     anonKey: supabaseConfig.anonKey,
   );
 
-  // Firebase / FCM 초기화 — Firebase 프로젝트가 아직 설정되지 않은 환경에서도
-  // 앱이 죽지 않도록 try-catch 로 감싼다. `flutterfire configure` 가 완료되면
-  // 자동으로 동작한다 (docs/PUSH_SETUP.md).
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+  if (firebaseReady) {
+    await AppMonitoringService.instance.observeAuthState(
+      Supabase.instance.client,
     );
-    await PushService.instance.initialize();
-  } catch (e) {
-    debugPrint('[push] Firebase 비활성 상태 — 푸시 알림 없이 진행합니다: $e');
+    try {
+      await PushService.instance.initialize();
+    } catch (error, stackTrace) {
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'Push service initialization failed',
+      );
+      debugPrint('[push] 푸시 초기화 실패 — 푸시 없이 진행합니다: $error');
+    }
   }
 
   final prefs = await SharedPreferences.getInstance();

@@ -13,15 +13,17 @@
 |------|---------|----------------|-----------|
 | `test/` 루트 | 2 | 4 | 앱 smoke, 기본 widget scaffold |
 | `test/models/` | 15 | 87 | 불변 모델, `fromMap()`, enum/값 객체 변환 |
-| `test/data/` | 7 | 43 | Repository, Supabase row 변환, fallback |
-| `test/state/` | 3 | 59 | Riverpod provider/controller 상태 전환 |
+| `test/data/` | 7 | 45 | Repository, Supabase row 변환, fallback |
+| `test/screens/` | 3 | 5 | 독립 화면 입력·필터·저장 흐름 |
+| `test/state/` | 3 | 63 | Riverpod provider/controller 상태 전환 |
+| `test/services/` | 3 | 16 | Firebase 이벤트 계약, 개인정보 필터, 환경·빌드 모드 정책 |
 | `test/theme/` | 1 | 18 | 디자인 토큰 회귀 방지 |
-| `test/utils/` | 11 | 143 | 날짜, 지도 수학, asset loader, 선택/통독 로직 |
-| `test/widgets/` | 34 | 241 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
+| `test/utils/` | 12 | 147 | 날짜, 지도 수학, asset loader, 선택/통독 로직 |
+| `test/widgets/` | 36 | 275 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
 | `tools/**/test_*.py` | 13 | 93 | seed, lint, asset, docs, Supabase 도구 |
 
 Dart 쪽 정적 카운트는 `test/**/*.dart`의 `test()`/`testWidgets()` 호출 기준
-595개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
+660개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
 공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.
 
 ## 1. 기본 실행 명령

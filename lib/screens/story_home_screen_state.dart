@@ -264,8 +264,13 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       } catch (_) {
         // 푸시 등록 실패는 앱 동작에 영향 없음
       }
-    } catch (_) {
-      // 인증 상태 변경 처리 실패는 무시 (재시도 기회 존재)
+    } catch (error, stackTrace) {
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'Signed-in user bootstrap failed',
+      );
+      // 인증 상태 변경 처리 실패는 화면을 막지 않고 다음 새로고침에서 재시도한다.
     }
   }
 
@@ -336,14 +341,30 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (user == null) {
       throw StateError('로그인 정보를 찾을 수 없습니다.');
     }
-    final saved = await ref
-        .read(userRepositoryProvider)
-        .upsertCompanionDiaryEntry(
-          userId: user.id,
-          entryDate: entryDate,
-          title: title,
-          body: body,
-        );
+    final isUpdate = _homeDiaryEntries.any(
+      (entry) => _sameHomeDiaryDate(entry.entryDate, entryDate),
+    );
+    late final UserCompanionDiaryEntry saved;
+    try {
+      saved = await ref
+          .read(userRepositoryProvider)
+          .upsertCompanionDiaryEntry(
+            userId: user.id,
+            entryDate: entryDate,
+            title: title,
+            body: body,
+          );
+    } catch (error, stackTrace) {
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'Companion diary save failed',
+      );
+      rethrow;
+    }
+    await AppMonitoringService.instance.logAnalyticsEvent(
+      AppAnalyticsEvent.diaryEntrySaved(isUpdate: isUpdate),
+    );
     if (mounted) {
       setState(() {
         _homeDiaryEntries = _replaceHomeDiaryEntry(_homeDiaryEntries, saved);
@@ -2056,6 +2077,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (!mounted) {
       return;
     }
+    unawaited(
+      AppMonitoringService.instance.logAnalyticsEvent(
+        AppAnalyticsEvent.storyOpened(
+          eventId: event.id,
+          entryPoint: _rootTab.name,
+        ),
+      ),
+    );
     // prev/next 결정 — 현재 region/character 모드의 사건 시퀀스에서.
     final state = ref.read(storyControllerProvider);
     final sequence = _eventSequenceForDetail(state);

@@ -1,6 +1,6 @@
 # ARCHITECTURE — 이야기 성경 기술 아키텍처
 
-> 최종 수정: 2026-07-15 (`오늘` 시대 순서·접이식 패널·환영 가이드 반영)
+> 최종 수정: 2026-07-16 (Firebase Analytics·Crashlytics 모니터링 반영)
 
 ## 1. 시스템 구성도
 
@@ -9,15 +9,15 @@
 │                         Flutter App                                  │
 │  ┌──────────┐  ┌───────────┐  ┌──────────────────┐  ┌────────────┐  │
 │  │ screens/ │←─│  state/   │←─│     data/        │  │ services/  │  │
-│  │ widgets/ │  │ Riverpod  │  │  repositories    │  │ PushService│  │
+│  │ widgets/ │  │ Riverpod  │  │  repositories    │  │Push/Monitor│  │
 │  └──────────┘  └───────────┘  └────────┬─────────┘  └─────┬──────┘  │
 └────────────────────────────────────────┼──────────────────┼────────┘
-                                         │ supabase SDK     │ firebase_messaging
+                                         │ supabase SDK     │ Firebase SDK
                                          ▼                  ▼
                       ┌────────────────────────┐   ┌────────────────┐
                       │        Supabase        │   │    Firebase    │
-                      │  ┌──────────────────┐  │   │  Cloud Msg     │
-                      │  │  PostgreSQL       │  │   │  (FCM)         │
+                      │  ┌──────────────────┐  │   │ FCM / Analytics│
+                      │  │  PostgreSQL       │  │   │ + Crashlytics  │
                       │  │  + pgvector       │  │   └────┬───────────┘
                       │  │  + RLS/트리거     │  │        │
                       │  │  + pg_cron        │  │        ├── APNs (iOS)
@@ -49,12 +49,13 @@
 
 ```
 lib/
-├── main.dart              # 엔트리포인트: dart-define 기반 Supabase 초기화, ProviderScope
+├── main.dart              # Firebase 모니터링, Supabase 초기화, ProviderScope
 ├── app.dart               # MaterialApp: 테마(Material3, 양피지 배경), 라우팅
 ├── models/                # 순수 데이터 클래스 (Supabase 행 → Dart 객체)
 ├── data/                  # Repository 패턴 (Supabase 쿼리 캡슐화)
 ├── state/                 # Riverpod Provider/Notifier (비즈니스 로직)
 ├── screens/               # 전체 화면 위젯
+├── services/              # FCM 푸시, Analytics/Crashlytics 모니터링
 └── widgets/               # 재사용 가능한 UI 컴포넌트
 ```
 
@@ -127,7 +128,7 @@ supabaseClientProvider (Provider<SupabaseClient>)
 
 **앱 시작:**
 ```
-main.dart → Supabase 초기화 + ProviderScope
+main.dart → Firebase 모니터링 초기화 → Supabase 초기화 + ProviderScope
   └→ app.dart → MaterialApp + 첫 화면(StoryHomeScreen)
 ```
 
@@ -281,6 +282,9 @@ stories JSON (소스 — 각 항목에 story_index 직접 박힘)
 | 환경변수 | 용도 |
 |----------|------|
 | `ENV` | 앱 런타임 환경 (`dev` / `real` / `prod`) — scripts가 `--dart-define`으로 주입 |
+| `FIREBASE_MONITORING_ENABLED` | real 디버그에서 Analytics/Crashlytics 연결을 1회 점검할 때만 쓰는 선택 플래그. 운영 릴리스는 자동 활성화되고 dev에서는 플래그를 줘도 비활성 |
+| `CRASHLYTICS_TEST_CRASH` | `FIREBASE_MONITORING_ENABLED=true`인 real 디버그 앱에서만 최초 Crashlytics 연결 확인용 강제 종료를 1회 실행하는 선택 플래그. 릴리스에서는 무시 |
+| `CRASHLYTICS_TEST_NON_FATAL` | 같은 조건의 real 디버그 앱에서만 비정상 종료 없이 테스트 non-fatal 1건을 보내는 선택 플래그. 릴리스에서는 무시 |
 | `SUPABASE_URL` | 앱이 사용할 Supabase URL — scripts가 `.env`의 선택 환경 값에서 주입 |
 | `SUPABASE_ANON_KEY` | 앱이 사용할 Supabase anon key — scripts가 `.env`의 선택 환경 값에서 주입 |
 | `SUPABASE_URL_DEV` / `SUPABASE_ANON_KEY_DEV` | scripts가 읽는 개발 Supabase 공개값 (`.env`) |

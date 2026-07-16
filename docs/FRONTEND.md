@@ -7,7 +7,7 @@
 
 ```
 lib/
-├── main.dart                          # 엔트리포인트
+├── main.dart                          # Firebase 모니터링 + Supabase 초기화 엔트리포인트
 ├── app.dart                           # MaterialApp + 테마 (AppTheme.light)
 ├── theme/                             # 디자인 시스템 단일 진실 소스
 │   ├── tokens.dart                    # AppColors / AppRadii / AppSpacing / AppShadows / AppFontSizes
@@ -308,10 +308,26 @@ static const _palette = <Color>[
 | NotificationListTile | `widgets/notification/notification_list_tile.dart` | 드롭다운/히스토리 공용 row (타입별 아이콘, 상대시간, 미독 점) |
 | NotificationDeepLink | `widgets/notification/notification_deep_link.dart` | deep_link 파싱 + 모바일/태블릿 "컴퓨터로 확인" 다이얼로그 |
 | PushService | `services/push_service.dart` | FCM 토큰 발급/등록, 포그라운드 메시지 handler |
+| AppMonitoringService | `services/app_monitoring_service.dart` | 운영 릴리스의 Analytics 수집과 모바일 Crashlytics 전역·비치명 오류 보고 |
 | AppNotification 모델 | `models/app_notification.dart` | `list_my_notifications` RPC 반환 row 파싱 |
 | Providers | `state/notification_providers.dart` | `unreadNotificationCountProvider` (polling Stream) + 목록 Future providers. `모두 읽음`/개별 읽음 직후 count/list/history provider 를 함께 invalidate 해 빨간 `!` 배지와 드롭다운 빈 상태가 즉시 갱신된다. |
 
 Firebase 설정 가이드: `docs/guides/PUSH_SETUP.md`. 인프라 전반 원리: `docs/guides/INFRA_GUIDE.md`.
+
+`AppMonitoringService`는 `ENV=real|prod`인 릴리스 빌드에서만 자동 수집한다.
+`ENV=dev`와 일반 디버그 실행은 Analytics/Crashlytics를 모두 끄고, 웹은
+Crashlytics를 호출하지 않는다. real 디버그에서 콘솔 연결을 점검할 때만
+`--dart-define=FIREBASE_MONITORING_ENABLED=true`를 명시한다. 핵심 저장 실패는
+기능을 구분하는 고정 reason과 스택 트레이스만 기록하며 감정 메모, 다이어리 본문,
+기도제목, 이메일, Supabase 사용자 ID는 첨부하지 않는다.
+기능 분석은 `story_opened`, `quiz_completed`, `emotion_mark_saved`,
+`story_completed`, `diary_entry_saved`, `bible_chapter_completed`,
+`account_created` 7개 이벤트로 제한한다. 저장형 이벤트는 Supabase 저장 성공 뒤에만
+기록하고 다이어리 내용·감정 종류·통독한 권/장·사용자 ID는 보내지 않는다. 로그인
+여부는 `login_state=signed_in|signed_out` 사용자 속성으로만 구분한다.
+AndroidManifest와 iOS Info.plist의 네이티브 기본 수집값도 false로 두고, 위 정책을
+통과한 실행에서만 SDK 런타임 API로 다시 활성화해 Firebase 초기화 직후의 개발
+이벤트가 운영 지표에 섞이지 않게 한다.
 
 ### 5.7 Proposal (사역자 제안 워크플로)
 
@@ -411,6 +427,8 @@ _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
 | cupertino_icons | ^1.0.8 | iOS 스타일 아이콘 |
 | firebase_core | ^3.8.0 | Firebase 초기화 (FCM) |
 | firebase_messaging | ^15.1.5 | FCM 토큰/메시지 — 푸시 알림 |
+| firebase_analytics | ^11.6.0 | 앱 실행·이용 현황과 재방문 분석 |
+| firebase_crashlytics | ^4.3.10 | Android/iOS 충돌 및 비치명 오류 보고 |
 | flutter_local_notifications | ^18.0.1 | 포그라운드 로컬 알림 (iOS/Android) |
 
 ## 7. 코딩 컨벤션

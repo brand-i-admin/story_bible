@@ -13,6 +13,8 @@ import '../models/event_emotion_mark.dart';
 import '../models/landmark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
+import '../services/app_analytics_event.dart';
+import '../services/app_monitoring_service.dart';
 import '../theme/tokens.dart';
 import '../utils/bible_book_meta.dart';
 import 'story_state.dart';
@@ -150,10 +152,18 @@ class StoryController extends Notifier<StoryState> {
         clearSelectedEvent: true,
         landmarks: landmarks,
       );
-    } catch (e) {
+    } catch (error, stackTrace) {
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'Story initial data load failed',
+      );
       state = state.copyWith(
         loading: false,
-        error: _buildLoadErrorMessage(prefix: '초기 데이터를 불러오지 못했습니다.', error: e),
+        error: _buildLoadErrorMessage(
+          prefix: '초기 데이터를 불러오지 못했습니다.',
+          error: error,
+        ),
       );
     }
   }
@@ -502,12 +512,22 @@ class StoryController extends Notifier<StoryState> {
     if (user == null) {
       return;
     }
+    final wasCompleted = state.completedEventIds.contains(eventId);
 
-    await _repo.upsertEventProgress(
-      userId: user.id,
-      eventId: eventId,
-      isCompleted: isCompleted,
-    );
+    try {
+      await _repo.upsertEventProgress(
+        userId: user.id,
+        eventId: eventId,
+        isCompleted: isCompleted,
+      );
+    } catch (error, stackTrace) {
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'Story completion save failed',
+      );
+      rethrow;
+    }
 
     final nextCompleted = {...state.completedEventIds};
     if (isCompleted) {
@@ -517,6 +537,11 @@ class StoryController extends Notifier<StoryState> {
     }
 
     state = state.copyWith(completedEventIds: nextCompleted);
+    if (isCompleted && !wasCompleted) {
+      await AppMonitoringService.instance.logAnalyticsEvent(
+        AppAnalyticsEvent.storyCompleted(eventId: eventId),
+      );
+    }
   }
 
   /// 로그아웃 또는 계정 전환 시 메모리에 남아 있는 사용자 전용 데이터를 지운다.
@@ -647,6 +672,7 @@ class StoryController extends Notifier<StoryState> {
     );
     final previous = state.completedBibleChapterKeys;
     final previousReadAts = state.completedBibleChapterReadAts;
+    final wasRead = previous.contains(key);
     final next = {...previous};
     final nextReadAts = {...previousReadAts};
     if (isRead) {
@@ -667,12 +693,22 @@ class StoryController extends Notifier<StoryState> {
         chapterNo: safeChapterNo,
         isRead: isRead,
       );
-    } catch (_) {
+    } catch (error, stackTrace) {
       state = state.copyWith(
         completedBibleChapterKeys: previous,
         completedBibleChapterReadAts: previousReadAts,
       );
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'Bible chapter progress save failed',
+      );
       rethrow;
+    }
+    if (isRead && !wasRead) {
+      await AppMonitoringService.instance.logAnalyticsEvent(
+        AppAnalyticsEvent.bibleChapterCompleted(),
+      );
     }
   }
 
@@ -710,11 +746,20 @@ class StoryController extends Notifier<StoryState> {
     state = state.copyWith(bibleReadEventIds: next);
     final user = ref.read(supabaseClientProvider).auth.currentUser;
     if (user != null) {
-      await _repo.upsertEventProgress(
-        userId: user.id,
-        eventId: eventId,
-        isBibleRead: isRead,
-      );
+      try {
+        await _repo.upsertEventProgress(
+          userId: user.id,
+          eventId: eventId,
+          isBibleRead: isRead,
+        );
+      } catch (error, stackTrace) {
+        AppMonitoringService.instance.recordNonFatal(
+          error,
+          stackTrace,
+          reason: 'Story reading progress save failed',
+        );
+        rethrow;
+      }
     }
     await _syncOverallCompletion(eventId);
   }
@@ -761,16 +806,34 @@ class StoryController extends Notifier<StoryState> {
       quizAttemptSummaries: nextAttempts,
     );
     final user = ref.read(supabaseClientProvider).auth.currentUser;
-    if (user != null && attemptSummary != null) {
-      await _repo.upsertQuizAttempt(userId: user.id, summary: attemptSummary);
-    } else if (user != null && !isCompleted) {
-      await _repo.deleteQuizAttempt(userId: user.id, eventId: eventId);
+    try {
+      if (user != null && attemptSummary != null) {
+        await _repo.upsertQuizAttempt(userId: user.id, summary: attemptSummary);
+      } else if (user != null && !isCompleted) {
+        await _repo.deleteQuizAttempt(userId: user.id, eventId: eventId);
+      }
+      if (user != null) {
+        await _repo.upsertEventProgress(
+          userId: user.id,
+          eventId: eventId,
+          isQuizCompleted: isCompleted,
+        );
+      }
+    } catch (error, stackTrace) {
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'Story quiz progress save failed',
+      );
+      rethrow;
     }
-    if (user != null) {
-      await _repo.upsertEventProgress(
-        userId: user.id,
-        eventId: eventId,
-        isQuizCompleted: isCompleted,
+    if (user != null && isCompleted) {
+      await AppMonitoringService.instance.logAnalyticsEvent(
+        AppAnalyticsEvent.quizCompleted(
+          eventId: eventId,
+          correctCount: correct,
+          totalCount: total,
+        ),
       );
     }
     await _syncOverallCompletion(eventId);
@@ -796,7 +859,19 @@ class StoryController extends Notifier<StoryState> {
           : normalizedNote,
       updatedAt: DateTime.now().toUtc(),
     );
-    await _repo.upsertEventEmotionMark(userId: user.id, mark: mark);
+    try {
+      await _repo.upsertEventEmotionMark(userId: user.id, mark: mark);
+    } catch (error, stackTrace) {
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'Story emotion mark save failed',
+      );
+      rethrow;
+    }
+    await AppMonitoringService.instance.logAnalyticsEvent(
+      AppAnalyticsEvent.emotionMarkSaved(eventId: eventId),
+    );
     state = state.copyWith(
       eventEmotionMarks: {...state.eventEmotionMarks, eventId: mark},
     );
@@ -925,8 +1000,13 @@ class StoryController extends Notifier<StoryState> {
   ) async {
     try {
       return await fetch();
-    } catch (error) {
+    } catch (error, stackTrace) {
       _logUserFetchFailure(label, error);
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'User data initial load failed: $label',
+      );
       return fallback;
     }
   }
@@ -988,9 +1068,14 @@ class StoryController extends Notifier<StoryState> {
     try {
       final keys = await _repo.fetchCompletedBibleChapterKeys(user.id);
       return (keys: keys, readAts: {for (final key in keys) key: null});
-    } catch (error) {
+    } catch (error, stackTrace) {
       debugPrint(
         '[StoryController] fetch bible chapter progress failed: $error',
+      );
+      AppMonitoringService.instance.recordNonFatal(
+        error,
+        stackTrace,
+        reason: 'User data initial load failed: bible chapter progress',
       );
       return (keys: const <String>{}, readAts: const <String, DateTime?>{});
     }
