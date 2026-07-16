@@ -1131,7 +1131,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('하단 저장/말씀 탭 대신 이야기 탐험 요약 카드를 보여준다', (tester) async {
+  testWidgets('저장한 이야기가 1개여도 목록을 먼저 열고 카드 탭에서만 상세로 이동한다', (tester) async {
     final savedVerse = SavedBibleVerse(
       id: 'saved-1',
       userId: user.id,
@@ -1212,12 +1212,18 @@ void main() {
       () => userRepository.countSavedVerses(userId: user.id),
     ).thenAnswer((_) async => 1);
 
+    StoryEvent? openedEvent;
+    ProfileEventOpenSource? openedSource;
     await _pumpProfileTab(
       tester,
       user: user,
       storyRepository: storyRepository,
       userRepository: userRepository,
       supabaseClient: supabaseClient,
+      onOpenEventDetail: (event, {source}) {
+        openedEvent = event;
+        openedSource = source;
+      },
     );
 
     expect(find.text('이야기 탐험 요약'), findsOneWidget);
@@ -1246,6 +1252,18 @@ void main() {
       find.byKey(const ValueKey('saved-stories-review-grid')),
       findsOneWidget,
     );
+    expect(openedEvent, isNull);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('saved-stories-review-grid')),
+        matching: find.text(savedEvent.title),
+      ),
+    );
+    await tester.pump();
+
+    expect(openedEvent, same(savedEvent));
+    expect(openedSource, ProfileEventOpenSource.detailOnly);
   });
 
   testWidgets('프로필 첫 진입은 기존 컨트롤러 상태가 비어 있어도 완료 이야기 수를 새로 읽는다', (tester) async {
