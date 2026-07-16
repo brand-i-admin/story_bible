@@ -223,39 +223,55 @@ class ProfileEventEraDivider extends StatelessWidget {
     return Padding(
       key: key == null ? ValueKey('profile-event-era-divider-$eraId') : null,
       padding: const EdgeInsets.fromLTRB(2, 4, 2, 0),
-      child: Row(
-        children: [
-          Expanded(child: Divider(color: palette.subtleBorder, height: 1)),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: palette.currentFill,
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: palette.subtleBorder, width: 0.9),
-            ),
-            child: Text(
-              label,
-              maxLines: largeText ? 2 : 1,
-              overflow: largeText
-                  ? TextOverflow.visible
-                  : TextOverflow.ellipsis,
-              softWrap: true,
-              style: TextStyle(
-                color: palette.text,
-                fontSize: 11.5,
-                fontWeight: FontWeight.w900,
-                height: 1.0,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 140;
+          final dividerAllowance = compact ? AppSpacing.x3 : AppSpacing.x10;
+          final maxBadgeWidth = constraints.maxWidth > dividerAllowance
+              ? constraints.maxWidth - dividerAllowance
+              : constraints.maxWidth;
+          return Row(
+            children: [
+              Expanded(child: Divider(color: palette.subtleBorder, height: 1)),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxBadgeWidth),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: compact ? 2 : 8),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: compact ? AppSpacing.x2 : AppSpacing.x4,
+                    vertical: AppSpacing.x1,
+                  ),
+                  decoration: BoxDecoration(
+                    color: palette.currentFill,
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: palette.subtleBorder, width: 0.9),
+                  ),
+                  child: Text(
+                    label,
+                    maxLines: largeText ? null : 2,
+                    overflow: largeText
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                    softWrap: true,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: palette.text,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w900,
+                      height: 1.0,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-          Expanded(
-            child: Divider(
-              color: AppColors.borderCard.withValues(alpha: 0.58),
-              height: 1,
-            ),
-          ),
-        ],
+              Expanded(
+                child: Divider(
+                  color: AppColors.borderCard.withValues(alpha: 0.58),
+                  height: 1,
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

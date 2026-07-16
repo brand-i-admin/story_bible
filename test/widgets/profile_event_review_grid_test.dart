@@ -81,6 +81,42 @@ void main() {
     );
     expect(nextDivider.top - first.bottom, lessThanOrEqualTo(14));
   });
+
+  testWidgets('좁은 검색 결과 열에서도 긴 시대명이 오버플로하지 않는다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: const MediaQuery(
+          data: MediaQueryData(textScaler: TextScaler.linear(1.2)),
+          child: Scaffold(
+            body: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 96,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ProfileEventEraDivider(
+                      eraId: 'era_nt_public_ministry',
+                      label: '예수님의 공생애',
+                    ),
+                    ProfileEventEraDivider(
+                      eraId: 'era_exile_return',
+                      label: '포로 및 포로 후기',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('예수님의 공생애'), findsOneWidget);
+    expect(find.text('포로 및 포로 후기'), findsOneWidget);
+  });
 }
 
 StoryEvent _event(String id, String title, String eraId, int storyIndex) {
