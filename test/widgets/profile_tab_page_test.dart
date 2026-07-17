@@ -709,7 +709,7 @@ void main() {
       supabaseClient: supabaseClient,
     );
 
-    expect(find.text('신앙 다이어리'), findsWidgets);
+    expect(find.text('다이어리'), findsWidgets);
     expect(find.byIcon(Icons.directions_walk_rounded), findsNothing);
     expect(find.byIcon(Icons.place_rounded), findsNothing);
   });
@@ -855,7 +855,7 @@ void main() {
       },
     );
 
-    expect(find.text('다이어리'), findsOneWidget);
+    expect(find.text('다이어리'), findsNWidgets(2));
     expect(
       find.byKey(const ValueKey('profile-story-exploration-summary-layer')),
       findsOneWidget,
@@ -924,16 +924,19 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('복습'), findsOneWidget);
     expect(find.text('기도'), findsNothing);
-    expect(find.text('신앙 다이어리'), findsWidgets);
+    expect(find.text('다이어리'), findsWidgets);
     expect(find.text('이야기 탐험 요약'), findsOneWidget);
     final explorationTitle = find.text('이야기 탐험 요약');
-    final diaryCardTitle = find.text('신앙 다이어리').last;
+    final diaryCardTitle = find.descendant(
+      of: find.byKey(const ValueKey('companion-diary-feature-card')),
+      matching: find.text('다이어리'),
+    );
     expect(
       tester.getTopLeft(explorationTitle).dy,
       lessThan(tester.getTopLeft(diaryCardTitle).dy),
     );
 
-    final faithPrompt = find.text("오늘 작성한 신앙 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요.");
+    final faithPrompt = find.text("오늘 작성한 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요.");
     await tester.ensureVisible(faithPrompt);
     await tester.pumpAndSettle();
 
@@ -966,12 +969,15 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    final diaryCardTitle = find.text('신앙 다이어리').last;
+    final diaryCardTitle = find.descendant(
+      of: find.byKey(const ValueKey('companion-diary-feature-card')),
+      matching: find.text('다이어리'),
+    );
     final diaryTitleWidget = tester.widget<Text>(diaryCardTitle);
     expect(diaryTitleWidget.maxLines, 2);
     expect(diaryTitleWidget.overflow, TextOverflow.visible);
 
-    final faithPrompt = find.text("오늘 작성한 신앙 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요.");
+    final faithPrompt = find.text("오늘 작성한 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요.");
     final faithPromptWidget = tester.widget<Text>(faithPrompt);
     expect(faithPromptWidget.maxLines, 4);
     expect(faithPromptWidget.overflow, TextOverflow.visible);
@@ -1045,7 +1051,10 @@ void main() {
       textScale: 1.4,
     );
 
-    final titleFinder = find.text('다이어리');
+    final titleFinder = find.descendant(
+      of: find.byKey(const ValueKey('profile-diary-layer')),
+      matching: find.text('다이어리'),
+    );
     expect(titleFinder, findsOneWidget);
     expect(find.text('고라의 반역: 권위에 맞서다'), findsNothing);
     expect(
@@ -1122,7 +1131,13 @@ void main() {
       textScale: 1.4,
     );
 
-    expect(find.text('다이어리'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('profile-diary-layer')),
+        matching: find.text('다이어리'),
+      ),
+      findsOneWidget,
+    );
     expect(
       find.byKey(const ValueKey('emotion-category-gratitude')),
       findsNothing,

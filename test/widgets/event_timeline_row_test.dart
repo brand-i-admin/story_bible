@@ -226,6 +226,44 @@ void main() {
   });
 
   group('StoryEventThumbCard emotion badge', () {
+    testWidgets('미션 타임라인 카드는 설명 없이 한 줄 수동 스크롤 제목과 우측 흐림을 쓴다', (tester) async {
+      const title = '돌라와 야일: 짧게 기록된 평화의 시대를 오래 살펴보는 제목';
+      const summary = '미션 카드에서는 표시하지 않을 설명입니다.';
+      await tester.pumpWidget(
+        _harness(
+          EventTimelineRow(
+            events: [_event(1, title: title, summary: summary)],
+            allEras: [_era()],
+            charactersByCode: const {},
+            selectedEventId: 'e1',
+            onTapEvent: (_) {},
+            cardPresentation: StoryEventCardPresentation.missionTimeline,
+            showSummary: false,
+          ),
+          width: 180,
+          height: 220,
+          textScale: 1.4,
+        ),
+      );
+      await tester.pump();
+
+      final titleText = tester.widget<Text>(find.text(title));
+      expect(titleText.maxLines, 1);
+      expect(titleText.softWrap, isFalse);
+      expect(find.text(summary), findsNothing);
+      expect(
+        find.byKey(const ValueKey('story-card-title-fade-missionTimeline-e1')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const ValueKey('story-card-title-scroll-missionTimeline-e1'),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('좁은 3열 프로필 카드 높이에서도 내용이 overflow 되지 않는다', (tester) async {
       await tester.pumpWidget(
         _harness(

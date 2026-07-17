@@ -519,52 +519,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
             _ReadingProgressRow(
               currentIndex: _readingTargetIndex,
               totalCount: _readingTargets.length,
-            )
-          else
-            _BibleChipsRow(
-              testament: _selectedTestament,
-              bookNo: selectedBookNoSafe,
-              chapter: selectedChapterSafe,
-              books: testamentBooks,
-              chapters: chapterItems,
-              completedChapterKeys: storyState.completedBibleChapterKeys,
-              onTestamentChanged: (t) {
-                setState(() {
-                  _selectedTestament = t;
-                  final next = _booksForTestament(t);
-                  if (next.isEmpty) return;
-                  final inSame = t == 'new'
-                      ? _selectedBookNo >= 40
-                      : _selectedBookNo <= 39;
-                  if (!inSame) {
-                    _selectedBookNo = next.first.key + 1;
-                  }
-                  final maxChapter = bibleBooks[_selectedBookNo - 1].chapters;
-                  if (_selectedChapter > maxChapter) {
-                    _selectedChapter = maxChapter;
-                  }
-                  _pendingFocusVerse = null;
-                  _selectedVerse = null;
-                });
-              },
-              onBookChanged: (bookNo) {
-                setState(() {
-                  _selectedBookNo = bookNo;
-                  final maxChapter = bibleBooks[bookNo - 1].chapters;
-                  if (_selectedChapter > maxChapter) {
-                    _selectedChapter = maxChapter;
-                  }
-                  _pendingFocusVerse = null;
-                  _selectedVerse = null;
-                });
-              },
-              onChapterChanged: (chapter) {
-                setState(() {
-                  _selectedChapter = chapter;
-                  _pendingFocusVerse = null;
-                  _selectedVerse = null;
-                });
-              },
             ),
           Expanded(
             child: _BibleVersesArea(
@@ -585,13 +539,73 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
                   ? null
                   : _verseKey(selectedVerse),
               onTapVerse: _selectVerse,
+              header: isGuidedReading
+                  ? null
+                  : _BibleChipsRow(
+                      testament: _selectedTestament,
+                      bookNo: selectedBookNoSafe,
+                      chapter: selectedChapterSafe,
+                      books: testamentBooks,
+                      chapters: chapterItems,
+                      completedChapterKeys:
+                          storyState.completedBibleChapterKeys,
+                      contentPadding: const EdgeInsets.fromLTRB(0, 4, 0, 12),
+                      onTestamentChanged: (t) {
+                        setState(() {
+                          _selectedTestament = t;
+                          final next = _booksForTestament(t);
+                          if (next.isEmpty) return;
+                          final inSame = t == 'new'
+                              ? _selectedBookNo >= 40
+                              : _selectedBookNo <= 39;
+                          if (!inSame) {
+                            _selectedBookNo = next.first.key + 1;
+                          }
+                          final maxChapter =
+                              bibleBooks[_selectedBookNo - 1].chapters;
+                          if (_selectedChapter > maxChapter) {
+                            _selectedChapter = maxChapter;
+                          }
+                          _pendingFocusVerse = null;
+                          _selectedVerse = null;
+                        });
+                      },
+                      onBookChanged: (bookNo) {
+                        setState(() {
+                          _selectedBookNo = bookNo;
+                          final maxChapter = bibleBooks[bookNo - 1].chapters;
+                          if (_selectedChapter > maxChapter) {
+                            _selectedChapter = maxChapter;
+                          }
+                          _pendingFocusVerse = null;
+                          _selectedVerse = null;
+                        });
+                      },
+                      onChapterChanged: (chapter) {
+                        setState(() {
+                          _selectedChapter = chapter;
+                          _pendingFocusVerse = null;
+                          _selectedVerse = null;
+                        });
+                      },
+                    ),
               footer: isGuidedReading
                   ? null
-                  : _ChapterReadButton(
-                      isChapterRead: isSelectedChapterRead,
-                      onToggleChapterRead: () => _setCurrentChapterRead(
-                        isRead: !isSelectedChapterRead,
-                      ),
+                  : Column(
+                      children: [
+                        _BibleBottomBar(
+                          canPrev: selectedChapterSafe > 1,
+                          canNext: selectedChapterSafe < chapterCount,
+                          onPrev: () => _goToChapter(-1),
+                          onNext: () => _goToChapter(1),
+                        ),
+                        _ChapterReadButton(
+                          isChapterRead: isSelectedChapterRead,
+                          onToggleChapterRead: () => _setCurrentChapterRead(
+                            isRead: !isSelectedChapterRead,
+                          ),
+                        ),
+                      ],
                     ),
             ),
           ),
@@ -602,13 +616,6 @@ class _BibleReaderPageState extends ConsumerState<BibleReaderPage> {
               isLast: _readingTargetIndex == _readingTargets.length - 1,
               onNext: _goToNextReadingTarget,
               onComplete: _completeGuidedReading,
-            )
-          else
-            _BibleBottomBar(
-              canPrev: selectedChapterSafe > 1,
-              canNext: selectedChapterSafe < chapterCount,
-              onPrev: () => _goToChapter(-1),
-              onNext: () => _goToChapter(1),
             ),
         ],
       ),
@@ -812,6 +819,7 @@ class _CircleIconButton extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────
 
 const double _bibleBookDropdownWidth = 124;
+const double _bibleSelectorRowWidth = 324;
 
 class _BibleChipsRow extends StatelessWidget {
   const _BibleChipsRow({
@@ -821,6 +829,7 @@ class _BibleChipsRow extends StatelessWidget {
     required this.books,
     required this.chapters,
     required this.completedChapterKeys,
+    this.contentPadding = const EdgeInsets.fromLTRB(16, 4, 16, 12),
     required this.onTestamentChanged,
     required this.onBookChanged,
     required this.onChapterChanged,
@@ -832,6 +841,7 @@ class _BibleChipsRow extends StatelessWidget {
   final List<MapEntry<int, BibleBookMeta>> books;
   final List<int> chapters;
   final Set<String> completedChapterKeys;
+  final EdgeInsets contentPadding;
   final ValueChanged<String> onTestamentChanged;
   final ValueChanged<int> onBookChanged;
   final ValueChanged<int> onChapterChanged;
@@ -840,66 +850,87 @@ class _BibleChipsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            SizedBox(
-              width: 92,
-              child: bibleDropdownFrame<String>(
-                value: testament,
-                items: const [
-                  DropdownMenuItem(value: 'old', child: Text('구약')),
-                  DropdownMenuItem(value: 'new', child: Text('신약')),
+      padding: contentPadding,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final rowWidth = constraints.maxWidth < _bibleSelectorRowWidth
+              ? _bibleSelectorRowWidth
+              : constraints.maxWidth;
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: rowWidth,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    key: const ValueKey('bible-testament-selector'),
+                    width: 92,
+                    child: bibleDropdownFrame<String>(
+                      value: testament,
+                      items: const [
+                        DropdownMenuItem(value: 'old', child: Text('구약')),
+                        DropdownMenuItem(value: 'new', child: Text('신약')),
+                      ],
+                      onChanged: (v) =>
+                          v != null ? onTestamentChanged(v) : null,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    key: const ValueKey('bible-book-selector'),
+                    width: _bibleBookDropdownWidth,
+                    child: bibleDropdownFrame<int>(
+                      value: bookNo,
+                      items: books
+                          .map(
+                            (e) => DropdownMenuItem<int>(
+                              value: e.key + 1,
+                              child: Text(
+                                e.value.name,
+                                maxLines: largeText ? 2 : 1,
+                                overflow: largeText
+                                    ? TextOverflow.visible
+                                    : TextOverflow.ellipsis,
+                                softWrap: true,
+                              ),
+                            ),
+                          )
+                          .toList(growable: false),
+                      onChanged: (v) => v != null ? onBookChanged(v) : null,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    key: const ValueKey('bible-chapter-selector'),
+                    width: 92,
+                    child: bibleDropdownFrame<int>(
+                      value: chapter,
+                      items: chapters
+                          .map((c) {
+                            final read = completedChapterKeys.contains(
+                              bibleChapterProgressKey(
+                                bookNo: bookNo,
+                                chapterNo: c,
+                              ),
+                            );
+                            return DropdownMenuItem<int>(
+                              value: c,
+                              child: _ChapterDropdownItem(
+                                chapter: c,
+                                read: read,
+                              ),
+                            );
+                          })
+                          .toList(growable: false),
+                      onChanged: (v) => v != null ? onChapterChanged(v) : null,
+                    ),
+                  ),
                 ],
-                onChanged: (v) => v != null ? onTestamentChanged(v) : null,
               ),
             ),
-            const SizedBox(width: 8),
-            SizedBox(
-              width: _bibleBookDropdownWidth,
-              child: bibleDropdownFrame<int>(
-                value: bookNo,
-                items: books
-                    .map(
-                      (e) => DropdownMenuItem<int>(
-                        value: e.key + 1,
-                        child: Text(
-                          e.value.name,
-                          maxLines: largeText ? 2 : 1,
-                          overflow: largeText
-                              ? TextOverflow.visible
-                              : TextOverflow.ellipsis,
-                          softWrap: true,
-                        ),
-                      ),
-                    )
-                    .toList(growable: false),
-                onChanged: (v) => v != null ? onBookChanged(v) : null,
-              ),
-            ),
-            const SizedBox(width: 8),
-            SizedBox(
-              width: 92,
-              child: bibleDropdownFrame<int>(
-                value: chapter,
-                items: chapters
-                    .map((c) {
-                      final read = completedChapterKeys.contains(
-                        bibleChapterProgressKey(bookNo: bookNo, chapterNo: c),
-                      );
-                      return DropdownMenuItem<int>(
-                        value: c,
-                        child: _ChapterDropdownItem(chapter: c, read: read),
-                      );
-                    })
-                    .toList(growable: false),
-                onChanged: (v) => v != null ? onChapterChanged(v) : null,
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -951,6 +982,7 @@ class _BibleVersesArea extends StatelessWidget {
     required this.savedVersesByKey,
     required this.selectedVerseKey,
     required this.onTapVerse,
+    this.header,
     this.footer,
   });
 
@@ -962,6 +994,7 @@ class _BibleVersesArea extends StatelessWidget {
   final Map<String, SavedBibleVerse> savedVersesByKey;
   final String? selectedVerseKey;
   final void Function(BibleVerse)? onTapVerse;
+  final Widget? header;
   final Widget? footer;
 
   static const double _estimatedVerseRowExtent = 82;
@@ -1055,6 +1088,7 @@ class _BibleVersesArea extends StatelessWidget {
           controller: scrollController,
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           children: [
+            if (header != null) header!,
             if (verses.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),

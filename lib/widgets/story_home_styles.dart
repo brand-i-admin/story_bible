@@ -735,12 +735,8 @@ Widget storySection({
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (inlineTitle)
-            RichText(
-              text: TextSpan(
-                style: const TextStyle(
-                  fontSize: AppFontSizes.body,
-                  height: AppLineHeights.body,
-                ).copyWith(color: bodyColor),
+            Text.rich(
+              TextSpan(
                 children: [
                   TextSpan(
                     text: title,
@@ -752,6 +748,10 @@ Widget storySection({
                   TextSpan(text: content),
                 ],
               ),
+              style: const TextStyle(
+                fontSize: AppFontSizes.body,
+                height: AppLineHeights.body,
+              ).copyWith(color: bodyColor),
             )
           else ...[
             Row(
@@ -1111,7 +1111,6 @@ class _SceneCaptionOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final largeText = _usesLargeTextLayout(context);
     return Align(
       alignment: Alignment.bottomCenter,
       child: DecoratedBox(
@@ -1124,21 +1123,18 @@ class _SceneCaptionOverlay extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 9,
-            vertical: largeText ? 7 : 6,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
           child: Text(
             caption,
             textAlign: TextAlign.center,
-            maxLines: largeText ? null : 1,
-            overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
-            softWrap: true,
-            style: TextStyle(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 11,
               fontWeight: FontWeight.w800,
-              height: largeText ? 1.24 : 1.18,
+              height: 1.18,
               letterSpacing: 0,
             ),
           ),

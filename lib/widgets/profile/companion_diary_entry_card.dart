@@ -177,7 +177,7 @@ class CompanionDiaryEntryDetailDialog extends StatelessWidget {
     final titleColor = darkSurface ? palette.text : AppColors.ink800;
     final bodyColor = darkSurface ? palette.text : AppColors.ink500;
     return ParchmentDialog(
-      title: '신앙 다이어리 상세',
+      title: '다이어리 상세',
       subtitle: formatCompanionDiaryEntryDate(entry.entryDate),
       showCloseButton: true,
       actions: [
@@ -217,14 +217,24 @@ class CompanionDiaryEntryDetailDialog extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          Text(
-            entry.body,
-            key: ValueKey('companion-diary-detail-body-${entry.id}'),
-            style: TextStyle(
-              color: bodyColor,
-              fontSize: 13.4,
-              fontWeight: FontWeight.w700,
-              height: 1.55,
+          Container(
+            key: const ValueKey('companion-diary-detail-body-surface'),
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppSpacing.x5),
+            decoration: BoxDecoration(
+              color: darkSurface ? palette.softSurface : palette.mutedSurface,
+              borderRadius: BorderRadius.circular(AppRadii.lg),
+              border: Border.all(color: palette.subtleBorder, width: 0.9),
+            ),
+            child: Text(
+              entry.body,
+              key: ValueKey('companion-diary-detail-body-${entry.id}'),
+              style: TextStyle(
+                color: bodyColor,
+                fontSize: 13.4,
+                fontWeight: FontWeight.w700,
+                height: 1.55,
+              ),
             ),
           ),
         ],
@@ -244,7 +254,7 @@ Future<bool> showCompanionDiaryDeleteConfirmDialog(
       final darkSurface = palette == AppColorPalette.blackMap;
       final largeText = MediaQuery.textScalerOf(dialogContext).scale(1) >= 1.3;
       return ParchmentDialog(
-        title: '신앙 다이어리를 삭제할까요?',
+        title: '다이어리를 삭제할까요?',
         subtitle: '남긴 다이어리를 삭제합니다.',
         actions: [
           ParchmentDialogActionButton(

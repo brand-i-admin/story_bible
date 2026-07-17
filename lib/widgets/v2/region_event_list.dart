@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../data/character_name_fallbacks.dart';
@@ -162,7 +164,13 @@ class RegionEventList extends StatelessWidget {
 
 /// 사건 썸네일 카드 — 홈의 RegionEventList 와 EventDetailPage 의 prev/next 카드
 /// 양쪽에서 재사용. orderNumber 가 null 이면 좌상단 동그라미 배지 미표시.
-enum StoryEventCardPresentation { mapTimeline, todayCurrent, todayAdjacent }
+enum StoryEventCardPresentation {
+  mapTimeline,
+  missionTimeline,
+  todayCurrent,
+  todayAdjacent,
+  reviewGrid,
+}
 
 class StoryEventThumbCard extends StatelessWidget {
   const StoryEventThumbCard({
@@ -190,10 +198,12 @@ class StoryEventThumbCard extends StatelessWidget {
     this.publicUrlForStoragePath,
   }) : forceOpaqueSurface =
            forceOpaqueSurface ??
-           presentation != StoryEventCardPresentation.mapTimeline,
+           (presentation != StoryEventCardPresentation.mapTimeline &&
+               presentation != StoryEventCardPresentation.missionTimeline),
        expandSurface =
            expandSurface ??
-           presentation != StoryEventCardPresentation.mapTimeline;
+           (presentation == StoryEventCardPresentation.todayCurrent ||
+               presentation == StoryEventCardPresentation.todayAdjacent);
   final StoryEvent event;
   final Era? era;
   final Map<String, Character> charactersByCode;
@@ -252,7 +262,9 @@ class StoryEventThumbCard extends StatelessWidget {
         if (orderNumber != null ||
             (emotionKey != null && emotionKey!.isNotEmpty))
           _OrderBadge(orderNumber: orderNumber, emotionKey: emotionKey),
-        if (selected && presentation == StoryEventCardPresentation.mapTimeline)
+        if (selected &&
+            (presentation == StoryEventCardPresentation.mapTimeline ||
+                presentation == StoryEventCardPresentation.missionTimeline))
           const _CurrentStoryBadge(),
       ],
     );
@@ -279,7 +291,9 @@ class StoryEventThumbCard extends StatelessWidget {
         (completed
             ? palette.completedBorder
             : (selected ? palette.selectedBorder : palette.subtleBorder));
-    final borderWidth = presentation == StoryEventCardPresentation.mapTimeline
+    final borderWidth =
+        presentation == StoryEventCardPresentation.mapTimeline ||
+            presentation == StoryEventCardPresentation.missionTimeline
         ? (selected ? 2.0 : 1.6)
         : 1.0;
     return Material(
@@ -326,13 +340,20 @@ class StoryEventThumbCard extends StatelessWidget {
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final compactLargeText = textScale >= 1.3;
     final deckCompact = expandSurface && !showSummary;
+    final manualSingleLine =
+        presentation == StoryEventCardPresentation.reviewGrid ||
+        presentation == StoryEventCardPresentation.missionTimeline;
     final thumbnailSize = deckCompact
         ? (compactLargeText ? 38.0 : 48.0)
         : (compactLargeText ? 44.0 : 64.0);
     final characterPillsHeight = deckCompact
-        ? (compactLargeText ? 21.0 : 18.0)
+        ? (presentation == StoryEventCardPresentation.todayAdjacent
+              ? (compactLargeText ? 19.0 : 17.0)
+              : (compactLargeText ? 21.0 : 18.0))
         : (compactLargeText ? 24.0 : 18.0);
-    final titleMaxLines = deckCompact ? 2 : (compactLargeText ? null : 2);
+    final titleMaxLines = manualSingleLine
+        ? 1
+        : (deckCompact ? 2 : (compactLargeText ? null : 2));
     final summaryMaxLines = compactLargeText ? null : 2;
     final gapAfterThumbnail = deckCompact
         ? (compactLargeText ? 2.0 : 4.0)
@@ -358,22 +379,28 @@ class StoryEventThumbCard extends StatelessWidget {
           ),
           event: event,
           theme: theme,
+          presentation: presentation,
           maxLines: titleMaxLines,
           fontSize: deckCompact
               ? presentation == StoryEventCardPresentation.todayCurrent
                     ? 12.2
-                    : 11.2
+                    : 9.6
               : 12,
         ),
         SizedBox(height: gapAfterTitle),
-        _ThumbMetaRow(placeName: event.placeName, yearLabel: _yearLabel()),
+        _ThumbMetaRow(
+          eventId: event.id,
+          presentation: presentation,
+          placeName: event.placeName,
+          yearLabel: _yearLabel(),
+        ),
         if (showSummary && summary.isNotEmpty) ...[
           SizedBox(height: gapBeforeSummary),
           _ThumbSummary(summary: summary, maxLines: summaryMaxLines),
         ],
         if (showCharacterPills && event.characterCodes.isNotEmpty) ...[
           SizedBox(height: gapBeforePills),
-          _buildCharacterPills(height: characterPillsHeight),
+          _buildCharacterPills(context, height: characterPillsHeight),
         ],
       ],
     );
@@ -385,19 +412,19 @@ class StoryEventThumbCard extends StatelessWidget {
     return startYear < 0 ? 'B.C. ${-startYear}' : 'A.D. $startYear';
   }
 
-  Widget _buildCharacterPills({required double height}) {
+  Widget _buildCharacterPills(BuildContext context, {required double height}) {
     final ordered = _orderedCharacterCodes();
     return SizedBox(
       height: height,
-      child: ShaderMask(
-        shaderCallback: (bounds) => const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          stops: [0.0, 0.85, 1.0],
-          colors: [Colors.white, Colors.white, Color(0x00FFFFFF)],
-        ).createShader(bounds),
-        blendMode: BlendMode.dstIn,
+      child: _RightEdgeScrollFade(
+        key: ValueKey(
+          'story-card-characters-fade-${presentation.name}-${event.id}',
+        ),
+        strong: presentation == StoryEventCardPresentation.reviewGrid,
         child: ListView.separated(
+          key: ValueKey(
+            'story-card-characters-scroll-${presentation.name}-${event.id}',
+          ),
           scrollDirection: Axis.horizontal,
           padding: EdgeInsets.zero,
           physics: const ClampingScrollPhysics(),
@@ -411,6 +438,7 @@ class StoryEventThumbCard extends StatelessWidget {
               code: code,
               character: character,
               name: localizedCharacterName(code: code, name: character?.name),
+              compact: presentation == StoryEventCardPresentation.todayAdjacent,
               accentColor: isHighlighted
                   ? colorForHighlightedCharacter?.call(code)
                   : null,
@@ -448,14 +476,37 @@ class _CardThumbnailFrame extends StatelessWidget {
         publicUrlForStoragePath: publicUrlForStoragePath,
       ),
     );
-    if (presentation == StoryEventCardPresentation.mapTimeline) {
+    if (presentation == StoryEventCardPresentation.mapTimeline ||
+        presentation == StoryEventCardPresentation.missionTimeline) {
       return ClipOval(
         child: SizedBox(width: size, height: size, child: thumbnail),
       );
     }
+    if (presentation == StoryEventCardPresentation.reviewGrid) {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final diameter = constraints.maxWidth * 0.5;
+          return Center(
+            child: ClipOval(
+              key: ValueKey(
+                'story-thumbnail-frame-${presentation.name}-${event.id}',
+              ),
+              child: SizedBox(
+                width: diameter,
+                height: diameter,
+                child: thumbnail,
+              ),
+            ),
+          );
+        },
+      );
+    }
+    final isTodayCard =
+        presentation == StoryEventCardPresentation.todayCurrent ||
+        presentation == StoryEventCardPresentation.todayAdjacent;
     final isTodayCurrent =
         presentation == StoryEventCardPresentation.todayCurrent;
-    final aspectRatio = isTodayCurrent ? 8 / 5 : 1.0;
+    final aspectRatio = isTodayCard ? 8 / 5 : 1.0;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: isTodayCurrent ? 3 : 0),
       child: ClipRRect(
@@ -472,6 +523,7 @@ class _ThumbTitle extends StatelessWidget {
     required this.textKey,
     required this.event,
     required this.theme,
+    required this.presentation,
     required this.maxLines,
     required this.fontSize,
   });
@@ -479,32 +531,269 @@ class _ThumbTitle extends StatelessWidget {
   final Key textKey;
   final StoryEvent event;
   final ThemeData theme;
+  final StoryEventCardPresentation presentation;
   final int? maxLines;
   final double fontSize;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final singleLine =
+        presentation == StoryEventCardPresentation.todayAdjacent ||
+        presentation == StoryEventCardPresentation.reviewGrid ||
+        presentation == StoryEventCardPresentation.missionTimeline;
+    final effectiveMaxLines = singleLine ? 1 : maxLines;
+    final style = theme.textTheme.titleSmall?.copyWith(
+      color: palette.text,
+      fontWeight: FontWeight.w700,
+      fontSize: fontSize,
+      height: effectiveMaxLines == null ? 1.14 : 1.08,
+    );
+    if (presentation == StoryEventCardPresentation.todayCurrent) {
+      return _AutoScrollingThumbTitle(
+        scrollKey: ValueKey(
+          'story-card-title-scroll-${presentation.name}-${event.id}',
+        ),
+        textKey: textKey,
+        text: event.title,
+        style: style,
+      );
+    }
+    if (presentation == StoryEventCardPresentation.reviewGrid ||
+        presentation == StoryEventCardPresentation.missionTimeline) {
+      return _ManualScrollingThumbLine(
+        fadeKey: ValueKey(
+          'story-card-title-fade-${presentation.name}-${event.id}',
+        ),
+        scrollKey: ValueKey(
+          'story-card-title-scroll-${presentation.name}-${event.id}',
+        ),
+        textKey: textKey,
+        text: event.title,
+        style: style,
+      );
+    }
     return Text(
       key: textKey,
       event.title,
-      maxLines: maxLines,
-      overflow: maxLines == null ? TextOverflow.visible : TextOverflow.ellipsis,
-      softWrap: true,
+      maxLines: effectiveMaxLines,
+      overflow: effectiveMaxLines == null
+          ? TextOverflow.visible
+          : TextOverflow.ellipsis,
+      softWrap: presentation != StoryEventCardPresentation.todayAdjacent,
       textAlign: TextAlign.center,
-      style: theme.textTheme.titleSmall?.copyWith(
-        color: palette.text,
-        fontWeight: FontWeight.w700,
-        fontSize: fontSize,
-        height: maxLines == null ? 1.14 : 1.08,
+      style: style,
+    );
+  }
+}
+
+class _ManualScrollingThumbLine extends StatelessWidget {
+  const _ManualScrollingThumbLine({
+    required this.fadeKey,
+    required this.scrollKey,
+    required this.textKey,
+    required this.text,
+    required this.style,
+  });
+
+  final Key fadeKey;
+  final Key scrollKey;
+  final Key textKey;
+  final String text;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    return _RightEdgeScrollFade(
+      key: fadeKey,
+      strong: true,
+      child: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          key: scrollKey,
+          scrollDirection: Axis.horizontal,
+          physics: const ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth: constraints.maxWidth),
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                text,
+                key: textKey,
+                maxLines: 1,
+                softWrap: false,
+                textAlign: TextAlign.center,
+                style: style,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RightEdgeScrollFade extends StatelessWidget {
+  const _RightEdgeScrollFade({
+    super.key,
+    required this.child,
+    this.strong = false,
+  });
+
+  final Widget child;
+  final bool strong;
+
+  @override
+  Widget build(BuildContext context) {
+    return ShaderMask(
+      shaderCallback: (bounds) => LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        stops: strong ? const [0.0, 0.68, 0.88, 1.0] : const [0.0, 0.84, 1.0],
+        colors: strong
+            ? const [
+                Colors.white,
+                Colors.white,
+                Color(0x88FFFFFF),
+                Color(0x00FFFFFF),
+              ]
+            : const [Colors.white, Colors.white, Color(0x00FFFFFF)],
+      ).createShader(bounds),
+      blendMode: BlendMode.dstIn,
+      child: child,
+    );
+  }
+}
+
+class _AutoScrollingThumbTitle extends StatefulWidget {
+  const _AutoScrollingThumbTitle({
+    required this.scrollKey,
+    required this.textKey,
+    required this.text,
+    required this.style,
+  });
+
+  final Key scrollKey;
+  final Key textKey;
+  final String text;
+  final TextStyle? style;
+
+  @override
+  State<_AutoScrollingThumbTitle> createState() =>
+      _AutoScrollingThumbTitleState();
+}
+
+class _AutoScrollingThumbTitleState extends State<_AutoScrollingThumbTitle> {
+  final ScrollController _controller = ScrollController();
+  Timer? _startTimer;
+  int _animationRequest = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleScrollToEnd();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AutoScrollingThumbTitle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.text != widget.text || oldWidget.style != widget.style) {
+      _scheduleScrollToEnd();
+    }
+  }
+
+  void _scheduleScrollToEnd() {
+    final request = ++_animationRequest;
+    _startTimer?.cancel();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startTimer = Timer(const Duration(milliseconds: 850), () {
+        if (!mounted ||
+            request != _animationRequest ||
+            !_controller.hasClients) {
+          return;
+        }
+        _startScrollCycle(request);
+      });
+    });
+  }
+
+  void _startScrollCycle(int request) {
+    if (!mounted || request != _animationRequest || !_controller.hasClients) {
+      return;
+    }
+    final distance = _controller.position.maxScrollExtent;
+    if (distance <= 0) return;
+    final milliseconds = (distance * 34).round().clamp(2400, 9000);
+    unawaited(
+      _controller
+          .animateTo(
+            distance,
+            duration: Duration(milliseconds: milliseconds),
+            curve: Curves.linear,
+          )
+          .then((_) {
+            if (!mounted ||
+                request != _animationRequest ||
+                !_controller.hasClients) {
+              return;
+            }
+            _startTimer = Timer(const Duration(seconds: 2), () {
+              if (!mounted ||
+                  request != _animationRequest ||
+                  !_controller.hasClients) {
+                return;
+              }
+              _controller.jumpTo(0);
+              _startScrollCycle(request);
+            });
+          }),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationRequest++;
+    _startTimer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        key: widget.scrollKey,
+        controller: _controller,
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: constraints.maxWidth),
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              widget.text,
+              key: widget.textKey,
+              maxLines: 1,
+              softWrap: false,
+              textAlign: TextAlign.center,
+              style: widget.style,
+            ),
+          ),
+        ),
       ),
     );
   }
 }
 
 class _ThumbMetaRow extends StatelessWidget {
-  const _ThumbMetaRow({required this.placeName, required this.yearLabel});
+  const _ThumbMetaRow({
+    required this.eventId,
+    required this.presentation,
+    required this.placeName,
+    required this.yearLabel,
+  });
 
+  final String eventId;
+  final StoryEventCardPresentation presentation;
   final String? placeName;
   final String? yearLabel;
 
@@ -513,21 +802,27 @@ class _ThumbMetaRow extends StatelessWidget {
     final palette = AppPaletteTheme.of(context);
     final hasPlace = placeName != null && placeName!.isNotEmpty;
     if (!hasPlace && yearLabel == null) return const SizedBox.shrink();
-    return SizedBox(
-      width: double.infinity,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
+    final label = [
+      if (hasPlace) placeName!,
+      if (yearLabel != null) yearLabel!,
+    ].join(' · ');
+    if (presentation == StoryEventCardPresentation.todayAdjacent) {
+      return SizedBox(
+        width: double.infinity,
         child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (hasPlace) ...[
               Icon(Icons.location_on, size: 10, color: palette.primary),
               const SizedBox(width: 1),
-              Text(
-                placeName!,
+            ],
+            Expanded(
+              child: Text(
+                label,
+                key: ValueKey(
+                  'story-card-meta-ellipsis-${presentation.name}-$eventId',
+                ),
                 maxLines: 1,
-                overflow: TextOverflow.visible,
+                overflow: TextOverflow.ellipsis,
                 softWrap: false,
                 style: TextStyle(
                   fontSize: 10,
@@ -536,28 +831,76 @@ class _ThumbMetaRow extends StatelessWidget {
                   height: 1.1,
                 ),
               ),
-            ],
-            if (hasPlace && yearLabel != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 3),
-                child: Text(
-                  '·',
-                  style: TextStyle(fontSize: 10, color: palette.mutedText),
-                ),
-              ),
-            if (yearLabel != null)
-              Text(
-                yearLabel!,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: palette.mutedText,
-                  height: 1.1,
-                ),
-              ),
+            ),
           ],
         ),
-      ),
+      );
+    }
+    final row = Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (hasPlace) ...[
+          Icon(Icons.location_on, size: 10, color: palette.primary),
+          const SizedBox(width: 1),
+          Text(
+            placeName!,
+            maxLines: 1,
+            overflow: TextOverflow.visible,
+            softWrap: false,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: palette.mutedText,
+              height: 1.1,
+            ),
+          ),
+        ],
+        if (hasPlace && yearLabel != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child: Text(
+              '·',
+              style: TextStyle(fontSize: 10, color: palette.mutedText),
+            ),
+          ),
+        if (yearLabel != null)
+          Text(
+            yearLabel!,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: palette.mutedText,
+              height: 1.1,
+            ),
+          ),
+      ],
+    );
+    if (presentation == StoryEventCardPresentation.todayCurrent ||
+        presentation == StoryEventCardPresentation.reviewGrid) {
+      final scrollView = LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          key: ValueKey('story-card-meta-scroll-${presentation.name}-$eventId'),
+          scrollDirection: Axis.horizontal,
+          physics: const ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth: constraints.maxWidth),
+            child: row,
+          ),
+        ),
+      );
+      if (presentation == StoryEventCardPresentation.reviewGrid) {
+        return _RightEdgeScrollFade(
+          key: ValueKey('story-card-meta-fade-${presentation.name}-$eventId'),
+          strong: true,
+          child: scrollView,
+        );
+      }
+      return scrollView;
+    }
+    return SizedBox(
+      width: double.infinity,
+      child: FittedBox(fit: BoxFit.scaleDown, child: row),
     );
   }
 }
@@ -626,16 +969,24 @@ class _OrderBadge extends StatelessWidget {
                   ],
                 ),
                 alignment: Alignment.center,
-                child: Text(
-                  '${orderNumber ?? ''}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w900,
-                    height: 1.0,
-                    shadows: [
-                      Shadow(color: Color(0xCC000000), blurRadius: 1.8),
-                    ],
+                child: Padding(
+                  padding: const EdgeInsets.all(3),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '${orderNumber ?? ''}',
+                      textScaler: TextScaler.noScaling,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        height: 1.0,
+                        shadows: [
+                          Shadow(color: Color(0xCC000000), blurRadius: 1.8),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -678,6 +1029,8 @@ class _TinyOrderBadge extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         '$number',
+        textScaler: TextScaler.noScaling,
+        textAlign: TextAlign.center,
         style: const TextStyle(
           color: Colors.white,
           fontSize: 7,
@@ -815,11 +1168,13 @@ class _CharPillAvatar extends StatelessWidget {
     required this.code,
     required this.character,
     required this.name,
+    this.compact = false,
     this.accentColor,
   });
   final String code;
   final Character? character;
   final String name;
+  final bool compact;
 
   /// 부모가 명시적으로 강조하라고 지정한 색. null 이면 default 파랑 톤
   /// (0xFF3F8FB6) 으로 표시. 사용자가 인물 모드에서 고른 인물의 pill 에
@@ -843,8 +1198,14 @@ class _CharPillAvatar extends StatelessWidget {
     final backgroundColor = color.withValues(alpha: darkSurface ? 0.34 : 0.20);
     final avatarCharacter =
         character ?? _localAvatarFallbackCharacter(code, name);
+    final avatarSize = compact ? 12.0 : 14.0;
     return Container(
-      padding: const EdgeInsets.fromLTRB(2, 2, 6, 2),
+      padding: EdgeInsets.fromLTRB(
+        2,
+        compact ? 1 : 2,
+        compact ? 5 : 6,
+        compact ? 1 : 2,
+      ),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(10),
@@ -858,30 +1219,36 @@ class _CharPillAvatar extends StatelessWidget {
           if (character != null)
             ClipOval(
               child: SizedBox(
-                width: 14,
-                height: 14,
-                child: CharacterAvatar(character: avatarCharacter, size: 14),
+                width: avatarSize,
+                height: avatarSize,
+                child: CharacterAvatar(
+                  character: avatarCharacter,
+                  size: avatarSize,
+                ),
               ),
             )
           else if (avatarCharacter.hasLocalAvatar)
             ClipOval(
               child: SizedBox(
-                width: 14,
-                height: 14,
-                child: CharacterAvatar(character: avatarCharacter, size: 14),
+                width: avatarSize,
+                height: avatarSize,
+                child: CharacterAvatar(
+                  character: avatarCharacter,
+                  size: avatarSize,
+                ),
               ),
             )
           else
             Container(
-              width: 14,
-              height: 14,
+              width: avatarSize,
+              height: avatarSize,
               decoration: BoxDecoration(shape: BoxShape.circle, color: color),
             ),
-          const SizedBox(width: 3),
+          SizedBox(width: compact ? 2 : 3),
           Text(
             name,
             style: TextStyle(
-              fontSize: 9.5,
+              fontSize: compact ? 8.5 : 9.5,
               fontWeight: FontWeight.w800,
               color: textColor,
             ),

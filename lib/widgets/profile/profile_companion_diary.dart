@@ -107,9 +107,7 @@ class CompanionDiaryTodaySection extends StatelessWidget {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(entry == null ? '신앙 다이어리를 남겼어요.' : '신앙 다이어리를 수정했어요.'),
-        ),
+        SnackBar(content: Text(entry == null ? '다이어리를 남겼어요.' : '다이어리를 수정했어요.')),
       );
     } catch (error) {
       if (!context.mounted) {
@@ -117,7 +115,7 @@ class CompanionDiaryTodaySection extends StatelessWidget {
       }
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('신앙 다이어리를 저장하지 못했습니다.\n$error')));
+      ).showSnackBar(SnackBar(content: Text('다이어리를 저장하지 못했습니다.\n$error')));
     }
   }
 
@@ -176,7 +174,7 @@ class CompanionDiaryTodaySection extends StatelessWidget {
       }
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('신앙 다이어리를 삭제했어요.')));
+      ).showSnackBar(const SnackBar(content: Text('다이어리를 삭제했어요.')));
     } catch (error) {
       if (!context.mounted) {
         return;
@@ -236,7 +234,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
     final message =
         error ??
         (readOnlySummary
-            ? "오늘 작성한 신앙 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요."
+            ? "오늘 작성한 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요."
             : '오늘 하나님과 함께한 순간을 기록해 보세요!');
     final darkSurface =
         ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
@@ -315,7 +313,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                       const SizedBox(width: 7),
                       Expanded(
                         child: Text(
-                          '신앙 다이어리',
+                          '다이어리',
                           maxLines: expandReadableText ? 2 : 1,
                           overflow: expandReadableText
                               ? TextOverflow.visible
@@ -447,9 +445,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(entry == null ? '신앙 다이어리를 남겼어요.' : '신앙 다이어리를 수정했어요.'),
-        ),
+        SnackBar(content: Text(entry == null ? '다이어리를 남겼어요.' : '다이어리를 수정했어요.')),
       );
     } catch (error) {
       if (!context.mounted) {
@@ -457,7 +453,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
       }
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('신앙 다이어리를 저장하지 못했습니다.\n$error')));
+      ).showSnackBar(SnackBar(content: Text('다이어리를 저장하지 못했습니다.\n$error')));
     }
   }
 
@@ -515,7 +511,7 @@ class _DiaryWriteButton extends StatelessWidget {
                 children: [
                   ProfileGlowingAddButton(
                     key: const ValueKey('companion-diary-add-button'),
-                    tooltip: '신앙 다이어리 기록하기',
+                    tooltip: '다이어리 기록하기',
                     onTap: onTap,
                     size: 28,
                     iconSize: 19,
@@ -618,7 +614,7 @@ class _CompanionDiaryEmptyState extends StatelessWidget {
           if (canWrite) ...[
             ProfileGlowingAddButton(
               key: const ValueKey('companion-diary-add-button'),
-              tooltip: '신앙 다이어리 작성',
+              tooltip: '다이어리 작성',
               onTap: onAdd,
             ),
             const SizedBox(height: 10),
@@ -627,7 +623,7 @@ class _CompanionDiaryEmptyState extends StatelessWidget {
             error ??
                 (canWrite
                     ? '신앙(예배,말씀,기도,삶의 사건)을 기록해보세요'
-                    : '로그인하면 신앙 다이어리를 남길 수 있어요.'),
+                    : '로그인하면 다이어리를 남길 수 있어요.'),
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: AppColors.ink300,

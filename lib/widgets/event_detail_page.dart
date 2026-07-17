@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -927,7 +929,6 @@ class _NavRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final thumbnail = ClipOval(
       child: SizedBox(
         width: 48,
@@ -980,11 +981,15 @@ class _NavRow extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        Text(
-          event.title,
-          maxLines: largeText ? 3 : 1,
-          overflow: largeText ? TextOverflow.visible : TextOverflow.ellipsis,
-          softWrap: true,
+        _AutoScrollingNavTitle(
+          scrollKey: ValueKey(
+            'event-detail-nav-title-scroll-${isPrev ? 'prev' : 'next'}',
+          ),
+          textKey: ValueKey(
+            'event-detail-nav-title-${isPrev ? 'prev' : 'next'}',
+          ),
+          text: event.title,
+          alignment: isPrev ? Alignment.centerLeft : Alignment.centerRight,
           textAlign: isPrev ? TextAlign.left : TextAlign.right,
           style: TextStyle(
             fontSize: 13,
@@ -1040,6 +1045,119 @@ class _NavRow extends StatelessWidget {
                       color: palette.primaryDeep,
                     ),
                   ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AutoScrollingNavTitle extends StatefulWidget {
+  const _AutoScrollingNavTitle({
+    required this.scrollKey,
+    required this.textKey,
+    required this.text,
+    required this.alignment,
+    required this.textAlign,
+    required this.style,
+  });
+
+  final Key scrollKey;
+  final Key textKey;
+  final String text;
+  final Alignment alignment;
+  final TextAlign textAlign;
+  final TextStyle style;
+
+  @override
+  State<_AutoScrollingNavTitle> createState() => _AutoScrollingNavTitleState();
+}
+
+class _AutoScrollingNavTitleState extends State<_AutoScrollingNavTitle> {
+  final ScrollController _controller = ScrollController();
+  Timer? _timer;
+  int _request = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleCycle();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AutoScrollingNavTitle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.text != widget.text || oldWidget.style != widget.style) {
+      _scheduleCycle();
+    }
+  }
+
+  void _scheduleCycle() {
+    final request = ++_request;
+    _timer?.cancel();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _timer = Timer(const Duration(milliseconds: 850), () {
+        if (!mounted || request != _request || !_controller.hasClients) return;
+        _scrollToEnd(request);
+      });
+    });
+  }
+
+  void _scrollToEnd(int request) {
+    if (!mounted || request != _request || !_controller.hasClients) return;
+    final distance = _controller.position.maxScrollExtent;
+    if (distance <= 0) return;
+    final milliseconds = (distance * 34).round().clamp(2400, 9000);
+    unawaited(
+      _controller
+          .animateTo(
+            distance,
+            duration: Duration(milliseconds: milliseconds),
+            curve: Curves.linear,
+          )
+          .then((_) {
+            if (!mounted || request != _request || !_controller.hasClients) {
+              return;
+            }
+            _timer = Timer(const Duration(seconds: 2), () {
+              if (!mounted || request != _request || !_controller.hasClients) {
+                return;
+              }
+              _controller.jumpTo(0);
+              _scrollToEnd(request);
+            });
+          }),
+    );
+  }
+
+  @override
+  void dispose() {
+    _request++;
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        key: widget.scrollKey,
+        controller: _controller,
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: constraints.maxWidth),
+          child: Align(
+            alignment: widget.alignment,
+            child: Text(
+              widget.text,
+              key: widget.textKey,
+              maxLines: 1,
+              softWrap: false,
+              textAlign: widget.textAlign,
+              style: widget.style,
+            ),
           ),
         ),
       ),

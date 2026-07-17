@@ -33,7 +33,7 @@ void main() {
     await tester.tap(find.text('작성'));
     await tester.pumpAndSettle();
 
-    expect(find.text('신앙 다이어리 작성'), findsOneWidget);
+    expect(find.text('다이어리 작성'), findsOneWidget);
     expect(find.text('2026년 7월 14일 화요일'), findsOneWidget);
     expect(find.text('제목 (선택)'), findsOneWidget);
     expect(find.text('기록을 돕는 질문'), findsOneWidget);

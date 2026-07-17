@@ -449,15 +449,13 @@ void main() {
     expect(source, isNot(contains('icon: Icons.search_rounded')));
   });
 
-  test('Android 폰은 시스템 inset 이 0이어도 하단 시트 여백을 보정한다', () {
+  test('지도 시트는 루트 네비게이션이 처리한 시스템 inset 을 다시 더하지 않는다', () {
     final source = File(
       'lib/screens/story_home_screen_state.dart',
     ).readAsStringSync();
 
-    expect(source, contains('_androidPhoneNavigationFallbackInset'));
-    expect(source, contains('double _bottomSheetSafeInsetFor('));
-    expect(source, contains('defaultTargetPlatform == TargetPlatform.android'));
-    expect(source, contains('rawBottomInset > 0'));
-    expect(source, contains('_bottomSheetSafeInsetFor('));
+    expect(source, contains('const bottomInset = 0.0;'));
+    expect(source, isNot(contains('_androidPhoneNavigationFallbackInset')));
+    expect(source, isNot(contains('double _bottomSheetSafeInsetFor(')));
   });
 }

@@ -84,7 +84,7 @@ class _CompanionDiaryEditorScreenState
           child: Column(
             children: [
               _DiaryEditorHeader(
-                title: isEditing ? '신앙 다이어리 수정' : '신앙 다이어리 작성',
+                title: isEditing ? '다이어리 수정' : '다이어리 작성',
                 onBack: () => Navigator.of(context).pop(),
               ),
               Expanded(

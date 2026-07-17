@@ -2035,13 +2035,13 @@ class _ProfileExplorationTraceSectionState
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text('신앙 다이어리를 수정했어요.')));
+          ).showSnackBar(const SnackBar(content: Text('다이어리를 수정했어요.')));
         }
       } catch (error) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('신앙 다이어리를 저장하지 못했습니다.\n$error')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('다이어리를 저장하지 못했습니다.\n$error')));
         }
       }
     } else if (action == CompanionDiaryDetailAction.delete) {
@@ -2057,7 +2057,7 @@ class _ProfileExplorationTraceSectionState
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text('신앙 다이어리를 삭제했어요.')));
+          ).showSnackBar(const SnackBar(content: Text('다이어리를 삭제했어요.')));
         }
       } catch (error) {
         if (mounted) {
@@ -2273,7 +2273,7 @@ class _SelectedDateEmotionSummary extends StatelessWidget {
           ProfileEmotionMarksList(
             marks: marks,
             eventById: eventById,
-            emptyMessage: '선택한 날짜에 새긴 감정과 코멘트 혹은 신앙 다이어리가 없습니다',
+            emptyMessage: '선택한 날짜에 새긴 감정과 코멘트 혹은 다이어리가 없습니다',
             loading: false,
             hasError: false,
             showTimestamp: false,
@@ -2563,7 +2563,7 @@ class _SelectedDateDiarySummary extends StatelessWidget {
     }
     if (currentEntry == null) {
       return _ProfileLogEmptyMessage(
-        message: error ?? '선택한 날짜에 남긴 신앙 다이어리가 없습니다.',
+        message: error ?? '선택한 날짜에 남긴 다이어리가 없습니다.',
       );
     }
     return Material(
@@ -2594,7 +2594,7 @@ class _SelectedDateDiarySummary extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '신앙 다이어리',
+                      '다이어리',
                       style: TextStyle(
                         color: palette.successBottom,
                         fontSize: 11,

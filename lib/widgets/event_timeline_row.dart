@@ -14,6 +14,8 @@ import 'completion_celebration.dart';
 import 'v2/region_event_list.dart'
     show StoryEventCardPresentation, StoryEventThumbCard;
 
+export 'v2/region_event_list.dart' show StoryEventCardPresentation;
+
 double eventTimelineRowHeightFor(BuildContext context, {required double base}) {
   final textScale = MediaQuery.textScalerOf(context).scale(1);
   final extra = ((textScale - 1) * 130).clamp(0.0, 60.0).toDouble();
@@ -50,6 +52,8 @@ class EventTimelineRow extends StatefulWidget {
     this.celebrationNonce = 0,
     this.onCelebrationComplete,
     this.publicUrlForStoragePath,
+    this.cardPresentation = StoryEventCardPresentation.mapTimeline,
+    this.showSummary = true,
   });
 
   final List<StoryEvent> events;
@@ -94,6 +98,8 @@ class EventTimelineRow extends StatefulWidget {
   final int celebrationNonce;
   final VoidCallback? onCelebrationComplete;
   final String Function(String storagePath)? publicUrlForStoragePath;
+  final StoryEventCardPresentation cardPresentation;
+  final bool showSummary;
 
   final ValueChanged<StoryEvent> onTapEvent;
 
@@ -281,7 +287,8 @@ class _EventTimelineRowState extends State<EventTimelineRow> {
           emotionKey: widget.eventEmotionMarks[event.id]?.emotionKey,
           attemptSummary: widget.quizAttemptSummaries[event.id],
           orderNumber: widget.orderNumberBuilder?.call(event, idx) ?? idx + 1,
-          presentation: StoryEventCardPresentation.mapTimeline,
+          presentation: widget.cardPresentation,
+          showSummary: widget.showSummary,
           loader: _loader,
           publicUrlForStoragePath: widget.publicUrlForStoragePath,
           onTap: () => widget.onTapEvent(event),

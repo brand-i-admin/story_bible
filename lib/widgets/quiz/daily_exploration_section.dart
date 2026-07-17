@@ -430,6 +430,9 @@ class _DailyExplorationSectionState
                                 colorForHighlightedCharacter:
                                     controller.colorForCharacter,
                                 onTapEvent: widget.onOpenEventDetail,
+                                cardPresentation:
+                                    StoryEventCardPresentation.missionTimeline,
+                                showSummary: false,
                               ),
                             ),
                           ],

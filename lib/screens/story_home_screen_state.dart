@@ -57,7 +57,6 @@ class _StoryDetailBackContext {
 class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   static const double _selectionSheetCollapsedSize = 0.16;
   static const double _selectionSheetExpandedSize = 0.60;
-  static const double _androidPhoneNavigationFallbackInset = 44;
 
   /// 인트로 패널(시대/모드 선택 단계) 의 기본 콘텐츠 높이.
   /// 실제 시트 높이는 화면 높이 대비 비율로 변환하되, 컨텐츠가 짧은 화면에서는
@@ -306,7 +305,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       if (!mounted) return;
       setState(() {
         _homeDiaryLoading = false;
-        _homeDiaryError = '신앙 다이어리를 불러오지 못했습니다.';
+        _homeDiaryError = '다이어리를 불러오지 못했습니다.';
       });
     }
   }
@@ -564,21 +563,6 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   bool _isPhoneSheetLayoutForSize(Size size) => size.width < 720;
-
-  double _bottomSheetSafeInsetFor({
-    required Size viewportSize,
-    required double rawBottomInset,
-  }) {
-    if (rawBottomInset > 0) {
-      return rawBottomInset;
-    }
-    if (!kIsWeb &&
-        defaultTargetPlatform == TargetPlatform.android &&
-        _isPhoneSheetLayoutForSize(viewportSize)) {
-      return _androidPhoneNavigationFallbackInset;
-    }
-    return 0;
-  }
 
   double _sheetFractionForHeight(
     Size size,
@@ -2913,7 +2897,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
     final leavingMap = _rootTab == StoryRootTab.map && tab != StoryRootTab.map;
-    if (leavingMap) {
+    final enteringMap = _rootTab != StoryRootTab.map && tab == StoryRootTab.map;
+    if (leavingMap || enteringMap) {
       _resetMapTabExploration();
     }
     setState(() {
@@ -3008,15 +2993,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     const defaultMapZoom = 3.25;
     final mapZoom = _initialMapZoomOverride(defaultMapZoom);
     final media = MediaQuery.of(context);
-    final viewportSize = MediaQuery.sizeOf(context);
     final topInset = media.padding.top;
-    // Android 3-button nav bar / iOS home indicator 등 system gesture bar 가
-    // 차지하는 픽셀. Android 폰에서 0으로 보고되는 경우에도 작은 fallback 을
-    // 주어 패널 하단이 nav bar 에 가려지지 않게 한다.
-    final bottomInset = _bottomSheetSafeInsetFor(
-      viewportSize: viewportSize,
-      rawBottomInset: media.padding.bottom,
-    );
+    // Scaffold 의 bottomNavigationBar 가 시스템 안전영역까지 이미 차지한다.
+    // 본문 안의 지도 시트가 같은 inset 을 다시 더하면 시트와 네비게이션 사이에
+    // 빈 띠가 생기므로 지도 본문에서는 추가 하단 inset 을 사용하지 않는다.
+    const bottomInset = 0.0;
     final mapCalloutTopObscuredPixels = topInset + 58;
     return Scaffold(
       body: PopScope<Object?>(

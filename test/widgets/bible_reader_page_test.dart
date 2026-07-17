@@ -272,7 +272,7 @@ void main() {
       expect(blueSwatch.border, isNull);
     });
 
-    testWidgets('일반 성경 리더는 장 통독 읽음 처리 버튼을 보여준다', (tester) async {
+    testWidgets('짧은 장은 본문 끝에 통독 처리와 장 이동 버튼을 순서대로 보여준다', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -288,9 +288,26 @@ void main() {
       expect(find.text('통독 읽음 처리'), findsOneWidget);
       expect(find.text('이전 장'), findsOneWidget);
       expect(find.text('다음 장'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('통독 읽음 처리')).dy,
+        greaterThan(tester.getTopLeft(find.text('이전 장')).dy),
+      );
+      final firstSelector = tester.getRect(
+        find.byKey(const ValueKey('bible-testament-selector')),
+      );
+      final lastSelector = tester.getRect(
+        find.byKey(const ValueKey('bible-chapter-selector')),
+      );
+      expect(
+        (firstSelector.left + lastSelector.right) / 2,
+        closeTo(
+          tester.view.physicalSize.width / tester.view.devicePixelRatio / 2,
+          1,
+        ),
+      );
     });
 
-    testWidgets('장 통독 읽음 처리 버튼은 마지막 절 아래에서만 보인다', (tester) async {
+    testWidgets('통독 처리와 이전·다음 장 버튼은 긴 본문의 마지막 절 아래에서만 보인다', (tester) async {
       tester.view.physicalSize = const Size(390, 640);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -310,8 +327,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('이전 장'), findsOneWidget);
-      expect(find.text('다음 장'), findsOneWidget);
+      expect(find.text('이전 장'), findsNothing);
+      expect(find.text('다음 장'), findsNothing);
       expect(find.text('통독 읽음 처리'), findsNothing);
 
       for (var i = 0; i < 20 && find.text('통독 읽음 처리').evaluate().isEmpty; i++) {
@@ -321,9 +338,50 @@ void main() {
 
       expect(find.textContaining('테스트 본문 30'), findsOneWidget);
       expect(find.text('통독 읽음 처리'), findsOneWidget);
+      expect(find.text('이전 장'), findsOneWidget);
+      expect(find.text('다음 장'), findsOneWidget);
       expect(
         tester.getTopLeft(find.text('통독 읽음 처리')).dy,
         greaterThan(tester.getTopLeft(find.textContaining('테스트 본문 30')).dy),
+      );
+      expect(
+        tester.getTopLeft(find.text('통독 읽음 처리')).dy,
+        greaterThan(tester.getTopLeft(find.text('이전 장')).dy),
+      );
+    });
+
+    testWidgets('구약·권·장 선택 줄은 본문과 함께 위로 스크롤된다', (tester) async {
+      tester.view.physicalSize = const Size(390, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            signedInUserProvider.overrideWithValue(user),
+            storyRepositoryProvider.overrideWithValue(storyRepository),
+            userRepositoryProvider.overrideWithValue(userRepository),
+          ],
+          child: const MaterialApp(
+            home: BibleReaderPage(initialBookNo: 1, initialChapterNo: 2),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final selectorTop = tester.getTopLeft(find.text('구약')).dy;
+      final verticalScrollable = find.descendant(
+        of: find.byType(ListView),
+        matching: find.byType(Scrollable),
+      );
+      await tester.drag(find.byType(ListView), const Offset(0, -420));
+      await tester.pumpAndSettle();
+
+      expect(find.text('구약'), findsNothing);
+      expect(
+        tester.state<ScrollableState>(verticalScrollable).position.pixels,
+        greaterThan(selectorTop),
       );
     });
 

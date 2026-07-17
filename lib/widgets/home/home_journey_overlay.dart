@@ -381,6 +381,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     final isCurrent = page == _currentPage;
     final isRecommended = event.id == widget.recommendedEventId;
     final isTodayStory = isRecommended && !widget.todayStoryCompleted;
+    const currentCardTopInset = 20.0;
     final label = isCurrent
         ? (isTodayStory ? '오늘의 이야기' : '현재 이야기')
         : page < _currentPage
@@ -425,91 +426,101 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
       color: AppColors.goldLight,
       child: card,
     );
-    final cardFrame = Stack(
-      key: ValueKey('home-journey-card-${event.id}-$page'),
-      clipBehavior: Clip.none,
-      children: [
-        Positioned.fill(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              isCurrent ? 5 : 10,
-              isCurrent ? 0 : 38,
-              isCurrent ? 5 : 10,
-              0,
-            ),
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 180),
-              opacity: isCurrent ? 1 : 0.72,
-              child: DecoratedBox(
-                key: ValueKey('home-journey-card-surface-frame-${event.id}'),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: isCurrent
-                      ? [
-                          BoxShadow(
-                            color: palette.currentAccent.withValues(
-                              alpha: 0.25,
-                            ),
-                            blurRadius: 18,
-                            spreadRadius: 2,
-                          ),
-                        ]
-                      : null,
+    final cardFrame = LayoutBuilder(
+      builder: (context, frameConstraints) {
+        final currentCardHeight =
+            frameConstraints.maxHeight - currentCardTopInset;
+        final adjacentTopInset =
+            frameConstraints.maxHeight - currentCardHeight * 0.7;
+        return Stack(
+          key: ValueKey('home-journey-card-${event.id}-$page'),
+          clipBehavior: Clip.none,
+          children: [
+            Positioned.fill(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  isCurrent ? 5 : 10,
+                  isCurrent ? currentCardTopInset : adjacentTopInset,
+                  isCurrent ? 5 : 10,
+                  0,
                 ),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    highlightedCard,
-                    Positioned(
-                      left: 8,
-                      top: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 7,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isCurrent
-                              ? palette.currentAccentDeep
-                              : palette.cardSurface.withValues(alpha: 0.94),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(
-                            color: palette.currentAccent.withValues(
-                              alpha: 0.35,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 180),
+                  opacity: isCurrent ? 1 : 0.72,
+                  child: DecoratedBox(
+                    key: ValueKey(
+                      'home-journey-card-surface-frame-${event.id}',
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: isCurrent
+                          ? [
+                              BoxShadow(
+                                color: palette.currentAccent.withValues(
+                                  alpha: 0.25,
+                                ),
+                                blurRadius: 18,
+                                spreadRadius: 2,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        highlightedCard,
+                        Positioned(
+                          left: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 7,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isCurrent
+                                  ? palette.currentAccentDeep
+                                  : palette.cardSurface.withValues(alpha: 0.94),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(
+                                color: palette.currentAccent.withValues(
+                                  alpha: 0.35,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              label,
+                              style: TextStyle(
+                                color: isCurrent
+                                    ? AppColors.fgOnDark
+                                    : palette.currentAccentDeep,
+                                fontSize: 9.8,
+                                fontWeight: FontWeight.w900,
+                                height: 1,
+                              ),
                             ),
                           ),
                         ),
-                        child: Text(
-                          label,
-                          style: TextStyle(
-                            color: isCurrent
-                                ? AppColors.fgOnDark
-                                : palette.currentAccentDeep,
-                            fontSize: 9.8,
-                            fontWeight: FontWeight.w900,
-                            height: 1,
-                          ),
-                        ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-        if (isCurrent)
-          Positioned(
-            left: 12,
-            right: 12,
-            top: -30,
-            child: ProfileEventEraDivider(
-              key: ValueKey('home-current-era-divider-${event.eraId}'),
-              eraId: event.eraId,
-              label: eraById[event.eraId]?.name ?? '시대 미상',
-            ),
-          ),
-      ],
+            if (isCurrent)
+              Positioned(
+                left: 12,
+                right: 12,
+                top: currentCardTopInset - 30,
+                child: ProfileEventEraDivider(
+                  key: ValueKey('home-current-era-divider-${event.eraId}'),
+                  eraId: event.eraId,
+                  label: eraById[event.eraId]?.name ?? '시대 미상',
+                ),
+              ),
+          ],
+        );
+      },
     );
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -731,7 +742,7 @@ class _HomeQuickActions extends StatelessWidget {
               key: const ValueKey('home-diary-quick-action'),
               effectId: 'diary',
               icon: Icons.edit_note_rounded,
-              title: '신앙 다이어리',
+              title: '다이어리',
               subtitle: diaryError ?? _diaryPreviewText(todayDiary),
               subtitleMaxLines: todayDiary == null ? 2 : 3,
               actionLabel: !diaryLoading && todayDiary == null
@@ -748,7 +759,7 @@ class _HomeQuickActions extends StatelessWidget {
               key: const ValueKey('home-bible-quick-action'),
               effectId: 'bible',
               icon: Icons.menu_book_rounded,
-              title: '통독 이어읽기',
+              title: '통독',
               subtitle: bibleTargetLabel,
               subtitleMaxLines: 2,
               actionLabel: '→ 이어읽기',
@@ -767,14 +778,14 @@ class _HomeQuickActions extends StatelessWidget {
       return '오늘 기록을 불러오는 중이에요.';
     }
     if (entry == null) {
-      return '오늘을 기록해보세요';
+      return '오늘을 기록';
     }
     return '${entry.title}\n${entry.body}';
   }
 
   Future<void> _handleDiaryTap(BuildContext context) async {
     if (!isAuthenticated) {
-      await _showLoginRequiredDialog(context, featureName: '신앙 다이어리');
+      await _showLoginRequiredDialog(context, featureName: '다이어리');
       return;
     }
     final entry = todayDiary;
@@ -835,9 +846,7 @@ class _HomeQuickActions extends StatelessWidget {
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            initialEntry == null ? '신앙 다이어리를 남겼어요.' : '신앙 다이어리를 수정했어요.',
-          ),
+          content: Text(initialEntry == null ? '다이어리를 남겼어요.' : '다이어리를 수정했어요.'),
         ),
       );
     } catch (error) {
@@ -846,7 +855,7 @@ class _HomeQuickActions extends StatelessWidget {
       }
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('신앙 다이어리를 저장하지 못했습니다.\n$error')));
+      ).showSnackBar(SnackBar(content: Text('다이어리를 저장하지 못했습니다.\n$error')));
     }
   }
 
@@ -872,7 +881,7 @@ class _HomeQuickActions extends StatelessWidget {
       }
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('신앙 다이어리를 삭제했어요.')));
+      ).showSnackBar(const SnackBar(content: Text('다이어리를 삭제했어요.')));
     } catch (error) {
       if (!context.mounted) {
         return;
@@ -885,7 +894,7 @@ class _HomeQuickActions extends StatelessWidget {
 
   Future<void> _handleBibleTap(BuildContext context) async {
     if (!isAuthenticated) {
-      await _showLoginRequiredDialog(context, featureName: '통독 이어읽기');
+      await _showLoginRequiredDialog(context, featureName: '통독');
       return;
     }
     onContinueBibleReading();

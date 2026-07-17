@@ -8,7 +8,9 @@ import '../../models/story_event.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/scene_asset_loader.dart';
-import '../v2/region_event_list.dart' show StoryEventThumbCard;
+
+import '../v2/region_event_list.dart'
+    show StoryEventCardPresentation, StoryEventThumbCard;
 
 class ProfileEventReviewGrid extends StatelessWidget {
   const ProfileEventReviewGrid({
@@ -22,7 +24,7 @@ class ProfileEventReviewGrid extends StatelessWidget {
     required this.onOpenEventDetail,
     this.emptyText = '보여줄 이야기가 없습니다.',
     this.padding = const EdgeInsets.fromLTRB(2, 0, 2, 12),
-    this.crossAxisCount = 3,
+    this.crossAxisCount = 2,
     this.scrollable = true,
   });
 
@@ -193,6 +195,7 @@ class _ProfileEventWrap extends StatelessWidget {
                     emotionKey: eventEmotionMarks[event.id]?.emotionKey,
                     attemptSummary: quizAttemptSummaries[event.id],
                     orderNumber: event.storyIndex,
+                    presentation: StoryEventCardPresentation.reviewGrid,
                     showSummary: false,
                     loader: loader,
                     onTap: () => onOpenEventDetail(event),

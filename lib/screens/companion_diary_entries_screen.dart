@@ -61,7 +61,7 @@ class _CompanionDiaryEntriesScreenState
         ? monthEntries
         : _entries;
     return ParchmentListPageScaffold(
-      title: '신앙 다이어리',
+      title: '다이어리',
       bodyPadding: const EdgeInsets.fromLTRB(
         AppSpacing.x5,
         62,
@@ -188,14 +188,14 @@ class _CompanionDiaryEntriesScreenState
       });
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('신앙 다이어리를 수정했어요.')));
+      ).showSnackBar(const SnackBar(content: Text('다이어리를 수정했어요.')));
     } catch (error) {
       if (!context.mounted) {
         return;
       }
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('신앙 다이어리를 저장하지 못했습니다.\n$error')));
+      ).showSnackBar(SnackBar(content: Text('다이어리를 저장하지 못했습니다.\n$error')));
     }
   }
 
@@ -227,7 +227,7 @@ class _CompanionDiaryEntriesScreenState
       });
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('신앙 다이어리를 삭제했어요.')));
+      ).showSnackBar(const SnackBar(content: Text('다이어리를 삭제했어요.')));
     } catch (error) {
       if (!context.mounted) {
         return;
@@ -436,8 +436,8 @@ class _CompanionDiaryEntriesEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final message = filter == _CompanionDiaryEntriesFilter.thisMonth
-        ? '이번 달에 남긴 신앙 다이어리가 없어요.'
-        : '아직 남긴 신앙 다이어리가 없어요.\n오늘 탭에서 첫 기록을 남겨보세요.';
+        ? '이번 달에 남긴 다이어리가 없어요.'
+        : '아직 남긴 다이어리가 없어요.\n오늘 탭에서 첫 기록을 남겨보세요.';
     return Center(
       child: Text(
         message,

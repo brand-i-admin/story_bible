@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
@@ -77,7 +78,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('장면 앞면 캡션은 아주 큰 글자에서도 말줄임하지 않는다', (tester) async {
+    testWidgets('장면 앞면 캡션은 아주 큰 글자에서도 한 줄 말줄임표로 표시한다', (tester) async {
       const caption = '아브라함이 밤하늘의 별을 바라보며 하나님이 주신 약속을 마음에 새깁니다.';
 
       await tester.pumpWidget(
@@ -95,8 +96,30 @@ void main() {
       await tester.pump();
 
       final text = tester.widget<Text>(find.text(caption));
-      expect(text.maxLines, anyOf(isNull, greaterThanOrEqualTo(2)));
-      expect(text.overflow, isNot(TextOverflow.ellipsis));
+      expect(text.maxLines, 1);
+      expect(text.overflow, TextOverflow.ellipsis);
+      expect(text.softWrap, isFalse);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('인라인 요약은 아주 큰 글자 배율을 그대로 적용한다', (tester) async {
+      const summary = '요약: 이미지 위에 표시되는 이야기 요약입니다.';
+      await tester.pumpWidget(
+        _largeTextHarness(
+          Center(
+            child: storySection(
+              title: '요약: ',
+              content: '이미지 위에 표시되는 이야기 요약입니다.',
+              inlineTitle: true,
+            ),
+          ),
+        ),
+      );
+
+      final paragraph = tester.renderObject<RenderParagraph>(
+        find.text(summary, findRichText: true),
+      );
+      expect(paragraph.textScaler.scale(10), closeTo(14, 0.01));
       expect(tester.takeException(), isNull);
     });
   });

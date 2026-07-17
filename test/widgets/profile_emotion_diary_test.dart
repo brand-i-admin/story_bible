@@ -185,9 +185,9 @@ void _companionDiaryWidgetTests() {
     ]) {
       expect(find.text(day), findsOneWidget);
     }
-    expect(find.text('신앙 다이어리'), findsOneWidget);
+    expect(find.text('다이어리'), findsOneWidget);
     expect(find.text('오늘 하나님과 함께한 순간을 기록해 보세요!'), findsOneWidget);
-    final diaryTitle = tester.widget<Text>(find.text('신앙 다이어리'));
+    final diaryTitle = tester.widget<Text>(find.text('다이어리'));
     final diaryPrompt = tester.widget<Text>(
       find.text('오늘 하나님과 함께한 순간을 기록해 보세요!'),
     );
@@ -317,7 +317,7 @@ void _companionDiaryWidgetTests() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('신앙 다이어리'), findsOneWidget);
+    expect(find.text('다이어리'), findsOneWidget);
     expect(find.text('통독 진행률'), findsOneWidget);
     expect(find.text('이어읽기'), findsOneWidget);
     final diaryWritePill = find.byKey(
@@ -445,7 +445,7 @@ void _companionDiaryWidgetTests() {
     await tester.enterText(find.byType(TextField).at(0), '선택한 날');
     await tester.enterText(find.byType(TextField).at(1), '그날의 본문');
     await tester.pump();
-    expect(find.text('신앙 다이어리 작성'), findsOneWidget);
+    expect(find.text('다이어리 작성'), findsOneWidget);
     expect(find.text('오늘의 말씀 연결'), findsNothing);
     await tester.tap(find.text('기록 저장'));
     await tester.pumpAndSettle();
@@ -498,14 +498,14 @@ void _companionDiaryWidgetTests() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('신앙 다이어리'), findsWidgets);
+    expect(find.text('다이어리'), findsWidgets);
     expect(find.text('갈릴리의 하루'), findsOneWidget);
     expect(find.text('말씀을 묵상하며 차분히 걸었습니다.'), findsOneWidget);
 
     await tester.tap(find.text('갈릴리의 하루'));
     await tester.pumpAndSettle();
 
-    expect(find.text('신앙 다이어리 상세'), findsOneWidget);
+    expect(find.text('다이어리 상세'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('companion-diary-detail-body-diary_1')),
       findsOneWidget,
@@ -571,7 +571,7 @@ void _companionDiaryWidgetTests() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('신앙 다이어리'), findsWidgets);
+    expect(find.text('다이어리'), findsWidgets);
     expect(
       tester.getTopLeft(find.byType(CompanionDiaryEntryPreviewCard)).dx,
       lessThan(24),
@@ -584,11 +584,17 @@ void _companionDiaryWidgetTests() {
     await tester.tap(find.text('광야의 감사'));
     await tester.pumpAndSettle();
 
-    expect(find.text('신앙 다이어리 상세'), findsOneWidget);
+    expect(find.text('다이어리 상세'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('companion-diary-detail-body-diary_1')),
       findsOneWidget,
     );
+    final bodySurface = tester.widget<Container>(
+      find.byKey(const ValueKey('companion-diary-detail-body-surface')),
+    );
+    final bodyDecoration = bodySurface.decoration! as BoxDecoration;
+    expect(bodyDecoration.borderRadius, BorderRadius.circular(AppRadii.lg));
+    expect(bodyDecoration.border, isNotNull);
     expect(
       find.byKey(const ValueKey('companion-diary-detail-edit-button')),
       findsOneWidget,
@@ -642,7 +648,7 @@ void _companionDiaryWidgetTests() {
     await tester.tap(find.text('어두운 밤의 기도'));
     await tester.pumpAndSettle();
 
-    expect(find.text('신앙 다이어리 상세'), findsOneWidget);
+    expect(find.text('다이어리 상세'), findsOneWidget);
     final detailBody = tester.widget<Text>(
       find.byKey(const ValueKey('companion-diary-detail-body-diary_1')),
     );
@@ -855,7 +861,7 @@ void main() {
 
     final previousWeekTop = tester.getTopLeft(find.text('31')).dy;
     final currentWeekTop = tester.getTopLeft(find.text('7')).dy;
-    final diaryTitleTop = tester.getTopLeft(find.text('신앙 다이어리')).dy;
+    final diaryTitleTop = tester.getTopLeft(find.text('다이어리')).dy;
     final previousWeekHeight = currentWeekTop - previousWeekTop;
     final currentWeekHeight = diaryTitleTop - currentWeekTop;
 

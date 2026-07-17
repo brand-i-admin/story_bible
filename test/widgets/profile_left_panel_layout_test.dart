@@ -544,6 +544,7 @@ void main() {
     expect(homeSource, isNot(contains('_parchmentPanelDecoration()')));
     expect(weeklySource, contains('floatingPanelDecoration(palette: palette)'));
     expect(weeklySource, contains('headerChipDecoration(palette: palette)'));
+    expect(weeklySource, isNot(contains('height: progressHeight')));
     expect(
       settingsSource,
       contains('modalSurfaceDecoration(palette: palette)'),
@@ -583,7 +584,7 @@ void main() {
     expect(source, contains('filteredEvents'));
   });
 
-  test('저장한 이야기 전체보기는 공용 3열 복습 그리드를 사용한다', () {
+  test('저장한 이야기 전체보기는 공용 2열 복습 그리드를 사용한다', () {
     final source = File(
       'lib/widgets/profile/profile_left_panel.dart',
     ).readAsStringSync();

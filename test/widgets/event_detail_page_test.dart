@@ -159,6 +159,69 @@ void main() {
     expect(loginMessages, ['본문을 읽으려면 로그인이 필요해요.', '퀴즈를 풀려면 로그인이 필요해요.']);
     expect(quizOpened, isFalse);
   });
+
+  testWidgets('이전·다음 이야기 제목은 한 줄로 반복 자동 스크롤한다', (tester) async {
+    const longTitle =
+        '아주 긴 이전과 다음 이야기 제목이 카드 너비를 넘어 끝까지 천천히 이동합니다 '
+        '아주 긴 이전과 다음 이야기 제목이 카드 너비를 넘어 끝까지 천천히 이동합니다';
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          storyRepositoryProvider.overrideWithValue(storyRepository),
+          signedInUserProvider.overrideWithValue(null),
+        ],
+        child: MaterialApp(
+          home: EventDetailPage(
+            event: _event(),
+            prevEvent: _event(id: 'previous', title: longTitle),
+            nextEvent: _event(id: 'next', title: longTitle),
+            sceneAssetsFuture: Future.value(const []),
+            onOpenBibleReader: (_) async => false,
+            onStartQuiz: (_) {},
+            onNavigateToEvent: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    for (final suffix in ['prev', 'next']) {
+      final title = tester.widget<Text>(
+        find.byKey(ValueKey('event-detail-nav-title-$suffix')),
+      );
+      expect(title.maxLines, 1);
+      expect(title.softWrap, isFalse);
+      expect(
+        find.byKey(ValueKey('event-detail-nav-title-scroll-$suffix')),
+        findsOneWidget,
+      );
+    }
+
+    final scrollable = find.descendant(
+      of: find.byKey(const ValueKey('event-detail-nav-title-scroll-prev')),
+      matching: find.byType(Scrollable),
+    );
+    final position = tester.state<ScrollableState>(scrollable).position;
+    expect(position.maxScrollExtent, greaterThan(0));
+    final scrollDuration = Duration(
+      milliseconds: (position.maxScrollExtent * 34).round().clamp(2400, 9000),
+    );
+
+    await tester.pump(const Duration(milliseconds: 850));
+    await tester.pump(scrollDuration);
+    await tester.pump();
+    expect(position.pixels, closeTo(position.maxScrollExtent, 0.1));
+    await tester.pump(const Duration(milliseconds: 1900));
+    expect(position.pixels, closeTo(position.maxScrollExtent, 0.1));
+    var restarted = false;
+    for (var i = 0; i < 30 && !restarted; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+      restarted = position.pixels < position.maxScrollExtent / 2;
+    }
+    expect(restarted, isTrue);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 }
 
 List<String> _avatarNames(WidgetTester tester) {
@@ -194,13 +257,15 @@ Finder _summaryFinder() {
 }
 
 StoryEvent _event({
+  String id = 'event-1',
+  String title = '시내산 도착',
   List<String> characterCodes = const ['aaron', 'moses'],
   List<BibleRef> bibleRefs = const [],
 }) {
   return StoryEvent(
-    id: 'event-1',
+    id: id,
     eraId: 'era-exodus',
-    title: '시내산 도착',
+    title: title,
     summary: '하나님은 백성에게 살아갈 길을 선포하신다.',
     backgroundContext: '출애굽 여정의 배경을 먼저 떠올립니다.',
     storyScenes: [],

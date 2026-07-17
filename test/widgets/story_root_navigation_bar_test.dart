@@ -325,7 +325,7 @@ void main() {
     expect(todaySource, isNot(contains('void showWelcomeGuide()')));
   });
 
-  test('지도 탭을 벗어나면 지도 탐색 선택을 첫 단계로 초기화한다', () {
+  test('지도 탭에 들어가거나 벗어날 때 지도 탐색 선택을 첫 단계로 초기화한다', () {
     final source = File(
       'lib/screens/story_home_screen_state.dart',
     ).readAsStringSync();
@@ -347,7 +347,17 @@ void main() {
     );
     expect(
       selectTabSource,
-      contains('if (leavingMap) {\n      _resetMapTabExploration();'),
+      contains(
+        'final enteringMap = _rootTab != StoryRootTab.map && '
+        'tab == StoryRootTab.map;',
+      ),
+    );
+    expect(
+      selectTabSource,
+      contains(
+        'if (leavingMap || enteringMap) {\n'
+        '      _resetMapTabExploration();',
+      ),
     );
     expect(resetSource, contains('controller.clearMapExplorationSelection();'));
     expect(resetSource, contains('_selectionStep = 1;'));
@@ -355,6 +365,24 @@ void main() {
     expect(
       resetSource,
       contains('_selectionPanelStage = StorySelectionPanelStage.expanded;'),
+    );
+  });
+
+  test('앱 시작 후 지도 탭에 처음 들어갈 때도 가이드 dismiss 유예를 시작한다', () {
+    final source = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+    final selectTabSource = source.substring(
+      source.indexOf('void _selectRootTab(StoryRootTab tab)'),
+      source.indexOf('void _continueBibleReading('),
+    );
+
+    expect(
+      selectTabSource,
+      contains(
+        'if (leavingMap || enteringMap) {\n'
+        '      _resetMapTabExploration();',
+      ),
     );
   });
 }

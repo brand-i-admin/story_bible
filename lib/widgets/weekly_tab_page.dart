@@ -391,12 +391,7 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
       builder: (context, constraints) {
         final palette = AppPaletteTheme.of(context);
         final w = constraints.maxWidth;
-        final h = constraints.maxHeight;
         final contentGap = (w * 0.011).clamp(8.0, 14.0).toDouble();
-        // compact 모드에서 본문(요약 텍스트 + gap + bar)이 약 50px 필요 + 컨테이너
-        // padding 16 = 66 minimum. 하한을 넉넉히.
-        final progressHeight = (h * 0.10).clamp(66.0, 78.0).toDouble();
-
         final isRegionMode = weekly.mode == WeeklyMode.region;
         final mapPanel = ClipRRect(
           borderRadius: BorderRadius.circular(16),
@@ -436,14 +431,11 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(
-              height: progressHeight,
-              child: _weeklyProgressRow(
-                daysRemainingKst: daysRemainingKst,
-                completedCount: completedStories,
-                totalCount: totalStories,
-                progress: weeklyProgress,
-              ),
+            _weeklyProgressRow(
+              daysRemainingKst: daysRemainingKst,
+              completedCount: completedStories,
+              totalCount: totalStories,
+              progress: weeklyProgress,
             ),
             SizedBox(height: contentGap),
             // 헤더 — 모드별 타이틀.
@@ -484,6 +476,9 @@ class _WeeklyTabPageState extends ConsumerState<WeeklyTabPage> {
                       onTapEvent: (event) {
                         widget.onOpenEventDetail(event);
                       },
+                      cardPresentation:
+                          StoryEventCardPresentation.missionTimeline,
+                      showSummary: false,
                     ),
                   ),
                 ],

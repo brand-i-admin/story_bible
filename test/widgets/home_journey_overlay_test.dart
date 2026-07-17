@@ -102,10 +102,10 @@ void main() {
       find.byKey(const ValueKey('home-journey-panel-toggle')),
       findsNothing,
     );
-    expect(find.text('신앙 다이어리'), findsOneWidget);
+    expect(find.text('다이어리'), findsOneWidget);
     expect(find.byIcon(Icons.edit_note_rounded), findsOneWidget);
     expect(find.text('기록하기'), findsOneWidget);
-    expect(find.text('통독 이어읽기'), findsOneWidget);
+    expect(find.text('통독'), findsOneWidget);
     expect(find.text('창세기 14장'), findsOneWidget);
     expect(find.text('이어읽기'), findsOneWidget);
     expect(
@@ -275,8 +275,8 @@ void main() {
     expect(nextVisibleFraction, greaterThan(0.7));
     expect(currentRect.left - previousRect.right, inInclusiveRange(0, 12));
     expect(nextRect.left - currentRect.right, inInclusiveRange(0, 12));
-    expect(currentRect.height - previousRect.height, greaterThanOrEqualTo(36));
-    expect(currentRect.height - nextRect.height, greaterThanOrEqualTo(36));
+    expect(previousRect.height / currentRect.height, closeTo(0.7, 0.03));
+    expect(nextRect.height / currentRect.height, closeTo(0.7, 0.03));
 
     final previousTitle = tester.widget<Text>(
       find.byKey(const ValueKey('story-card-title-todayAdjacent-previous')),
@@ -295,6 +295,45 @@ void main() {
       currentTitle.style!.fontSize,
       greaterThan(nextTitle.style!.fontSize!),
     );
+    expect(previousTitle.maxLines, 1);
+    expect(previousTitle.overflow, TextOverflow.ellipsis);
+    expect(previousTitle.softWrap, isFalse);
+    expect(nextTitle.maxLines, 1);
+    expect(nextTitle.overflow, TextOverflow.ellipsis);
+    expect(nextTitle.softWrap, isFalse);
+    expect(currentTitle.maxLines, 1);
+    expect(currentTitle.softWrap, isFalse);
+    expect(
+      find.byKey(
+        const ValueKey('story-card-title-scroll-todayCurrent-recommended'),
+      ),
+      findsOneWidget,
+    );
+    final currentMetaScroll = tester.widget<SingleChildScrollView>(
+      find.byKey(
+        const ValueKey('story-card-meta-scroll-todayCurrent-recommended'),
+      ),
+    );
+    expect(currentMetaScroll.scrollDirection, Axis.horizontal);
+    expect(
+      find.byKey(
+        const ValueKey('story-card-characters-scroll-todayCurrent-recommended'),
+      ),
+      findsOneWidget,
+    );
+    for (final eventId in ['previous', 'next']) {
+      final meta = tester.widget<Text>(
+        find.byKey(ValueKey('story-card-meta-ellipsis-todayAdjacent-$eventId')),
+      );
+      expect(meta.maxLines, 1);
+      expect(meta.overflow, TextOverflow.ellipsis);
+      expect(
+        find.byKey(
+          ValueKey('story-card-characters-scroll-todayAdjacent-$eventId'),
+        ),
+        findsOneWidget,
+      );
+    }
 
     for (final (presentation, eventId) in [
       ('todayAdjacent', 'previous'),
@@ -309,10 +348,13 @@ void main() {
       expect(border.top.width, 1);
     }
     expect(
-      previousThumbnailRect.width,
-      closeTo(previousThumbnailRect.height, 1),
+      previousThumbnailRect.width / previousThumbnailRect.height,
+      closeTo(8 / 5, 0.06),
     );
-    expect(nextThumbnailRect.width, closeTo(nextThumbnailRect.height, 1));
+    expect(
+      nextThumbnailRect.width / nextThumbnailRect.height,
+      closeTo(8 / 5, 0.06),
+    );
     expect(
       currentThumbnailRect.width / currentThumbnailRect.height,
       closeTo(8 / 5, 0.06),
@@ -337,6 +379,137 @@ void main() {
     }
     expect(currentRect.height, lessThan(200));
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('긴 제목과 지역과 인물은 세 글자 크기에서 카드 밖으로 넘치지 않는다', (tester) async {
+    const screenSize = Size(390, 780);
+    final longEvents = [
+      _event(
+        id: 'previous-long',
+        title: '이전 이야기의 아주 긴 제목도 한 줄에서 정리됩니다',
+        rank: 1,
+        placeName: '갈릴리와 가버나움과 데가볼리 일대의 아주 긴 지역 이름',
+        characterCodes: const ['noah', 'abraham', 'isaac', 'jacob'],
+      ),
+      _event(
+        id: 'recommended-long',
+        title: '현재 이야기의 아주 긴 제목은 천천히 끝까지 자동으로 이동합니다',
+        rank: 2,
+        placeName: '예루살렘과 베다니와 감람산을 잇는 아주 긴 지역 이름',
+        characterCodes: const ['noah', 'abraham', 'isaac', 'jacob'],
+      ),
+      _event(
+        id: 'next-long',
+        title: '다음 이야기의 아주 긴 제목도 한 줄에서 정리됩니다',
+        rank: 3,
+        placeName: '유대와 사마리아와 땅끝까지 이어지는 아주 긴 지역 이름',
+        characterCodes: const ['noah', 'abraham', 'isaac', 'jacob'],
+      ),
+    ];
+    await tester.binding.setSurfaceSize(screenSize);
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    for (final textScale in [1.0, 1.2, 1.4]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(
+              size: screenSize,
+              textScaler: TextScaler.linear(textScale),
+            ),
+            child: Scaffold(
+              body: SizedBox(
+                height: 445,
+                child: HomeJourneyOverlay(
+                  events: longEvents,
+                  recommendedEventId: 'recommended-long',
+                  currentEventId: 'recommended-long',
+                  eras: const [_era],
+                  charactersByCode: const {'noah': _noah},
+                  eventEmotionMarks: const {},
+                  quizAttemptSummaries: const {},
+                  isAuthenticated: true,
+                  todayDiary: null,
+                  diaryLoading: false,
+                  diaryError: null,
+                  bibleTargetLabel: '창세기 14장',
+                  onOpenStory: (_) {},
+                  onCurrentStoryChanged: (_) {},
+                  onSaveDiary: _discardDiarySave,
+                  onDeleteDiary: _discardDiaryDelete,
+                  onContinueBibleReading: () {},
+                  onOpenProfile: () {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 120));
+
+      final currentCard = tester.getRect(
+        find.byKey(
+          const ValueKey('home-story-task-highlight-recommended-long'),
+        ),
+      );
+      for (final key in [
+        'story-card-title-scroll-todayCurrent-recommended-long',
+        'story-card-meta-scroll-todayCurrent-recommended-long',
+        'story-card-characters-scroll-todayCurrent-recommended-long',
+      ]) {
+        final childRect = tester.getRect(find.byKey(ValueKey(key)));
+        expect(
+          childRect.left,
+          greaterThanOrEqualTo(currentCard.left),
+          reason: 'textScale=$textScale, key=$key',
+        );
+        expect(
+          childRect.right,
+          lessThanOrEqualTo(currentCard.right),
+          reason: 'textScale=$textScale, key=$key',
+        );
+        expect(
+          childRect.bottom,
+          lessThanOrEqualTo(currentCard.bottom),
+          reason: 'textScale=$textScale, key=$key',
+        );
+      }
+      expect(tester.takeException(), isNull, reason: 'textScale=$textScale');
+    }
+
+    final orderBadgeTexts = tester.widgetList<Text>(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Text &&
+            const {'1', '2', '3'}.contains(widget.data) &&
+            widget.style?.fontSize == 12,
+      ),
+    );
+    expect(orderBadgeTexts, isNotEmpty);
+    for (final badgeText in orderBadgeTexts) {
+      expect(badgeText.textScaler, TextScaler.noScaling);
+      expect(badgeText.textAlign, TextAlign.center);
+    }
+
+    final titleScroll = find.byKey(
+      const ValueKey('story-card-title-scroll-todayCurrent-recommended-long'),
+    );
+    final titleScrollable = find.descendant(
+      of: titleScroll,
+      matching: find.byType(Scrollable),
+    );
+    final titlePosition = tester
+        .state<ScrollableState>(titleScrollable)
+        .position;
+    expect(titlePosition.maxScrollExtent, greaterThan(0));
+    await tester.pump(const Duration(milliseconds: 850));
+    await tester.pump(const Duration(seconds: 10));
+    expect(titlePosition.pixels, closeTo(titlePosition.maxScrollExtent, 0.5));
+    await tester.pump(const Duration(milliseconds: 1900));
+    expect(titlePosition.pixels, closeTo(titlePosition.maxScrollExtent, 0.5));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(titlePosition.pixels, lessThan(titlePosition.maxScrollExtent / 2));
+    await tester.pumpWidget(const SizedBox.shrink());
   });
 
   testWidgets('비로그인 다이어리 탭은 내정보 이동 버튼이 있는 안내 팝업을 연다', (tester) async {
@@ -495,7 +668,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('home-diary-quick-action')));
     await tester.pumpAndSettle();
 
-    expect(find.text('신앙 다이어리 상세'), findsOneWidget);
+    expect(find.text('다이어리 상세'), findsOneWidget);
     expect(find.text('오늘의 감사'), findsOneWidget);
     expect(find.text('함께하심을 기억합니다.'), findsOneWidget);
     expect(find.text('수정'), findsOneWidget);
@@ -883,14 +1056,15 @@ void main() {
       find.byKey(const ValueKey('home-bible-quick-action')),
       findsOneWidget,
     );
-    final diarySubtitle = tester.widget<Text>(find.text('오늘을 기록해보세요'));
+    final diarySubtitle = tester.widget<Text>(find.text('오늘을 기록'));
     expect(diarySubtitle.overflow, TextOverflow.visible);
     expect(diarySubtitle.maxLines, greaterThanOrEqualTo(2));
     final diaryCard = find.byKey(const ValueKey('home-diary-quick-action'));
     expect(
-      tester.getRect(find.text('오늘을 기록해보세요')).bottom,
+      tester.getRect(find.text('오늘을 기록')).bottom,
       lessThanOrEqualTo(tester.getRect(diaryCard).bottom),
     );
+    expect(find.text('기록하기'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
@@ -926,6 +1100,7 @@ StoryEvent _event({
   required String title,
   required int rank,
   String eraId = 'era-1',
+  String placeName = '테스트 장소',
   List<String> characterCodes = const [],
 }) {
   return StoryEvent(
@@ -942,7 +1117,7 @@ StoryEvent _event({
     rankInEra: rank,
     globalRank: rank,
     landmarkId: 'landmark-$id',
-    placeName: '테스트 장소',
+    placeName: placeName,
     lat: 31 + rank.toDouble(),
     lng: 35 + rank.toDouble(),
     characterCodes: characterCodes,

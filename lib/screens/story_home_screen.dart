@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -63,9 +64,6 @@ import 'bible_verse_search_screen.dart';
 import 'notification_history_screen.dart';
 import 'proposal_board_screen.dart';
 import 'proposal_detail_screen.dart';
-
-import 'package:flutter/foundation.dart'
-    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 
 part 'story_home_screen_state.dart';
 part 'story_home_screen_widgets.dart';

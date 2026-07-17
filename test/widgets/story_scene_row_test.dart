@@ -4,8 +4,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/widgets/story_home_styles.dart';
 
-Widget _harness(Widget child, {double width = 320}) {
+Widget _harness(Widget child, {double width = 320, double textScale = 1}) {
   return MaterialApp(
+    builder: (context, child) => MediaQuery(
+      data: MediaQuery.of(
+        context,
+      ).copyWith(textScaler: TextScaler.linear(textScale)),
+      child: child!,
+    ),
     home: Scaffold(
       body: Center(
         child: SizedBox(width: width, height: 320, child: child),
@@ -108,6 +114,29 @@ void main() {
         find.descendant(of: back, matching: find.text(caption)),
       );
       expect(backText.maxLines, isNull);
+    });
+
+    testWidgets('아주큰 글자에서도 장면 앞면 캡션은 한 줄 말줄임표로 고정한다', (tester) async {
+      const caption = '아주 긴 장면 설명이더라도 앞면에서는 이미지를 가리지 않도록 한 줄만 표시합니다';
+      await tester.pumpWidget(
+        _harness(
+          const StorySceneRow(
+            sceneAssets: ['assets/scene_solo.png'],
+            sceneCaptions: [caption],
+          ),
+          width: 320,
+          textScale: 1.4,
+        ),
+      );
+
+      final front = find.byKey(const ValueKey('story-scene-caption-front-0'));
+      final frontText = tester.widget<Text>(
+        find.descendant(of: front, matching: find.text(caption)),
+      );
+      expect(frontText.maxLines, 1);
+      expect(frontText.overflow, TextOverflow.ellipsis);
+      expect(frontText.softWrap, isFalse);
+      expect(tester.takeException(), isNull);
     });
   });
 }
