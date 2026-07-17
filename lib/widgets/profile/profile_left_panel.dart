@@ -1425,7 +1425,7 @@ class _ProfileStoryProgressPage extends StatefulWidget {
 
 class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
   String? _selectedEraId;
-  _StoryProgressFilter _storyFilter = _StoryProgressFilter.all;
+  _StoryProgressFilter _storyFilter = _StoryProgressFilter.completed;
 
   @override
   void initState() {
@@ -1503,7 +1503,7 @@ class _ProfileStoryProgressPageState extends State<_ProfileStoryProgressPage> {
                 onSelectEra: (eraId) {
                   setState(() {
                     _selectedEraId = eraId;
-                    _storyFilter = _StoryProgressFilter.all;
+                    _storyFilter = _StoryProgressFilter.completed;
                   });
                 },
                 trailingScrollPadding: 8,

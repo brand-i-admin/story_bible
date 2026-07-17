@@ -13,12 +13,8 @@ final dailyExplorationCatalogProvider = FutureProvider<List<StoryEvent>>((
   }
 
   final repo = ref.read(storyRepositoryProvider);
-  final eventLists = await Future.wait(
-    eras.map((era) => repo.fetchEventsByEra(era.id)),
-  );
-  return orderedDailyExplorationEvents(
-    eventLists.expand((items) => items).toList(growable: false),
-  );
+  final events = await repo.fetchAllEvents();
+  return orderedDailyExplorationEvents(events);
 });
 
 final dailyExplorationJourneyProvider = FutureProvider<List<StoryEvent>>((

@@ -8,7 +8,7 @@ import 'package:story_bible/theme/app_theme.dart';
 import 'package:story_bible/widgets/profile/companion_diary_entry_card.dart';
 
 void main() {
-  testWidgets('신앙 다이어리 목록은 이번 달 기록일과 연속일, 전체·이번달 필터를 보여준다', (tester) async {
+  testWidgets('신앙 다이어리 목록은 이번 달을 기본으로 하고 전체 필터로 전환된다', (tester) async {
     final entries = [
       _entry('july-14', DateTime(2026, 7, 14), '7월 14일 기록'),
       _entry('july-13', DateTime(2026, 7, 13), '7월 13일 기록'),
@@ -34,23 +34,15 @@ void main() {
     expect(find.text('최근'), findsNothing);
     expect(find.text('북마크'), findsNothing);
     expect(find.byType(FloatingActionButton), findsNothing);
-    await tester.scrollUntilVisible(find.text('6월 기록'), 200);
-    expect(find.text('6월 기록'), findsOneWidget);
-
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('companion-diary-filter-this-month')),
-      -200,
-    );
-
-    await tester.tap(
-      find.byKey(const ValueKey('companion-diary-filter-this-month')),
-    );
+    expect(find.text('6월 기록'), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('companion-diary-filter-all')));
     await tester.pumpAndSettle();
 
     expect(find.text('7월 14일 기록'), findsOneWidget);
     expect(find.text('7월 13일 기록'), findsOneWidget);
     expect(find.text('7월 12일 기록'), findsOneWidget);
-    expect(find.text('6월 기록'), findsNothing);
+    await tester.scrollUntilVisible(find.text('6월 기록'), 200);
+    expect(find.text('6월 기록'), findsOneWidget);
   });
 
   testWidgets('날짜와 KST 시간을 카드 안 제목 오른쪽에 표시한다', (tester) async {

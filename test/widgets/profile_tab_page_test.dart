@@ -72,6 +72,9 @@ class _ProfileProgressRefreshStoryController extends StoryController {
   }
 
   @override
+  Future<void> refreshUserScopedData() => refreshCompletedEventIds();
+
+  @override
   Future<void> refreshQuizAttemptSummaries() async {}
 
   @override
@@ -220,7 +223,7 @@ void main() {
       ],
     );
     when(() => storyRepository.fetchLandmarks()).thenAnswer((_) async => []);
-    when(() => storyRepository.fetchCharactersByEra('era-1')).thenAnswer(
+    when(() => storyRepository.fetchAllActiveCharacters()).thenAnswer(
       (_) async => [
         const Character(
           id: 'person-1',
@@ -234,7 +237,7 @@ void main() {
       ],
     );
     when(
-      () => storyRepository.fetchEventsByEra('era-1'),
+      () => storyRepository.fetchAllEvents(),
     ).thenAnswer((_) async => const <StoryEvent>[]);
     when(
       () => storyRepository.fetchEventsByIds(any()),
@@ -598,8 +601,8 @@ void main() {
     await refresh;
     await tester.pump(const Duration(milliseconds: 100));
 
-    verify(() => storyRepository.fetchCharactersByEra('era-1')).called(2);
-    verify(() => storyRepository.fetchEventsByEra('era-1')).called(2);
+    verify(() => storyRepository.fetchAllActiveCharacters()).called(2);
+    verify(() => storyRepository.fetchAllEvents()).called(1);
     verify(() => userRepository.ensureSignedInUser(user)).called(2);
   });
 
@@ -726,7 +729,7 @@ void main() {
 
     when(() => auth.currentUser).thenReturn(user);
     when(
-      () => storyRepository.fetchEventsByEra('era-1'),
+      () => storyRepository.fetchAllEvents(),
     ).thenAnswer((_) async => [event]);
     when(
       () => storyRepository.fetchEventProgress(user.id),
@@ -817,7 +820,7 @@ void main() {
 
     when(() => auth.currentUser).thenReturn(user);
     when(
-      () => storyRepository.fetchEventsByEra('era-1'),
+      () => storyRepository.fetchAllEvents(),
     ).thenAnswer((_) async => [firstEvent]);
     when(() => storyRepository.fetchEventProgress(user.id)).thenAnswer(
       (_) async =>
@@ -1012,7 +1015,7 @@ void main() {
 
     when(() => auth.currentUser).thenReturn(user);
     when(
-      () => storyRepository.fetchEventsByEra('era-1'),
+      () => storyRepository.fetchAllEvents(),
     ).thenAnswer((_) async => [recentEvent, nextEvent]);
     when(() => storyRepository.fetchEventProgress(user.id)).thenAnswer(
       (_) async =>
@@ -1092,7 +1095,7 @@ void main() {
 
     when(() => auth.currentUser).thenReturn(user);
     when(
-      () => storyRepository.fetchEventsByEra('era-1'),
+      () => storyRepository.fetchAllEvents(),
     ).thenAnswer((_) async => [recentEvent, nextEvent, sideEvent]);
     when(() => storyRepository.fetchEventProgress(user.id)).thenAnswer(
       (_) async =>
@@ -1298,7 +1301,7 @@ void main() {
       () => notificationRepository.watchUnreadCount(),
     ).thenAnswer((_) => Stream<int>.value(0));
     when(
-      () => storyRepository.fetchEventsByEra('era-1'),
+      () => storyRepository.fetchAllEvents(),
     ).thenAnswer((_) async => [completedEvent, incompleteEvent]);
 
     final container = ProviderContainer(
@@ -1591,7 +1594,7 @@ void main() {
     expect(openedVerseNo, isNull);
   });
 
-  testWidgets('이야기 진행률 페이지는 전체/완료/미완료 필터로 카드를 거른다', (tester) async {
+  testWidgets('이야기 진행률 페이지는 완료를 기본으로 하고 전체/미완료로 전환된다', (tester) async {
     final completedEvent = _profileEvent(
       id: 'event-done',
       title: '완료한 이야기',
@@ -1605,7 +1608,7 @@ void main() {
 
     when(() => auth.currentUser).thenReturn(user);
     when(
-      () => storyRepository.fetchEventsByEra('era-1'),
+      () => storyRepository.fetchAllEvents(),
     ).thenAnswer((_) async => [completedEvent, incompleteEvent]);
     when(() => storyRepository.fetchEventProgress(user.id)).thenAnswer(
       (_) async => const {
@@ -1651,13 +1654,13 @@ void main() {
     }
 
     expect(find.text('완료한 이야기'), findsWidgets);
-    expect(progressGridTitle('미완료 이야기'), findsOneWidget);
+    expect(progressGridTitle('미완료 이야기'), findsNothing);
 
-    await tester.tap(find.byKey(const ValueKey('story-progress-filter-완료')));
+    await tester.tap(find.byKey(const ValueKey('story-progress-filter-전체')));
     await tester.pumpAndSettle();
 
     expect(progressGridTitle('완료한 이야기'), findsOneWidget);
-    expect(progressGridTitle('미완료 이야기'), findsNothing);
+    expect(progressGridTitle('미완료 이야기'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('story-progress-filter-미완료')));
     await tester.pumpAndSettle();
@@ -1687,7 +1690,7 @@ void main() {
 
     when(() => auth.currentUser).thenReturn(user);
     when(
-      () => storyRepository.fetchEventsByEra('era-1'),
+      () => storyRepository.fetchAllEvents(),
     ).thenAnswer((_) async => [...wrongEvents, confusedEvent, correctEvent]);
     when(
       () => storyRepository.fetchEventProgress(user.id),
@@ -1822,7 +1825,7 @@ void main() {
       storyIndex: 4,
     );
     when(() => auth.currentUser).thenReturn(user);
-    when(() => storyRepository.fetchEventsByEra('era-1')).thenAnswer(
+    when(() => storyRepository.fetchAllEvents()).thenAnswer(
       (_) async => [joyEvent, gratitudeEvent, comfortEvent, fearEvent],
     );
     when(() => storyRepository.fetchEventProgress(user.id)).thenAnswer(
@@ -1937,7 +1940,7 @@ void main() {
     final event = _profileEvent(id: 'event-gratitude', title: '감사로 새긴 이야기');
     when(() => auth.currentUser).thenReturn(user);
     when(
-      () => storyRepository.fetchEventsByEra('era-1'),
+      () => storyRepository.fetchAllEvents(),
     ).thenAnswer((_) async => [event]);
     when(
       () => storyRepository.fetchEventProgress(user.id),

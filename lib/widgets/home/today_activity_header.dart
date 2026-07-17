@@ -333,6 +333,7 @@ class _StreakFireCelebrationState extends State<_StreakFireCelebration>
   late final AnimationController _controller;
   late final Animation<double> _scale;
   Timer? _replayTimer;
+  var _remainingReplays = 1;
 
   @override
   void initState() {
@@ -356,6 +357,10 @@ class _StreakFireCelebrationState extends State<_StreakFireCelebration>
     if (status != AnimationStatus.completed) {
       return;
     }
+    if (_remainingReplays <= 0) {
+      return;
+    }
+    _remainingReplays -= 1;
     _replayTimer?.cancel();
     _replayTimer = Timer(_replayDelay, () {
       if (mounted) {
@@ -369,6 +374,7 @@ class _StreakFireCelebrationState extends State<_StreakFireCelebration>
     super.didUpdateWidget(oldWidget);
     if (widget.streakDays > oldWidget.streakDays) {
       _replayTimer?.cancel();
+      _remainingReplays = 1;
       _controller.forward(from: 0);
     }
   }

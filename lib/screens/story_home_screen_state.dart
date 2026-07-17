@@ -81,6 +81,8 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   ProviderSubscription<User?>? _authUserSubscription;
   StoryRootTab _rootTab = StoryRootTab.today;
   StoryRootTab _retainedMapRootTab = StoryRootTab.today;
+  bool _hasBuiltBibleTab = false;
+  bool _hasBuiltProfileTab = false;
   BibleReadingTarget? _bibleTabTarget;
   int? _bibleTabVerseNo;
   List<UserCompanionDiaryEntry> _homeDiaryEntries = const [];
@@ -243,6 +245,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
 
+    final shouldUseInitialLoad = ref.read(storyControllerProvider).eras.isEmpty;
     try {
       final profile = await ref
           .read(userRepositoryProvider)
@@ -252,10 +255,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       }
       setState(() => _todayNickname = profile.nickname);
       final storyController = ref.read(storyControllerProvider.notifier);
-      await storyController.refreshCompletedEventIds();
-      await storyController.refreshQuizAttemptSummaries();
-      await storyController.refreshSavedEventIds();
-      await storyController.refreshCompletedBibleChapterKeys();
+      if (shouldUseInitialLoad) {
+        await storyController.initialize();
+      } else {
+        await storyController.refreshUserScopedData();
+      }
       await _loadHomeDiaryEntries(showLoading: false);
       // FCM 토큰 upsert — Firebase 미설정/권한 거부면 내부적으로 no-op.
       try {
@@ -1633,7 +1637,10 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     if (!mounted) {
       return;
     }
-    setState(() => _rootTab = StoryRootTab.profile);
+    setState(() {
+      _markRootTabBuilt(StoryRootTab.profile);
+      _rootTab = StoryRootTab.profile;
+    });
   }
 
   Future<void> _openProfileEventDetailPage(
@@ -2732,23 +2739,11 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final mapBody = visibleMapTab == StoryRootTab.today
         ? _buildTodayTab()
         : _buildMapTab(context);
-    final foregroundBody = switch (_rootTab) {
-      StoryRootTab.bible => _buildBibleRootTab(),
-      StoryRootTab.profile => _buildProfileRootTab(),
-      _ => null,
-    };
-    if (foregroundBody == null) {
-      return mapBody;
-    }
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        IgnorePointer(
-          ignoring: true,
-          child: TickerMode(enabled: false, child: mapBody),
-        ),
-        foregroundBody,
-      ],
+    return StoryRootTabRetentionStack(
+      selectedTab: _rootTab,
+      mapChild: mapBody,
+      bibleChild: _hasBuiltBibleTab ? _buildBibleRootTab() : null,
+      profileChild: _hasBuiltProfileTab ? _buildProfileRootTab() : null,
     );
   }
 
@@ -2851,6 +2846,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
             int? initialVerseNo,
           }) async {
             setState(() {
+              _markRootTabBuilt(StoryRootTab.bible);
               _bibleTabTarget = (
                 bookNo: initialBookNo ?? oldTestamentFirstBookNo,
                 chapterNo: initialChapterNo ?? 1,
@@ -2902,6 +2898,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _resetMapTabExploration();
     }
     setState(() {
+      _markRootTabBuilt(tab);
       _rootTab = tab;
       if (tab == StoryRootTab.today || tab == StoryRootTab.map) {
         _retainedMapRootTab = tab;
@@ -2916,6 +2913,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     }
   }
 
+  void _markRootTabBuilt(StoryRootTab tab) {
+    if (tab == StoryRootTab.bible) {
+      _hasBuiltBibleTab = true;
+    } else if (tab == StoryRootTab.profile) {
+      _hasBuiltProfileTab = true;
+    }
+  }
+
   void _continueBibleReading(BibleReadingTarget? target) {
     if (target == null) {
       ScaffoldMessenger.of(
@@ -2924,6 +2929,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return;
     }
     setState(() {
+      _markRootTabBuilt(StoryRootTab.bible);
       _bibleTabTarget = target;
       _bibleTabVerseNo = null;
       _rootTab = StoryRootTab.bible;

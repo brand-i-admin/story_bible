@@ -25,6 +25,13 @@ typedef _BibleChapterProgress = ({
   Set<String> keys,
   Map<String, DateTime?> readAts,
 });
+typedef _UserScopedSnapshot = ({
+  _EventProgressMap eventProgress,
+  Map<String, EventEmotionMark> eventEmotionMarks,
+  Set<String> savedEventIds,
+  _BibleChapterProgress bibleChapterProgress,
+  Map<String, QuizAttemptSummary> quizAttemptSummaries,
+});
 
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
   return Supabase.instance.client;
@@ -41,51 +48,35 @@ final storyControllerProvider = NotifierProvider<StoryController, StoryState>(
 class StoryController extends Notifier<StoryState> {
   Timer? _searchDebounce;
   int _userScopeRevision = 0;
+  Future<void>? _initializationFuture;
 
   StoryRepository get _repo => ref.read(storyRepositoryProvider);
 
   @override
   StoryState build() => const StoryState(loading: true);
 
-  Future<void> initialize() async {
+  Future<void> initialize() {
+    final inFlight = _initializationFuture;
+    if (inFlight != null) {
+      return inFlight;
+    }
+    final future = _initialize();
+    _initializationFuture = future;
+    unawaited(
+      future.whenComplete(() {
+        if (identical(_initializationFuture, future)) {
+          _initializationFuture = null;
+        }
+      }),
+    );
+    return future;
+  }
+
+  Future<void> _initialize() async {
     final userScopeRevision = _userScopeRevision;
     try {
       state = state.copyWith(loading: true, clearError: true);
       final eras = await _repo.fetchEras();
-      final eventProgress = await _safeUserFetch<_EventProgressMap>(
-        'fetchEventProgress',
-        _fetchEventProgressForCurrentUser,
-        const <
-          String,
-          ({bool bibleRead, bool quizCompleted, bool completed})
-        >{},
-      );
-      final eventEmotionMarks =
-          await _safeUserFetch<Map<String, EventEmotionMark>>(
-            'fetchEventEmotionMarks',
-            _fetchEventEmotionMarksForCurrentUser,
-            const <String, EventEmotionMark>{},
-          );
-      final savedEventIds = await _safeUserFetch<Set<String>>(
-        'fetchSavedEventIds',
-        _fetchSavedEventIdsForCurrentUser,
-        const <String>{},
-      );
-      final bibleChapterProgress = await _safeUserFetch<_BibleChapterProgress>(
-        'fetchCompletedBibleChapterProgress',
-        _fetchCompletedBibleChapterProgressForCurrentUser,
-        (keys: const <String>{}, readAts: const <String, DateTime?>{}),
-      );
-      final completedEventIds = _completedIdsFromProgress(
-        eventProgress,
-        eventEmotionMarks,
-      );
-      final quizAttemptSummaries =
-          await _safeUserFetch<Map<String, QuizAttemptSummary>>(
-            'fetchQuizAttemptSummaries',
-            _fetchQuizAttemptSummariesForCurrentUser,
-            const <String, QuizAttemptSummary>{},
-          );
       if (eras.isEmpty) {
         state = state.copyWith(
           loading: false,
@@ -97,51 +88,20 @@ class StoryController extends Notifier<StoryState> {
         return;
       }
 
-      // 시대별 랜드마크는 시대/인물 선택과 무관하게 부팅 시 한 번만 전체 로드.
-      // 실패해도 나머지 화면은 살려야 하므로 swallow.
-      List<Landmark> landmarks = const [];
-      try {
-        landmarks = await _repo.fetchLandmarks();
-      } catch (e) {
-        debugPrint(
-          '[StoryController] fetchLandmarks failed: $e — '
-          'apply-seeds-landmarks 가 적용됐는지 확인하세요.',
-        );
-        landmarks = const [];
-      }
+      final results = await Future.wait<Object?>([
+        _fetchUserScopedSnapshot(),
+        _fetchLandmarksSafely(),
+      ]);
+      final userSnapshot = results[0]! as _UserScopedSnapshot;
+      final landmarks = results[1]! as List<Landmark>;
 
       final hasOldTestament = eras.any((era) => _eraTestament(era) == 'old');
       final useFetchedUserData = userScopeRevision == _userScopeRevision;
-      state = state.copyWith(
+      var nextState = state.copyWith(
         loading: false,
         eras: eras,
         characters: const [],
         events: const [],
-        completedEventIds: useFetchedUserData
-            ? completedEventIds
-            : state.completedEventIds,
-        bibleReadEventIds: useFetchedUserData
-            ? _bibleReadIdsFromProgress(eventProgress)
-            : state.bibleReadEventIds,
-        quizCompletedEventIds: useFetchedUserData
-            ? _quizCompletedIdsFromProgress(eventProgress)
-            : state.quizCompletedEventIds,
-        lastQuizScores: useFetchedUserData
-            ? _scoresFromAttempts(quizAttemptSummaries)
-            : state.lastQuizScores,
-        quizAttemptSummaries: useFetchedUserData
-            ? quizAttemptSummaries
-            : state.quizAttemptSummaries,
-        eventEmotionMarks: useFetchedUserData
-            ? eventEmotionMarks
-            : state.eventEmotionMarks,
-        savedEventIds: useFetchedUserData ? savedEventIds : state.savedEventIds,
-        completedBibleChapterKeys: useFetchedUserData
-            ? bibleChapterProgress.keys
-            : state.completedBibleChapterKeys,
-        completedBibleChapterReadAts: useFetchedUserData
-            ? bibleChapterProgress.readAts
-            : state.completedBibleChapterReadAts,
         selectedEraId: null,
         selectedCharacterCodes: const {},
         selectedCharacterColors: const {},
@@ -152,6 +112,10 @@ class StoryController extends Notifier<StoryState> {
         clearSelectedEvent: true,
         landmarks: landmarks,
       );
+      if (useFetchedUserData) {
+        nextState = _withUserScopedSnapshot(nextState, userSnapshot);
+      }
+      state = nextState;
     } catch (error, stackTrace) {
       AppMonitoringService.instance.recordNonFatal(
         error,
@@ -308,7 +272,6 @@ class StoryController extends Notifier<StoryState> {
   }
 
   Future<void> selectEra(String eraId) async {
-    final userScopeRevision = _userScopeRevision;
     if (state.selectedEraId == eraId && state.characters.isNotEmpty) {
       return;
     }
@@ -323,76 +286,20 @@ class StoryController extends Notifier<StoryState> {
         selectedTestament: eraTestament,
         clearError: true,
       );
-      final characters = await _repo.fetchCharactersByEra(eraId);
-      final events = await _repo.fetchEventsByEra(eraId);
+      final results = await Future.wait<Object?>([
+        _repo.fetchCharactersByEra(eraId),
+        _repo.fetchEventsByEra(eraId),
+      ]);
+      final characters = results[0]! as List<Character>;
+      final events = results[1]! as List<StoryEvent>;
       final selectedCharacterCodes = _ensureSelectedCharacterCodes(
         characters,
         const {},
       );
-      final eventProgress = await _safeUserFetch<_EventProgressMap>(
-        'fetchEventProgress',
-        _fetchEventProgressForCurrentUser,
-        const <
-          String,
-          ({bool bibleRead, bool quizCompleted, bool completed})
-        >{},
-      );
-      final eventEmotionMarks =
-          await _safeUserFetch<Map<String, EventEmotionMark>>(
-            'fetchEventEmotionMarks',
-            _fetchEventEmotionMarksForCurrentUser,
-            const <String, EventEmotionMark>{},
-          );
-      final savedEventIds = await _safeUserFetch<Set<String>>(
-        'fetchSavedEventIds',
-        _fetchSavedEventIdsForCurrentUser,
-        const <String>{},
-      );
-      final bibleChapterProgress = await _safeUserFetch<_BibleChapterProgress>(
-        'fetchCompletedBibleChapterProgress',
-        _fetchCompletedBibleChapterProgressForCurrentUser,
-        (keys: const <String>{}, readAts: const <String, DateTime?>{}),
-      );
-      final completedEventIds = _completedIdsFromProgress(
-        eventProgress,
-        eventEmotionMarks,
-      );
-      final quizAttemptSummaries =
-          await _safeUserFetch<Map<String, QuizAttemptSummary>>(
-            'fetchQuizAttemptSummaries',
-            _fetchQuizAttemptSummariesForCurrentUser,
-            const <String, QuizAttemptSummary>{},
-          );
-      final useFetchedUserData = userScopeRevision == _userScopeRevision;
       state = state.copyWith(
         loading: false,
         characters: characters,
         events: events,
-        completedEventIds: useFetchedUserData
-            ? completedEventIds
-            : state.completedEventIds,
-        bibleReadEventIds: useFetchedUserData
-            ? _bibleReadIdsFromProgress(eventProgress)
-            : state.bibleReadEventIds,
-        quizCompletedEventIds: useFetchedUserData
-            ? _quizCompletedIdsFromProgress(eventProgress)
-            : state.quizCompletedEventIds,
-        lastQuizScores: useFetchedUserData
-            ? _scoresFromAttempts(quizAttemptSummaries)
-            : state.lastQuizScores,
-        quizAttemptSummaries: useFetchedUserData
-            ? quizAttemptSummaries
-            : state.quizAttemptSummaries,
-        eventEmotionMarks: useFetchedUserData
-            ? eventEmotionMarks
-            : state.eventEmotionMarks,
-        savedEventIds: useFetchedUserData ? savedEventIds : state.savedEventIds,
-        completedBibleChapterKeys: useFetchedUserData
-            ? bibleChapterProgress.keys
-            : state.completedBibleChapterKeys,
-        completedBibleChapterReadAts: useFetchedUserData
-            ? bibleChapterProgress.readAts
-            : state.completedBibleChapterReadAts,
         selectedCharacterCodes: selectedCharacterCodes,
         selectedCharacterColors: _assignSelectedColors(selectedCharacterCodes),
         selectedTimelineUnitCodes: const {},
@@ -550,6 +457,17 @@ class StoryController extends Notifier<StoryState> {
   /// 사용자 테이블에서 읽어 온 진행도·퀴즈·저장·통독 데이터만 초기화한다.
   void clearUserScopedData() {
     _userScopeRevision++;
+    if (state.completedEventIds.isEmpty &&
+        state.bibleReadEventIds.isEmpty &&
+        state.quizCompletedEventIds.isEmpty &&
+        state.lastQuizScores.isEmpty &&
+        state.quizAttemptSummaries.isEmpty &&
+        state.eventEmotionMarks.isEmpty &&
+        state.savedEventIds.isEmpty &&
+        state.completedBibleChapterKeys.isEmpty &&
+        state.completedBibleChapterReadAts.isEmpty) {
+      return;
+    }
     state = state.copyWith(
       completedEventIds: const <String>{},
       bibleReadEventIds: const <String>{},
@@ -561,6 +479,19 @@ class StoryController extends Notifier<StoryState> {
       completedBibleChapterKeys: const <String>{},
       completedBibleChapterReadAts: const <String, DateTime?>{},
     );
+  }
+
+  /// 인증 전환이나 명시적 새로고침 때 사용자 전용 데이터를 병렬로 한 번에 갱신한다.
+  ///
+  /// 개별 refresh 메서드를 직렬 호출하면 같은 네트워크 왕복을 기다리는 동안
+  /// [StoryState]도 여러 번 발행되어 지도와 프로필이 반복 rebuild 된다.
+  Future<void> refreshUserScopedData() async {
+    final userScopeRevision = _userScopeRevision;
+    final snapshot = await _fetchUserScopedSnapshot();
+    if (userScopeRevision != _userScopeRevision) {
+      return;
+    }
+    state = _withUserScopedSnapshot(state, snapshot);
   }
 
   Future<void> refreshCompletedEventIds() async {
@@ -991,6 +922,80 @@ class StoryController extends Notifier<StoryState> {
         error: '검색에 실패했습니다: $error',
       );
     }
+  }
+
+  Future<_UserScopedSnapshot> _fetchUserScopedSnapshot() async {
+    final results = await Future.wait<Object?>([
+      _safeUserFetch<_EventProgressMap>(
+        'fetchEventProgress',
+        _fetchEventProgressForCurrentUser,
+        const <
+          String,
+          ({bool bibleRead, bool quizCompleted, bool completed})
+        >{},
+      ),
+      _safeUserFetch<Map<String, EventEmotionMark>>(
+        'fetchEventEmotionMarks',
+        _fetchEventEmotionMarksForCurrentUser,
+        const <String, EventEmotionMark>{},
+      ),
+      _safeUserFetch<Set<String>>(
+        'fetchSavedEventIds',
+        _fetchSavedEventIdsForCurrentUser,
+        const <String>{},
+      ),
+      _safeUserFetch<_BibleChapterProgress>(
+        'fetchCompletedBibleChapterProgress',
+        _fetchCompletedBibleChapterProgressForCurrentUser,
+        (keys: const <String>{}, readAts: const <String, DateTime?>{}),
+      ),
+      _safeUserFetch<Map<String, QuizAttemptSummary>>(
+        'fetchQuizAttemptSummaries',
+        _fetchQuizAttemptSummariesForCurrentUser,
+        const <String, QuizAttemptSummary>{},
+      ),
+    ]);
+    return (
+      eventProgress: results[0]! as _EventProgressMap,
+      eventEmotionMarks: results[1]! as Map<String, EventEmotionMark>,
+      savedEventIds: results[2]! as Set<String>,
+      bibleChapterProgress: results[3]! as _BibleChapterProgress,
+      quizAttemptSummaries: results[4]! as Map<String, QuizAttemptSummary>,
+    );
+  }
+
+  Future<List<Landmark>> _fetchLandmarksSafely() async {
+    try {
+      return await _repo.fetchLandmarks();
+    } catch (error) {
+      debugPrint(
+        '[StoryController] fetchLandmarks failed: $error — '
+        'apply-seeds-landmarks 가 적용됐는지 확인하세요.',
+      );
+      return const [];
+    }
+  }
+
+  StoryState _withUserScopedSnapshot(
+    StoryState base,
+    _UserScopedSnapshot snapshot,
+  ) {
+    return base.copyWith(
+      completedEventIds: _completedIdsFromProgress(
+        snapshot.eventProgress,
+        snapshot.eventEmotionMarks,
+      ),
+      bibleReadEventIds: _bibleReadIdsFromProgress(snapshot.eventProgress),
+      quizCompletedEventIds: _quizCompletedIdsFromProgress(
+        snapshot.eventProgress,
+      ),
+      lastQuizScores: _scoresFromAttempts(snapshot.quizAttemptSummaries),
+      quizAttemptSummaries: snapshot.quizAttemptSummaries,
+      eventEmotionMarks: snapshot.eventEmotionMarks,
+      savedEventIds: snapshot.savedEventIds,
+      completedBibleChapterKeys: snapshot.bibleChapterProgress.keys,
+      completedBibleChapterReadAts: snapshot.bibleChapterProgress.readAts,
+    );
   }
 
   Future<T> _safeUserFetch<T>(

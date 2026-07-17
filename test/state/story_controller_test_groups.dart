@@ -31,6 +31,22 @@ void main() {
   }
 
   group('StoryController.initialize', () {
+    test('동시에 호출된 초기화는 같은 네트워크 작업을 공유한다', () async {
+      final pendingEras = Completer<List<Era>>();
+      when(() => mockRepo.fetchEras()).thenAnswer((_) => pendingEras.future);
+
+      final container = buildContainer();
+      final controller = container.read(storyControllerProvider.notifier);
+      final first = controller.initialize();
+      await untilCalled(() => mockRepo.fetchEras());
+      final second = controller.initialize();
+
+      expect(identical(first, second), isTrue);
+      pendingEras.complete(const []);
+      await Future.wait([first, second]);
+      verify(() => mockRepo.fetchEras()).called(1);
+    });
+
     test('eras 로드 성공 시 첫 구약 시대를 기본 testament로 설정', () async {
       final eras = [
         _era(id: 'era1', code: 'era_primeval', testament: 'old'),
@@ -119,6 +135,64 @@ void main() {
       expect(state.eras, eras);
       expect(state.completedEventIds, isEmpty);
       expect(state.quizAttemptSummaries, isEmpty);
+    });
+  });
+
+  group('StoryController.refreshUserScopedData', () {
+    test('사용자 전용 조회를 모두 동시에 시작하고 한 번에 상태에 반영한다', () async {
+      final user = _user(id: 'parallel-user');
+      final eventProgress =
+          Completer<
+            Map<String, ({bool bibleRead, bool quizCompleted, bool completed})>
+          >();
+      final emotionMarks = Completer<Map<String, EventEmotionMark>>();
+      final savedEventIds = Completer<Set<String>>();
+      final bibleReadAts = Completer<Map<String, DateTime?>>();
+      final quizAttempts = Completer<Map<String, QuizAttemptSummary>>();
+      when(() => mockAuth.currentUser).thenReturn(user);
+      when(
+        () => mockRepo.fetchEventProgress(user.id),
+      ).thenAnswer((_) => eventProgress.future);
+      when(
+        () => mockRepo.fetchEventEmotionMarks(user.id),
+      ).thenAnswer((_) => emotionMarks.future);
+      when(
+        () => mockRepo.fetchSavedEventIds(user.id),
+      ).thenAnswer((_) => savedEventIds.future);
+      when(
+        () => mockRepo.fetchCompletedBibleChapterReadAts(user.id),
+      ).thenAnswer((_) => bibleReadAts.future);
+      when(
+        () => mockRepo.fetchQuizAttemptSummaries(user.id),
+      ).thenAnswer((_) => quizAttempts.future);
+
+      final container = buildContainer();
+      final refresh = container
+          .read(storyControllerProvider.notifier)
+          .refreshUserScopedData();
+      await Future<void>.delayed(Duration.zero);
+
+      verify(() => mockRepo.fetchEventProgress(user.id)).called(1);
+      verify(() => mockRepo.fetchEventEmotionMarks(user.id)).called(1);
+      verify(() => mockRepo.fetchSavedEventIds(user.id)).called(1);
+      verify(
+        () => mockRepo.fetchCompletedBibleChapterReadAts(user.id),
+      ).called(1);
+      verify(() => mockRepo.fetchQuizAttemptSummaries(user.id)).called(1);
+
+      eventProgress.complete({
+        'event-1': (bibleRead: true, quizCompleted: true, completed: true),
+      });
+      emotionMarks.complete(const {});
+      savedEventIds.complete({'event-1'});
+      bibleReadAts.complete({'1:1': DateTime.utc(2026, 7, 17)});
+      quizAttempts.complete(const {});
+      await refresh;
+
+      final state = container.read(storyControllerProvider);
+      expect(state.bibleReadEventIds, {'event-1'});
+      expect(state.savedEventIds, {'event-1'});
+      expect(state.completedBibleChapterKeys, {'1:1'});
     });
   });
 
@@ -244,6 +318,26 @@ void main() {
       expect(state.characters, hasLength(1));
       expect(state.events, hasLength(1));
       expect(state.loading, isFalse);
+    });
+
+    test('시대 전환은 이미 전역에 있는 사용자 진행도를 다시 조회하지 않는다', () async {
+      final user = _user(id: 'era-user');
+      when(() => mockAuth.currentUser).thenReturn(user);
+      when(
+        () => mockRepo.fetchCharactersByEra('era1'),
+      ).thenAnswer((_) async => [_person(id: 'p1', name: '아담')]);
+      when(
+        () => mockRepo.fetchEventsByEra('era1'),
+      ).thenAnswer((_) async => const []);
+
+      final container = buildContainer();
+      await container.read(storyControllerProvider.notifier).selectEra('era1');
+
+      verifyNever(() => mockRepo.fetchEventProgress(user.id));
+      verifyNever(() => mockRepo.fetchEventEmotionMarks(user.id));
+      verifyNever(() => mockRepo.fetchSavedEventIds(user.id));
+      verifyNever(() => mockRepo.fetchQuizAttemptSummaries(user.id));
+      verifyNever(() => mockRepo.fetchCompletedBibleChapterReadAts(user.id));
     });
 
     test('실패 시 error 메시지 설정', () async {

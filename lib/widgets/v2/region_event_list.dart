@@ -686,10 +686,16 @@ class _AutoScrollingThumbTitleState extends State<_AutoScrollingThumbTitle> {
   final ScrollController _controller = ScrollController();
   Timer? _startTimer;
   int _animationRequest = 0;
+  double? _textScale;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final nextTextScale = MediaQuery.textScalerOf(context).scale(1);
+    if (_textScale == nextTextScale) {
+      return;
+    }
+    _textScale = nextTextScale;
     _scheduleScrollToEnd();
   }
 
@@ -704,6 +710,12 @@ class _AutoScrollingThumbTitleState extends State<_AutoScrollingThumbTitle> {
   void _scheduleScrollToEnd() {
     final request = ++_animationRequest;
     _startTimer?.cancel();
+    if (_controller.hasClients) {
+      // 글자 크기/스타일 변경 중 실행 중이던 animateTo를 취소한다. 이전
+      // maxScrollExtent를 향한 애니메이션이 새 레이아웃에 남으면 범위를
+      // 넘어선 위치에서 계속 합성되는 프레임과 테스트 불안정이 생긴다.
+      _controller.jumpTo(0);
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startTimer = Timer(const Duration(milliseconds: 850), () {
         if (!mounted ||
@@ -724,29 +736,21 @@ class _AutoScrollingThumbTitleState extends State<_AutoScrollingThumbTitle> {
     if (distance <= 0) return;
     final milliseconds = (distance * 34).round().clamp(2400, 9000);
     unawaited(
-      _controller
-          .animateTo(
-            distance,
-            duration: Duration(milliseconds: milliseconds),
-            curve: Curves.linear,
-          )
-          .then((_) {
-            if (!mounted ||
-                request != _animationRequest ||
-                !_controller.hasClients) {
-              return;
-            }
-            _startTimer = Timer(const Duration(seconds: 2), () {
-              if (!mounted ||
-                  request != _animationRequest ||
-                  !_controller.hasClients) {
-                return;
-              }
-              _controller.jumpTo(0);
-              _startScrollCycle(request);
-            });
-          }),
+      _controller.animateTo(
+        distance,
+        duration: Duration(milliseconds: milliseconds),
+        curve: Curves.linear,
+      ),
     );
+    // animateTo의 Future 완료는 스크롤 범위가 레이아웃 중 바뀌면 늦어질 수
+    // 있다. 절대 시간 타이머로 한 번만 원위치시켜 무한 애니메이션과 범위 밖
+    // 합성 상태를 모두 막는다.
+    _startTimer = Timer(Duration(milliseconds: milliseconds + 2000), () {
+      if (!mounted || request != _animationRequest || !_controller.hasClients) {
+        return;
+      }
+      _controller.jumpTo(0);
+    });
   }
 
   @override

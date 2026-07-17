@@ -582,6 +582,14 @@ void main() {
     expect(source, contains("label: '완료'"));
     expect(source, contains("label: '미완료'"));
     expect(source, contains('filteredEvents'));
+    expect(
+      source,
+      contains(
+        '_StoryProgressFilter _storyFilter = '
+        '_StoryProgressFilter.completed;',
+      ),
+    );
+    expect(source, contains('_storyFilter = _StoryProgressFilter.completed;'));
   });
 
   test('저장한 이야기 전체보기는 공용 2열 복습 그리드를 사용한다', () {

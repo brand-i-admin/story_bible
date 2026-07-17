@@ -6,7 +6,70 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/widgets/home/story_root_navigation_bar.dart';
 
+class _RetainedTabProbe extends StatefulWidget {
+  const _RetainedTabProbe({required this.label, required this.onDispose});
+
+  final String label;
+  final VoidCallback onDispose;
+
+  @override
+  State<_RetainedTabProbe> createState() => _RetainedTabProbeState();
+}
+
+class _RetainedTabProbeState extends State<_RetainedTabProbe> {
+  var count = 0;
+
+  @override
+  void dispose() {
+    widget.onDispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () => setState(() => count += 1),
+      child: Text('${widget.label}:$count'),
+    );
+  }
+}
+
 void main() {
+  testWidgets('루트 탭 레이어는 숨긴 화면을 Offstage로 유지해 재진입 로딩을 막는다', (tester) async {
+    var bibleDisposed = false;
+    var selectedTab = StoryRootTab.bible;
+
+    Widget buildRetentionStack() {
+      return MaterialApp(
+        home: StoryRootTabRetentionStack(
+          selectedTab: selectedTab,
+          mapChild: const Text('지도'),
+          bibleChild: _RetainedTabProbe(
+            label: '성경',
+            onDispose: () => bibleDisposed = true,
+          ),
+          profileChild: const Text('내정보'),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildRetentionStack());
+    await tester.tap(find.text('성경:0'));
+    await tester.pump();
+    expect(find.text('성경:1'), findsOneWidget);
+
+    selectedTab = StoryRootTab.profile;
+    await tester.pumpWidget(buildRetentionStack());
+    expect(bibleDisposed, isFalse);
+    expect(find.text('성경:1', skipOffstage: false), findsOneWidget);
+    expect(find.text('성경:1'), findsNothing);
+
+    selectedTab = StoryRootTab.bible;
+    await tester.pumpWidget(buildRetentionStack());
+    expect(find.text('성경:1'), findsOneWidget);
+    expect(bibleDisposed, isFalse);
+  });
+
   testWidgets('오늘 성경 지도 내정보 순서로 네비게이션 항목을 표시한다', (tester) async {
     StoryRootTab? selected;
     await tester.pumpWidget(
@@ -179,6 +242,9 @@ void main() {
     final todaySource = File(
       'lib/widgets/home/today_home_page.dart',
     ).readAsStringSync();
+    final retentionSource = File(
+      'lib/widgets/home/story_root_navigation_bar.dart',
+    ).readAsStringSync();
 
     expect(homeSource, contains('final GlobalKey _sharedMapKey'));
     expect(homeSource, contains('mapKey: _sharedMapKey'));
@@ -186,8 +252,12 @@ void main() {
     expect(homeSource, contains('key: _sharedMapKey'));
     expect(homeSource, contains('StoryRootTab _retainedMapRootTab'));
     expect(homeSource, contains('_buildRetainedMapBody'));
-    expect(homeSource, contains('IgnorePointer('));
-    expect(homeSource, contains('TickerMode('));
+    expect(retentionSource, contains('IgnorePointer('));
+    expect(retentionSource, contains('TickerMode('));
+    expect(retentionSource, contains('Offstage('));
+    expect(homeSource, contains('StoryRootTabRetentionStack('));
+    expect(homeSource, contains('_hasBuiltBibleTab'));
+    expect(homeSource, contains('_hasBuiltProfileTab'));
     expect(todaySource, contains('final bool mapGesturesEnabled;'));
     expect(
       todaySource,
@@ -215,6 +285,23 @@ void main() {
         'user == null\n        ? TodayActivitySummary.empty\n        : summarizeTodayActivity(',
       ),
     );
+  });
+
+  test('홈/내정보 로딩 경로는 전체 이야기와 활성 인물을 각각 한 번만 조회한다', () {
+    final catalogSource = File(
+      'lib/state/daily_mission_provider.dart',
+    ).readAsStringSync();
+    final profileSource = File(
+      'lib/widgets/profile_tab_page.dart',
+    ).readAsStringSync();
+
+    expect(catalogSource, contains('repo.fetchAllEvents()'));
+    expect(
+      catalogSource,
+      isNot(contains('eras.map((era) => repo.fetchEventsByEra')),
+    );
+    expect(profileSource, contains('repo.fetchAllActiveCharacters()'));
+    expect(profileSource, isNot(contains('repo.fetchCharactersByEra')));
   });
 
   test('로그아웃과 계정 전환은 루트와 내정보에서 사용자 전용 캐시를 즉시 비운다', () {

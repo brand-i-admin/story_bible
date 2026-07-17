@@ -26,6 +26,7 @@ import '../screens/saved_verses_screen.dart';
 import '../services/app_analytics_event.dart';
 import '../services/app_monitoring_service.dart';
 import '../state/auth_providers.dart';
+import '../state/daily_mission_provider.dart';
 import '../state/story_controller.dart';
 import '../state/story_state.dart';
 import '../theme/app_color_palette.dart';
@@ -179,7 +180,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       _handleProfileAuthUserChanged(next);
     });
     _scheduleProfileKstMidnightRefresh();
-    Future.microtask(() => _loadProfilePeople(forceRefresh: true));
+    Future.microtask(_loadInitialProfileData);
   }
 
   @override
@@ -193,7 +194,12 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
   }
 
   void _handleProfileAuthUserChanged(User? user) {
-    ref.read(storyControllerProvider.notifier).clearUserScopedData();
+    // 루트 탭으로 포함된 화면은 StoryHomeScreen이 인증 범위를 한 번만
+    // 초기화한다. 단독 화면으로 사용될 때에만 여기서 컨트롤러를 정리해,
+    // 같은 인증 변경을 두 번 처리하며 진행 중인 요청을 무효화하지 않는다.
+    if (!widget.embedded) {
+      ref.read(storyControllerProvider.notifier).clearUserScopedData();
+    }
     if (!mounted) {
       return;
     }
@@ -220,8 +226,21 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       _profileError = null;
     });
     if (user != null) {
-      unawaited(_loadProfilePeople(forceRefresh: true));
+      unawaited(_loadInitialProfileData());
     }
+  }
+
+  Future<void> _loadInitialProfileData() async {
+    // 루트 탭에서는 StoryHomeScreen이 인증 데이터 초기화를 소유한다. 단독
+    // 프로필 화면만 자체 갱신해, 앱 탭 진입 때 동일한 사용자 쿼리를 반복하지
+    // 않으면서 독립 라우트의 기존 동작은 유지한다.
+    if (!widget.embedded) {
+      await ref.read(storyControllerProvider.notifier).refreshUserScopedData();
+    }
+    if (!mounted) {
+      return;
+    }
+    await _loadProfilePeople(forceRefresh: true);
   }
 
   bool _isCurrentProfileUser(String userId) =>
@@ -275,7 +294,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     if (!mounted) {
       return;
     }
-    await ref.read(storyControllerProvider.notifier).refreshCompletedEventIds();
+    await ref.read(storyControllerProvider.notifier).refreshUserScopedData();
     await _loadProfilePeople(forceRefresh: true);
   }
 
@@ -646,42 +665,35 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       final user = ref.read(signedInUserProvider);
       final repo = ref.read(storyRepositoryProvider);
       final userRepo = ref.read(userRepositoryProvider);
-      final peopleByEra = <List<Character>>[];
-      final eventsByEra = <List<StoryEvent>>[];
-      for (final era in state.eras) {
-        peopleByEra.add(await repo.fetchCharactersByEra(era.id));
-        eventsByEra.add(await repo.fetchEventsByEra(era.id));
-      }
-
-      final characterByCode = <String, Character>{};
-      for (var i = 0; i < state.eras.length; i++) {
-        final eraPeople = peopleByEra[i];
-        for (final character in eraPeople) {
-          characterByCode.putIfAbsent(character.code, () => character);
+      final eras = state.eras;
+      final catalogResults = await Future.wait<Object?>([
+        ref.read(dailyExplorationCatalogProvider.future),
+        repo.fetchAllActiveCharacters(),
+      ]);
+      final allCatalogEvents = catalogResults[0]! as List<StoryEvent>;
+      final activeCharacters = catalogResults[1]! as List<Character>;
+      final allEvents = _sortEventsByEraThenIndex(allCatalogEvents, eras);
+      final characterOrder = <String, int>{};
+      for (final event in allEvents) {
+        for (final code in event.characterCodes) {
+          characterOrder.putIfAbsent(code, () => characterOrder.length);
         }
       }
-
-      final allPeople = characterByCode.values.toList()
-        ..sort(_compareProfilePeople);
-      final allEvents = _sortEventsByEraThenIndex(
-        eventsByEra.expand((events) => events).toList(),
-        state.eras,
-      );
+      final allPeople =
+          activeCharacters
+              .where((character) => characterOrder.containsKey(character.code))
+              .toList()
+            ..sort((a, b) {
+              final order = (characterOrder[a.code] ?? 1 << 30).compareTo(
+                characterOrder[b.code] ?? 1 << 30,
+              );
+              return order != 0 ? order : _compareProfilePeople(a, b);
+            });
 
       AppUserProfile? profile;
 
       if (user != null) {
         profile = await userRepo.ensureSignedInUser(user);
-        await ref
-            .read(storyControllerProvider.notifier)
-            .refreshCompletedEventIds();
-        await ref
-            .read(storyControllerProvider.notifier)
-            .refreshQuizAttemptSummaries();
-        await ref.read(storyControllerProvider.notifier).refreshSavedEventIds();
-        await ref
-            .read(storyControllerProvider.notifier)
-            .refreshCompletedBibleChapterKeys();
       }
 
       if (!mounted || ref.read(signedInUserProvider)?.id != requestedUserId) {

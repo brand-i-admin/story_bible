@@ -44,22 +44,46 @@ class StoryRepository {
         await _client.rpc('list_characters_by_era', params: {'p_era_id': eraId})
             as List<dynamic>;
 
-    return rows.map<Character>((row) {
-      final map = row as Map<String, dynamic>;
-      return Character(
-        id: map['id'] as String,
-        code: map['code'] as String,
-        name: localizedCharacterName(
-          code: map['code'] as String,
-          name: map['name'] as String?,
-        ),
-        tagline: map['tagline'] as String?,
-        description: map['description'] as String?,
-        avatarUrl: map['avatar_url'] as String?,
-        avatarStoragePath: map['avatar_storage_path'] as String?,
-        displayOrder: (map['display_order'] as num).toInt(),
-      );
-    }).toList();
+    return _charactersFromRows(rows);
+  }
+
+  /// 프로필 전체 진행 현황에 쓰는 활성 인물 카탈로그를 한 번에 조회한다.
+  Future<List<Character>> fetchAllActiveCharacters() async {
+    final rows = await _client
+        .from('characters')
+        .select(
+          'id, code, name, tagline, description, avatar_url, avatar_storage_path',
+        )
+        .eq('is_active', true)
+        .order('code', ascending: true);
+
+    return _charactersFromRows(rows);
+  }
+
+  List<Character> _charactersFromRows(List<dynamic> rows) {
+    return rows.indexed
+        .map<Character>((entry) {
+          final (index, row) = entry;
+          final map = row as Map<String, dynamic>;
+          final code = map['code'] as String;
+          final displayOrder = map['display_order'];
+          return Character(
+            id: map['id'] as String,
+            code: code,
+            name: localizedCharacterName(
+              code: code,
+              name: map['name'] as String?,
+            ),
+            tagline: map['tagline'] as String?,
+            description: map['description'] as String?,
+            avatarUrl: map['avatar_url'] as String?,
+            avatarStoragePath: map['avatar_storage_path'] as String?,
+            displayOrder: displayOrder is num
+                ? displayOrder.toInt()
+                : index + 1,
+          );
+        })
+        .toList(growable: false);
   }
 
   Future<List<StoryEvent>> fetchEventsByEra(String eraId) async {
@@ -73,6 +97,18 @@ class StoryRepository {
         .select()
         .eq('era_id', eraId)
         .order('rank_in_era', ascending: true);
+    return _visibleEventsFromRows(rows);
+  }
+
+  /// 오늘 홈처럼 전체 이야기 카탈로그가 필요한 화면의 단일 조회 경로.
+  ///
+  /// 시대마다 `events_ordered`를 다시 조회하면 앱 시작 직후 동일한 view를 여러
+  /// 번 스캔하고 모바일 네트워크 연결도 불필요하게 늘어난다.
+  Future<List<StoryEvent>> fetchAllEvents() async {
+    final rows = await _client
+        .from('events_ordered')
+        .select()
+        .order('global_rank', ascending: true);
     return _visibleEventsFromRows(rows);
   }
 

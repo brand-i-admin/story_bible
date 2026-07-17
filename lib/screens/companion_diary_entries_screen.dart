@@ -31,7 +31,7 @@ class CompanionDiaryEntriesScreen extends StatefulWidget {
 class _CompanionDiaryEntriesScreenState
     extends State<CompanionDiaryEntriesScreen> {
   late List<UserCompanionDiaryEntry> _entries;
-  _CompanionDiaryEntriesFilter _filter = _CompanionDiaryEntriesFilter.all;
+  _CompanionDiaryEntriesFilter _filter = _CompanionDiaryEntriesFilter.thisMonth;
 
   @override
   void initState() {

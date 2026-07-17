@@ -502,12 +502,16 @@ void main() {
         .state<ScrollableState>(titleScrollable)
         .position;
     expect(titlePosition.maxScrollExtent, greaterThan(0));
+    final titleAnimationDuration = Duration(
+      milliseconds: (titlePosition.maxScrollExtent * 34).round().clamp(
+        2400,
+        9000,
+      ),
+    );
     await tester.pump(const Duration(milliseconds: 850));
-    await tester.pump(const Duration(seconds: 10));
+    await tester.pump(titleAnimationDuration);
     expect(titlePosition.pixels, closeTo(titlePosition.maxScrollExtent, 0.5));
-    await tester.pump(const Duration(milliseconds: 1900));
-    expect(titlePosition.pixels, closeTo(titlePosition.maxScrollExtent, 0.5));
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 2100));
     expect(titlePosition.pixels, lessThan(titlePosition.maxScrollExtent / 2));
     await tester.pumpWidget(const SizedBox.shrink());
   });

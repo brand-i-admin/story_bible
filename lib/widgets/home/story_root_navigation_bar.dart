@@ -8,6 +8,80 @@ Color storyRootNavigationSurfaceColor(AppColorPalette palette) {
   return Color.alphaBlend(palette.panelSurface, palette.pageBottom);
 }
 
+/// 이미 방문한 루트 탭을 트리 안에 유지하되, 현재 탭만 paint/tick/input 한다.
+///
+/// 성경과 내정보를 단순 switch 문으로 교체하면 탭을 나갈 때 State와 화면별
+/// 네트워크 캐시가 dispose되어 재진입마다 로딩이 반복된다. 반대로 숨은 지도
+/// WebView를 일반 [Stack] 뒤에 계속 paint하면 플랫폼 뷰 합성 비용이 남는다.
+/// [Offstage]와 [TickerMode]를 함께 사용해 두 문제를 동시에 피한다.
+class StoryRootTabRetentionStack extends StatelessWidget {
+  const StoryRootTabRetentionStack({
+    super.key,
+    required this.selectedTab,
+    required this.mapChild,
+    this.bibleChild,
+    this.profileChild,
+  });
+
+  final StoryRootTab selectedTab;
+  final Widget mapChild;
+  final Widget? bibleChild;
+  final Widget? profileChild;
+
+  @override
+  Widget build(BuildContext context) {
+    final mapActive =
+        selectedTab == StoryRootTab.today || selectedTab == StoryRootTab.map;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        _RetainedRootTabLayer(
+          key: const ValueKey('retained-root-map-layer'),
+          active: mapActive,
+          child: mapChild,
+        ),
+        if (bibleChild case final child?)
+          _RetainedRootTabLayer(
+            key: const ValueKey('retained-root-bible-layer'),
+            active: selectedTab == StoryRootTab.bible,
+            child: child,
+          ),
+        if (profileChild case final child?)
+          _RetainedRootTabLayer(
+            key: const ValueKey('retained-root-profile-layer'),
+            active: selectedTab == StoryRootTab.profile,
+            child: child,
+          ),
+      ],
+    );
+  }
+}
+
+class _RetainedRootTabLayer extends StatelessWidget {
+  const _RetainedRootTabLayer({
+    super.key,
+    required this.active,
+    required this.child,
+  });
+
+  final bool active;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      ignoring: !active,
+      child: TickerMode(
+        enabled: active,
+        child: Offstage(
+          offstage: !active,
+          child: RepaintBoundary(child: child),
+        ),
+      ),
+    );
+  }
+}
+
 class StoryRootNavigationBar extends StatelessWidget {
   const StoryRootNavigationBar({
     super.key,

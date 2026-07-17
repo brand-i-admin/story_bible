@@ -192,6 +192,7 @@ class CompanionDiaryTodaySection extends StatelessWidget {
           entries: entries,
           onSave: onSave,
           onDelete: onDelete,
+          now: entryDate,
         ),
       ),
     );
@@ -464,6 +465,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
           entries: entries,
           onSave: onSave,
           onDelete: onDelete,
+          now: entryDate,
         ),
       ),
     );

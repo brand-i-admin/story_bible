@@ -525,7 +525,9 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 |--------|------|------|
 | `fetchEras()` | `eras` ORDER BY display_order → `hiddenEraCodes` 제외 | `List<Era>` |
 | `fetchCharactersByEra(eraId)` | `character_eras` view JOIN `persons` WHERE era_id ORDER BY display_order | `List<Character>` |
+| `fetchAllActiveCharacters()` | `characters` WHERE is_active ORDER BY code. 프로필 전체 현황에서 시대별 RPC 반복을 피한다. | `List<Character>` |
 | `fetchEventsByEra(eraId)` | `events_ordered` view WHERE era_id ORDER BY rank_in_era → 숨김 era 제외 | `List<StoryEvent>` |
+| `fetchAllEvents()` | `events_ordered` view ORDER BY global_rank → 숨김 era 제외. 오늘/프로필 카탈로그가 공유한다. | `List<StoryEvent>` |
 | `fetchEventsForCharacter(personCode)` | `events_ordered` WHERE character_codes @> ARRAY[code] ORDER BY global_rank → 숨김 era 제외 | `List<StoryEvent>` |
 | `fetchEventsByIds(eventIds)` | `events_ordered` WHERE id IN (...) ORDER BY global_rank → 숨김 era 제외 | `List<StoryEvent>` |
 | `searchEventsByText(query)` | 전체 `events_ordered` + persons name lookup → 숨김 era 제외 → 클라이언트 가중치 검색 | `List<StoryEvent>` (상위 20) |
