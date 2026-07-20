@@ -720,6 +720,77 @@ void main() {
       expect(source, contains('return true'));
     });
 
+    test('map viewport resizes without reloading the retained WebView', () {
+      final terrainSource = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(terrainSource, contains('with WidgetsBindingObserver'));
+      expect(terrainSource, contains('void didChangeMetrics()'));
+      expect(terrainSource, contains('AppLifecycleState.resumed'));
+      expect(terrainSource, contains('void activate()'));
+      expect(terrainSource, contains('ResizeObserver'));
+      expect(terrainSource, contains('window.storyBibleRefreshViewport'));
+      expect(terrainSource, contains('map.resize();'));
+      expect(terrainSource, contains('map.triggerRepaint();'));
+      expect(terrainSource, contains('.maplibregl-canvas-container'));
+      expect(terrainSource, contains('.maplibregl-canvas {'));
+      expect(terrainSource, contains('.maplibregl-marker {'));
+
+      final didUpdateStart = terrainSource.indexOf(
+        'void didUpdateWidget(covariant StoryTerrain3dMap oldWidget)',
+      );
+      final disposeStart = terrainSource.indexOf(
+        'void dispose()',
+        didUpdateStart,
+      );
+      final didUpdateSource = terrainSource.substring(
+        didUpdateStart,
+        disposeStart,
+      );
+      expect(didUpdateSource, contains('_scheduleViewportRefresh();'));
+      expect(
+        didUpdateSource,
+        isNot(contains('_loadHtmlIfNeeded(force: true)')),
+      );
+    });
+
+    test('map readiness requires a healthy rendered viewport', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(source, contains('const hasHealthyViewport = () =>'));
+      expect(source, contains('map.isStyleLoaded()'));
+      expect(source, contains('map.getCanvas().getBoundingClientRect()'));
+      expect(source, contains('if (!hasHealthyViewport()) return;'));
+      expect(source, contains("map.once('idle', requestReadyCheck);"));
+      expect(source, contains("map.once('render', requestReadyCheck);"));
+      expect(source, isNot(contains('setTimeout(markReady, 900)')));
+    });
+
+    test('initial map failure retries are bounded and user-recoverable', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(source, contains('_maxAutomaticReloadAttempts = 2'));
+      expect(source, contains('void _handleInitialLoadFailure('));
+      expect(source, contains('void _scheduleAutomaticReload('));
+      expect(source, contains('_automaticReloadAttempts >='));
+      expect(
+        source,
+        contains('_loadHtmlIfNeeded(force: true, resetReloadAttempts: false)'),
+      );
+      expect(source, contains('void _retryMapLoad()'));
+      expect(source, contains('void _reportInitialLoadFailureOnce()'));
+      expect(
+        source,
+        contains("reason: '3D map startup failed after bounded retries'"),
+      );
+      expect(source, contains("label: const Text('다시 시도')"));
+    });
+
     test('subresource errors do not show the 3D map failure overlay', () {
       final source = File(
         'lib/widgets/map/story_terrain_3d_map.dart',

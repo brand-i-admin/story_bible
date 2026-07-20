@@ -13,6 +13,9 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 import '../../models/event_emotion_mark.dart';
 import '../../models/landmark.dart';
 import '../../models/story_event.dart';
+import '../../services/app_monitoring_service.dart';
+import '../../theme/app_color_palette.dart';
+import '../../theme/tokens.dart';
 import '../../utils/map_math.dart' as map_math;
 import 'map_tile_style.dart';
 import 'story_event_marker_presentation.dart';
@@ -128,6 +131,10 @@ class StoryTerrain3dMapController {
 
   void clearGestureSuspension() => _state?._clearGestureSuspension();
 
+  /// 이미 생성된 MapLibre 인스턴스의 캔버스 크기만 현재 Flutter 레이아웃에
+  /// 맞춘다. HTML/style/WebView는 다시 로드하지 않는다.
+  void refreshViewport() => _state?._scheduleViewportRefresh();
+
   void moveTo(
     LatLng center,
     double zoom, {
@@ -183,7 +190,8 @@ class StoryTerrain3dMapController {
   }
 }
 
-class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
+class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
+    with WidgetsBindingObserver {
   static const _minZoom = 2.7;
   static const _maxZoom = 12.4;
   static const double _eventSpreadRadiusDeg = 0.065;
@@ -192,8 +200,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   static const _boundsSouth = -8.0;
   static const _boundsEast = 64.0;
   static const _boundsNorth = 50.5;
-  static const _initialLoadTimeoutDuration = Duration(seconds: 20);
-  static const _htmlRevision = 'today-journey-map-2026-07-15';
+  static const _initialLoadTimeoutDuration = Duration(seconds: 8);
+  static const _maxAutomaticReloadAttempts = 2;
+  static const _htmlRevision = 'map-viewport-recovery-2026-07-20';
   static const _homeIntroZoomOutDelta = 0.72;
   static final Set<Factory<OneSequenceGestureRecognizer>>
   _mapGestureRecognizers = <Factory<OneSequenceGestureRecognizer>>{
@@ -204,6 +213,8 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   final StoryTerrainWebViewController _webController =
       StoryTerrainWebViewController();
   Timer? _initialLoadTimeout;
+  Timer? _automaticReloadTimer;
+  Timer? _viewportRefreshTimer;
   late final String _webBridgeId = 'story-terrain-${identityHashCode(this)}';
   String? _webHtml;
   String? _lastRendererSignature;
@@ -211,8 +222,11 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   String? _lastOverlaySignature;
   String? _pendingCameraPayload;
   String? _pendingOverlayPayload;
+  int _htmlLoadSequence = 0;
   bool _mapReady = false;
   bool _hasError = false;
+  bool _initialFailureReported = false;
+  int _automaticReloadAttempts = 0;
 
   bool get _useTopDownRegionCamera =>
       widget.regionLandmarks.isNotEmpty &&
@@ -236,6 +250,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     widget.controller?._bind(this);
     if (kIsWeb) {
       _loadHtmlIfNeeded(force: true);
@@ -269,12 +284,36 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     _loadHtmlIfNeeded();
     if (oldWidget.mapGesturesEnabled != widget.mapGesturesEnabled) {
       _syncGestureAvailability();
+      _scheduleViewportRefresh();
+    }
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    // GlobalKey로 오늘/지도 탭 사이를 이동하거나 Offstage에서 다시 보일 때
+    // 같은 WebView를 유지한 채 캔버스 크기만 재확인한다.
+    _scheduleViewportRefresh();
+  }
+
+  @override
+  void didChangeMetrics() {
+    _scheduleViewportRefresh();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _scheduleViewportRefresh();
     }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _initialLoadTimeout?.cancel();
+    _automaticReloadTimer?.cancel();
+    _viewportRefreshTimer?.cancel();
     widget.controller?._unbind(this);
     super.dispose();
   }
@@ -297,9 +336,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
             onMessage: _handleJavaScriptMessageRaw,
           ),
           if (_hasError)
-            const _Map3dStatusOverlay(
+            _Map3dStatusOverlay(
               title: '3D 지도를 불러오지 못했어요',
               message: '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
+              onRetry: _retryMapLoad,
             ),
         ],
       );
@@ -310,9 +350,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       children: [
         _buildNativeWebView(),
         if (_hasError)
-          const _Map3dStatusOverlay(
+          _Map3dStatusOverlay(
             title: '3D 지도를 불러오지 못했어요',
             message: '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
+            onRetry: _retryMapLoad,
           ),
       ],
     );
@@ -367,6 +408,9 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           debugPrint('[Map3D] ready: ${widget.source.label}');
           _mapReady = true;
           _initialLoadTimeout?.cancel();
+          _automaticReloadTimer?.cancel();
+          _automaticReloadAttempts = 0;
+          _initialFailureReported = false;
           if (_hasError && mounted) {
             setState(() => _hasError = false);
           }
@@ -374,15 +418,15 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
           _flushPendingCameraPayload();
           _flushPendingOverlayPayload();
           _syncGestureAvailability();
+          _scheduleViewportRefresh();
           break;
         case 'mapError':
           debugPrint('[Map3D] map error: ${decoded['message'] ?? decoded}');
           break;
         case 'error':
           debugPrint('[Map3D] js error: ${decoded['message'] ?? decoded}');
-          if (kIsWeb && !_mapReady && mounted) {
-            _initialLoadTimeout?.cancel();
-            setState(() => _hasError = true);
+          if (!_mapReady) {
+            _handleInitialLoadFailure('Map JavaScript failed before ready');
           }
           break;
       }
@@ -391,7 +435,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     }
   }
 
-  void _loadHtmlIfNeeded({bool force = false}) {
+  void _loadHtmlIfNeeded({
+    bool force = false,
+    bool resetReloadAttempts = true,
+  }) {
     final rendererSignature = jsonEncode({
       'htmlRevision': _htmlRevision,
       'style': widget.source.style.name,
@@ -472,10 +519,22 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     _lastOverlaySignature = overlaySignature;
     _pendingCameraPayload = jsonEncode(cameraPayload);
     _pendingOverlayPayload = jsonEncode(overlayPayload);
+    if (resetReloadAttempts) {
+      _automaticReloadTimer?.cancel();
+      _automaticReloadAttempts = 0;
+      _initialFailureReported = false;
+    }
+    _htmlLoadSequence += 1;
     _mapReady = false;
     _hasError = false;
     if (kIsWeb) {
-      _webHtml = _buildHtml();
+      final hadLoadedHtml = _webHtml != null;
+      final nextHtml = _buildHtml();
+      if (hadLoadedHtml && mounted) {
+        setState(() => _webHtml = nextHtml);
+      } else {
+        _webHtml = nextHtml;
+      }
       _armInitialLoadTimeout();
       return;
     }
@@ -503,7 +562,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
 
     if (mounted) {
       _initialLoadTimeout?.cancel();
-      setState(() => _hasError = true);
+      _handleInitialLoadFailure('Main-frame WebView resource failed');
     }
   }
 
@@ -513,8 +572,99 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       if (!mounted || _mapReady) {
         return;
       }
-      setState(() => _hasError = true);
+      _handleInitialLoadFailure('Map readiness timed out');
     });
+  }
+
+  void _handleInitialLoadFailure(String reason) {
+    if (!mounted || _mapReady) {
+      return;
+    }
+    _initialLoadTimeout?.cancel();
+    if (_automaticReloadAttempts < _maxAutomaticReloadAttempts) {
+      _scheduleAutomaticReload(reason);
+      return;
+    }
+    _reportInitialLoadFailureOnce();
+    if (!_hasError) {
+      setState(() => _hasError = true);
+    }
+  }
+
+  void _reportInitialLoadFailureOnce() {
+    if (_initialFailureReported) {
+      return;
+    }
+    _initialFailureReported = true;
+    AppMonitoringService.instance.recordNonFatal(
+      StateError('3D map startup failed after bounded retries'),
+      StackTrace.current,
+      reason: '3D map startup failed after bounded retries',
+    );
+  }
+
+  void _scheduleAutomaticReload(String reason) {
+    if (!mounted ||
+        _mapReady ||
+        _automaticReloadAttempts >= _maxAutomaticReloadAttempts ||
+        (_automaticReloadTimer?.isActive ?? false)) {
+      return;
+    }
+    final attempt = _automaticReloadAttempts + 1;
+    final delay = Duration(milliseconds: attempt == 1 ? 350 : 900);
+    debugPrint(
+      '[Map3D] scheduling automatic reload $attempt/'
+      '$_maxAutomaticReloadAttempts: $reason',
+    );
+    _automaticReloadTimer = Timer(delay, () {
+      if (!mounted || _mapReady) {
+        return;
+      }
+      _automaticReloadAttempts = attempt;
+      _loadHtmlIfNeeded(force: true, resetReloadAttempts: false);
+    });
+  }
+
+  void _retryMapLoad() {
+    _automaticReloadTimer?.cancel();
+    _automaticReloadAttempts = 0;
+    _loadHtmlIfNeeded(force: true);
+    if (mounted) {
+      setState(() => _hasError = false);
+    }
+  }
+
+  void _scheduleViewportRefresh() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _viewportRefreshTimer?.cancel();
+      _viewportRefreshTimer = Timer(const Duration(milliseconds: 80), () {
+        if (mounted) {
+          unawaited(_refreshViewport());
+        }
+      });
+    });
+  }
+
+  Future<void> _refreshViewport() async {
+    try {
+      await _runMapJavaScript('''
+        if (window.storyBibleRefreshViewport) {
+          window.storyBibleRefreshViewport();
+        } else if (window.storyBibleMap) {
+          window.storyBibleMap.resize();
+          window.storyBibleMap.triggerRepaint();
+        }
+      ''');
+    } catch (error) {
+      debugPrint('[Map3D] viewport refresh failed: $error');
+      if (_mapReady) {
+        _mapReady = false;
+      }
+      _handleInitialLoadFailure('Map viewport refresh failed');
+    }
   }
 
   static bool _hasTerrainSource(StoryMapTileSource source) {
@@ -821,6 +971,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     final initialCenter = [widget.center.longitude, widget.center.latitude];
     final payload = jsonEncode({
       'bridgeId': _webBridgeId,
+      'loadSequence': _htmlLoadSequence,
       'styleJsonUrl': widget.source.styleJsonUrl,
       'terrainTileJsonUrl': widget.source.terrainTileJsonUrl,
       'terrainTiles': widget.source.terrainTiles,
@@ -871,6 +1022,28 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
     }
     #map {
       position: relative;
+    }
+    /* MapLibre의 원격 CSS가 일시적으로 실패해도 캔버스와 DOM marker의
+       필수 배치가 무너지지 않도록 하는 최소 로컬 fallback이다. */
+    .maplibregl-map {
+      position: relative;
+      overflow: hidden;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+    .maplibregl-canvas-container {
+      width: 100%;
+      height: 100%;
+    }
+    .maplibregl-canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .maplibregl-marker {
+      position: absolute;
+      left: 0;
+      top: 0;
+      will-change: transform;
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
@@ -1298,6 +1471,38 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       mapOptions.maxTileCacheZoomLevels = maxTileCacheZoomLevels;
     }
     const map = new maplibregl.Map(mapOptions);
+    const mapContainer = document.getElementById('map');
+    let mapResizeFrame = null;
+    let requestReadyAfterResize = () => {};
+    const refreshMapViewport = () => {
+      if (mapResizeFrame !== null) return;
+      mapResizeFrame = window.requestAnimationFrame(() => {
+        mapResizeFrame = null;
+        const rect = mapContainer.getBoundingClientRect();
+        if (rect.width < 1 || rect.height < 1) return;
+        map.resize();
+        map.triggerRepaint();
+        requestReadyAfterResize();
+      });
+    };
+    window.storyBibleRefreshViewport = refreshMapViewport;
+    if (typeof ResizeObserver !== 'undefined') {
+      const viewportObserver = new ResizeObserver(refreshMapViewport);
+      viewportObserver.observe(mapContainer);
+      viewportObserver.observe(document.documentElement);
+      window.storyBibleMapViewportObserver = viewportObserver;
+    }
+    window.addEventListener('resize', refreshMapViewport, { passive: true });
+    window.addEventListener('orientationchange', refreshMapViewport, {
+      passive: true
+    });
+    window.addEventListener('pageshow', refreshMapViewport, { passive: true });
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) refreshMapViewport();
+    });
+    window.setTimeout(refreshMapViewport, 0);
+    window.setTimeout(refreshMapViewport, 180);
+    window.setTimeout(refreshMapViewport, 700);
     map.on('error', (event) => {
       const error = event && event.error;
       post({
@@ -2422,14 +2627,30 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
       map.on('mouseleave', 'story-bible-landmark-hit', () => map.getCanvas().style.cursor = '');
 
       let readyPosted = false;
+      const hasHealthyViewport = () => {
+        if (!map.isStyleLoaded()) return false;
+        const containerRect = mapContainer.getBoundingClientRect();
+        const canvasRect = map.getCanvas().getBoundingClientRect();
+        if (containerRect.width < 1 || containerRect.height < 1) return false;
+        if (canvasRect.width < 1 || canvasRect.height < 1) return false;
+        return Math.abs(containerRect.width - canvasRect.width) <= 2 &&
+          Math.abs(containerRect.height - canvasRect.height) <= 2;
+      };
       const markReady = () => {
         if (readyPosted) return;
+        if (!hasHealthyViewport()) return;
         readyPosted = true;
         document.body.classList.add('ready');
         post({ type: 'ready' });
       };
-      map.once('idle', markReady);
-      setTimeout(markReady, 900);
+      const requestReadyCheck = () => {
+        refreshMapViewport();
+        window.requestAnimationFrame(markReady);
+      };
+      requestReadyAfterResize = () => window.requestAnimationFrame(markReady);
+      map.once('idle', requestReadyCheck);
+      map.once('render', requestReadyCheck);
+      window.setTimeout(requestReadyCheck, 900);
     });
   </script>
 </body>
@@ -2881,28 +3102,31 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap> {
 }
 
 class _Map3dStatusOverlay extends StatelessWidget {
-  const _Map3dStatusOverlay({required this.title, required this.message});
+  const _Map3dStatusOverlay({
+    required this.title,
+    required this.message,
+    required this.onRetry,
+  });
 
   final String title;
   final String message;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
     return Center(
       child: Container(
-        margin: const EdgeInsets.all(24),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        margin: const EdgeInsets.all(AppSpacing.x10),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.x8,
+          vertical: AppSpacing.x6,
+        ),
         decoration: BoxDecoration(
-          color: const Color(0xEEFFF4DE),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFBDA076)),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x33000000),
-              blurRadius: 18,
-              offset: Offset(0, 8),
-            ),
-          ],
+          color: palette.softSurface,
+          borderRadius: BorderRadius.circular(AppRadii.lg),
+          border: Border.all(color: palette.subtleBorder),
+          boxShadow: AppShadows.md,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2910,21 +3134,38 @@ class _Map3dStatusOverlay extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF3E2723),
-                fontSize: 15,
+              style: TextStyle(
+                color: palette.text,
+                fontSize: AppFontSizes.input,
                 fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.x2),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF6D5643),
-                fontSize: 12,
+              style: TextStyle(
+                color: palette.mutedText,
+                fontSize: AppFontSizes.base,
                 fontWeight: FontWeight.w600,
               ),
+            ),
+            const SizedBox(height: AppSpacing.x5),
+            FilledButton.icon(
+              onPressed: onRetry,
+              style: FilledButton.styleFrom(
+                backgroundColor: palette.primaryDeep,
+                foregroundColor: palette.activeTextOnAccent,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.x7,
+                  vertical: AppSpacing.x3,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadii.lg),
+                ),
+              ),
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              label: const Text('다시 시도'),
             ),
           ],
         ),

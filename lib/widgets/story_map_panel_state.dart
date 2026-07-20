@@ -290,7 +290,15 @@ class _StoryMapPanelState extends State<StoryMapPanel> {
               builder: (context, constraints) {
                 final mapSize = constraints.biggest;
                 if (mapSize.width > 0 && mapSize.height > 0) {
+                  final sizeChanged = mapSize != _lastMapSize;
                   _lastMapSize = mapSize;
+                  if (sizeChanged) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        _terrain3dController.refreshViewport();
+                      }
+                    });
+                  }
                 }
                 return StoryTerrain3dMap(
                   controller: _terrain3dController,

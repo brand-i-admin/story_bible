@@ -116,6 +116,9 @@ iframe 브릿지로 같은 HTML 렌더러를 띄운다. country boundary, region
 분리한다. 상단/하단 Flutter 오버레이는 유지한다. 지도 HTML 은 renderer 설정이
 바뀔 때만 새로 로드하고, 카메라 이동과 시대/지역/사건 선택 변화는 JS `easeTo()`
 및 GeoJSON `setData()` 로 갱신해 반복 로딩 overlay 를 피한다.
+루트 탭 전환, 앱 resume, 회전/창 크기 변경 뒤에는 보존 중인 같은 WebView와
+MapLibre 인스턴스에 `resize()`와 repaint만 요청한다. `ResizeObserver`도 실제 지도
+컨테이너 크기 변화를 감지하므로 탭을 돌아다녀도 style/타일을 처음부터 다시 받지 않는다.
 Android WebView 는 Flutter gesture arena 에서 지도 드래그/핀치를 놓치지 않도록
 eager gesture recognizer 를 사용한다. Android 에서는 WebView renderer OOM 을 줄이기
 위해 worker/cache/antialias/pitch 를 보수적으로 제한하고 DEM terrain 은 비활성화한다.
@@ -124,8 +127,10 @@ eager gesture recognizer 를 사용한다. Android 에서는 WebView renderer OO
 네이티브 Activity 는 WebView renderer 종료를 처리해 렌더러가 죽어도 앱 프로세스가
 같이 종료되지 않게 한다.
 확대/이동 중 일부 타일이나 서브리소스 요청이 실패·취소되어도 지도 실패 팝업이나
-반복 로그로 올리지 않는다. 초기 로딩에서 MapLibre `ready` 신호가 일정 시간 오지
-않거나 main frame 이 실패한 경우에만 지도 실패 안내와 main-frame 로그를 표시한다.
+반복 로그로 올리지 않는다. 최초 style 로드와 캔버스 크기가 모두 정상인 경우에만
+MapLibre `ready`로 인정한다. 초기 로딩이 8초 안에 준비되지 않거나 main frame/JS가
+실패하면 짧은 지연 뒤 최대 2회만 자동 재생성한다. 그래도 실패하면 `다시 시도`가 있는
+지도 실패 안내를 표시하고 운영 Crashlytics에 개인 정보 없는 non-fatal 1건만 기록한다.
 기본 지도 style 의 symbol label layer 를 숨겨 영어/현지어 지명 대신 앱이 직접
 올리는 한국어 국가/region 라벨과 사건 핀만 보이게 한다.
 3D 첫 화면은 하단 선택 시트에 사우디아라비아와 걸프 지역이 가려지지 않도록
