@@ -777,9 +777,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           .map((reference) => reference.book),
     );
     final bookList = bookNames.isEmpty ? '성경' : bookNames.join(', ');
-    return '선택된 $eraName에는 $bookList의 이야기들이 등장합니다.\n'
-        '해당 시대를 볼 방법을 선택하세요.\n'
-        "(다른 시대를 선택하려면 '시대 다시 선택' 이나 '시대/방법' 버튼을 선택하세요)";
+    return '• $eraName - $bookList\n'
+        '• 시대를 볼 방법 선택\n'
+        "(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)";
   }
 
   /// 안내가 떠 있는 상태에서 화면을 탭하거나 지도를 만지면 hint dismiss.

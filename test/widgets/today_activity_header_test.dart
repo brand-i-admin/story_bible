@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/theme/app_color_palette.dart';
+import 'package:story_bible/theme/tokens.dart';
 import 'package:story_bible/utils/today_activity_summary.dart';
 import 'package:story_bible/widgets/home/story_root_navigation_bar.dart';
 import 'package:story_bible/widgets/home/today_activity_header.dart';
@@ -161,6 +162,40 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(dialogVisibilityChanges, [true, false]);
+  });
+
+  testWidgets('연속 반짝임은 밝은 팔레트에서 진한 역할색, 다크에서 금빛을 사용한다', (tester) async {
+    Future<Color?> sparkleColorFor(AppColorPalette palette) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(extensions: [AppPaletteTheme(palette)]),
+          home: const Scaffold(
+            body: TodayActivityHeader(
+              nickname: '기도친구',
+              summary: TodayActivitySummary(
+                streakDays: 5,
+                explorationCount: 1,
+                hasDiary: false,
+                bibleChapterCount: 0,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+      final firstSparkle = find.descendant(
+        of: find.byKey(const ValueKey('today-streak-fire-sparkle-0')),
+        matching: find.byIcon(Icons.auto_awesome_rounded),
+      );
+      return tester.widget<Icon>(firstSparkle).color;
+    }
+
+    for (final palette in AppColorPalette.values.where(
+      (palette) => palette != AppColorPalette.blackMap,
+    )) {
+      expect(await sparkleColorFor(palette), palette.primaryDeep);
+    }
+    expect(await sparkleColorFor(AppColorPalette.blackMap), AppColors.goldHi);
   });
 
   testWidgets('비로그인 기본 이름과 초기화된 일일 활동을 표시한다', (tester) async {

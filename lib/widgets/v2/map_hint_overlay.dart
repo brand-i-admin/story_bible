@@ -47,9 +47,16 @@ class MapHintOverlay extends StatelessWidget {
                     duration: const Duration(milliseconds: 220),
                     child: Container(
                       key: const ValueKey('map-hint-container'),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 8,
+                      transform: Matrix4.translationValues(
+                        0,
+                        _guideOuterTranslationY,
+                        0,
+                      ),
+                      padding: const EdgeInsets.fromLTRB(
+                        15,
+                        AppSpacing.x5,
+                        15,
+                        AppSpacing.x3,
                       ),
                       decoration: BoxDecoration(
                         color: outerColor,
@@ -87,7 +94,7 @@ class MapHintOverlay extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    top: -16,
+                    top: _guideDismissBadgeTop,
                     child: Container(
                       key: const ValueKey('map-hint-dismiss-badge'),
                       padding: const EdgeInsets.symmetric(
@@ -138,6 +145,8 @@ class MapHintOverlay extends StatelessWidget {
 const double _guideAvatarGap = 12;
 const double _guideAvatarSize = 48;
 const double _guideAvatarImageScale = 1.13;
+const double _guideOuterTranslationY = -2;
+const double _guideDismissBadgeTop = -22;
 
 Color _guideOuterColor(AppColorPalette palette) {
   return palette.utilityBackground.withValues(alpha: 0.64);
@@ -178,6 +187,10 @@ bool _isGuideStepLine(String line) {
   final trimmed = line.trimLeft();
   return trimmed.isNotEmpty &&
       _GuideSpeechMessage.circledDigits.containsKey(trimmed[0]);
+}
+
+bool _isGuideBulletLine(String line) {
+  return line.trimLeft().startsWith('•');
 }
 
 bool _isGuideAsideLine(String line) {
@@ -227,7 +240,8 @@ class _GuideSpeechMessage extends StatelessWidget {
     final textStyle = _guideSpeechTextStyle();
     final lines = message.split('\n');
     final hasStepLines = lines.any(_isStepLine);
-    if (!hasStepLines) {
+    final hasBulletLines = lines.any(_isBulletLine);
+    if (!hasStepLines && !hasBulletLines) {
       return Text(message, textAlign: TextAlign.left, style: textStyle);
     }
 
@@ -235,8 +249,17 @@ class _GuideSpeechMessage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (final line in lines)
-          _isStepLine(line)
+        for (final (index, line) in lines.indexed)
+          _isBulletLine(line)
+              ? Padding(
+                  padding: EdgeInsets.only(top: index == 0 ? 0 : 7),
+                  child: _GuideBulletLine(
+                    key: ValueKey('map-hint-bullet-$index'),
+                    text: line.trimLeft().substring(1).trimLeft(),
+                    textStyle: textStyle,
+                  ),
+                )
+              : _isStepLine(line)
               ? Padding(
                   padding: const EdgeInsets.only(top: 7),
                   child: _GuideStepLine(
@@ -245,6 +268,21 @@ class _GuideSpeechMessage extends StatelessWidget {
                     textStyle: textStyle,
                     completed:
                         checklistStates?[circledDigits[line.trimLeft()[0]]!],
+                  ),
+                )
+              : _isAsideLine(line) && hasBulletLines
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 9),
+                  child: Text(
+                    line.trim(),
+                    maxLines: 2,
+                    overflow: TextOverflow.visible,
+                    textAlign: TextAlign.left,
+                    style: textStyle.copyWith(
+                      color: Colors.white,
+                      fontSize: 11.2,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 )
               : _isAsideLine(line)
@@ -276,8 +314,42 @@ class _GuideSpeechMessage extends StatelessWidget {
     return _isGuideStepLine(line);
   }
 
+  bool _isBulletLine(String line) {
+    return _isGuideBulletLine(line);
+  }
+
   bool _isAsideLine(String line) {
     return _isGuideAsideLine(line);
+  }
+}
+
+class _GuideBulletLine extends StatelessWidget {
+  const _GuideBulletLine({
+    super.key,
+    required this.text,
+    required this.textStyle,
+  });
+
+  final String text;
+  final TextStyle textStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('•', style: textStyle.copyWith(fontWeight: FontWeight.w900)),
+        const SizedBox(width: 7),
+        Expanded(
+          child: Text(
+            text,
+            overflow: TextOverflow.visible,
+            textAlign: TextAlign.left,
+            style: textStyle,
+          ),
+        ),
+      ],
+    );
   }
 }
 

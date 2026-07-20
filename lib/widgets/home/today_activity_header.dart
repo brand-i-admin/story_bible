@@ -356,6 +356,8 @@ class _StreakFireCelebrationState extends State<_StreakFireCelebration>
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final sparkleColor = _streakSparkleColor(palette);
     return SizedBox(
       key: const ValueKey('today-streak-fire-celebration'),
       width: 30,
@@ -402,6 +404,7 @@ class _StreakFireCelebrationState extends State<_StreakFireCelebration>
                   opacityKey: ValueKey('today-streak-fire-sparkle-$index'),
                   position: _sparklePositions[index],
                   intensity: _sparkleIntensity(index),
+                  color: sparkleColor,
                 ),
               Center(
                 child: Transform.scale(
@@ -428,11 +431,13 @@ class _StreakFireSparkle extends StatelessWidget {
     required this.opacityKey,
     required this.position,
     required this.intensity,
+    required this.color,
   });
 
   final Key opacityKey;
   final Offset position;
   final double intensity;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -444,15 +449,17 @@ class _StreakFireSparkle extends StatelessWidget {
         child: Opacity(
           key: opacityKey,
           opacity: 0.18 + intensity * 0.82,
-          child: const Icon(
-            Icons.auto_awesome_rounded,
-            size: 8,
-            color: AppColors.goldHi,
-          ),
+          child: Icon(Icons.auto_awesome_rounded, size: 8, color: color),
         ),
       ),
     );
   }
+}
+
+Color _streakSparkleColor(AppColorPalette palette) {
+  return palette == AppColorPalette.blackMap
+      ? AppColors.goldHi
+      : palette.primaryDeep;
 }
 
 class _StreakRuleRow extends StatelessWidget {

@@ -71,7 +71,15 @@ void main() {
         .dy;
     expect(badgeTop, lessThan(outerTop));
     expect(badgeBottom, greaterThan(outerTop));
-    expect(badgeBottom - outerTop, lessThanOrEqualTo(8));
+    expect(badgeBottom - outerTop, lessThanOrEqualTo(4));
+    expect(outerTop - badgeTop, greaterThanOrEqualTo(19.5));
+    final outerContainer = tester.widget<Container>(
+      find.byKey(const ValueKey('map-hint-container')),
+    );
+    final outerPadding = outerContainer.padding! as EdgeInsets;
+    expect(outerPadding.top, 12);
+    expect(outerPadding.bottom, 8);
+    expect(outerContainer.transform?.getTranslation().y, -2);
 
     final outerHeight = tester
         .getSize(find.byKey(const ValueKey('map-hint-container')))
@@ -79,7 +87,7 @@ void main() {
     final messageHeight = tester
         .getSize(find.byKey(const ValueKey('map-hint-message-row')))
         .height;
-    expect(outerHeight - messageHeight, lessThanOrEqualTo(20));
+    expect(outerHeight - messageHeight, closeTo(22, 0.01));
     expect(find.byIcon(Icons.touch_app_rounded), findsNothing);
   });
 
@@ -148,6 +156,30 @@ void main() {
     final secondStep = tester.widget<Text>(find.text('시간 순·인물·장소 중 선택해 주세요.'));
     expect(aside.style?.fontSize, lessThan(firstStep.style?.fontSize ?? 0));
     expect(firstStep.style?.fontSize, secondStep.style?.fontSize);
+  });
+
+  testWidgets('시대 선택 가이드는 두 불릿과 짧은 다른 시대 안내를 표시한다', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: MapHintOverlay(
+            message:
+                '• 출애굽 시대 - 출애굽기, 민수기, 신명기, 여호수아\n'
+                '• 시대를 볼 방법 선택\n'
+                "(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)",
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('map-hint-bullet-0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('map-hint-bullet-1')), findsOneWidget);
+    expect(find.text('출애굽 시대 - 출애굽기, 민수기, 신명기, 여호수아'), findsOneWidget);
+    expect(find.text('시대를 볼 방법 선택'), findsOneWidget);
+    expect(
+      find.text("(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)"),
+      findsOneWidget,
+    );
   });
 
   testWidgets('오늘 환영 가이드는 세 가지 동행 항목과 두 참고 문구를 간결하게 표시한다', (tester) async {
@@ -365,9 +397,10 @@ void main() {
       contains('_selectedEraIntroHintMessage(selectedEra, state.events)'),
     );
     expect(source, contains('canonicalBibleBookNames('));
-    expect(source, contains('선택된 \$eraName에는 \$bookList의 이야기들이 등장합니다.'));
-    expect(source, contains('해당 시대를 볼 방법을 선택하세요.'));
-    expect(source, contains("(다른 시대를 선택하려면 '시대 다시 선택' 이나 '시대/방법' 버튼을 선택하세요)"));
+    expect(source, contains('• \$eraName - \$bookList'));
+    expect(source, contains('• 시대를 볼 방법 선택'));
+    expect(source, contains("(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)"));
+    expect(source, isNot(contains('이야기들이 등장합니다.')));
     expect(source, isNot(contains('창조부터 바벨까지')));
     expect(source, contains('노란 지역을 눌러'));
     expect(source, contains('아래 패널에서 인물을'));
