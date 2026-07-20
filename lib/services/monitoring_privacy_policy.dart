@@ -9,6 +9,9 @@ const _expectedErrorFragments = <String>{
   'operation was cancelled',
   'sign in canceled',
   'sign in cancelled',
+  'invalid refresh token',
+  'refresh_token_not_found',
+  'refresh_token_already_used',
 };
 
 /// 인터넷 단절이나 사용자의 취소처럼 정상적으로 예상되는 실패를 제외한다.

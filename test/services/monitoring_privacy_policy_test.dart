@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:story_bible/services/monitoring_privacy_policy.dart';
 
@@ -11,6 +12,19 @@ void main() {
       );
       expect(
         shouldReportNonFatalError(Exception('The operation was canceled')),
+        isFalse,
+      );
+    });
+
+    test('서버에서 이미 정리된 refresh token은 보고하지 않는다', () {
+      expect(
+        shouldReportNonFatalError(
+          const AuthException(
+            'Invalid Refresh Token: Refresh Token Not Found',
+            statusCode: '400',
+            code: 'refresh_token_not_found',
+          ),
+        ),
         isFalse,
       );
     });

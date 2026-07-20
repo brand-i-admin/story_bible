@@ -595,6 +595,12 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 
 로그아웃 후에는 사용자 테이블 RLS가 새 조회를 차단하는 것과 별개로, 로그인 중 조회해 둔 앱 메모리도 즉시 정리한다. 인증 사용자 ID 변경 시 `StoryController`의 `user_event_progress`·`user_quiz_attempts`·`user_event_emotion_marks`·`user_saved_events`·`user_bible_chapter_progress` 파생 상태와 `ProfileTabPage`의 프로필/저장 말씀/다이어리 미리보기 캐시를 모두 비운다. 인증 전환 전에 시작된 비동기 조회 결과도 revision/user ID 검증에 실패하면 버려 다른 계정이나 비로그인 화면에 노출하지 않는다.
 
+앱 시작 시 로컬에 남은 Supabase 세션의 refresh token이 서버에서 이미 제거됐으면
+SDK가 해당 로컬 세션을 지우고 signed-out 상태를 방출한다. 모니터링용 인증 스트림
+구독은 이 오류를 직접 소비하며, `refresh_token_not_found`와
+`refresh_token_already_used`는 정상적인 재로그인 필요 상태로 분류해 Crashlytics
+fatal/non-fatal 집계에서 제외한다.
+
 계정 삭제 확인 아이디는 이메일 → `user_profiles.share_id` → Auth UUID 순서로 표시하며,
 동일 값이 Edge Function 에 전달되어 서버에서도 한 번 더 검증된다.
 

@@ -108,18 +108,30 @@ class AppMonitoringService {
   Future<void> observeAuthState(SupabaseClient client) async {
     await _authStateSubscription?.cancel();
     await setLoginState(client.auth.currentUser != null);
-    _authStateSubscription = client.auth.onAuthStateChange.listen((authState) {
-      final user = authState.session?.user;
-      unawaited(setLoginState(user != null));
-      if (authState.event == AuthChangeEvent.signedIn &&
-          user != null &&
-          isLikelyNewAccountSignIn(
-            createdAt: user.createdAt,
-            lastSignInAt: user.lastSignInAt,
-          )) {
-        unawaited(logAnalyticsEvent(AppAnalyticsEvent.accountCreated()));
-      }
-    });
+    _authStateSubscription = client.auth.onAuthStateChange.listen(
+      (authState) {
+        final user = authState.session?.user;
+        unawaited(setLoginState(user != null));
+        if (authState.event == AuthChangeEvent.signedIn &&
+            user != null &&
+            isLikelyNewAccountSignIn(
+              createdAt: user.createdAt,
+              lastSignInAt: user.lastSignInAt,
+            )) {
+          unawaited(logAnalyticsEvent(AppAnalyticsEvent.accountCreated()));
+        }
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        // GoTrue removes an invalid persisted session before emitting this
+        // error. Handle it here so a normal signed-out recovery is not raised
+        // to PlatformDispatcher as an uncaught fatal exception.
+        recordNonFatal(
+          error,
+          stackTrace,
+          reason: 'Supabase auth state stream error',
+        );
+      },
+    );
   }
 
   Future<void> setLoginState(bool signedIn) async {
