@@ -667,16 +667,96 @@ void main() {
       isFalse,
     );
     expect(find.byIcon(Icons.edit_note_rounded), findsOneWidget);
-    expect(find.text('오늘의 감사\n함께하심을 기억합니다.'), findsOneWidget);
-    expect(find.text('기록하기'), findsNothing);
-    await tester.tap(find.byKey(const ValueKey('home-diary-quick-action')));
-    await tester.pumpAndSettle();
-
-    expect(find.text('다이어리 상세'), findsOneWidget);
     expect(find.text('오늘의 감사'), findsOneWidget);
     expect(find.text('함께하심을 기억합니다.'), findsOneWidget);
+    expect(find.text('기록하기'), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('home-diary-quick-action')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('다이어리 상세'), findsOneWidget);
+    expect(find.text('오늘의 감사'), findsNWidgets(2));
+    expect(find.text('함께하심을 기억합니다.'), findsNWidgets(2));
     expect(find.text('수정'), findsOneWidget);
     expect(find.text('삭제'), findsOneWidget);
+  });
+
+  testWidgets('아주크게에서도 오늘 다이어리 제목은 한 줄 수동 스크롤이고 본문은 세 줄로 제한한다', (tester) async {
+    final now = DateTime(2026, 7, 14);
+    final entry = UserCompanionDiaryEntry(
+      id: 'diary-today-long-title',
+      userId: 'user-1',
+      entryDate: now,
+      title: '은혜를 오래 기억하며 오늘의 걸음을 천천히 돌아보는 다이어리 제목',
+      body: '말씀을 묵상하며 하루의 모든 순간에 함께하신 은혜를 차분히 되새겼습니다.',
+      createdAt: now,
+      updatedAt: now,
+    );
+    await tester.binding.setSurfaceSize(const Size(390, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(textScaler: TextScaler.linear(1.4)),
+          child: Scaffold(
+            body: HomeJourneyOverlay(
+              events: events,
+              recommendedEventId: 'recommended',
+              currentEventId: 'recommended',
+              eras: const [_era],
+              charactersByCode: const {},
+              eventEmotionMarks: const {},
+              quizAttemptSummaries: const {},
+              isAuthenticated: true,
+              todayDiary: entry,
+              diaryLoading: false,
+              diaryError: null,
+              bibleTargetLabel: '창세기 14장',
+              onOpenStory: (_) {},
+              onCurrentStoryChanged: (_) {},
+              onSaveDiary: _discardDiarySave,
+              onDeleteDiary: _discardDiaryDelete,
+              onContinueBibleReading: () {},
+              onOpenProfile: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final title = tester.widget<Text>(
+      find.byKey(const ValueKey('home-diary-entry-title')),
+    );
+    final body = tester.widget<Text>(
+      find.byKey(const ValueKey('home-diary-entry-body')),
+    );
+    expect(title.maxLines, 1);
+    expect(title.softWrap, isFalse);
+    expect(title.textScaler, isNotNull);
+    expect(title.textScaler!.scale(1), 1.4);
+    expect(title.style?.fontWeight, FontWeight.w900);
+    expect(body.maxLines, 3);
+    expect(body.overflow, TextOverflow.ellipsis);
+    expect(
+      find.byKey(const ValueKey('home-diary-entry-title-scroll')),
+      findsOneWidget,
+    );
+    final titleScroll = find.byKey(
+      const ValueKey('home-diary-entry-title-scroll'),
+    );
+    final titleScrollPosition = tester
+        .state<ScrollableState>(
+          find.descendant(of: titleScroll, matching: find.byType(Scrollable)),
+        )
+        .position;
+    expect(titleScrollPosition.maxScrollExtent, greaterThan(0));
+    await tester.drag(titleScroll, const Offset(-48, 0));
+    await tester.pump();
+    expect(titleScrollPosition.pixels, greaterThan(0));
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('이야기 덱을 옆으로 넘기면 현재 이야기가 다음 이야기로 바뀐다', (tester) async {
@@ -1061,8 +1141,8 @@ void main() {
       findsOneWidget,
     );
     final diarySubtitle = tester.widget<Text>(find.text('오늘을 기록'));
-    expect(diarySubtitle.overflow, TextOverflow.visible);
-    expect(diarySubtitle.maxLines, greaterThanOrEqualTo(2));
+    expect(diarySubtitle.overflow, TextOverflow.ellipsis);
+    expect(diarySubtitle.maxLines, 3);
     final diaryCard = find.byKey(const ValueKey('home-diary-quick-action'));
     expect(
       tester.getRect(find.text('오늘을 기록')).bottom,

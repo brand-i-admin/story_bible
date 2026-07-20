@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../../theme/app_color_palette.dart';
@@ -156,10 +154,7 @@ class TodayActivityLabelRail extends StatelessWidget {
             completed: streakActive,
             contentKey: const ValueKey('today-streak-label-content'),
             completionOverlay: streakActive
-                ? _StreakFireCelebration(
-                    accent: palette.currentAccentDeep,
-                    streakDays: summary.streakDays,
-                  )
+                ? _StreakFireCelebration(accent: palette.currentAccentDeep)
                 : null,
             onTap: () => _showStreakInfo(context),
           ),
@@ -315,13 +310,9 @@ class _TodayActivityLabel extends StatelessWidget {
 }
 
 class _StreakFireCelebration extends StatefulWidget {
-  const _StreakFireCelebration({
-    required this.accent,
-    required this.streakDays,
-  });
+  const _StreakFireCelebration({required this.accent});
 
   final Color accent;
-  final int streakDays;
 
   @override
   State<_StreakFireCelebration> createState() => _StreakFireCelebrationState();
@@ -329,62 +320,38 @@ class _StreakFireCelebration extends StatefulWidget {
 
 class _StreakFireCelebrationState extends State<_StreakFireCelebration>
     with SingleTickerProviderStateMixin {
-  static const Duration _replayDelay = Duration(milliseconds: 900);
+  static const _sparklePositions = [
+    Offset(11, 0),
+    Offset(23, 9),
+    Offset(6, 22),
+    Offset(0, 10),
+  ];
+  static const _sparklePhases = [0.0, 0.22, 0.5, 0.72];
+
   late final AnimationController _controller;
   late final Animation<double> _scale;
-  Timer? _replayTimer;
-  var _remainingReplays = 1;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+    _scale = Tween<double>(begin: 1, end: 1.28).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
     );
-    _scale =
-        TweenSequence<double>([
-          TweenSequenceItem(tween: Tween(begin: 1, end: 1.32), weight: 45),
-          TweenSequenceItem(tween: Tween(begin: 1.32, end: 1), weight: 55),
-        ]).animate(
-          CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
-        );
-    _controller.addStatusListener(_handleAnimationStatus);
-    _controller.forward();
-  }
-
-  void _handleAnimationStatus(AnimationStatus status) {
-    if (status != AnimationStatus.completed) {
-      return;
-    }
-    if (_remainingReplays <= 0) {
-      return;
-    }
-    _remainingReplays -= 1;
-    _replayTimer?.cancel();
-    _replayTimer = Timer(_replayDelay, () {
-      if (mounted) {
-        _controller.forward(from: 0);
-      }
-    });
-  }
-
-  @override
-  void didUpdateWidget(covariant _StreakFireCelebration oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.streakDays > oldWidget.streakDays) {
-      _replayTimer?.cancel();
-      _remainingReplays = 1;
-      _controller.forward(from: 0);
-    }
   }
 
   @override
   void dispose() {
-    _replayTimer?.cancel();
-    _controller.removeStatusListener(_handleAnimationStatus);
     _controller.dispose();
     super.dispose();
+  }
+
+  double _sparkleIntensity(int index) {
+    final progress = (_controller.value + _sparklePhases[index]) % 1;
+    return 1 - (progress - 0.5).abs() * 2;
   }
 
   @override
@@ -395,16 +362,93 @@ class _StreakFireCelebrationState extends State<_StreakFireCelebration>
       height: 30,
       child: AnimatedBuilder(
         animation: _controller,
-        builder: (context, child) => Transform.scale(
-          key: const ValueKey('today-streak-fire-scale'),
-          scale: _scale.value,
-          child: child,
-        ),
-        child: Icon(
-          Icons.local_fire_department_rounded,
-          key: const ValueKey('today-streak-fire-icon'),
-          size: 26,
-          color: widget.accent,
+        builder: (context, child) {
+          final glowIntensity = Curves.easeInOutSine.transform(
+            _controller.value,
+          );
+          final glowColor = Color.alphaBlend(
+            AppColors.goldHi.withValues(alpha: 0.42),
+            widget.accent,
+          );
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Center(
+                child: SizedBox(
+                  width: 17 + glowIntensity * 7,
+                  height: 17 + glowIntensity * 7,
+                  child: DecoratedBox(
+                    key: const ValueKey('today-streak-fire-glow'),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: glowColor.withValues(
+                        alpha: 0.06 + glowIntensity * 0.12,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: glowColor.withValues(
+                            alpha: 0.14 + glowIntensity * 0.24,
+                          ),
+                          blurRadius: 5 + glowIntensity * 9,
+                          spreadRadius: 0.5 + glowIntensity * 1.5,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              for (var index = 0; index < _sparklePositions.length; index++)
+                _StreakFireSparkle(
+                  opacityKey: ValueKey('today-streak-fire-sparkle-$index'),
+                  position: _sparklePositions[index],
+                  intensity: _sparkleIntensity(index),
+                ),
+              Center(
+                child: Transform.scale(
+                  key: const ValueKey('today-streak-fire-scale'),
+                  scale: _scale.value,
+                  child: Icon(
+                    Icons.local_fire_department_rounded,
+                    key: const ValueKey('today-streak-fire-icon'),
+                    size: 27,
+                    color: widget.accent,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _StreakFireSparkle extends StatelessWidget {
+  const _StreakFireSparkle({
+    required this.opacityKey,
+    required this.position,
+    required this.intensity,
+  });
+
+  final Key opacityKey;
+  final Offset position;
+  final double intensity;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: position.dx,
+      top: position.dy,
+      child: Transform.scale(
+        scale: 0.68 + intensity * 0.52,
+        child: Opacity(
+          key: opacityKey,
+          opacity: 0.18 + intensity * 0.82,
+          child: const Icon(
+            Icons.auto_awesome_rounded,
+            size: 8,
+            color: AppColors.goldHi,
+          ),
         ),
       ),
     );

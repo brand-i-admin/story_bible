@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,6 +44,16 @@ void main() {
         ),
       ],
     );
+  });
+
+  test('감정 새기기 메모 입력칸은 한 줄부터 최대 다섯 줄까지 자동 확장한다', () {
+    final source = File(
+      'lib/widgets/event_detail_page.dart',
+    ).readAsStringSync();
+
+    expect(source, contains("key: const ValueKey('emotion-note-input')"));
+    expect(source, contains('minLines: 1'));
+    expect(source, contains('maxLines: 5'));
   });
 
   testWidgets('배경 지식 제목 옆에 등장인물 아바타와 인라인 요약을 표시한다', (tester) async {

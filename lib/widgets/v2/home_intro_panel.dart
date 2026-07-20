@@ -38,9 +38,9 @@ class HomeIntroPanel extends StatelessWidget {
     final palette = AppPaletteTheme.of(context);
     final canPickMode = selectedEraId != null;
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
-    // 시대를 골랐으면 1번 영역(헤더+칩)은 흐리게 처리해 시선을 2번으로 유도.
+    // 시대를 골랐으면 1번 영역(헤더+칩)은 비활성 색으로 바꾸어 시선을 2번으로 유도.
     // 다시 고르려면 패널 위 "시대 다시 선택" 또는 stepper 의 "시대/방법"을 사용한다.
-    final eraStepOpacity = canPickMode ? 0.78 : 1.0;
+    final eraStepOpacity = canPickMode ? 0.86 : 1.0;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
@@ -73,6 +73,7 @@ class HomeIntroPanel extends StatelessWidget {
                     eras: eras,
                     selectedEraId: selectedEraId,
                     onSelectEra: onSelectEra,
+                    enabled: !canPickMode,
                     trailingScrollPadding: _homeIntroHorizontalPadding,
                   ),
                 ],

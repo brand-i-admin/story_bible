@@ -248,7 +248,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('선택한 시대 칩은 현재 팔레트 다이어리 역할색을 따른다', (tester) async {
+  testWidgets('선택 후 시대 칩은 잠긴 비활성 색과 상태 아이콘을 표시한다', (tester) async {
     await tester.pumpWidget(
       homeIntroHarness(
         width: 390,
@@ -264,12 +264,28 @@ void main() {
       find.byKey(const ValueKey('era-chip-era_divided_kingdom')),
     );
     final decoration = selectedChip.decoration! as BoxDecoration;
-    final gradient = decoration.gradient! as LinearGradient;
+    const palette = AppColorPalette.colorfulMap;
 
-    expect(gradient.colors, [
-      AppColorPalette.colorfulMap.currentAccentDeep,
-      AppColorPalette.colorfulMap.currentAccentDeep,
-    ]);
+    expect(decoration.gradient, isNull);
+    expect(
+      decoration.color,
+      Color.alphaBlend(
+        palette.currentAccentDeep.withValues(alpha: 0.26),
+        palette.mutedSurface,
+      ),
+    );
+    expect(
+      decoration.border?.top.color,
+      palette.currentAccent.withValues(alpha: 0.74),
+    );
+    expect(
+      find.byKey(const ValueKey('era-chip-lock-era_divided_kingdom')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('era-chip-lock-era_exodus')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('블랙 팔레트의 보기 방식 문구는 팔레트 글자색을 따른다', (tester) async {

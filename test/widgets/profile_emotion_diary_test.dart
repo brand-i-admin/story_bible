@@ -337,6 +337,71 @@ void _companionDiaryWidgetTests() {
     expect(find.byKey(const ValueKey('diary-content-tab-bar')), findsNothing);
   });
 
+  testWidgets('아주크게에서도 내정보 다이어리 제목은 한 줄 수동 스크롤이고 본문은 카드 끝까지 세 줄을 쓴다', (
+    tester,
+  ) async {
+    final repository = _MockStoryRepository();
+    when(
+      () => repository.fetchEventsByIds(any()),
+    ).thenAnswer((_) async => const <StoryEvent>[]);
+    final entry = _diaryEntry(
+      entryDate: DateTime(2026, 6, 10),
+      title: '오늘 하루 받은 은혜와 감사의 이유를 오래 기록하는 다이어리 제목',
+      body:
+          '오늘 본문에서 만난 말씀을 되새기며 하루 동안 함께하신 은혜를 차분히 기록했습니다. 내일도 이 마음을 기억하고 싶습니다.',
+    );
+
+    await tester.pumpWidget(
+      _wrap(
+        repository: repository,
+        marks: const <String, EventEmotionMark>{},
+        companionDiaryEntries: [entry],
+        now: DateTime.utc(2026, 6, 10),
+        width: 390,
+        textScale: 1.4,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final title = tester.widget<Text>(
+      find.byKey(const ValueKey('companion-diary-entry-title')),
+    );
+    final body = tester.widget<Text>(
+      find.byKey(const ValueKey('companion-diary-entry-body')),
+    );
+    final cardRect = tester.getRect(
+      find.byKey(const ValueKey('companion-diary-feature-card')),
+    );
+    final bodyRect = tester.getRect(
+      find.byKey(const ValueKey('companion-diary-entry-body')),
+    );
+    expect(title.maxLines, 1);
+    expect(title.softWrap, isFalse);
+    expect(title.textScaler, isNotNull);
+    expect(title.textScaler!.scale(1), 1.4);
+    expect(title.style?.fontWeight, FontWeight.w900);
+    expect(body.maxLines, 3);
+    expect(body.overflow, TextOverflow.ellipsis);
+    expect(bodyRect.right, greaterThan(cardRect.right - 28));
+    expect(
+      find.byKey(const ValueKey('companion-diary-entry-title-scroll')),
+      findsOneWidget,
+    );
+    final titleScroll = find.byKey(
+      const ValueKey('companion-diary-entry-title-scroll'),
+    );
+    final titleScrollPosition = tester
+        .state<ScrollableState>(
+          find.descendant(of: titleScroll, matching: find.byType(Scrollable)),
+        )
+        .position;
+    expect(titleScrollPosition.maxScrollExtent, greaterThan(0));
+    await tester.drag(titleScroll, const Offset(-48, 0));
+    await tester.pump();
+    expect(titleScrollPosition.pixels, greaterThan(0));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('아주크게에서 긴 마지막 통독 권도 통독 카드 안에 맞춘다', (tester) async {
     final repository = _MockStoryRepository();
     when(
@@ -710,7 +775,8 @@ void main() {
       companionSource,
       contains('constraints: BoxConstraints(minHeight: minHeight)'),
     );
-    expect(companionSource, contains('maxLines: readOnlySummary ? 2 : 3'));
+    expect(companionSource, contains('maxLines: 3'));
+    expect(companionSource, contains('FadingHorizontalTextScroll'));
     expect(companionSource, isNot(contains('오늘 적은 다이어리')));
     expect(source, isNot(contains('_DiaryLinkedTabSection')));
     expect(source, isNot(contains('_DiaryContentTab')));

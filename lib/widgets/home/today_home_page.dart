@@ -16,6 +16,7 @@ import '../../utils/today_activity_summary.dart';
 import '../map/story_event_marker_presentation.dart';
 import '../profile/companion_diary_entry_card.dart';
 import '../story_map_panel.dart';
+import '../v2/map_hint_overlay.dart';
 import '../web_pointer_interceptor.dart';
 import 'home_journey_overlay.dart';
 import 'story_root_navigation_bar.dart';
@@ -85,11 +86,15 @@ class TodayHomePage extends StatefulWidget {
 
 class _TodayHomePageState extends State<TodayHomePage> {
   static const Duration _modalMapInputLockDuration = Duration(hours: 1);
+  static const String _todayGuideMessage =
+      '이야기, 다이어리, 통독을 해보세요!\n'
+      '(이야기 순서는 감정을 새길 때마다 재정렬 됩니다)';
   final SceneAssetLoader _sceneAssetLoader = SceneAssetLoader();
   String? _currentEventId;
   String? _currentThumbnailEventId;
   String? _currentThumbnailUrl;
   int _thumbnailRequest = 0;
+  bool _todayGuideDismissed = false;
 
   @override
   void initState() {
@@ -103,6 +108,9 @@ class _TodayHomePageState extends State<TodayHomePage> {
   @override
   void didUpdateWidget(covariant TodayHomePage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (!oldWidget.mapGesturesEnabled && widget.mapGesturesEnabled) {
+      _todayGuideDismissed = false;
+    }
     var selectionChanged = false;
     if (oldWidget.recommendedEventId != widget.recommendedEventId) {
       _currentEventId = widget.recommendedEventId;
@@ -124,6 +132,12 @@ class _TodayHomePageState extends State<TodayHomePage> {
     if (_currentEventId == eventId) return;
     setState(() => _currentEventId = eventId);
     unawaited(_loadCurrentThumbnail(eventId));
+  }
+
+  void _dismissTodayGuide() {
+    if (_todayGuideDismissed) return;
+    widget.mapController.suppressMapTaps(const Duration(milliseconds: 650));
+    setState(() => _todayGuideDismissed = true);
   }
 
   void _setStreakDialogMapInputBlocked(bool blocked) {
@@ -186,6 +200,7 @@ class _TodayHomePageState extends State<TodayHomePage> {
             304.0 + ((textScale - 1) * 185).clamp(0.0, 76.0);
         final topObscured =
             media.padding.top + TodayActivityHeader.mapObscuredExtent + 8;
+        final todayGuideVerticalOffset = textScale >= 1.3 ? 60.0 : 0.0;
         final bottomObscuredFraction = constraints.maxHeight <= 0
             ? 0.48
             : (floatingOverlayExtent / constraints.maxHeight).clamp(0.0, 0.68);
@@ -342,6 +357,28 @@ class _TodayHomePageState extends State<TodayHomePage> {
                 ),
               ),
             ),
+            if (!_todayGuideDismissed)
+              Positioned.fill(
+                child: WebPointerInterceptor(
+                  child: Listener(
+                    key: const ValueKey('today-guide-dismiss-layer'),
+                    behavior: HitTestBehavior.opaque,
+                    onPointerDown: (_) => _dismissTodayGuide(),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: topObscured,
+                        bottom: floatingOverlayExtent + 12,
+                      ),
+                      child: Transform.translate(
+                        offset: Offset(0, todayGuideVerticalOffset),
+                        child: const MapHintOverlay(
+                          message: _todayGuideMessage,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         );
       },

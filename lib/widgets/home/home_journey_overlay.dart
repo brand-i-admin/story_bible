@@ -11,6 +11,7 @@ import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/daily_exploration_selection.dart';
 import '../../utils/scene_asset_loader.dart';
+import '../fading_horizontal_text_scroll.dart';
 import '../login_required_dialog.dart';
 import '../profile/companion_diary_entry_card.dart';
 import '../profile/profile_event_review_grid.dart';
@@ -743,8 +744,14 @@ class _HomeQuickActions extends StatelessWidget {
               effectId: 'diary',
               icon: Icons.edit_note_rounded,
               title: '다이어리',
-              subtitle: diaryError ?? _diaryPreviewText(todayDiary),
-              subtitleMaxLines: todayDiary == null ? 2 : 3,
+              previewTitle: diaryError == null ? _diaryTitle(todayDiary) : null,
+              subtitle: diaryError ?? _diaryBody(todayDiary),
+              subtitleMaxLines: 3,
+              previewTitleScrollKey: const ValueKey(
+                'home-diary-entry-title-scroll',
+              ),
+              previewTitleTextKey: const ValueKey('home-diary-entry-title'),
+              subtitleKey: const ValueKey('home-diary-entry-body'),
               actionLabel: !diaryLoading && todayDiary == null
                   ? '+ 기록하기'
                   : null,
@@ -773,14 +780,20 @@ class _HomeQuickActions extends StatelessWidget {
     );
   }
 
-  String _diaryPreviewText(UserCompanionDiaryEntry? entry) {
+  String? _diaryTitle(UserCompanionDiaryEntry? entry) {
+    final title = entry?.title.trim() ?? '';
+    return title.isEmpty ? null : title;
+  }
+
+  String _diaryBody(UserCompanionDiaryEntry? entry) {
     if (diaryLoading) {
       return '오늘 기록을 불러오는 중이에요.';
     }
     if (entry == null) {
       return '오늘을 기록';
     }
-    return '${entry.title}\n${entry.body}';
+    final body = entry.body.trim();
+    return body.isEmpty ? '작성한 내용이 없습니다.' : body;
   }
 
   Future<void> _handleDiaryTap(BuildContext context) async {
@@ -924,6 +937,10 @@ class _HomeQuickActionCard extends StatelessWidget {
     this.actionLabel,
     this.actionEffectActive = false,
     this.subtitleMaxLines = 1,
+    this.previewTitle,
+    this.previewTitleScrollKey,
+    this.previewTitleTextKey,
+    this.subtitleKey,
   });
 
   final String effectId;
@@ -935,11 +952,14 @@ class _HomeQuickActionCard extends StatelessWidget {
   final String? actionLabel;
   final bool actionEffectActive;
   final int subtitleMaxLines;
+  final String? previewTitle;
+  final Key? previewTitleScrollKey;
+  final Key? previewTitleTextKey;
+  final Key? subtitleKey;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final darkSurface = palette == AppColorPalette.blackMap;
     final surface = Color.alphaBlend(
       accent.withValues(alpha: darkSurface ? 0.18 : 0.10),
@@ -978,11 +998,9 @@ class _HomeQuickActionCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      maxLines: largeText ? 2 : 1,
-                      overflow: largeText
-                          ? TextOverflow.visible
-                          : TextOverflow.ellipsis,
-                      softWrap: true,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
                       style: TextStyle(
                         color: palette.text,
                         fontSize: 13,
@@ -990,13 +1008,27 @@ class _HomeQuickActionCard extends StatelessWidget {
                         height: 1.1,
                       ),
                     ),
+                    if (previewTitle != null) ...[
+                      const SizedBox(height: 4),
+                      FadingHorizontalTextScroll(
+                        text: previewTitle!,
+                        scrollKey: previewTitleScrollKey,
+                        textKey: previewTitleTextKey,
+                        textScaler: MediaQuery.textScalerOf(context),
+                        style: TextStyle(
+                          color: palette.text,
+                          fontSize: 12.2,
+                          fontWeight: FontWeight.w900,
+                          height: 1.15,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      maxLines: largeText
-                          ? subtitleMaxLines + 2
-                          : subtitleMaxLines,
-                      overflow: TextOverflow.visible,
+                      key: subtitleKey,
+                      maxLines: subtitleMaxLines,
+                      overflow: TextOverflow.ellipsis,
                       softWrap: true,
                       style: TextStyle(
                         color: palette.mutedText,

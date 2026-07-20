@@ -18,6 +18,7 @@ class EraPickRows extends StatelessWidget {
     required this.eras,
     required this.selectedEraId,
     required this.onSelectEra,
+    this.enabled = true,
     this.gap = 8,
     this.trailingScrollPadding = 0,
   });
@@ -25,6 +26,9 @@ class EraPickRows extends StatelessWidget {
   final List<Era> eras;
   final String? selectedEraId;
   final ValueChanged<String> onSelectEra;
+
+  /// false이면 선택을 잠그고 모든 칩을 뚜렷한 비활성 표면으로 표시한다.
+  final bool enabled;
 
   /// 두 row 사이 세로 간격.
   final double gap;
@@ -44,6 +48,7 @@ class EraPickRows extends StatelessWidget {
           eras: old,
           selectedEraId: selectedEraId,
           onSelectEra: onSelectEra,
+          enabled: enabled,
           trailingScrollPadding: trailingScrollPadding,
         ),
         SizedBox(height: gap),
@@ -52,6 +57,7 @@ class EraPickRows extends StatelessWidget {
           eras: newT,
           selectedEraId: selectedEraId,
           onSelectEra: onSelectEra,
+          enabled: enabled,
           trailingScrollPadding: trailingScrollPadding,
         ),
       ],
@@ -79,6 +85,7 @@ class EraPickRow extends StatelessWidget {
     required this.eras,
     required this.selectedEraId,
     required this.onSelectEra,
+    this.enabled = true,
     this.trailingScrollPadding = 0,
   });
 
@@ -86,6 +93,7 @@ class EraPickRow extends StatelessWidget {
   final List<Era> eras;
   final String? selectedEraId;
   final ValueChanged<String> onSelectEra;
+  final bool enabled;
   final double trailingScrollPadding;
 
   @override
@@ -120,6 +128,7 @@ class EraPickRow extends StatelessWidget {
                   _EraChip(
                     era: eras[i],
                     selected: selectedEraId == eras[i].id,
+                    enabled: enabled,
                     onTap: () => onSelectEra(eras[i].id),
                   ),
                 ],
@@ -136,10 +145,12 @@ class _EraChip extends StatelessWidget {
   const _EraChip({
     required this.era,
     required this.selected,
+    required this.enabled,
     required this.onTap,
   });
   final Era era;
   final bool selected;
+  final bool enabled;
   final VoidCallback onTap;
 
   @override
@@ -147,74 +158,119 @@ class _EraChip extends StatelessWidget {
     final palette = AppPaletteTheme.of(context);
     final eraColor = EraColors.forCode(era.code);
     final iconData = eraIconFor(era.code);
-    final selectedColors = [
-      palette.currentAccentDeep,
-      palette.currentAccentDeep,
-    ];
+    final foreground = !enabled
+        ? (selected
+              ? palette.text.withValues(alpha: 0.82)
+              : palette.mutedText.withValues(alpha: 0.78))
+        : (selected ? AppColors.fgOnDark : palette.text);
+    final iconColor = !enabled
+        ? palette.mutedText.withValues(alpha: selected ? 0.90 : 0.72)
+        : (selected ? AppColors.parchmentCream : eraColor);
+    final decoration = !enabled
+        ? _disabledEraChipDecoration(palette, selected: selected)
+        : selected
+        ? _selectedEraChipDecoration([
+            palette.currentAccentDeep,
+            palette.currentAccentDeep,
+          ])
+        : softButtonDecoration(
+            selected: false,
+            palette: palette,
+            includeShadow: false,
+          );
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadii.lg),
-        splashColor: eraColor.withValues(alpha: 0.18),
-        highlightColor: eraColor.withValues(alpha: 0.10),
-        child: AnimatedContainer(
-          key: ValueKey('era-chip-${era.id}'),
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.x3,
-            vertical: AppSpacing.x2,
-          ),
-          decoration: selected
-              ? _selectedEraChipDecoration(selectedColors)
-              : softButtonDecoration(
-                  selected: false,
-                  palette: palette,
-                  includeShadow: false,
-                ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (!selected) ...[
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: eraColor,
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: '${_shortEraLabel(era)} 시대${enabled ? '' : ', 선택 잠김'}',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: enabled ? onTap : null,
+          borderRadius: BorderRadius.circular(AppRadii.lg),
+          splashColor: enabled ? eraColor.withValues(alpha: 0.18) : null,
+          highlightColor: enabled ? eraColor.withValues(alpha: 0.10) : null,
+          child: AnimatedContainer(
+            key: ValueKey('era-chip-${era.id}'),
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.x3,
+              vertical: AppSpacing.x2,
+            ),
+            decoration: decoration,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!selected) ...[
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: enabled
+                          ? eraColor
+                          : palette.mutedText.withValues(alpha: 0.52),
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                ],
+                Icon(iconData, size: 14, color: iconColor),
+                const SizedBox(width: 4),
+                Text(
+                  _shortEraLabel(era),
+                  style: AppTextStyles.chipLabel.copyWith(
+                    fontSize: 11.5,
+                    color: foreground,
                   ),
                 ),
-                const SizedBox(width: 5),
+                if (selected) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.check_circle,
+                    size: 13,
+                    color: enabled
+                        ? AppColors.parchmentCream
+                        : palette.currentAccent.withValues(alpha: 0.88),
+                  ),
+                ],
+                if (!enabled) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.lock_outline_rounded,
+                    key: ValueKey('era-chip-lock-${era.id}'),
+                    size: 12,
+                    color: palette.mutedText.withValues(alpha: 0.78),
+                  ),
+                ],
               ],
-              Icon(
-                iconData,
-                size: 14,
-                color: selected ? AppColors.parchmentCream : eraColor,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                _shortEraLabel(era),
-                style: AppTextStyles.chipLabel.copyWith(
-                  fontSize: 11.5,
-                  color: selected ? AppColors.fgOnDark : palette.text,
-                ),
-              ),
-              if (selected) ...[
-                const SizedBox(width: 4),
-                const Icon(
-                  Icons.check_circle,
-                  size: 13,
-                  color: AppColors.parchmentCream,
-                ),
-              ],
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+BoxDecoration _disabledEraChipDecoration(
+  AppColorPalette palette, {
+  required bool selected,
+}) {
+  return BoxDecoration(
+    color: selected
+        ? Color.alphaBlend(
+            palette.currentAccentDeep.withValues(alpha: 0.26),
+            palette.mutedSurface,
+          )
+        : palette.mutedSurface,
+    borderRadius: BorderRadius.circular(AppRadii.lg),
+    border: Border.all(
+      color: selected
+          ? palette.currentAccent.withValues(alpha: 0.74)
+          : palette.mutedText.withValues(alpha: 0.36),
+      width: 1,
+    ),
+  );
 }
 
 BoxDecoration _selectedEraChipDecoration(List<Color> colors) {

@@ -6,6 +6,7 @@ import '../../screens/companion_diary_entries_screen.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
+import '../fading_horizontal_text_scroll.dart';
 import '../pulse_highlight.dart';
 import 'companion_diary_entry_card.dart';
 import 'glowing_add_button.dart';
@@ -337,13 +338,15 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          diaryTitle,
-                          maxLines: expandReadableText ? 2 : 1,
-                          overflow: expandReadableText
-                              ? TextOverflow.visible
-                              : TextOverflow.ellipsis,
-                          softWrap: true,
+                        FadingHorizontalTextScroll(
+                          text: diaryTitle,
+                          scrollKey: const ValueKey(
+                            'companion-diary-entry-title-scroll',
+                          ),
+                          textKey: const ValueKey(
+                            'companion-diary-entry-title',
+                          ),
+                          textScaler: MediaQuery.textScalerOf(context),
                           style: TextStyle(
                             color: palette.text,
                             fontSize: 12.2,
@@ -352,18 +355,16 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 58),
-                          child: Text(
-                            diaryBody,
-                            maxLines: readOnlySummary ? 2 : 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: palette.mutedText,
-                              fontSize: 11.6,
-                              fontWeight: FontWeight.w800,
-                              height: 1.3,
-                            ),
+                        Text(
+                          diaryBody,
+                          key: const ValueKey('companion-diary-entry-body'),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: palette.mutedText,
+                            fontSize: 11.6,
+                            fontWeight: FontWeight.w800,
+                            height: 1.3,
                           ),
                         ),
                       ],

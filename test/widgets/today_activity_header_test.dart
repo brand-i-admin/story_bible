@@ -57,14 +57,38 @@ void main() {
     final activeFire = tester.widget<Icon>(
       find.byKey(const ValueKey('today-streak-fire-icon')),
     );
-    expect(activeFire.size, greaterThanOrEqualTo(24));
-    expect(find.byIcon(Icons.auto_awesome_rounded), findsNothing);
+    expect(activeFire.size, greaterThanOrEqualTo(27));
+    final glow = tester.widget<DecoratedBox>(
+      find.byKey(const ValueKey('today-streak-fire-glow')),
+    );
+    final glowDecoration = glow.decoration as BoxDecoration;
+    expect(glowDecoration.boxShadow, isNotEmpty);
+    for (var index = 0; index < 4; index++) {
+      expect(
+        find.byKey(ValueKey('today-streak-fire-sparkle-$index')),
+        findsOneWidget,
+      );
+    }
+    expect(find.byIcon(Icons.auto_awesome_rounded), findsNWidgets(4));
+    final initialSparkleOpacity = tester
+        .widget<Opacity>(
+          find.byKey(const ValueKey('today-streak-fire-sparkle-0')),
+        )
+        .opacity;
 
-    await tester.pump(const Duration(milliseconds: 220));
+    await tester.pump(const Duration(milliseconds: 600));
     final scaledFire = tester.widget<Transform>(
       find.byKey(const ValueKey('today-streak-fire-scale')),
     );
-    expect(scaledFire.transform.getMaxScaleOnAxis(), greaterThan(1));
+    expect(scaledFire.transform.getMaxScaleOnAxis(), greaterThan(1.13));
+    expect(
+      tester
+          .widget<Opacity>(
+            find.byKey(const ValueKey('today-streak-fire-sparkle-0')),
+          )
+          .opacity,
+      isNot(initialSparkleOpacity),
+    );
     expect(
       find.byKey(const ValueKey('today-story-completion-mark')),
       findsOneWidget,
@@ -122,7 +146,8 @@ void main() {
     await tester.tap(
       find.ancestor(of: find.text('연속: 5일'), matching: find.byType(InkWell)),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(dialogVisibilityChanges, [true]);
     expect(find.text('연속일은 이렇게 계산해요'), findsOneWidget);
@@ -132,7 +157,8 @@ void main() {
     expect(find.text('세 가지 중 1개 이상 완료한 날이 연속일에 카운팅됩니다.'), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.close_rounded));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(dialogVisibilityChanges, [true, false]);
   });

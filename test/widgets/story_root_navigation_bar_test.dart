@@ -330,14 +330,27 @@ void main() {
     );
   });
 
-  test('오늘 화면은 일일 활동 헤더와 지도 위 플로팅 카드 덱을 제공한다', () {
+  test('오늘 화면은 일일 활동 헤더, 가이드, 지도 위 플로팅 카드 덱을 제공한다', () {
     final source = File(
       'lib/widgets/home/today_home_page.dart',
     ).readAsStringSync();
 
     expect(source, contains('TodayActivityHeader('));
-    expect(source, isNot(contains('MapHintOverlay(')));
-    expect(source, isNot(contains('_showWelcomeGuide')));
+    expect(source, contains('MapHintOverlay('));
+    expect(source, contains('_todayGuideDismissed'));
+    expect(source, contains('_dismissTodayGuide'));
+    expect(
+      source,
+      contains('!oldWidget.mapGesturesEnabled && widget.mapGesturesEnabled'),
+    );
+    expect(source, contains('_todayGuideDismissed = false;'));
+    expect(source, contains('이야기, 다이어리, 통독을 해보세요!'));
+    expect(source, contains('(이야기 순서는 감정을 새길 때마다 재정렬 됩니다)'));
+    expect(source, contains('onPointerDown: (_) => _dismissTodayGuide()'));
+    expect(source, contains('textScale >= 1.3 ? 60.0 : 0.0'));
+    expect(source, contains('Transform.translate('));
+    expect(source, contains('offset: Offset(0, todayGuideVerticalOffset)'));
+    expect(source, isNot(contains('todayGuideTopInset')));
     expect(source, isNot(contains('AnimatedContainer(')));
     expect(source, isNot(contains('_todayPanelCollapsedHeight')));
     expect(source, isNot(contains('constraints.maxHeight * 0.43')));
@@ -398,7 +411,7 @@ void main() {
     expect(overlaySource, isNot(contains('home-journey-panel-toggle')));
   });
 
-  test('선택된 오늘 탭을 다시 눌러도 제거된 환영 가이드를 다시 만들지 않는다', () {
+  test('선택된 오늘 탭을 다시 눌러도 별도 컨트롤러로 가이드를 다시 만들지 않는다', () {
     final homeSource = File(
       'lib/screens/story_home_screen_state.dart',
     ).readAsStringSync();

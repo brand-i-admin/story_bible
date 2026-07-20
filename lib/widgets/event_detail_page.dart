@@ -1558,9 +1558,12 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
         ),
         const SizedBox(height: 10),
         ParchmentDialogTextField(
+          key: const ValueKey('emotion-note-input'),
           controller: _noteController,
           hintText: '왜 이 감정이 남았는지 적어 보세요.',
           maxLength: 100,
+          minLines: 1,
+          maxLines: 5,
           autofocus: true,
           onChanged: (_) => setState(() {}),
         ),
