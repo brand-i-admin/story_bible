@@ -3650,7 +3650,7 @@ returns void language sql security definer set search_path = public as $$
 $$;
 grant execute on function public.unregister_push_token(text) to authenticated;
 
--- 금주 인물 — seed 포팅 + pick + 월요일 주간 미션 알림
+-- 금주 인물 — seed 포팅 + pick + 월요일 동행 격려 알림
 create or replace function public._seed_from_week_key(p_key text)
 returns bigint language plpgsql immutable as $$
 declare v_acc bigint := 0; v_i int;
@@ -3666,7 +3666,7 @@ create or replace function public.pick_weekly_character()
 returns void language plpgsql security definer set search_path = public as $$
 declare
   v_monday date; v_week_key text;
-  v_character_code text; v_character_name text;
+  v_character_code text;
   v_active_count int; v_seed bigint; v_index int;
 begin
   v_monday := date_trunc('week', now() at time zone 'utc')::date;
@@ -3682,7 +3682,7 @@ begin
   v_seed := public._seed_from_week_key(v_week_key);
   v_index := (v_seed % v_active_count)::int;
 
-  select code, name into v_character_code, v_character_name
+  select code into v_character_code
   from characters where is_active = true
   order by code offset v_index limit 1;
 
@@ -3693,10 +3693,9 @@ begin
 
   -- bell drop 에 쌓이지 않게 broadcast 를 거치지 않고 send-push 로 직접 발송.
   perform public._fire_push_broadcast(
-    '이번 주 미션이 열렸어요',
-    '이번 주는 "' || coalesce(v_character_name, v_character_code) ||
-      '" 이야기와 함께 걸어요. 주간 미션을 시작해 보세요.',
-    '/weekly',
+    '좋은 한주의 시작입니다!',
+    '이번주도 하나님과 친밀한 동행하는 한주 되세요!',
+    null,
     'weekly_exploration'
   );
 end;
@@ -3799,52 +3798,18 @@ create trigger trg_push_after_broadcast
 after insert on broadcast_notifications
 for each row execute function public._push_after_broadcast();
 
--- 매일 미션 푸시 — 수요일 KST 9시 (= UTC 0시)에 전체 사용자에게 push-only
--- 발송. KST 날짜 시드로 오늘의 사건 제목을 함께 담아 보낸다.
+-- 이야기 탐험 푸시 — 수요일 KST 9시 (= UTC 0시)에 전체 사용자에게
+-- 한 주 중간의 탐험 안내를 push-only 로 발송한다.
 create or replace function public.dispatch_daily_exploration_push()
 returns void
 language plpgsql
 security definer
 set search_path = public
 as $$
-declare
-  v_now_kst timestamp;
-  v_day_key text;
-  v_count int;
-  v_seed bigint;
-  v_offset int;
-  v_event_title text;
 begin
-  v_now_kst := now() at time zone 'Asia/Seoul';
-  v_day_key :=
-    extract(year from v_now_kst)::int || '-' ||
-    extract(month from v_now_kst)::int || '-' ||
-    extract(day from v_now_kst)::int;
-
-  select count(*)
-    into v_count
-    from events_ordered e
-    join eras er on er.id = e.era_id
-    where er.code <> 'era_nt_consummation';
-
-  if coalesce(v_count, 0) > 0 then
-    v_seed := public._seed_from_week_key('daily-exploration:' || v_day_key);
-    v_offset := (v_seed % v_count)::int;
-
-    select e.title
-      into v_event_title
-      from events_ordered e
-      join eras er on er.id = e.era_id
-      where er.code <> 'era_nt_consummation'
-      order by e.global_rank, e.id
-      offset v_offset
-      limit 1;
-  end if;
-
   perform public._fire_push_broadcast(
-    '오늘의 미션이 열렸어요',
-    '「' || coalesce(v_event_title, '오늘 도착한 성경 사건') ||
-      '」 사건을 함께 미션으로 만나봐요.',
+    '한주도 잘 보내고 계신가요!?',
+    '이야기 탐험으로 하나님의 이야기를 탐험해보세요!',
     '/daily-exploration',
     'daily_exploration'
   );

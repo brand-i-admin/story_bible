@@ -20,7 +20,7 @@
 | `test/theme/` | 1 | 18 | 디자인 토큰 회귀 방지 |
 | `test/utils/` | 12 | 147 | 날짜, 지도 수학, asset loader, 선택/통독 로직 |
 | `test/widgets/` | 36 | 284 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
-| `tools/**/test_*.py` | 13 | 93 | seed, lint, asset, docs, Supabase 도구 |
+| `tools/**/test_*.py` | 18 | 128 | seed, lint, asset, docs, Supabase 도구·정기 푸시 SQL 문구 |
 
 Dart 쪽 정적 카운트는 `test/**/*.dart`의 `test()`/`testWidgets()` 호출 기준
 672개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
@@ -128,11 +128,11 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 |----------|---------|-----------|------|
 | `tools/app` | 1 | 5 | `pubspec.yaml` asset 경로 검증 |
 | `tools/docs` | 1 | 3 | `story_guide.md`와 HTML guide 생성 |
-| `tools/export` | 1 | 5 | DB events → JSON 역추출 |
-| `tools/images` | 2 | 17 | runtime thumbnail, scene utility |
+| `tools/export` | 1 | 8 | DB events → JSON 역추출 |
+| `tools/images` | 2 | 23 | runtime thumbnail, scene utility |
 | `tools/lint` | 1 | 5 | secret/forbidden pattern scan |
-| `tools/seed` | 5 | 49 | KRV seed, quiz seed, captions, timeline, polygons |
-| `tools/supabase` | 2 | 9 | bucket purge, avatar upload |
+| `tools/seed` | 6 | 56 | KRV seed, quiz seed, captions, timeline, polygons |
+| `tools/supabase` | 6 | 28 | bucket purge, avatar upload, Storage sync, 정기 푸시 SQL 문구 |
 
 도구를 추가하면 `tools/<area>/test_*.py`를 같이 추가하고,
 `python3 tools/run_unit_tests.py`에 잡히는지 확인한다. Python 코드는 `black`

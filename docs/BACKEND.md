@@ -329,7 +329,7 @@ token text UNIQUE, device_label text
 ```sql
 week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at timestamptz
 ```
-- pg_cron 이 월요일 00:00 UTC (= KST 9시) 에 `pick_weekly_character()` 실행 → 이 테이블에 row 저장 후 주간 미션 시작 FCM 을 직접 발송.
+- pg_cron 이 월요일 00:00 UTC (= KST 9시) 에 `pick_weekly_character()` 실행 → 이 테이블에 row 를 저장하고 “좋은 한주의 시작입니다!” 동행 격려 FCM 을 직접 발송한다. 알림은 특정 미션 딥링크 없이 앱을 여는 push-only 메시지다.
 - Dart 쪽 `weekly_selection.dart` 의 `seedFromKey` 를 plpgsql `_seed_from_week_key` 로 포팅해 동일 결과 보장.
 
 #### 트리거
@@ -354,8 +354,8 @@ week_key text PK ('YYYY-M-D'), character_code text FK→characters, picked_at ti
 | `notify_quiz_completed(event_id)` | 퀴즈 완료 시 클라이언트가 호출 |
 | `register_push_token(token, platform, label)` | FCM 토큰 upsert |
 | `unregister_push_token(token)` | 로그아웃/토큰 갱신 시 |
-| `pick_weekly_character()` | pg_cron 월요일 KST 9시 — 금주 인물을 뽑고 주간 미션 시작 push-only 발송 |
-| `dispatch_daily_exploration_push()` | pg_cron 수요일 KST 9시 — KST 날짜 시드로 오늘의 사건 제목을 고른 뒤 “「사건명」 사건을 함께 미션으로 만나봐요.” push-only 발송 |
+| `pick_weekly_character()` | pg_cron 월요일 KST 9시 — 금주 인물을 뽑고 “좋은 한주의 시작입니다!” 동행 격려 push-only 발송 |
+| `dispatch_daily_exploration_push()` | pg_cron 수요일 KST 9시 — “한주도 잘 보내고 계신가요!?”와 이야기 탐험 안내를 `/daily-exploration` 딥링크로 push-only 발송 |
 | `notify_weekly_diary_reflection()` | pg_cron 금요일 KST 9시 — 나의 다이어리 묵상/신앙 정리 push-only 발송 |
 
 #### 30일 보관
@@ -676,7 +676,7 @@ Storage 버킷은 `db_init.sql` 에 선언된다. 앱 런타임/public 자산과
 - 경로: `supabase/functions/send-push/index.ts`
 - 호출 경로:
   - **broadcast_notifications AFTER INSERT** → `trg_push_after_broadcast` → `_fire_push_broadcast` → 이 함수 (자동)
-  - **주간/매일 cron** → `_fire_push_broadcast` 직접 호출 (broadcast 테이블 우회)
+  - **월·수요일 정기 동행/탐험 + 금요일 다이어리 cron** → `_fire_push_broadcast` 직접 호출 (broadcast 테이블 우회)
   - 수동 발송: `supabase.functions.invoke('send-push', { ... })`
 - 배포: `supabase functions deploy send-push`
 - 배포 전제 secrets:

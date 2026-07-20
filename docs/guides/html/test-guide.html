@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 465 Dart tests</div>
+      <div class="subtle">310 events · 675 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -27,7 +27,7 @@
           <div class="eyebrow">Developer documentation</div>
           <h1>테스트 가이드 — Story Bible</h1>
           <p>테스트: 현재 테스트 파일과 검증 책임 카탈로그</p>
-          <div class="card"><strong>Dart 테스트 분포</strong><div class="bar-row"><span>test/app_test.dart</span><div class="bar"><i style="width:1%"></i></div><b>3</b></div><div class="bar-row"><span>test/data</span><div class="bar"><i style="width:25%"></i></div><b>38</b></div><div class="bar-row"><span>test/models</span><div class="bar"><i style="width:58%"></i></div><b>89</b></div><div class="bar-row"><span>test/state</span><div class="bar"><i style="width:16%"></i></div><b>25</b></div><div class="bar-row"><span>test/theme</span><div class="bar"><i style="width:9%"></i></div><b>14</b></div><div class="bar-row"><span>test/utils</span><div class="bar"><i style="width:74%"></i></div><b>113</b></div><div class="bar-row"><span>test/widget_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>1</b></div><div class="bar-row"><span>test/widgets</span><div class="bar"><i style="width:100%"></i></div><b>151</b></div></div>
+          <div class="card"><strong>Dart 테스트 분포</strong><div class="bar-row"><span>test/app_test.dart</span><div class="bar"><i style="width:1%"></i></div><b>3</b></div><div class="bar-row"><span>test/data</span><div class="bar"><i style="width:15%"></i></div><b>45</b></div><div class="bar-row"><span>test/models</span><div class="bar"><i style="width:30%"></i></div><b>87</b></div><div class="bar-row"><span>test/screens</span><div class="bar"><i style="width:1%"></i></div><b>5</b></div><div class="bar-row"><span>test/services</span><div class="bar"><i style="width:5%"></i></div><b>16</b></div><div class="bar-row"><span>test/state</span><div class="bar"><i style="width:9%"></i></div><b>27</b></div><div class="bar-row"><span>test/theme</span><div class="bar"><i style="width:6%"></i></div><b>18</b></div><div class="bar-row"><span>test/utils</span><div class="bar"><i style="width:51%"></i></div><b>147</b></div><div class="bar-row"><span>test/widget_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>1</b></div><div class="bar-row"><span>test/widgets</span><div class="bar"><i style="width:100%"></i></div><b>287</b></div></div>
           <div class="toc"><strong>On this page</strong><a class="level-1" href="#테스트-가이드-—-story-bible">테스트 가이드 — Story Bible</a><a class="level-2" href="#0-한-장-요약">0. 한 장 요약</a><a class="level-2" href="#1-기본-실행-명령">1. 기본 실행 명령</a><a class="level-2" href="#2-모델-테스트">2. 모델 테스트</a><a class="level-2" href="#3-repository-state-테스트">3. Repository / State 테스트</a><a class="level-2" href="#4-utils-테스트">4. Utils 테스트</a><a class="level-2" href="#5-widget-테스트">5. Widget 테스트</a><a class="level-2" href="#6-python-도구-테스트">6. Python 도구 테스트</a><a class="level-2" href="#7-변경-유형별-최소-검증">7. 변경 유형별 최소 검증</a><a class="level-2" href="#8-남은-테스트-공백">8. 남은 테스트 공백</a></div>
         </section>
         <article class="doc-body">
@@ -53,47 +53,59 @@
 <tr>
 <td><code>test/models/</code></td>
 <td>15</td>
-<td>89</td>
+<td>87</td>
 <td>불변 모델, <code>fromMap()</code>, enum/값 객체 변환</td>
 </tr>
 <tr>
 <td><code>test/data/</code></td>
-<td>4</td>
-<td>33</td>
+<td>7</td>
+<td>45</td>
 <td>Repository, Supabase row 변환, fallback</td>
+</tr>
+<tr>
+<td><code>test/screens/</code></td>
+<td>3</td>
+<td>5</td>
+<td>독립 화면 입력·필터·저장 흐름</td>
 </tr>
 <tr>
 <td><code>test/state/</code></td>
 <td>3</td>
-<td>25</td>
+<td>66</td>
 <td>Riverpod provider/controller 상태 전환</td>
+</tr>
+<tr>
+<td><code>test/services/</code></td>
+<td>3</td>
+<td>16</td>
+<td>Firebase 이벤트 계약, 개인정보 필터, 환경·빌드 모드 정책</td>
 </tr>
 <tr>
 <td><code>test/theme/</code></td>
 <td>1</td>
-<td>14</td>
+<td>18</td>
 <td>디자인 토큰 회귀 방지</td>
 </tr>
 <tr>
 <td><code>test/utils/</code></td>
-<td>9</td>
-<td>108</td>
-<td>날짜, 지도 수학, asset loader, 선택 로직</td>
+<td>12</td>
+<td>147</td>
+<td>날짜, 지도 수학, asset loader, 선택/통독 로직</td>
 </tr>
 <tr>
 <td><code>test/widgets/</code></td>
-<td>27</td>
-<td>141</td>
-<td>주요 화면 조각, 다이얼로그, 프로필/지도 UI</td>
+<td>36</td>
+<td>284</td>
+<td>주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI</td>
 </tr>
 <tr>
 <td><code>tools/**/test_*.py</code></td>
-<td>13</td>
-<td>93</td>
-<td>seed, lint, asset, docs, Supabase 도구</td>
+<td>18</td>
+<td>128</td>
+<td>seed, lint, asset, docs, Supabase 도구·정기 푸시 SQL 문구</td>
 </tr>
 </tbody></table></div>
-<p>Dart 쪽 정적 카운트는 <code>test/**/*.dart</code>의 <code>test()</code>/<code>testWidgets()</code> 호출 기준 445개다. <code>test/state/story_controller_test_groups.dart</code>처럼 helper 파일 안에서 공유되는 테스트 그룹도 포함되므로 디렉토리별 단순 합보다 크다.</p>
+<p>Dart 쪽 정적 카운트는 <code>test/**/*.dart</code>의 <code>test()</code>/<code>testWidgets()</code> 호출 기준 672개다. <code>test/state/story_controller_test_groups.dart</code>처럼 helper 파일 안의 공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.</p>
 <h2 id="1-기본-실행-명령">1. 기본 실행 명령</h2>
 <pre><code class="language-bash">dart format --output=none --set-exit-if-changed .
 flutter analyze
@@ -196,6 +208,11 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 </tr>
 <tr>
 <td>Repository</td>
+<td><code>test/data/color_palette_repository_test.dart</code></td>
+<td>전역 색 조합 저장/복원</td>
+</tr>
+<tr>
+<td>Repository</td>
 <td><code>test/data/character_name_fallbacks_test.dart</code></td>
 <td>인물 이름 fallback</td>
 </tr>
@@ -237,7 +254,11 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 </tr>
 <tr>
 <td><code>daily_exploration_selection_test.dart</code></td>
-<td>날짜별 탐색 선택 안정성</td>
+<td>날짜별 미션 선택, 최근 감정 기준 오늘 탐험 재개, 구약 7시대→신약 3시대/시대 내 사건 순서, 전체 처음·끝 위치 안정성</td>
+</tr>
+<tr>
+<td><code>bible_reading_progress_test.dart</code></td>
+<td>마지막 통독 완료 위치 다음 장 계산과 표시 문구</td>
 </tr>
 <tr>
 <td><code>home_back_navigation_test.dart</code></td>
@@ -253,7 +274,7 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 </tr>
 <tr>
 <td><code>scene_asset_loader_test.dart</code></td>
-<td>장면 썸네일 로컬 우선, Storage fallback</td>
+<td>장면 썸네일 로컬 우선, Storage fallback, 오늘 지도 핀 data URL/인덱스 복구</td>
 </tr>
 <tr>
 <td><code>system_insets_test.dart</code></td>
@@ -295,7 +316,7 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 </tr>
 <tr>
 <td>접근성/공통 UI</td>
-<td><code>font_scale_bottom_sheet_test.dart</code>, <code>pulse_highlight_test.dart</code>, <code>story_home_styles_test.dart</code>, <code>emotion_badge_icon_test.dart</code></td>
+<td><code>font_scale_bottom_sheet_test.dart</code>, <code>home_journey_overlay_test.dart</code>, <code>story_root_navigation_bar_test.dart</code>, <code>pulse_highlight_test.dart</code>, <code>story_home_styles_test.dart</code></td>
 </tr>
 <tr>
 <td>알림</td>
@@ -326,13 +347,13 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 <tr>
 <td><code>tools/export</code></td>
 <td>1</td>
-<td>5</td>
+<td>8</td>
 <td>DB events → JSON 역추출</td>
 </tr>
 <tr>
 <td><code>tools/images</code></td>
 <td>2</td>
-<td>17</td>
+<td>23</td>
 <td>runtime thumbnail, scene utility</td>
 </tr>
 <tr>
@@ -343,15 +364,15 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 </tr>
 <tr>
 <td><code>tools/seed</code></td>
-<td>5</td>
-<td>49</td>
+<td>6</td>
+<td>56</td>
 <td>KRV seed, quiz seed, captions, timeline, polygons</td>
 </tr>
 <tr>
 <td><code>tools/supabase</code></td>
-<td>2</td>
-<td>9</td>
-<td>bucket purge, avatar upload</td>
+<td>6</td>
+<td>28</td>
+<td>bucket purge, avatar upload, Storage sync, 정기 푸시 SQL 문구</td>
 </tr>
 </tbody></table></div>
 <p>도구를 추가하면 <code>tools/&lt;area&gt;/test_*.py</code>를 같이 추가하고, <code>python3 tools/run_unit_tests.py</code>에 잡히는지 확인한다. Python 코드는 <code>black</code> 포맷 대상이며, 현재 pre-commit hook은 <code>tools/seed|images|app|lint|export|docs</code> 경로를 포맷한다.</p>

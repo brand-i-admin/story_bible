@@ -149,8 +149,8 @@ DB 트리거/pg_cron 이 `send-push` 를 직접 호출하는 인프라가 `db_in
 
 자동 발송 경로:
 - 새 이야기/인물 승인 (admin → `approve_event_proposal`) → broadcast row INSERT → 트리거 → push
-- 매주 월요일 KST 9시 → `pick_weekly_character()` (주간 미션 시작 push-only)
-- 매주 수요일 KST 9시 → `dispatch_daily_exploration_push()` (매일 미션 push-only)
+- 매주 월요일 KST 9시 → `pick_weekly_character()` (한 주 시작 동행 격려 push-only, 미션 딥링크 없음)
+- 매주 수요일 KST 9시 → `dispatch_daily_exploration_push()` (이야기 탐험 안내 push-only, `/daily-exploration` 딥링크)
 - 매주 금요일 KST 9시 → `notify_weekly_diary_reflection()` (나의 다이어리 묵상 push-only)
 
 설정 검증 SQL:
@@ -175,7 +175,7 @@ select jobname, schedule, active from cron.job order by jobname;
    select public.dispatch_daily_exploration_push();
    ```
 
-   → 본인 휴대폰에 "오늘의 미션이 열렸어요" 알림이 오면 통과.
+   → 본인 휴대폰에 “한주도 잘 보내고 계신가요!?” 알림이 오면 통과.
 
 4. send-push 함수 로그 (Supabase Dashboard → Functions → send-push → Logs):
    - 정상: `[send-push] sent: N, failed: 0`

@@ -591,8 +591,8 @@ pg_cron 또는 trigger
 select public.dispatch_daily_exploration_push();
 ```
 
-이 함수는 KST 날짜 시드로 오늘의 사건 제목을 고르고 전체 push token 대상에게
-"오늘의 미션이 열렸어요" 알림을 보낸다.
+이 함수는 전체 push token 대상에게 “한주도 잘 보내고 계신가요!?” 제목과
+이야기 탐험 안내를 보낸다. 알림을 누르면 `/daily-exploration`으로 이동한다.
 
 테스트 전 확인:
 
