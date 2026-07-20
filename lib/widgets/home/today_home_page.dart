@@ -200,7 +200,6 @@ class _TodayHomePageState extends State<TodayHomePage> {
             304.0 + ((textScale - 1) * 185).clamp(0.0, 76.0);
         final topObscured =
             media.padding.top + TodayActivityHeader.mapObscuredExtent + 8;
-        final todayGuideVerticalOffset = textScale >= 1.3 ? 60.0 : 0.0;
         final bottomObscuredFraction = constraints.maxHeight <= 0
             ? 0.48
             : (floatingOverlayExtent / constraints.maxHeight).clamp(0.0, 0.68);
@@ -369,12 +368,7 @@ class _TodayHomePageState extends State<TodayHomePage> {
                         top: topObscured,
                         bottom: floatingOverlayExtent + 12,
                       ),
-                      child: Transform.translate(
-                        offset: Offset(0, todayGuideVerticalOffset),
-                        child: const MapHintOverlay(
-                          message: _todayGuideMessage,
-                        ),
-                      ),
+                      child: const MapHintOverlay(message: _todayGuideMessage),
                     ),
                   ),
                 ),

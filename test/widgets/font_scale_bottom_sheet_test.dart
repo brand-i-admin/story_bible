@@ -14,6 +14,7 @@ Future<ProviderContainer> _pumpSheet(
   FontScale initial = FontScale.normal,
   AppColorPalette initialPalette = AppColorPalette.classic,
   DisplaySettingsSection? section,
+  double textScale = 1,
 }) async {
   SharedPreferences.setMockInitialValues(<String, Object>{
     'font_scale': initial.storageKey,
@@ -29,7 +30,10 @@ Future<ProviderContainer> _pumpSheet(
     UncontrolledProviderScope(
       container: container,
       child: MaterialApp(
-        home: Scaffold(body: FontScaleBottomSheet(section: section)),
+        home: MediaQuery(
+          data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
+          child: Scaffold(body: FontScaleBottomSheet(section: section)),
+        ),
       ),
     ),
   );
@@ -124,6 +128,24 @@ void main() {
       expect(find.text('1.0x'), findsOneWidget);
       expect(find.text('1.2x'), findsOneWidget);
       expect(find.text('1.4x'), findsOneWidget);
+    });
+
+    testWidgets('아주크게에서도 세 글자 크기 라벨을 한 줄 같은 위치에 둔다', (tester) async {
+      await _pumpSheet(
+        tester,
+        initial: FontScale.veryLarge,
+        textScale: FontScale.veryLarge.ratio,
+      );
+
+      for (final label in ['보통', '크게', '아주크게']) {
+        expect(tester.widget<Text>(find.text(label)).maxLines, 1);
+      }
+
+      final normalTop = tester.getTopLeft(find.text('보통')).dy;
+      final largeTop = tester.getTopLeft(find.text('크게')).dy;
+      final veryLargeTop = tester.getTopLeft(find.text('아주크게')).dy;
+      expect((normalTop - largeTop).abs(), lessThanOrEqualTo(1));
+      expect((largeTop - veryLargeTop).abs(), lessThanOrEqualTo(1));
     });
 
     testWidgets('현재 선택된 단계에 체크 아이콘을 표시한다', (tester) async {

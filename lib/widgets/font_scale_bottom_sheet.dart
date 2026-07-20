@@ -358,7 +358,6 @@ class _FontScaleChoiceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
     final darkSurface = palette == AppColorPalette.blackMap;
     final backgroundColor = selected
         ? palette.selectedSurface
@@ -393,18 +392,21 @@ class _FontScaleChoiceButton extends StatelessWidget {
                     ? Icon(Icons.check, size: 18, color: checkColor)
                     : null,
               ),
-              Text(
-                scale.label,
-                textAlign: TextAlign.center,
-                maxLines: largeText ? 2 : 1,
-                overflow: largeText
-                    ? TextOverflow.visible
-                    : TextOverflow.ellipsis,
-                softWrap: true,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: labelColor,
+              SizedBox(
+                width: double.infinity,
+                height: 20,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    scale.label,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: labelColor,
+                    ),
+                  ),
                 ),
               ),
               Text(

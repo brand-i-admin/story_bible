@@ -8,7 +8,7 @@ import 'package:story_bible/theme/app_color_palette.dart';
 import 'package:story_bible/widgets/v2/map_hint_overlay.dart';
 
 void main() {
-  testWidgets('MapHintOverlay는 상단 배지에 사라지는 조건을 표시한다', (tester) async {
+  testWidgets('MapHintOverlay는 바깥 프레임 상단에 닫힘 안내를 겹쳐 표시한다', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(body: MapHintOverlay(message: '노란 지역을 눌러 그곳의 사건을 보세요.')),
@@ -60,13 +60,26 @@ void main() {
     );
     final overlayCenter = tester.getCenter(find.byType(MapHintOverlay));
     expect((badgeCenter.dx - overlayCenter.dx).abs(), lessThan(1));
+    final outerTop = tester
+        .getTopLeft(find.byKey(const ValueKey('map-hint-container')))
+        .dy;
+    final badgeTop = tester
+        .getTopLeft(find.byKey(const ValueKey('map-hint-dismiss-badge')))
+        .dy;
     final badgeBottom = tester
         .getBottomLeft(find.byKey(const ValueKey('map-hint-dismiss-badge')))
         .dy;
-    final messageTop = tester
-        .getTopLeft(find.byKey(const ValueKey('map-hint-message-row')))
-        .dy;
-    expect(messageTop - badgeBottom, greaterThanOrEqualTo(18));
+    expect(badgeTop, lessThan(outerTop));
+    expect(badgeBottom, greaterThan(outerTop));
+    expect(badgeBottom - outerTop, lessThanOrEqualTo(8));
+
+    final outerHeight = tester
+        .getSize(find.byKey(const ValueKey('map-hint-container')))
+        .height;
+    final messageHeight = tester
+        .getSize(find.byKey(const ValueKey('map-hint-message-row')))
+        .height;
+    expect(outerHeight - messageHeight, lessThanOrEqualTo(20));
     expect(find.byIcon(Icons.touch_app_rounded), findsNothing);
   });
 

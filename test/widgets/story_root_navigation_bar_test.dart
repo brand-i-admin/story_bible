@@ -347,9 +347,11 @@ void main() {
     expect(source, contains('이야기, 다이어리, 통독을 해보세요!'));
     expect(source, contains('(이야기 순서는 감정을 새길 때마다 재정렬 됩니다)'));
     expect(source, contains('onPointerDown: (_) => _dismissTodayGuide()'));
-    expect(source, contains('textScale >= 1.3 ? 60.0 : 0.0'));
-    expect(source, contains('Transform.translate('));
-    expect(source, contains('offset: Offset(0, todayGuideVerticalOffset)'));
+    expect(source, isNot(contains('textScale >= 1.3 ? 60.0 : 0.0')));
+    expect(source, isNot(contains('todayGuideVerticalOffset')));
+    expect(source, isNot(contains('Transform.translate(')));
+    expect(source, contains('top: topObscured'));
+    expect(source, contains('bottom: floatingOverlayExtent + 12'));
     expect(source, isNot(contains('todayGuideTopInset')));
     expect(source, isNot(contains('AnimatedContainer(')));
     expect(source, isNot(contains('_todayPanelCollapsedHeight')));

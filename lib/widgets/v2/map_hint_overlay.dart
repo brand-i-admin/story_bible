@@ -39,76 +39,34 @@ class MapHintOverlay extends StatelessWidget {
             fit: BoxFit.scaleDown,
             child: SizedBox(
               width: contentWidth,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 220),
-                child: Container(
-                  key: const ValueKey('map-hint-container'),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 13,
-                  ),
-                  decoration: BoxDecoration(
-                    color: outerColor,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: palette.utilityBorder.withValues(alpha: 0.58),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: palette.primaryDeep.withValues(alpha: 0.16),
-                        blurRadius: 18,
-                        offset: const Offset(0, 4),
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.topCenter,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 220),
+                    child: Container(
+                      key: const ValueKey('map-hint-container'),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 8,
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          key: const ValueKey('map-hint-dismiss-badge'),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 9,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: dismissBadgeColor,
-                            borderRadius: BorderRadius.circular(999),
-                            border: Border.all(
-                              color: palette.currentAccent.withValues(
-                                alpha: 0.32,
-                              ),
-                              width: 1,
-                            ),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.hourglass_top_rounded,
-                                color: Colors.white,
-                                size: 13,
-                              ),
-                              SizedBox(width: 6),
-                              Text(
-                                '화면 아무데나 누르면 사라집니다',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w800,
-                                  height: 1.2,
-                                ),
-                              ),
-                            ],
-                          ),
+                      decoration: BoxDecoration(
+                        color: outerColor,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: palette.utilityBorder.withValues(alpha: 0.58),
+                          width: 1,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: palette.primaryDeep.withValues(alpha: 0.16),
+                            blurRadius: 18,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 18),
-                      Row(
+                      child: Row(
                         key: const ValueKey('map-hint-message-row'),
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -126,9 +84,48 @@ class MapHintOverlay extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: -16,
+                    child: Container(
+                      key: const ValueKey('map-hint-dismiss-badge'),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: dismissBadgeColor,
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: palette.currentAccent.withValues(alpha: 0.32),
+                          width: 1,
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.hourglass_top_rounded,
+                            color: Colors.white,
+                            size: 13,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            '화면 아무데나 누르면 사라집니다',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w800,
+                              height: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
