@@ -731,7 +731,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
           .firstOrNull;
       if (selectedEra != null) {
         return (
-          message: _selectedEraIntroHintMessage(selectedEra),
+          message: _selectedEraIntroHintMessage(selectedEra, state.events),
           avatarSize: 70,
         );
       }
@@ -766,69 +766,20 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     return null;
   }
 
-  String _selectedEraIntroHintMessage(Era era) {
-    final label = _eraHintLabel(era);
-    final description = _eraHintDescription(era.code);
-    return '선택한 시대: $label\n$description\n② 아래에서 시간 순·인물·장소 중 선택해 주세요.';
-  }
-
-  String _eraHintLabel(Era era) {
-    switch (era.code) {
-      case 'era_primeval':
-        return '원역사';
-      case 'era_patriarch':
-        return '족장';
-      case 'era_exodus':
-        return '출애굽';
-      case 'era_judges':
-        return '사사';
-      case 'era_monarchy':
-        return '통일 왕국';
-      case 'era_divided_kingdom':
-        return '분열왕국';
-      case 'era_exile_return':
-        return '포로 및 포로 후기';
-      case 'era_nt_public_ministry':
-        return '예수님 사역';
-      case 'era_nt_apostolic':
-        return '사도';
-      case 'era_nt_post_apostolic':
-        return '후기 사도';
-      case 'era_nt_consummation':
-        return '역사의 종결';
-    }
-
-    return era.name
-        .replaceFirst(RegExp(r'의 시대$'), '')
-        .replaceFirst(RegExp(r' 시대$'), '');
-  }
-
-  String _eraHintDescription(String eraCode) {
-    switch (eraCode) {
-      case 'era_primeval':
-        return '창조부터 바벨까지, 죄와 은혜의 시작을 따라갑니다.';
-      case 'era_patriarch':
-        return '아브라함부터 요셉까지, 약속이 한 가족을 따라 이어집니다.';
-      case 'era_exodus':
-        return '출애굽과 광야 여정 속에서 하나님이 백성을 세우십니다.';
-      case 'era_judges':
-        return '가나안 정착 뒤 반복되는 위기와 구원을 따라갑니다.';
-      case 'era_monarchy':
-        return '사울, 다윗, 솔로몬을 중심으로 왕국이 세워집니다.';
-      case 'era_divided_kingdom':
-        return '남유다와 북이스라엘의 왕들, 선지자들의 경고를 봅니다.';
-      case 'era_exile_return':
-        return '포로와 귀환 속에서 성전과 공동체가 다시 세워집니다.';
-      case 'era_nt_public_ministry':
-        return '예수님의 탄생, 사역, 십자가와 부활을 따라갑니다.';
-      case 'era_nt_apostolic':
-        return '성령 강림 뒤 복음이 예루살렘에서 땅끝으로 퍼집니다.';
-      case 'era_nt_post_apostolic':
-        return '교회들이 편지를 통해 믿음과 삶을 배워 갑니다.';
-      case 'era_nt_consummation':
-        return '예수님이 가르치신 마지막 때와 새 창조 소망을 봅니다.';
-    }
-    return '이 시대의 사건들을 성경 흐름 안에서 따라갑니다.';
+  String _selectedEraIntroHintMessage(Era era, List<StoryEvent> events) {
+    final eraName = era.name.trim().endsWith('시대')
+        ? era.name.trim()
+        : '${era.name.trim()} 시대';
+    final bookNames = canonicalBibleBookNames(
+      events
+          .where((event) => event.eraId == era.id)
+          .expand((event) => event.bibleRefs)
+          .map((reference) => reference.book),
+    );
+    final bookList = bookNames.isEmpty ? '성경' : bookNames.join(', ');
+    return '선택된 $eraName에는 $bookList의 이야기들이 등장합니다.\n'
+        '해당 시대를 볼 방법을 선택하세요.\n'
+        "(다른 시대를 선택하려면 '시대 다시 선택' 이나 '시대/방법' 버튼을 선택하세요)";
   }
 
   /// 안내가 떠 있는 상태에서 화면을 탭하거나 지도를 만지면 hint dismiss.

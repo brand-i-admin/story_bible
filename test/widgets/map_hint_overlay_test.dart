@@ -230,6 +230,44 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('권 목록이 가장 긴 후기 사도 가이드도 좁은 지도 영역에 맞춰진다', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    const message =
+        '선택된 후기 사도 시대에는 로마서, 고린도전서, 고린도후서, 갈라디아서, '
+        '에베소서, 빌립보서, 골로새서, 데살로니가전서, 디모데전서, 디모데후서, '
+        '야고보서, 베드로전서, 베드로후서, 요한일서, 요한계시록의 이야기들이 등장합니다.\n'
+        '해당 시대를 볼 방법을 선택하세요.\n'
+        "(다른 시대를 선택하려면 '시대 다시 선택' 이나 '시대/방법' 버튼을 선택하세요)";
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              key: ValueKey('long-era-guide-available-area'),
+              width: 390,
+              height: 312,
+              child: MapHintOverlay(message: message, avatarSize: 70),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final availableRect = tester.getRect(
+      find.byKey(const ValueKey('long-era-guide-available-area')),
+    );
+    final guideRect = tester.getRect(
+      find.byKey(const ValueKey('map-hint-container')),
+    );
+    expect(guideRect.top, greaterThanOrEqualTo(availableRect.top - 0.5));
+    expect(guideRect.bottom, lessThanOrEqualTo(availableRect.bottom + 0.5));
+    expect(find.text(message), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('첫 안내 문구는 좁은 폰에서도 단계 줄 글자 크기를 맞춘다', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
@@ -322,9 +360,15 @@ void main() {
     expect(source, contains('② 시간 순·인물·장소 중 선택'));
     expect(source, contains('(성경 구절 검색은 오늘 탭의 🔍 클릭)'));
     expect(source, isNot(contains('⓪')));
-    expect(source, contains('선택한 시대: \$label'));
-    expect(source, contains('창조부터 바벨까지'));
-    expect(source, contains('② 아래에서 시간 순·인물·장소 중 선택'));
+    expect(
+      source,
+      contains('_selectedEraIntroHintMessage(selectedEra, state.events)'),
+    );
+    expect(source, contains('canonicalBibleBookNames('));
+    expect(source, contains('선택된 \$eraName에는 \$bookList의 이야기들이 등장합니다.'));
+    expect(source, contains('해당 시대를 볼 방법을 선택하세요.'));
+    expect(source, contains("(다른 시대를 선택하려면 '시대 다시 선택' 이나 '시대/방법' 버튼을 선택하세요)"));
+    expect(source, isNot(contains('창조부터 바벨까지')));
     expect(source, contains('노란 지역을 눌러'));
     expect(source, contains('아래 패널에서 인물을'));
     expect(source, contains('아래 패널에서 구간 카드를'));

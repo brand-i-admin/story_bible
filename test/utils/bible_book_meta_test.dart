@@ -128,4 +128,30 @@ void main() {
       expect(normalizeBibleBookKey('창 세 기'), '창세기');
     });
   });
+
+  group('canonicalBibleBookNames', () {
+    test('시대 사건의 약어를 중복 없이 정경 순서의 전체 권 이름으로 바꾼다', () {
+      expect(
+        canonicalBibleBookNames([
+          '욘',
+          '왕하',
+          '왕상',
+          '왕하',
+          '대하',
+          '사',
+          '렘',
+          '겔',
+          '단',
+        ]),
+        ['열왕기상', '열왕기하', '역대하', '이사야', '예레미야', '에스겔', '다니엘', '요나'],
+      );
+    });
+
+    test('전체 이름도 인식하고 알 수 없는 권 표기는 마지막에 한 번만 보존한다', () {
+      expect(canonicalBibleBookNames(['사도행전', '행', '새권', ' 새권 ']), [
+        '사도행전',
+        '새권',
+      ]);
+    });
+  });
 }

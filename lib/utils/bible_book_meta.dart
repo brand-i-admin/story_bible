@@ -2,6 +2,7 @@
 //
 // story_home_screen.dart에서 추출한 공통 유틸리티다.
 // - bibleBooks: 66권의 이름 + 장 수
+// - canonicalBibleBookNames: 약어/전체 이름을 정경 순서의 전체 권 이름으로 변환
 // - parseBibleNavigationTarget: "마 1:1" 같은 참조를 BibleNavigationTarget으로 변환
 
 class BibleBookMeta {
@@ -244,6 +245,36 @@ final Map<int, String> bibleBookNoToAlias = () {
   });
   return Map<int, String>.unmodifiable(map);
 }();
+
+/// 성경 권 약어/전체 이름을 중복 없이 66권 정경 순서의 전체 이름으로 바꾼다.
+///
+/// `events.bible_refs`는 보통 `왕상`, `행` 같은 약어를 저장하지만, 제안으로
+/// 추가된 데이터가 전체 이름을 사용할 수도 있어 두 표기를 모두 허용한다. 아직
+/// 메타데이터에 없는 표기는 누락하지 않고 입력 순서대로 마지막에 보존한다.
+List<String> canonicalBibleBookNames(Iterable<String> rawBookNames) {
+  final knownBookNumbers = <int>{};
+  final unknownBooks = <String, String>{};
+
+  for (final rawBookName in rawBookNames) {
+    final trimmed = rawBookName.trim();
+    if (trimmed.isEmpty) {
+      continue;
+    }
+    final normalized = normalizeBibleBookKey(trimmed);
+    final bookNo = bibleRefBookLookup[normalized];
+    if (bookNo != null && bookNo >= 1 && bookNo <= bibleBooks.length) {
+      knownBookNumbers.add(bookNo);
+      continue;
+    }
+    unknownBooks.putIfAbsent(normalized, () => trimmed);
+  }
+
+  final sortedBookNumbers = knownBookNumbers.toList()..sort();
+  return <String>[
+    for (final bookNo in sortedBookNumbers) bibleBooks[bookNo - 1].name,
+    ...unknownBooks.values,
+  ];
+}
 
 BibleNavigationTarget? parseBibleNavigationTarget(String? rawRef) {
   if (rawRef == null) {
