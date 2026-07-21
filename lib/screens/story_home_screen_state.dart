@@ -722,7 +722,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
 
   /// 현재 단계/모드에 어울리는 지도 안내 문구. null 이면 hint 미표시.
   /// 사용자가 dismiss (지도 제스처/region 선택 등) 했으면 null.
-  ({String message, double? avatarSize})? _currentMapHint() {
+  ({String message, double? avatarSize, bool showAvatar})? _currentMapHint() {
     if (_mapHintDismissed) return null;
     if (_mode == null && _selectionStep == 1) {
       final state = ref.read(storyControllerProvider);
@@ -733,12 +733,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         return (
           message: _selectedEraIntroHintMessage(selectedEra, state.events),
           avatarSize: 70,
+          showAvatar: false,
         );
       }
       return (
         message:
             '오늘은 성경 어디를 여행해볼까요?\n① 먼저 시대를 고르고\n② 시간 순·인물·장소 중 선택해 주세요.\n(성경 구절 검색은 오늘 탭의 🔍 클릭)',
         avatarSize: 70,
+        showAvatar: true,
       );
     }
     if (_mode == _SelectionMode.region) {
@@ -747,6 +749,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
         return (
           message: '노란 지역을 눌러 그곳의 사건을 보세요.\n지도를 확대·축소해도 괜찮아요.',
           avatarSize: null,
+          showAvatar: true,
         );
       }
       return null;
@@ -755,12 +758,14 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       return (
         message: '아래 패널에서 인물을 한 명 이상 골라주세요.\n좌측 상단의 초록 「다음」 버튼을 눌러주세요.',
         avatarSize: null,
+        showAvatar: true,
       );
     }
     if (_mode == _SelectionMode.timeline && _selectionStep == 2) {
       return (
         message: '아래 패널에서 구간 카드를 골라주세요.\n좌측 상단의 초록 「다음」 버튼을 눌러주세요.',
         avatarSize: null,
+        showAvatar: true,
       );
     }
     return null;
@@ -778,7 +783,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     );
     final bookList = bookNames.isEmpty ? '성경' : bookNames.join(', ');
     return '• $eraName - $bookList\n'
-        '• 시대를 볼 방법 선택\n'
+        '• 선택된 시대를 보는 방법을 선택하세요\n'
         "(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)";
   }
 
@@ -3305,6 +3310,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                           child: MapHintOverlay(
                             message: mapHint.message,
                             avatarSize: mapHint.avatarSize ?? 48,
+                            showAvatar: mapHint.showAvatar,
                           ),
                         ),
                       ),

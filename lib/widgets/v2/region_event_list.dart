@@ -683,6 +683,13 @@ class _AutoScrollingThumbTitle extends StatefulWidget {
 }
 
 class _AutoScrollingThumbTitleState extends State<_AutoScrollingThumbTitle> {
+  static const _initialDelay = Duration(milliseconds: 850);
+  static const _endPause = Duration(milliseconds: 2000);
+  static const _restartDelay = Duration(milliseconds: 850);
+  static const _millisecondsPerPixel = 26;
+  static const _minimumScrollMilliseconds = 2400;
+  static const _maximumScrollMilliseconds = 7200;
+
   final ScrollController _controller = ScrollController();
   Timer? _startTimer;
   int _animationRequest = 0;
@@ -717,7 +724,7 @@ class _AutoScrollingThumbTitleState extends State<_AutoScrollingThumbTitle> {
       _controller.jumpTo(0);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startTimer = Timer(const Duration(milliseconds: 850), () {
+      _startTimer = Timer(_initialDelay, () {
         if (!mounted ||
             request != _animationRequest ||
             !_controller.hasClients) {
@@ -734,7 +741,10 @@ class _AutoScrollingThumbTitleState extends State<_AutoScrollingThumbTitle> {
     }
     final distance = _controller.position.maxScrollExtent;
     if (distance <= 0) return;
-    final milliseconds = (distance * 34).round().clamp(2400, 9000);
+    final milliseconds = (distance * _millisecondsPerPixel).round().clamp(
+      _minimumScrollMilliseconds,
+      _maximumScrollMilliseconds,
+    );
     unawaited(
       _controller.animateTo(
         distance,
@@ -743,13 +753,16 @@ class _AutoScrollingThumbTitleState extends State<_AutoScrollingThumbTitle> {
       ),
     );
     // animateTo의 Future 완료는 스크롤 범위가 레이아웃 중 바뀌면 늦어질 수
-    // 있다. 절대 시간 타이머로 한 번만 원위치시켜 무한 애니메이션과 범위 밖
-    // 합성 상태를 모두 막는다.
-    _startTimer = Timer(Duration(milliseconds: milliseconds + 2000), () {
+    // 있다. 절대 시간 타이머로 원위치시킨 뒤 같은 제목의 다음 주기를 시작한다.
+    _startTimer = Timer(Duration(milliseconds: milliseconds) + _endPause, () {
       if (!mounted || request != _animationRequest || !_controller.hasClients) {
         return;
       }
       _controller.jumpTo(0);
+      _startTimer = Timer(_restartDelay, () {
+        if (!mounted || request != _animationRequest) return;
+        _startScrollCycle(request);
+      });
     });
   }
 

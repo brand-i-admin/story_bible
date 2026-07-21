@@ -163,9 +163,10 @@ void main() {
       const MaterialApp(
         home: Scaffold(
           body: MapHintOverlay(
+            showAvatar: false,
             message:
                 '• 출애굽 시대 - 출애굽기, 민수기, 신명기, 여호수아\n'
-                '• 시대를 볼 방법 선택\n'
+                '• 선택된 시대를 보는 방법을 선택하세요\n'
                 "(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)",
           ),
         ),
@@ -174,12 +175,53 @@ void main() {
 
     expect(find.byKey(const ValueKey('map-hint-bullet-0')), findsOneWidget);
     expect(find.byKey(const ValueKey('map-hint-bullet-1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('map-hint-avatar')), findsNothing);
+    expect(find.byKey(const ValueKey('map-hint-avatar-image')), findsNothing);
     expect(find.text('출애굽 시대 - 출애굽기, 민수기, 신명기, 여호수아'), findsOneWidget);
-    expect(find.text('시대를 볼 방법 선택'), findsOneWidget);
+    expect(find.text('선택된 시대를 보는 방법을 선택하세요'), findsOneWidget);
     expect(
-      find.text("(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)"),
+      find.byKey(const ValueKey('map-hint-era-back-icon')),
       findsOneWidget,
     );
+    expect(
+      find.byKey(const ValueKey('map-hint-era-home-icon')),
+      findsOneWidget,
+    );
+    for (final (ringKey, iconKey) in [
+      ('map-hint-era-back-icon-ring', 'map-hint-era-back-icon'),
+      ('map-hint-era-home-icon-ring', 'map-hint-era-home-icon'),
+    ]) {
+      final ringFinder = find.byKey(ValueKey(ringKey));
+      expect(ringFinder, findsOneWidget);
+      final ring = tester.widget<Container>(ringFinder);
+      final decoration = ring.decoration! as BoxDecoration;
+      expect(decoration.shape, BoxShape.circle);
+      expect(tester.getSize(ringFinder), const Size.square(18));
+      expect(
+        find.descendant(
+          of: ringFinder,
+          matching: find.byKey(ValueKey(iconKey)),
+        ),
+        findsOneWidget,
+      );
+    }
+    expect(
+      find.byKey(const ValueKey('map-hint-era-navigation-aside')),
+      findsOneWidget,
+    );
+    final navigationAside = tester.widget<RichText>(
+      find.byKey(const ValueKey('map-hint-era-navigation-aside')),
+    );
+    expect(navigationAside.text.toPlainText(), contains('시대 다시 선택'));
+    expect(navigationAside.text.toPlainText(), contains('시대/방법'));
+    final containerRect = tester.getRect(
+      find.byKey(const ValueKey('map-hint-container')),
+    );
+    final bubbleRect = tester.getRect(
+      find.byKey(const ValueKey('map-hint-speech-bubble')),
+    );
+    expect(bubbleRect.left, closeTo(containerRect.left + 16, 0.1));
+    expect(bubbleRect.right, closeTo(containerRect.right - 16, 0.1));
   });
 
   testWidgets('오늘 환영 가이드는 세 가지 동행 항목과 두 참고 문구를 간결하게 표시한다', (tester) async {
@@ -388,6 +430,8 @@ void main() {
     expect(source, contains('오늘은 성경 어디를 여행해볼까요?'));
     expect(source, contains('avatarSize: 70'));
     expect(source, contains('avatarSize: mapHint.avatarSize ?? 48'));
+    expect(source, contains('showAvatar: false'));
+    expect(source, contains('showAvatar: mapHint.showAvatar'));
     expect(source, contains('① 먼저 시대를 고르고'));
     expect(source, contains('② 시간 순·인물·장소 중 선택'));
     expect(source, contains('(성경 구절 검색은 오늘 탭의 🔍 클릭)'));
@@ -398,7 +442,7 @@ void main() {
     );
     expect(source, contains('canonicalBibleBookNames('));
     expect(source, contains('• \$eraName - \$bookList'));
-    expect(source, contains('• 시대를 볼 방법 선택'));
+    expect(source, contains('• 선택된 시대를 보는 방법을 선택하세요'));
     expect(source, contains("(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)"));
     expect(source, isNot(contains('이야기들이 등장합니다.')));
     expect(source, isNot(contains('창조부터 바벨까지')));

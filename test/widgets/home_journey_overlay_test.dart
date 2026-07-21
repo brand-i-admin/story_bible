@@ -512,9 +512,9 @@ void main() {
         .position;
     expect(titlePosition.maxScrollExtent, greaterThan(0));
     final titleAnimationDuration = Duration(
-      milliseconds: (titlePosition.maxScrollExtent * 34).round().clamp(
+      milliseconds: (titlePosition.maxScrollExtent * 26).round().clamp(
         2400,
-        9000,
+        7200,
       ),
     );
     await tester.pump(const Duration(milliseconds: 850));
@@ -522,6 +522,13 @@ void main() {
     expect(titlePosition.pixels, closeTo(titlePosition.maxScrollExtent, 0.5));
     await tester.pump(const Duration(milliseconds: 2100));
     expect(titlePosition.pixels, lessThan(titlePosition.maxScrollExtent / 2));
+    await tester.pump(const Duration(milliseconds: 850));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(
+      titlePosition.pixels,
+      greaterThan(0),
+      reason: '처음으로 돌아온 제목은 다음 자동 스크롤을 다시 시작해야 한다.',
+    );
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
@@ -1099,14 +1106,14 @@ void main() {
   });
 
   testWidgets('작은 화면과 아주큰 글자에서도 두 섹션과 퀴 액션이 넘치지 않는다', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(390, 780));
+    await tester.binding.setSurfaceSize(const Size(320, 780));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await tester.pumpWidget(
       MaterialApp(
         home: MediaQuery(
           data: const MediaQueryData(
-            size: Size(390, 780),
+            size: Size(320, 780),
             textScaler: TextScaler.linear(1.4),
           ),
           child: Scaffold(
@@ -1157,7 +1164,30 @@ void main() {
       tester.getRect(find.text('오늘을 기록')).bottom,
       lessThanOrEqualTo(tester.getRect(diaryCard).bottom),
     );
-    expect(find.text('기록하기'), findsOneWidget);
+    for (final (effectId, label) in [('diary', '기록하기'), ('bible', '이어읽기')]) {
+      final card = find.byKey(ValueKey('home-$effectId-quick-action'));
+      final cta = find.byKey(ValueKey('home-$effectId-quick-action-cta'));
+      final labelFinder = find.descendant(of: cta, matching: find.text(label));
+      expect(labelFinder, findsOneWidget);
+      final cardRect = tester.getRect(card);
+      final ctaRect = tester.getRect(cta);
+      final labelRect = tester.getRect(labelFinder);
+      expect(
+        ctaRect.center.dx,
+        closeTo(cardRect.center.dx, 0.5),
+        reason: '$label CTA는 카드 가로 중앙에 있어야 한다.',
+      );
+      expect(
+        labelRect.left,
+        greaterThanOrEqualTo(ctaRect.left),
+        reason: '$label 왼쪽이 CTA 밖으로 나가면 안 된다.',
+      );
+      expect(
+        labelRect.right,
+        lessThanOrEqualTo(ctaRect.right),
+        reason: '$label 오른쪽이 CTA 밖으로 나가면 안 된다.',
+      );
+    }
     expect(tester.takeException(), isNull);
   });
 }

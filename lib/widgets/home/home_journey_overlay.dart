@@ -986,77 +986,83 @@ class _HomeQuickActionCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(19),
             border: Border.all(color: accent.withValues(alpha: 0.20)),
           ),
-          child: Row(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                width: 38,
-                height: 38,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.18),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: accent, size: 23),
-              ),
-              const SizedBox(width: 9),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                      style: TextStyle(
-                        color: palette.text,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w900,
-                        height: 1.1,
-                      ),
+              Row(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.18),
+                      shape: BoxShape.circle,
                     ),
-                    if (previewTitle != null) ...[
-                      const SizedBox(height: 4),
-                      FadingHorizontalTextScroll(
-                        text: previewTitle!,
-                        scrollKey: previewTitleScrollKey,
-                        textKey: previewTitleTextKey,
-                        textScaler: MediaQuery.textScalerOf(context),
-                        style: TextStyle(
-                          color: palette.text,
-                          fontSize: 12.2,
-                          fontWeight: FontWeight.w900,
-                          height: 1.15,
+                    child: Icon(icon, color: accent, size: 23),
+                  ),
+                  const SizedBox(width: 9),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: false,
+                          style: TextStyle(
+                            color: palette.text,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w900,
+                            height: 1.1,
+                          ),
                         ),
-                      ),
-                    ],
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      key: subtitleKey,
-                      maxLines: subtitleMaxLines,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: true,
-                      style: TextStyle(
-                        color: palette.mutedText,
-                        fontSize: 11.4,
-                        fontWeight: FontWeight.w800,
-                        height: 1.1,
-                      ),
+                        if (previewTitle != null) ...[
+                          const SizedBox(height: 4),
+                          FadingHorizontalTextScroll(
+                            text: previewTitle!,
+                            scrollKey: previewTitleScrollKey,
+                            textKey: previewTitleTextKey,
+                            textScaler: MediaQuery.textScalerOf(context),
+                            style: TextStyle(
+                              color: palette.text,
+                              fontSize: 12.2,
+                              fontWeight: FontWeight.w900,
+                              height: 1.15,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          key: subtitleKey,
+                          maxLines: subtitleMaxLines,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: true,
+                          style: TextStyle(
+                            color: palette.mutedText,
+                            fontSize: 11.4,
+                            fontWeight: FontWeight.w800,
+                            height: 1.1,
+                          ),
+                        ),
+                      ],
                     ),
-                    if (actionLabel != null) ...[
-                      const SizedBox(height: 6),
-                      _HomeQuickActionCta(
-                        effectId: effectId,
-                        label: actionLabel!,
-                        accent: accent,
-                        active: actionEffectActive,
-                      ),
-                    ],
-                  ],
-                ),
+                  ),
+                ],
               ),
+              if (actionLabel != null) ...[
+                const SizedBox(height: 6),
+                _HomeQuickActionCta(
+                  effectId: effectId,
+                  label: actionLabel!,
+                  accent: accent,
+                  active: actionEffectActive,
+                ),
+              ],
             ],
           ),
         ),
@@ -1081,8 +1087,10 @@ class _HomeQuickActionCta extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final horizontalPadding = textScale > 1.2 ? 7.0 : 10.0;
     return Align(
-      alignment: Alignment.centerLeft,
+      alignment: Alignment.center,
       child: PulseHighlight(
         key: ValueKey('home-$effectId-quick-action-cta-glow'),
         active: active,
@@ -1092,7 +1100,10 @@ class _HomeQuickActionCta extends StatelessWidget {
         color: accent,
         child: Container(
           key: ValueKey('home-$effectId-quick-action-cta'),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: 6,
+          ),
           decoration: BoxDecoration(
             color: Color.alphaBlend(
               accent.withValues(alpha: 0.13),
@@ -1130,41 +1141,45 @@ class _HomeQuickActionLabel extends StatelessWidget {
     return Semantics(
       label: label,
       excludeSemantics: true,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            key: ValueKey('home-$effectId-quick-action-symbol-ring'),
-            width: 18,
-            height: 18,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: accent.withValues(alpha: 0.08),
-              shape: BoxShape.circle,
-              border: Border.all(color: accent.withValues(alpha: 0.58)),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              key: ValueKey('home-$effectId-quick-action-symbol-ring'),
+              width: 18,
+              height: 18,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+                border: Border.all(color: accent.withValues(alpha: 0.58)),
+              ),
+              child: Icon(
+                isDiary ? Icons.add_rounded : Icons.arrow_forward_rounded,
+                size: 14,
+                color: accent,
+              ),
             ),
-            child: Icon(
-              isDiary ? Icons.add_rounded : Icons.arrow_forward_rounded,
-              size: 14,
-              color: accent,
+            const SizedBox(width: 3),
+            Text(
+              actionText,
+              key: ValueKey(
+                'home-quick-action-label-${label.replaceAll(' ', '-')}',
+              ),
+              maxLines: 1,
+              softWrap: false,
+              style: TextStyle(
+                color: accent,
+                fontSize: 11.6,
+                fontWeight: FontWeight.w900,
+                height: 1.1,
+              ),
             ),
-          ),
-          const SizedBox(width: 3),
-          Text(
-            actionText,
-            key: ValueKey(
-              'home-quick-action-label-${label.replaceAll(' ', '-')}',
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.visible,
-            style: TextStyle(
-              color: accent,
-              fontSize: 11.6,
-              fontWeight: FontWeight.w900,
-              height: 1.1,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

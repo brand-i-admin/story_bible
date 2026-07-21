@@ -15,12 +15,14 @@ class MapHintOverlay extends StatelessWidget {
     required this.message,
     this.avatarSize = _guideAvatarSize,
     this.avatarAssetPath = 'assets/avatars_thumbs/guide.png',
+    this.showAvatar = true,
     this.checklistStates,
   });
 
   final String message;
   final double avatarSize;
   final String avatarAssetPath;
+  final bool showAvatar;
   final Map<String, bool>? checklistStates;
 
   @override
@@ -76,12 +78,14 @@ class MapHintOverlay extends StatelessWidget {
                         key: const ValueKey('map-hint-message-row'),
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _GuideAvatar(
-                            key: const ValueKey('map-hint-avatar'),
-                            assetPath: avatarAssetPath,
-                            size: avatarSize,
-                          ),
-                          const SizedBox(width: _guideAvatarGap),
+                          if (showAvatar) ...[
+                            _GuideAvatar(
+                              key: const ValueKey('map-hint-avatar'),
+                              assetPath: avatarAssetPath,
+                              size: avatarSize,
+                            ),
+                            const SizedBox(width: _guideAvatarGap),
+                          ],
                           Expanded(
                             child: _GuideSpeechBubble(
                               message: message,
@@ -204,6 +208,13 @@ bool _isGuideAsideLine(String line) {
   return trimmed.startsWith('(') && trimmed.endsWith(')');
 }
 
+bool _isEraNavigationAsideLine(String line) {
+  final trimmed = line.trim();
+  return _isGuideAsideLine(trimmed) &&
+      trimmed.contains('시대 다시 선택') &&
+      trimmed.contains('시대/방법');
+}
+
 class _GuideSpeechBubble extends StatelessWidget {
   const _GuideSpeechBubble({required this.message, this.checklistStates});
 
@@ -276,6 +287,17 @@ class _GuideSpeechMessage extends StatelessWidget {
                         checklistStates?[circledDigits[line.trimLeft()[0]]!],
                   ),
                 )
+              : _isEraNavigationAsideLine(line) && hasBulletLines
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 9),
+                  child: _GuideEraNavigationAside(
+                    textStyle: textStyle.copyWith(
+                      color: Colors.white,
+                      fontSize: 11.2,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                )
               : _isAsideLine(line) && hasBulletLines
               ? Padding(
                   padding: const EdgeInsets.only(top: 9),
@@ -326,6 +348,90 @@ class _GuideSpeechMessage extends StatelessWidget {
 
   bool _isAsideLine(String line) {
     return _isGuideAsideLine(line);
+  }
+}
+
+class _GuideEraNavigationAside extends StatelessWidget {
+  const _GuideEraNavigationAside({required this.textStyle});
+
+  final TextStyle textStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    final iconColor = textStyle.color ?? Colors.white;
+    return RichText(
+      key: const ValueKey('map-hint-era-navigation-aside'),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 2,
+      overflow: TextOverflow.visible,
+      textAlign: TextAlign.left,
+      text: TextSpan(
+        style: textStyle,
+        children: [
+          const TextSpan(text: "(다른 시대 선택은 '"),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: _GuideEraNavigationIcon(
+              ringKey: const ValueKey('map-hint-era-back-icon-ring'),
+              iconKey: const ValueKey('map-hint-era-back-icon'),
+              icon: Icons.arrow_back_rounded,
+              color: iconColor,
+              semanticLabel: '시대 다시 선택',
+            ),
+          ),
+          const TextSpan(text: " 시대 다시 선택' 버튼 혹은 '"),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: _GuideEraNavigationIcon(
+              ringKey: const ValueKey('map-hint-era-home-icon-ring'),
+              iconKey: const ValueKey('map-hint-era-home-icon'),
+              icon: Icons.home_rounded,
+              color: iconColor,
+              semanticLabel: '시대/방법',
+            ),
+          ),
+          const TextSpan(text: " 시대/방법' 버튼 클릭)"),
+        ],
+      ),
+    );
+  }
+}
+
+class _GuideEraNavigationIcon extends StatelessWidget {
+  const _GuideEraNavigationIcon({
+    required this.ringKey,
+    required this.iconKey,
+    required this.icon,
+    required this.color,
+    required this.semanticLabel,
+  });
+
+  final Key ringKey;
+  final Key iconKey;
+  final IconData icon;
+  final Color color;
+  final String semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: ringKey,
+      width: 18,
+      height: 18,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        shape: BoxShape.circle,
+        border: Border.all(color: color.withValues(alpha: 0.58)),
+      ),
+      child: Icon(
+        icon,
+        key: iconKey,
+        color: color,
+        size: 12,
+        semanticLabel: semanticLabel,
+      ),
+    );
   }
 }
 
