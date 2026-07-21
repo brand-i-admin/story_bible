@@ -416,8 +416,8 @@ class _GuideEraNavigationIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       key: ringKey,
-      width: 18,
-      height: 18,
+      width: 16,
+      height: 16,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.10),
@@ -428,7 +428,7 @@ class _GuideEraNavigationIcon extends StatelessWidget {
         icon,
         key: iconKey,
         color: color,
-        size: 12,
+        size: 10,
         semanticLabel: semanticLabel,
       ),
     );

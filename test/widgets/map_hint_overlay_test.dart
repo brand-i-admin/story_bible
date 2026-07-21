@@ -196,14 +196,13 @@ void main() {
       final ring = tester.widget<Container>(ringFinder);
       final decoration = ring.decoration! as BoxDecoration;
       expect(decoration.shape, BoxShape.circle);
-      expect(tester.getSize(ringFinder), const Size.square(18));
-      expect(
-        find.descendant(
-          of: ringFinder,
-          matching: find.byKey(ValueKey(iconKey)),
-        ),
-        findsOneWidget,
+      expect(tester.getSize(ringFinder), const Size.square(16));
+      final iconFinder = find.descendant(
+        of: ringFinder,
+        matching: find.byKey(ValueKey(iconKey)),
       );
+      expect(iconFinder, findsOneWidget);
+      expect(tester.widget<Icon>(iconFinder).size, 10);
     }
     expect(
       find.byKey(const ValueKey('map-hint-era-navigation-aside')),
