@@ -28,6 +28,7 @@ class HomeJourneyOverlay extends StatelessWidget {
     required this.events,
     required this.recommendedEventId,
     required this.currentEventId,
+    this.currentEraDividerAnchorKey,
     required this.eras,
     required this.charactersByCode,
     required this.eventEmotionMarks,
@@ -50,6 +51,7 @@ class HomeJourneyOverlay extends StatelessWidget {
   final List<StoryEvent> events;
   final String? recommendedEventId;
   final String? currentEventId;
+  final Key? currentEraDividerAnchorKey;
   final List<Era> eras;
   final Map<String, Character> charactersByCode;
   final Map<String, EventEmotionMark> eventEmotionMarks;
@@ -82,6 +84,7 @@ class HomeJourneyOverlay extends StatelessWidget {
           events: events,
           recommendedEventId: recommendedEventId,
           currentEventId: currentEventId,
+          currentEraDividerAnchorKey: currentEraDividerAnchorKey,
           eras: eras,
           charactersByCode: charactersByCode,
           eventEmotionMarks: eventEmotionMarks,
@@ -117,6 +120,7 @@ class _HomeStoryJourneyDeck extends StatefulWidget {
     required this.events,
     required this.recommendedEventId,
     required this.currentEventId,
+    this.currentEraDividerAnchorKey,
     required this.eras,
     required this.charactersByCode,
     required this.eventEmotionMarks,
@@ -129,6 +133,7 @@ class _HomeStoryJourneyDeck extends StatefulWidget {
   final List<StoryEvent> events;
   final String? recommendedEventId;
   final String? currentEventId;
+  final Key? currentEraDividerAnchorKey;
   final List<Era> eras;
   final Map<String, Character> charactersByCode;
   final Map<String, EventEmotionMark> eventEmotionMarks;
@@ -513,10 +518,13 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
                 left: 12,
                 right: 12,
                 top: currentCardTopInset - 30,
-                child: ProfileEventEraDivider(
-                  key: ValueKey('home-current-era-divider-${event.eraId}'),
-                  eraId: event.eraId,
-                  label: eraById[event.eraId]?.name ?? '시대 미상',
+                child: SizedBox(
+                  key: widget.currentEraDividerAnchorKey,
+                  child: ProfileEventEraDivider(
+                    key: ValueKey('home-current-era-divider-${event.eraId}'),
+                    eraId: event.eraId,
+                    label: eraById[event.eraId]?.name ?? '시대 미상',
+                  ),
                 ),
               ),
           ],

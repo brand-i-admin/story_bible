@@ -118,34 +118,34 @@ void main() {
       );
     });
 
-    testWidgets('3단계 버튼(보통/크게/아주크게)을 렌더한다', (tester) async {
+    testWidgets('3단계 버튼(작게/보통/크게)을 렌더한다', (tester) async {
       await _pumpSheet(tester);
 
-      expect(find.text('작게'), findsNothing);
+      expect(find.text('작게'), findsOneWidget);
       expect(find.text('보통'), findsOneWidget);
       expect(find.text('크게'), findsOneWidget);
-      expect(find.text('아주크게'), findsOneWidget);
+      expect(find.text('아주크게'), findsNothing);
       expect(find.text('1.0x'), findsOneWidget);
       expect(find.text('1.2x'), findsOneWidget);
       expect(find.text('1.4x'), findsOneWidget);
     });
 
-    testWidgets('아주크게에서도 세 글자 크기 라벨을 한 줄 같은 위치에 둔다', (tester) async {
+    testWidgets('크게에서도 세 글자 크기 라벨을 한 줄 같은 위치에 둔다', (tester) async {
       await _pumpSheet(
         tester,
         initial: FontScale.veryLarge,
         textScale: FontScale.veryLarge.ratio,
       );
 
-      for (final label in ['보통', '크게', '아주크게']) {
+      for (final label in ['작게', '보통', '크게']) {
         expect(tester.widget<Text>(find.text(label)).maxLines, 1);
       }
 
+      final smallTop = tester.getTopLeft(find.text('작게')).dy;
       final normalTop = tester.getTopLeft(find.text('보통')).dy;
       final largeTop = tester.getTopLeft(find.text('크게')).dy;
-      final veryLargeTop = tester.getTopLeft(find.text('아주크게')).dy;
+      expect((smallTop - normalTop).abs(), lessThanOrEqualTo(1));
       expect((normalTop - largeTop).abs(), lessThanOrEqualTo(1));
-      expect((largeTop - veryLargeTop).abs(), lessThanOrEqualTo(1));
     });
 
     testWidgets('현재 선택된 단계에 체크 아이콘을 표시한다', (tester) async {
@@ -262,13 +262,13 @@ void main() {
       );
     });
 
-    testWidgets('아주크게 상태에서도 바텀시트 overflow가 발생하지 않는다', (tester) async {
+    testWidgets('크게 상태에서도 바텀시트 overflow가 발생하지 않는다', (tester) async {
       await tester.binding.setSurfaceSize(const Size(320, 640));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await _pumpSheet(tester, initial: FontScale.veryLarge);
 
-      expect(find.text('아주크게'), findsOneWidget);
+      expect(find.text('크게'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });

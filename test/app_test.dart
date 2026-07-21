@@ -12,7 +12,7 @@ void main() {
     'fontScaleBuilder는 fontScaleProvider의 ratio를 MediaQuery.textScaler로 주입한다',
     (tester) async {
       SharedPreferences.setMockInitialValues(<String, Object>{
-        'font_scale': 'large',
+        'font_scale': FontScale.large.storageKey,
       });
       final prefs = await SharedPreferences.getInstance();
 
@@ -37,7 +37,7 @@ void main() {
     'fontScaleBuilder는 veryLarge(1.4x)를 MediaQuery.textScaler로 주입한다',
     (tester) async {
       SharedPreferences.setMockInitialValues(<String, Object>{
-        'font_scale': 'veryLarge',
+        'font_scale': FontScale.veryLarge.storageKey,
       });
       final prefs = await SharedPreferences.getInstance();
 
@@ -58,7 +58,7 @@ void main() {
     },
   );
 
-  testWidgets('fontScaleBuilder는 저장값이 없으면 normal(1.0×)을 사용한다', (tester) async {
+  testWidgets('fontScaleBuilder는 저장값이 없으면 large(1.2×)를 사용한다', (tester) async {
     SharedPreferences.setMockInitialValues(<String, Object>{});
     final prefs = await SharedPreferences.getInstance();
 
@@ -75,6 +75,6 @@ void main() {
     final BuildContext innerContext = tester.element(find.text('probe'));
     final textScaler = MediaQuery.textScalerOf(innerContext);
 
-    expect(textScaler.scale(10), closeTo(10.0, 0.001));
+    expect(textScaler.scale(10), closeTo(12.0, 0.001));
   });
 }

@@ -16,32 +16,35 @@ void main() {
     });
 
     test('라벨은 한국어로 표시된다', () {
-      expect(FontScale.normal.label, '보통');
-      expect(FontScale.large.label, '크게');
-      expect(FontScale.veryLarge.label, '아주크게');
+      expect(FontScale.normal.label, '작게');
+      expect(FontScale.large.label, '보통');
+      expect(FontScale.veryLarge.label, '크게');
     });
 
-    test('storageKey는 enum name과 동일하다', () {
-      expect(FontScale.normal.storageKey, 'normal');
-      expect(FontScale.large.storageKey, 'large');
-      expect(FontScale.veryLarge.storageKey, 'veryLarge');
+    test('storageKey는 사용자에게 보이는 크기 의미와 동일하다', () {
+      expect(FontScale.normal.storageKey, 'small');
+      expect(FontScale.large.storageKey, 'normal');
+      expect(FontScale.veryLarge.storageKey, 'large');
     });
 
     group('fromStorage', () {
-      test('알려진 값은 대응되는 enum으로 복원된다', () {
-        expect(FontScale.fromStorage('normal'), FontScale.normal);
-        expect(FontScale.fromStorage('large'), FontScale.large);
+      test('현재 저장 키는 대응되는 enum으로 복원된다', () {
+        expect(FontScale.fromStorage('small'), FontScale.normal);
+        expect(FontScale.fromStorage('normal'), FontScale.large);
+        expect(FontScale.fromStorage('large'), FontScale.veryLarge);
+      });
+
+      test('이전 veryLarge 저장 키는 가장 큰 단계로 복원된다', () {
         expect(FontScale.fromStorage('veryLarge'), FontScale.veryLarge);
       });
 
-      test('null은 normal로 복원된다', () {
-        expect(FontScale.fromStorage(null), FontScale.normal);
+      test('null은 기본 크기인 large로 복원된다', () {
+        expect(FontScale.fromStorage(null), FontScale.large);
       });
 
-      test('알 수 없는 값은 normal로 복원된다', () {
-        expect(FontScale.fromStorage('small'), FontScale.normal);
-        expect(FontScale.fromStorage('xlarge'), FontScale.normal);
-        expect(FontScale.fromStorage(''), FontScale.normal);
+      test('알 수 없는 값은 기본 크기인 large로 복원된다', () {
+        expect(FontScale.fromStorage('xlarge'), FontScale.large);
+        expect(FontScale.fromStorage(''), FontScale.large);
       });
     });
   });

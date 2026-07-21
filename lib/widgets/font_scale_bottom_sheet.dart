@@ -372,7 +372,7 @@ class _FontScaleChoiceButton extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        key: ValueKey('font-scale-button-${scale.storageKey}'),
+        key: ValueKey('font-scale-button-${scale.name}'),
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(

@@ -44,6 +44,9 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: HomeJourneyOverlay(
+            currentEraDividerAnchorKey: const ValueKey(
+              'current-era-divider-anchor',
+            ),
             events: events,
             recommendedEventId: 'recommended',
             currentEventId: 'recommended',
@@ -75,6 +78,12 @@ void main() {
     expect(
       find.byKey(const ValueKey('home-current-era-divider-era-1')),
       findsOneWidget,
+    );
+    expect(
+      tester.getRect(find.byKey(const ValueKey('current-era-divider-anchor'))),
+      tester.getRect(
+        find.byKey(const ValueKey('home-current-era-divider-era-1')),
+      ),
     );
     final previousRect = tester.getRect(
       find.byKey(const ValueKey('home-journey-card-surface-frame-previous')),

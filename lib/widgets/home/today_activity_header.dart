@@ -8,6 +8,12 @@ import '../parchment_dialog.dart';
 import '../web_pointer_interceptor.dart';
 import 'story_root_navigation_bar.dart';
 
+abstract final class TodayActivityIcons {
+  static const story = Icons.explore_rounded;
+  static const diary = Icons.edit_note_rounded;
+  static const bible = Icons.menu_book_rounded;
+}
+
 class TodayActivityHeader extends StatelessWidget {
   const TodayActivityHeader({
     super.key,
@@ -162,7 +168,7 @@ class TodayActivityLabelRail extends StatelessWidget {
         const SizedBox(width: AppSpacing.x1),
         Expanded(
           child: _TodayActivityLabel(
-            icon: Icons.explore_rounded,
+            icon: TodayActivityIcons.story,
             text: '이야기: ${summary.explorationCount}개',
             accent: palette.regionAccent,
             completed: summary.explorationCount > 0,
@@ -172,7 +178,7 @@ class TodayActivityLabelRail extends StatelessWidget {
         const SizedBox(width: AppSpacing.x1),
         Expanded(
           child: _TodayActivityLabel(
-            icon: Icons.edit_note_rounded,
+            icon: TodayActivityIcons.diary,
             text: '다이어리: ${summary.hasDiary ? 'o' : 'x'}',
             accent: palette.successBottom,
             completed: summary.hasDiary,
@@ -182,7 +188,7 @@ class TodayActivityLabelRail extends StatelessWidget {
         const SizedBox(width: AppSpacing.x1),
         Expanded(
           child: _TodayActivityLabel(
-            icon: Icons.menu_book_rounded,
+            icon: TodayActivityIcons.bible,
             text: '통독: ${summary.bibleChapterCount}장',
             accent: palette.primary,
             completed: summary.bibleChapterCount > 0,

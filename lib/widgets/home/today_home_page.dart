@@ -16,11 +16,173 @@ import '../../utils/today_activity_summary.dart';
 import '../map/story_event_marker_presentation.dart';
 import '../profile/companion_diary_entry_card.dart';
 import '../story_map_panel.dart';
-import '../v2/map_hint_overlay.dart';
 import '../web_pointer_interceptor.dart';
 import 'home_journey_overlay.dart';
 import 'story_root_navigation_bar.dart';
 import 'today_activity_header.dart';
+
+/// 오늘 가이드가 헤더 하단과 현재 이야기의 시대 라벨 상단 사이를
+/// 정확히 채우도록 화면 상단·하단 여백을 계산한다.
+EdgeInsets todayGuideInsets({
+  required double surfaceHeight,
+  required double headerBottom,
+  required double eraLabelTop,
+}) {
+  if (!surfaceHeight.isFinite ||
+      !headerBottom.isFinite ||
+      !eraLabelTop.isFinite ||
+      surfaceHeight <= 0) {
+    return EdgeInsets.zero;
+  }
+  final top = headerBottom.clamp(0.0, surfaceHeight).toDouble();
+  final bottomEdge = eraLabelTop.clamp(top, surfaceHeight).toDouble();
+  return EdgeInsets.only(top: top, bottom: surfaceHeight - bottomEdge);
+}
+
+class TodayTodoGuide extends StatelessWidget {
+  const TodayTodoGuide({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    final background = Color.alphaBlend(
+      palette.characterAccent.withValues(alpha: 0.28),
+      palette.utilityBackground,
+    ).withValues(alpha: 0.90);
+    return Center(
+      child: Container(
+        key: const ValueKey('today-todo-guide'),
+        constraints: const BoxConstraints(maxWidth: 410),
+        margin: const EdgeInsets.symmetric(horizontal: AppSpacing.x7),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.x7,
+          vertical: AppSpacing.x5,
+        ),
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+          border: Border.all(
+            color: palette.utilityBorder.withValues(alpha: 0.68),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: palette.primaryDeep.withValues(alpha: 0.18),
+              blurRadius: 18,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    '매일 할 일:',
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13.2,
+                      fontWeight: FontWeight.w900,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.x4),
+                  _TodayTodoItem(
+                    icon: TodayActivityIcons.story,
+                    label: '이야기',
+                    color: palette.regionAccent,
+                  ),
+                  const _TodayTodoSeparator(),
+                  _TodayTodoItem(
+                    icon: TodayActivityIcons.diary,
+                    label: '다이어리',
+                    color: palette.successBottom,
+                  ),
+                  const _TodayTodoSeparator(),
+                  _TodayTodoItem(
+                    icon: TodayActivityIcons.bible,
+                    label: '통독',
+                    color: palette.primary,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.x3),
+            const FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '(아래 이야기 카드는 감정을 새길 때마다 재정렬 됩니다)',
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 11.2,
+                  fontWeight: FontWeight.w700,
+                  height: 1.2,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TodayTodoItem extends StatelessWidget {
+  const _TodayTodoItem({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 15, color: color),
+        const SizedBox(width: AppSpacing.x1),
+        Text(
+          label,
+          maxLines: 1,
+          style: TextStyle(
+            color: color,
+            fontSize: 12.8,
+            fontWeight: FontWeight.w900,
+            height: 1.2,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _TodayTodoSeparator extends StatelessWidget {
+  const _TodayTodoSeparator();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text(
+      ', ',
+      style: TextStyle(
+        color: Colors.white70,
+        fontSize: 12.8,
+        fontWeight: FontWeight.w800,
+      ),
+    );
+  }
+}
 
 class TodayHomePage extends StatefulWidget {
   const TodayHomePage({
@@ -86,15 +248,24 @@ class TodayHomePage extends StatefulWidget {
 
 class _TodayHomePageState extends State<TodayHomePage> {
   static const Duration _modalMapInputLockDuration = Duration(hours: 1);
-  static const String _todayGuideMessage =
-      '이야기, 다이어리, 통독을 해보세요!\n'
-      '(이야기 순서는 감정을 새길 때마다 재정렬 됩니다)';
   final SceneAssetLoader _sceneAssetLoader = SceneAssetLoader();
+  final GlobalKey _stackKey = GlobalKey(debugLabel: 'today-stack');
+  final GlobalKey _headerAnchorKey = GlobalKey(
+    debugLabel: 'today-header-anchor',
+  );
+  final GlobalKey _journeyAnchorKey = GlobalKey(
+    debugLabel: 'today-journey-anchor',
+  );
+  final GlobalKey _eraDividerAnchorKey = GlobalKey(
+    debugLabel: 'today-era-divider-anchor',
+  );
   String? _currentEventId;
   String? _currentThumbnailEventId;
   String? _currentThumbnailUrl;
   int _thumbnailRequest = 0;
   bool _todayGuideDismissed = false;
+  double? _renderedHeaderBottom;
+  double? _renderedEraLabelTop;
 
   @override
   void initState() {
@@ -138,6 +309,51 @@ class _TodayHomePageState extends State<TodayHomePage> {
     if (_todayGuideDismissed) return;
     widget.mapController.suppressMapTaps(const Duration(milliseconds: 650));
     setState(() => _todayGuideDismissed = true);
+  }
+
+  void _scheduleGuideAnchorMeasurement() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _todayGuideDismissed) return;
+      final stackBox = _stackKey.currentContext?.findRenderObject();
+      final headerBox = _headerAnchorKey.currentContext?.findRenderObject();
+      final eraDividerBox = _eraDividerAnchorKey.currentContext
+          ?.findRenderObject();
+      final journeyBox = _journeyAnchorKey.currentContext?.findRenderObject();
+      if (stackBox is! RenderBox ||
+          headerBox is! RenderBox ||
+          !stackBox.hasSize ||
+          !headerBox.hasSize) {
+        return;
+      }
+      final lowerAnchorBox = eraDividerBox is RenderBox
+          ? eraDividerBox
+          : journeyBox is RenderBox
+          ? journeyBox
+          : null;
+      if (lowerAnchorBox == null || !lowerAnchorBox.hasSize) return;
+
+      final headerBottom = headerBox
+          .localToGlobal(Offset(0, headerBox.size.height), ancestor: stackBox)
+          .dy;
+      final eraLabelTop = lowerAnchorBox
+          .localToGlobal(Offset.zero, ancestor: stackBox)
+          .dy;
+      if (eraLabelTop < headerBottom) return;
+      final unchanged =
+          (_renderedHeaderBottom == null ||
+              (_renderedHeaderBottom! - headerBottom).abs() < 0.5) &&
+          (_renderedEraLabelTop == null ||
+              (_renderedEraLabelTop! - eraLabelTop).abs() < 0.5);
+      if (unchanged &&
+          _renderedHeaderBottom != null &&
+          _renderedEraLabelTop != null) {
+        return;
+      }
+      setState(() {
+        _renderedHeaderBottom = headerBottom;
+        _renderedEraLabelTop = eraLabelTop;
+      });
+    });
   }
 
   void _setStreakDialogMapInputBlocked(bool blocked) {
@@ -203,7 +419,20 @@ class _TodayHomePageState extends State<TodayHomePage> {
         final bottomObscuredFraction = constraints.maxHeight <= 0
             ? 0.48
             : (floatingOverlayExtent / constraints.maxHeight).clamp(0.0, 0.68);
+        if (!_todayGuideDismissed) {
+          _scheduleGuideAnchorMeasurement();
+        }
+        final fallbackEraLabelTop =
+            (constraints.maxHeight - floatingOverlayExtent - 12)
+                .clamp(topObscured, constraints.maxHeight)
+                .toDouble();
+        final guideInsets = todayGuideInsets(
+          surfaceHeight: constraints.maxHeight,
+          headerBottom: _renderedHeaderBottom ?? topObscured,
+          eraLabelTop: _renderedEraLabelTop ?? fallbackEraLabelTop,
+        );
         return Stack(
+          key: _stackKey,
           children: [
             Positioned.fill(
               child: StoryMapPanel(
@@ -284,6 +513,7 @@ class _TodayHomePageState extends State<TodayHomePage> {
                 },
                 child: WebPointerInterceptor(
                   child: TodayActivityHeader(
+                    key: _headerAnchorKey,
                     nickname: widget.nickname,
                     summary: widget.activitySummary,
                     onStreakDialogVisibilityChanged:
@@ -328,6 +558,8 @@ class _TodayHomePageState extends State<TodayHomePage> {
                 onPointerSignal: (_) => widget.mapController.suppressMapTaps(),
                 child: WebPointerInterceptor(
                   child: HomeJourneyOverlay(
+                    key: _journeyAnchorKey,
+                    currentEraDividerAnchorKey: _eraDividerAnchorKey,
                     events: widget.events,
                     recommendedEventId: widget.recommendedEventId,
                     currentEventId: currentEventId,
@@ -364,11 +596,8 @@ class _TodayHomePageState extends State<TodayHomePage> {
                     behavior: HitTestBehavior.opaque,
                     onPointerDown: (_) => _dismissTodayGuide(),
                     child: Padding(
-                      padding: EdgeInsets.only(
-                        top: topObscured,
-                        bottom: floatingOverlayExtent + 12,
-                      ),
-                      child: const MapHintOverlay(message: _todayGuideMessage),
+                      padding: guideInsets,
+                      child: const TodayTodoGuide(),
                     ),
                   ),
                 ),

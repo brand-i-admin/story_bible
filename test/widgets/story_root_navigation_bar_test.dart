@@ -336,7 +336,8 @@ void main() {
     ).readAsStringSync();
 
     expect(source, contains('TodayActivityHeader('));
-    expect(source, contains('MapHintOverlay('));
+    expect(source, contains('const TodayTodoGuide()'));
+    expect(source, isNot(contains('MapHintOverlay(')));
     expect(source, contains('_todayGuideDismissed'));
     expect(source, contains('_dismissTodayGuide'));
     expect(
@@ -344,14 +345,22 @@ void main() {
       contains('!oldWidget.mapGesturesEnabled && widget.mapGesturesEnabled'),
     );
     expect(source, contains('_todayGuideDismissed = false;'));
-    expect(source, contains('이야기, 다이어리, 통독을 해보세요!'));
-    expect(source, contains('(이야기 순서는 감정을 새길 때마다 재정렬 됩니다)'));
+    expect(source, contains('매일 할 일:'));
+    expect(source, contains('(아래 이야기 카드는 감정을 새길 때마다 재정렬 됩니다)'));
+    expect(source, isNot(contains('이야기, 다이어리, 통독을 해보세요!')));
+    expect(source, isNot(contains('assets/avatars_thumbs/guide.png')));
     expect(source, contains('onPointerDown: (_) => _dismissTodayGuide()'));
     expect(source, isNot(contains('textScale >= 1.3 ? 60.0 : 0.0')));
     expect(source, isNot(contains('todayGuideVerticalOffset')));
     expect(source, isNot(contains('Transform.translate(')));
-    expect(source, contains('top: topObscured'));
-    expect(source, contains('bottom: floatingOverlayExtent + 12'));
+    expect(source, contains('_scheduleGuideAnchorMeasurement()'));
+    expect(
+      source,
+      contains('currentEraDividerAnchorKey: _eraDividerAnchorKey'),
+    );
+    expect(source, contains('final guideInsets = todayGuideInsets('));
+    expect(source, contains('padding: guideInsets'));
+    expect(source, isNot(contains('bottom: floatingOverlayExtent + 12')));
     expect(source, isNot(contains('todayGuideTopInset')));
     expect(source, isNot(contains('AnimatedContainer(')));
     expect(source, isNot(contains('_todayPanelCollapsedHeight')));

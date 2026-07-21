@@ -8,21 +8,27 @@ import '../data/font_scale_repository.dart';
 /// `MediaQuery.textScaler`에 주입되어 모든 `Text` 위젯에 자동 적용된다.
 /// SharedPreferences에는 [storageKey] 문자열로 저장한다.
 enum FontScale {
-  normal(1.0, '보통'),
-  large(1.2, '크게'),
-  veryLarge(1.4, '아주크게');
+  normal(1.0, '작게'),
+  large(1.2, '보통'),
+  veryLarge(1.4, '크게');
 
   const FontScale(this.ratio, this.label);
 
   final double ratio;
   final String label;
 
-  String get storageKey => name;
+  String get storageKey => switch (this) {
+    FontScale.normal => 'small',
+    FontScale.large => 'normal',
+    FontScale.veryLarge => 'large',
+  };
 
   static FontScale fromStorage(String? raw) => switch (raw) {
-    'large' => FontScale.large,
+    'small' => FontScale.normal,
+    'normal' => FontScale.large,
+    'large' => FontScale.veryLarge,
     'veryLarge' => FontScale.veryLarge,
-    _ => FontScale.normal,
+    _ => FontScale.large,
   };
 }
 

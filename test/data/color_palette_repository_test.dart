@@ -13,10 +13,10 @@ void main() {
       prefs = await SharedPreferences.getInstance();
     });
 
-    test('저장값이 없으면 classic을 반환한다', () {
+    test('저장값이 없으면 atlasNavy를 반환한다', () {
       final repo = ColorPaletteRepository(prefs);
 
-      expect(repo.read(), AppColorPalette.classic);
+      expect(repo.read(), AppColorPalette.atlasNavy);
     });
 
     test('선택한 팔레트를 같은 키로 저장한다', () async {
@@ -28,18 +28,18 @@ void main() {
       expect(repo.read(), AppColorPalette.blackMap);
     });
 
-    test('알 수 없는 저장값은 classic으로 보정한다', () async {
+    test('알 수 없는 저장값은 atlasNavy로 보정한다', () async {
       await prefs.setString(ColorPaletteRepository.key, 'bogus');
       final repo = ColorPaletteRepository(prefs);
 
-      expect(repo.read(), AppColorPalette.classic);
+      expect(repo.read(), AppColorPalette.atlasNavy);
     });
 
-    test('제거된 brightCoast 저장값은 classic으로 보정한다', () async {
+    test('제거된 brightCoast 저장값은 atlasNavy로 보정한다', () async {
       await prefs.setString(ColorPaletteRepository.key, 'brightCoast');
       final repo = ColorPaletteRepository(prefs);
 
-      expect(repo.read(), AppColorPalette.classic);
+      expect(repo.read(), AppColorPalette.atlasNavy);
     });
   });
 }

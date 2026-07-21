@@ -306,7 +306,7 @@ enum AppColorPalette {
         return palette;
       }
     }
-    return AppColorPalette.classic;
+    return AppColorPalette.atlasNavy;
   }
 }
 
