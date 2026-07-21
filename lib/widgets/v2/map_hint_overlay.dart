@@ -27,7 +27,6 @@ class MapHintOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final outerColor = _guideOuterColor(palette);
-    final dismissBadgeColor = _guideDismissBadgeColor(palette);
     return LayoutBuilder(
       builder: (context, constraints) {
         final contentWidth = constraints.maxWidth.isFinite
@@ -93,44 +92,9 @@ class MapHintOverlay extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: _guideDismissBadgeTop,
-                    child: Container(
-                      key: const ValueKey('map-hint-dismiss-badge'),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 9,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: dismissBadgeColor,
-                        borderRadius: BorderRadius.circular(999),
-                        border: Border.all(
-                          color: palette.currentAccent.withValues(alpha: 0.32),
-                          width: 1,
-                        ),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.hourglass_top_rounded,
-                            color: Colors.white,
-                            size: 13,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            '화면 아무데나 누르면 사라집니다',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w800,
-                              height: 1.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  const Positioned(
+                    top: MapHintDismissBadge.overlapTop,
+                    child: MapHintDismissBadge(),
                   ),
                 ],
               ),
@@ -142,11 +106,53 @@ class MapHintOverlay extends StatelessWidget {
   }
 }
 
+/// 지도와 오늘 탭 가이드가 함께 사용하는 닫기 안내 배지다.
+class MapHintDismissBadge extends StatelessWidget {
+  const MapHintDismissBadge({super.key, this.badgeKey});
+
+  static const double overlapTop = -22;
+
+  final Key? badgeKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Container(
+      key: badgeKey ?? const ValueKey('map-hint-dismiss-badge'),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration: BoxDecoration(
+        color: _guideDismissBadgeColor(palette),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        border: Border.all(
+          color: palette.currentAccent.withValues(alpha: 0.32),
+          width: 1,
+        ),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.hourglass_top_rounded, color: Colors.white, size: 13),
+          SizedBox(width: 6),
+          Text(
+            '화면 아무데나 누르면 사라집니다',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w800,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 const double _guideAvatarGap = 12;
 const double _guideAvatarSize = 48;
 const double _guideAvatarImageScale = 1.13;
 const double _guideOuterTranslationY = -2;
-const double _guideDismissBadgeTop = -22;
 
 Color _guideOuterColor(AppColorPalette palette) {
   return palette.utilityBackground.withValues(alpha: 0.64);

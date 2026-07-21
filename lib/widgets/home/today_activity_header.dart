@@ -9,6 +9,7 @@ import '../web_pointer_interceptor.dart';
 import 'story_root_navigation_bar.dart';
 
 abstract final class TodayActivityIcons {
+  static const streak = Icons.local_fire_department_rounded;
   static const story = Icons.explore_rounded;
   static const diary = Icons.edit_note_rounded;
   static const bible = Icons.menu_book_rounded;
@@ -154,7 +155,7 @@ class TodayActivityLabelRail extends StatelessWidget {
       children: [
         Expanded(
           child: _TodayActivityLabel(
-            icon: Icons.local_fire_department_rounded,
+            icon: TodayActivityIcons.streak,
             text: '연속: ${summary.streakDays}일',
             accent: palette.currentAccentDeep,
             completed: streakActive,

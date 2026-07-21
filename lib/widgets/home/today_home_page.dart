@@ -16,6 +16,7 @@ import '../../utils/today_activity_summary.dart';
 import '../map/story_event_marker_presentation.dart';
 import '../profile/companion_diary_entry_card.dart';
 import '../story_map_panel.dart';
+import '../v2/map_hint_overlay.dart';
 import '../web_pointer_interceptor.dart';
 import 'home_journey_overlay.dart';
 import 'story_root_navigation_bar.dart';
@@ -45,92 +46,158 @@ class TodayTodoGuide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final background = Color.alphaBlend(
+    final isDark = palette == AppColorPalette.blackMap;
+    final outerBackground = Color.alphaBlend(
       palette.characterAccent.withValues(alpha: 0.28),
       palette.utilityBackground,
-    ).withValues(alpha: 0.90);
-    return Center(
-      child: Container(
-        key: const ValueKey('today-todo-guide'),
-        constraints: const BoxConstraints(maxWidth: 410),
-        margin: const EdgeInsets.symmetric(horizontal: AppSpacing.x7),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.x7,
-          vertical: AppSpacing.x5,
-        ),
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: BorderRadius.circular(AppRadii.xl),
-          border: Border.all(
-            color: palette.utilityBorder.withValues(alpha: 0.68),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: palette.primaryDeep.withValues(alpha: 0.18),
-              blurRadius: 18,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+    ).withValues(alpha: 0.68);
+    final contentBackground = isDark
+        ? Color.alphaBlend(
+            palette.primary.withValues(alpha: 0.06),
+            palette.cardSurface,
+          ).withValues(alpha: 0.88)
+        : Color.alphaBlend(
+            palette.currentAccent.withValues(alpha: 0.035),
+            AppColors.parchmentLight,
+          ).withValues(alpha: 0.84);
+    final primaryTextColor = isDark ? palette.text : AppColors.ink900;
+    final secondaryTextColor = isDark ? palette.mutedText : AppColors.ink500;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final contentWidth = constraints.maxWidth.isFinite
+            ? (constraints.maxWidth - AppSpacing.x10)
+                  .clamp(1.0, 410.0)
+                  .toDouble()
+            : 410.0;
+        return Center(
+          child: FittedBox(
+            key: const ValueKey('today-todo-guide-scale-to-fit'),
+            fit: BoxFit.scaleDown,
+            child: SizedBox(
+              width: contentWidth,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.topCenter,
                 children: [
-                  const Text(
-                    '매일 할 일:',
-                    maxLines: 1,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13.2,
-                      fontWeight: FontWeight.w900,
-                      height: 1.2,
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: -MapHintDismissBadge.overlapTop,
+                    ),
+                    child: Container(
+                      key: const ValueKey('today-todo-guide'),
+                      padding: const EdgeInsets.all(AppSpacing.x4),
+                      decoration: BoxDecoration(
+                        color: outerBackground,
+                        borderRadius: BorderRadius.circular(AppRadii.xl),
+                        border: Border.all(
+                          color: palette.utilityBorder.withValues(alpha: 0.42),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: palette.primaryDeep.withValues(alpha: 0.12),
+                            blurRadius: 14,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Container(
+                        key: const ValueKey('today-todo-guide-content'),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.x7,
+                          vertical: AppSpacing.x5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: contentBackground,
+                          borderRadius: BorderRadius.circular(AppRadii.lg),
+                          border: Border.all(
+                            color: palette.currentAccent.withValues(
+                              alpha: 0.18,
+                            ),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    TodayActivityIcons.streak,
+                                    size: 15,
+                                    color: palette.currentAccentDeep,
+                                  ),
+                                  const SizedBox(width: AppSpacing.x2),
+                                  Text(
+                                    '매일 할 일:',
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: primaryTextColor,
+                                      fontSize: 13.2,
+                                      fontWeight: FontWeight.w900,
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppSpacing.x4),
+                                  _TodayTodoItem(
+                                    icon: TodayActivityIcons.story,
+                                    label: '이야기',
+                                    color: palette.regionAccent,
+                                  ),
+                                  _TodayTodoSeparator(
+                                    color: secondaryTextColor,
+                                  ),
+                                  _TodayTodoItem(
+                                    icon: TodayActivityIcons.diary,
+                                    label: '다이어리',
+                                    color: palette.successBottom,
+                                  ),
+                                  _TodayTodoSeparator(
+                                    color: secondaryTextColor,
+                                  ),
+                                  _TodayTodoItem(
+                                    icon: TodayActivityIcons.bible,
+                                    label: '통독',
+                                    color: palette.primary,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.x3),
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                '(아래 이야기 카드는 감정을 새길 때마다 재정렬 됩니다)',
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: secondaryTextColor,
+                                  fontSize: 11.2,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.x4),
-                  _TodayTodoItem(
-                    icon: TodayActivityIcons.story,
-                    label: '이야기',
-                    color: palette.regionAccent,
-                  ),
-                  const _TodayTodoSeparator(),
-                  _TodayTodoItem(
-                    icon: TodayActivityIcons.diary,
-                    label: '다이어리',
-                    color: palette.successBottom,
-                  ),
-                  const _TodayTodoSeparator(),
-                  _TodayTodoItem(
-                    icon: TodayActivityIcons.bible,
-                    label: '통독',
-                    color: palette.primary,
+                  const Positioned(
+                    top: 0,
+                    child: MapHintDismissBadge(
+                      badgeKey: ValueKey('today-guide-dismiss-badge'),
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.x3),
-            const FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                '(아래 이야기 카드는 감정을 새길 때마다 재정렬 됩니다)',
-                maxLines: 1,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 11.2,
-                  fontWeight: FontWeight.w700,
-                  height: 1.2,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -169,14 +236,16 @@ class _TodayTodoItem extends StatelessWidget {
 }
 
 class _TodayTodoSeparator extends StatelessWidget {
-  const _TodayTodoSeparator();
+  const _TodayTodoSeparator({required this.color});
+
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
+    return Text(
       ', ',
       style: TextStyle(
-        color: Colors.white70,
+        color: color,
         fontSize: 12.8,
         fontWeight: FontWeight.w800,
       ),
