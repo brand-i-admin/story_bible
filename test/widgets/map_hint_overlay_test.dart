@@ -213,6 +213,7 @@ void main() {
     );
     expect(navigationAside.text.toPlainText(), contains('시대 다시 선택'));
     expect(navigationAside.text.toPlainText(), contains('시대/방법'));
+    expect(navigationAside.text.toPlainText(), contains("시대 다시 선택' 버튼\n혹은 '"));
     final containerRect = tester.getRect(
       find.byKey(const ValueKey('map-hint-container')),
     );

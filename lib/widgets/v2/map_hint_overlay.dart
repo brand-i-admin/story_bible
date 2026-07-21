@@ -379,7 +379,7 @@ class _GuideEraNavigationAside extends StatelessWidget {
               semanticLabel: '시대 다시 선택',
             ),
           ),
-          const TextSpan(text: " 시대 다시 선택' 버튼 혹은 '"),
+          const TextSpan(text: " 시대 다시 선택' 버튼\n혹은 '"),
           WidgetSpan(
             alignment: PlaceholderAlignment.middle,
             child: _GuideEraNavigationIcon(
