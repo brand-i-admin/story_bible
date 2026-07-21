@@ -801,10 +801,8 @@ void main() {
         );
         expect(source, contains("label: const Text('다시 시도')"));
         expect(source, contains("'앱을 완전히 종료한 뒤 다시 실행해 주세요.'"));
-        expect(
-          source,
-          contains('onRetry: _hasRetriedManually ? null : _retryMapLoad'),
-        );
+        expect(source, contains('onRetry: _hasRetriedManually'));
+        expect(source, contains(': _retryMapLoad'));
       },
     );
 
@@ -815,13 +813,39 @@ void main() {
           'lib/widgets/map/story_terrain_3d_map.dart',
         ).readAsStringSync();
 
-        expect(source, contains('if (!_mapReady && !_hasError)'));
+        expect(
+          source,
+          contains('if (!_mapReady && !_hasError && !_hasRetriedManually)'),
+        );
         expect(source, contains('_Map3dLoadingOverlay()'));
         expect(source, contains('CircularProgressIndicator('));
         expect(source, contains("'3D 지도를 불러오는 중이에요'"));
         expect(source, contains("'잠시만 기다려 주세요.'"));
       },
     );
+
+    test('map failure and manual retry stay above every route popup', () {
+      final source = File(
+        'lib/widgets/map/story_terrain_3d_map.dart',
+      ).readAsStringSync();
+
+      expect(source, contains('Overlay.of(context, rootOverlay: true)'));
+      expect(source, contains('OverlayEntry('));
+      expect(source, contains("ValueKey('map3d-startup-blocking-overlay')"));
+      expect(source, contains('WebPointerInterceptor('));
+      expect(source, contains('ModalBarrier('));
+      expect(source, contains('dismissible: false'));
+      expect(source, contains('void _showBlockingStartupOverlay()'));
+      expect(source, contains('void _hideBlockingStartupOverlay()'));
+      expect(source, contains('_startupOverlayEntry?.markNeedsBuild();'));
+      expect(
+        source,
+        contains(
+          'if (!_mapReady && !_hasError && !_hasRetriedManually)\n'
+          '            const _Map3dLoadingOverlay()',
+        ),
+      );
+    });
 
     test('stale WebView messages cannot complete a newer map reload', () {
       final source = File(

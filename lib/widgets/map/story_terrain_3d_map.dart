@@ -17,6 +17,7 @@ import '../../services/app_monitoring_service.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/map_math.dart' as map_math;
+import '../web_pointer_interceptor.dart';
 import 'map_tile_style.dart';
 import 'story_event_marker_presentation.dart';
 
@@ -213,6 +214,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
       StoryTerrainWebViewController();
   Timer? _initialLoadTimeout;
   Timer? _viewportRefreshTimer;
+  OverlayEntry? _startupOverlayEntry;
   late final String _webBridgeId = 'story-terrain-${identityHashCode(this)}';
   String? _webHtml;
   String? _lastRendererSignature;
@@ -323,6 +325,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
     WidgetsBinding.instance.removeObserver(this);
     _initialLoadTimeout?.cancel();
     _viewportRefreshTimer?.cancel();
+    _hideBlockingStartupOverlay();
     widget.controller?._unbind(this);
     super.dispose();
   }
@@ -345,17 +348,8 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
             bridgeId: _webBridgeId,
             onMessage: _handleJavaScriptMessageRaw,
           ),
-          if (!_mapReady && !_hasError) const _Map3dLoadingOverlay(),
-          if (_hasError)
-            _Map3dStatusOverlay(
-              title: _hasRetriedManually
-                  ? '지도를 다시 불러오지 못했어요'
-                  : '3D 지도를 불러오지 못했어요',
-              message: _hasRetriedManually
-                  ? '앱을 완전히 종료한 뒤 다시 실행해 주세요.'
-                  : '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
-              onRetry: _hasRetriedManually ? null : _retryMapLoad,
-            ),
+          if (!_mapReady && !_hasError && !_hasRetriedManually)
+            const _Map3dLoadingOverlay(),
         ],
       );
     }
@@ -364,17 +358,8 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
       fit: StackFit.expand,
       children: [
         _buildNativeWebView(),
-        if (!_mapReady && !_hasError) const _Map3dLoadingOverlay(),
-        if (_hasError)
-          _Map3dStatusOverlay(
-            title: _hasRetriedManually
-                ? '지도를 다시 불러오지 못했어요'
-                : '3D 지도를 불러오지 못했어요',
-            message: _hasRetriedManually
-                ? '앱을 완전히 종료한 뒤 다시 실행해 주세요.'
-                : '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
-            onRetry: _hasRetriedManually ? null : _retryMapLoad,
-          ),
+        if (!_mapReady && !_hasError && !_hasRetriedManually)
+          const _Map3dLoadingOverlay(),
       ],
     );
   }
@@ -441,6 +426,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
           if (_hasError && mounted) {
             setState(() => _hasError = false);
           }
+          _hideBlockingStartupOverlay();
           widget.onMapReady?.call();
           _flushPendingCameraPayload();
           _flushPendingOverlayPayload();
@@ -607,6 +593,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
     if (!_hasError) {
       setState(() => _hasError = true);
     }
+    _showBlockingStartupOverlay();
   }
 
   void _reportInitialLoadFailureOnce() {
@@ -644,6 +631,62 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
       _mapReady = false;
       _hasError = false;
     });
+    _startupOverlayEntry?.markNeedsBuild();
+  }
+
+  void _showBlockingStartupOverlay() {
+    final currentEntry = _startupOverlayEntry;
+    if (currentEntry != null) {
+      currentEntry.markNeedsBuild();
+      return;
+    }
+
+    final overlay = Overlay.of(context, rootOverlay: true);
+    final entry = OverlayEntry(
+      builder: (overlayContext) {
+        return Positioned.fill(
+          key: const ValueKey('map3d-startup-blocking-overlay'),
+          child: WebPointerInterceptor(
+            child: BlockSemantics(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ModalBarrier(
+                    dismissible: false,
+                    color: Colors.black.withValues(alpha: 0.42),
+                  ),
+                  SafeArea(
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: _hasError
+                          ? _Map3dStatusOverlay(
+                              title: _hasRetriedManually
+                                  ? '지도를 다시 불러오지 못했어요'
+                                  : '3D 지도를 불러오지 못했어요',
+                              message: _hasRetriedManually
+                                  ? '앱을 완전히 종료한 뒤 다시 실행해 주세요.'
+                                  : '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
+                              onRetry: _hasRetriedManually
+                                  ? null
+                                  : _retryMapLoad,
+                            )
+                          : const _Map3dLoadingOverlay(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    _startupOverlayEntry = entry;
+    overlay.insert(entry);
+  }
+
+  void _hideBlockingStartupOverlay() {
+    _startupOverlayEntry?.remove();
+    _startupOverlayEntry = null;
   }
 
   void _scheduleViewportRefresh() {
