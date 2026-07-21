@@ -200,9 +200,8 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
   static const _boundsSouth = -8.0;
   static const _boundsEast = 64.0;
   static const _boundsNorth = 50.5;
-  static const _initialLoadTimeoutDuration = Duration(seconds: 8);
-  static const _maxAutomaticReloadAttempts = 2;
-  static const _htmlRevision = 'map-viewport-recovery-2026-07-20';
+  static const _initialLoadTimeoutDuration = Duration(seconds: 5);
+  static const _htmlRevision = 'map-retry-recovery-2026-07-21';
   static const _homeIntroZoomOutDelta = 0.72;
   static final Set<Factory<OneSequenceGestureRecognizer>>
   _mapGestureRecognizers = <Factory<OneSequenceGestureRecognizer>>{
@@ -213,7 +212,6 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
   final StoryTerrainWebViewController _webController =
       StoryTerrainWebViewController();
   Timer? _initialLoadTimeout;
-  Timer? _automaticReloadTimer;
   Timer? _viewportRefreshTimer;
   late final String _webBridgeId = 'story-terrain-${identityHashCode(this)}';
   String? _webHtml;
@@ -226,7 +224,8 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
   bool _mapReady = false;
   bool _hasError = false;
   bool _initialFailureReported = false;
-  int _automaticReloadAttempts = 0;
+  bool _hasRetriedManually = false;
+  int _platformViewGeneration = 0;
 
   bool get _useTopDownRegionCamera =>
       widget.regionLandmarks.isNotEmpty &&
@@ -256,22 +255,33 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
       _loadHtmlIfNeeded(force: true);
       return;
     }
-    _controller = WebViewController()
+    _controller = _createNativeWebViewController(_platformViewGeneration);
+    _loadHtmlIfNeeded(force: true);
+  }
+
+  WebViewController _createNativeWebViewController(int generation) {
+    return WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFE5D2B5))
       ..addJavaScriptChannel(
         'StoryBibleMap',
-        onMessageReceived: (message) =>
-            _handleJavaScriptMessageRaw(message.message),
+        onMessageReceived: (message) {
+          if (generation != _platformViewGeneration) {
+            return;
+          }
+          _handleJavaScriptMessageRaw(message.message);
+        },
       )
       ..setNavigationDelegate(
         NavigationDelegate(
           onWebResourceError: (error) {
+            if (generation != _platformViewGeneration) {
+              return;
+            }
             _handleWebResourceError(error);
           },
         ),
       );
-    _loadHtmlIfNeeded(force: true);
   }
 
   @override
@@ -312,7 +322,6 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _initialLoadTimeout?.cancel();
-    _automaticReloadTimer?.cancel();
     _viewportRefreshTimer?.cancel();
     widget.controller?._unbind(this);
     super.dispose();
@@ -330,16 +339,22 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
         fit: StackFit.expand,
         children: [
           StoryTerrainWebView(
+            key: ValueKey('story-terrain-web-$_platformViewGeneration'),
             controller: _webController,
             html: _webHtml ?? _buildHtml(),
             bridgeId: _webBridgeId,
             onMessage: _handleJavaScriptMessageRaw,
           ),
+          if (!_mapReady && !_hasError) const _Map3dLoadingOverlay(),
           if (_hasError)
             _Map3dStatusOverlay(
-              title: '3D 지도를 불러오지 못했어요',
-              message: '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
-              onRetry: _retryMapLoad,
+              title: _hasRetriedManually
+                  ? '지도를 다시 불러오지 못했어요'
+                  : '3D 지도를 불러오지 못했어요',
+              message: _hasRetriedManually
+                  ? '앱을 완전히 종료한 뒤 다시 실행해 주세요.'
+                  : '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
+              onRetry: _hasRetriedManually ? null : _retryMapLoad,
             ),
         ],
       );
@@ -349,11 +364,16 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
       fit: StackFit.expand,
       children: [
         _buildNativeWebView(),
+        if (!_mapReady && !_hasError) const _Map3dLoadingOverlay(),
         if (_hasError)
           _Map3dStatusOverlay(
-            title: '3D 지도를 불러오지 못했어요',
-            message: '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
-            onRetry: _retryMapLoad,
+            title: _hasRetriedManually
+                ? '지도를 다시 불러오지 못했어요'
+                : '3D 지도를 불러오지 못했어요',
+            message: _hasRetriedManually
+                ? '앱을 완전히 종료한 뒤 다시 실행해 주세요.'
+                : '네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
+            onRetry: _hasRetriedManually ? null : _retryMapLoad,
           ),
       ],
     );
@@ -379,13 +399,21 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
           );
     }
 
-    return WebViewWidget.fromPlatformCreationParams(params: params);
+    return KeyedSubtree(
+      key: ValueKey('story-terrain-native-$_platformViewGeneration'),
+      child: WebViewWidget.fromPlatformCreationParams(params: params),
+    );
   }
 
   void _handleJavaScriptMessageRaw(String raw) {
     try {
       final decoded = jsonDecode(raw);
       if (decoded is! Map<String, dynamic>) {
+        return;
+      }
+      final messageLoadSequence = decoded['loadSequence'];
+      if (messageLoadSequence != null &&
+          messageLoadSequence != _htmlLoadSequence) {
         return;
       }
       switch (decoded['type']) {
@@ -408,8 +436,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
           debugPrint('[Map3D] ready: ${widget.source.label}');
           _mapReady = true;
           _initialLoadTimeout?.cancel();
-          _automaticReloadTimer?.cancel();
-          _automaticReloadAttempts = 0;
+          _hasRetriedManually = false;
           _initialFailureReported = false;
           if (_hasError && mounted) {
             setState(() => _hasError = false);
@@ -435,10 +462,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
     }
   }
 
-  void _loadHtmlIfNeeded({
-    bool force = false,
-    bool resetReloadAttempts = true,
-  }) {
+  void _loadHtmlIfNeeded({bool force = false}) {
     final rendererSignature = jsonEncode({
       'htmlRevision': _htmlRevision,
       'style': widget.source.style.name,
@@ -519,11 +543,6 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
     _lastOverlaySignature = overlaySignature;
     _pendingCameraPayload = jsonEncode(cameraPayload);
     _pendingOverlayPayload = jsonEncode(overlayPayload);
-    if (resetReloadAttempts) {
-      _automaticReloadTimer?.cancel();
-      _automaticReloadAttempts = 0;
-      _initialFailureReported = false;
-    }
     _htmlLoadSequence += 1;
     _mapReady = false;
     _hasError = false;
@@ -581,11 +600,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
       return;
     }
     _initialLoadTimeout?.cancel();
-    if (_automaticReloadAttempts < _maxAutomaticReloadAttempts) {
-      _scheduleAutomaticReload(reason);
-      return;
+    if (_hasRetriedManually) {
+      debugPrint('[Map3D] manual retry failed: $reason');
+      _reportInitialLoadFailureOnce();
     }
-    _reportInitialLoadFailureOnce();
     if (!_hasError) {
       setState(() => _hasError = true);
     }
@@ -597,41 +615,35 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
     }
     _initialFailureReported = true;
     AppMonitoringService.instance.recordNonFatal(
-      StateError('3D map startup failed after bounded retries'),
+      StateError('3D map startup failed after manual retry'),
       StackTrace.current,
-      reason: '3D map startup failed after bounded retries',
+      reason: '3D map startup failed after manual retry',
     );
-  }
-
-  void _scheduleAutomaticReload(String reason) {
-    if (!mounted ||
-        _mapReady ||
-        _automaticReloadAttempts >= _maxAutomaticReloadAttempts ||
-        (_automaticReloadTimer?.isActive ?? false)) {
-      return;
-    }
-    final attempt = _automaticReloadAttempts + 1;
-    final delay = Duration(milliseconds: attempt == 1 ? 350 : 900);
-    debugPrint(
-      '[Map3D] scheduling automatic reload $attempt/'
-      '$_maxAutomaticReloadAttempts: $reason',
-    );
-    _automaticReloadTimer = Timer(delay, () {
-      if (!mounted || _mapReady) {
-        return;
-      }
-      _automaticReloadAttempts = attempt;
-      _loadHtmlIfNeeded(force: true, resetReloadAttempts: false);
-    });
   }
 
   void _retryMapLoad() {
-    _automaticReloadTimer?.cancel();
-    _automaticReloadAttempts = 0;
-    _loadHtmlIfNeeded(force: true);
-    if (mounted) {
-      setState(() => _hasError = false);
+    if (_hasRetriedManually) {
+      return;
     }
+    _initialLoadTimeout?.cancel();
+    _initialFailureReported = false;
+    _hasRetriedManually = true;
+    _replacePlatformViewForRecovery();
+    _loadHtmlIfNeeded(force: true);
+  }
+
+  void _replacePlatformViewForRecovery() {
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _platformViewGeneration += 1;
+      if (!kIsWeb) {
+        _controller = _createNativeWebViewController(_platformViewGeneration);
+      }
+      _mapReady = false;
+      _hasError = false;
+    });
   }
 
   void _scheduleViewportRefresh() {
@@ -1394,6 +1406,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
     const post = (message) => {
       try {
         message.bridgeId = config.bridgeId;
+        message.loadSequence = config.loadSequence;
         const encoded = JSON.stringify(message);
         if (window.StoryBibleMap && window.StoryBibleMap.postMessage) {
           window.StoryBibleMap.postMessage(encoded);
@@ -3101,6 +3114,66 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
   }
 }
 
+class _Map3dLoadingOverlay extends StatelessWidget {
+  const _Map3dLoadingOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Semantics(
+      liveRegion: true,
+      label: '3D 지도를 불러오는 중이에요',
+      child: Center(
+        child: Container(
+          margin: const EdgeInsets.all(AppSpacing.x10),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.x8,
+            vertical: AppSpacing.x6,
+          ),
+          decoration: BoxDecoration(
+            color: palette.softSurface,
+            borderRadius: BorderRadius.circular(AppRadii.lg),
+            border: Border.all(color: palette.subtleBorder),
+            boxShadow: AppShadows.md,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox.square(
+                dimension: 32,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  color: palette.primaryDeep,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.x4),
+              Text(
+                '3D 지도를 불러오는 중이에요',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: palette.text,
+                  fontSize: AppFontSizes.input,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.x2),
+              Text(
+                '잠시만 기다려 주세요.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: palette.mutedText,
+                  fontSize: AppFontSizes.base,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _Map3dStatusOverlay extends StatelessWidget {
   const _Map3dStatusOverlay({
     required this.title,
@@ -3110,7 +3183,7 @@ class _Map3dStatusOverlay extends StatelessWidget {
 
   final String title;
   final String message;
-  final VoidCallback onRetry;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -3150,23 +3223,25 @@ class _Map3dStatusOverlay extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: AppSpacing.x5),
-            FilledButton.icon(
-              onPressed: onRetry,
-              style: FilledButton.styleFrom(
-                backgroundColor: palette.primaryDeep,
-                foregroundColor: palette.activeTextOnAccent,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.x7,
-                  vertical: AppSpacing.x3,
+            if (onRetry != null) ...[
+              const SizedBox(height: AppSpacing.x5),
+              FilledButton.icon(
+                onPressed: onRetry,
+                style: FilledButton.styleFrom(
+                  backgroundColor: palette.primaryDeep,
+                  foregroundColor: palette.activeTextOnAccent,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.x7,
+                    vertical: AppSpacing.x3,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadii.lg),
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadii.lg),
-                ),
+                icon: const Icon(Icons.refresh_rounded, size: 18),
+                label: const Text('다시 시도'),
               ),
-              icon: const Icon(Icons.refresh_rounded, size: 18),
-              label: const Text('다시 시도'),
-            ),
+            ],
           ],
         ),
       ),

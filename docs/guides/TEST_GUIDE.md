@@ -19,11 +19,11 @@
 | `test/services/` | 4 | 18 | Firebase 이벤트 계약, 개인정보 필터, 환경·빌드 모드 정책, 인증 스트림 오류 격리 |
 | `test/theme/` | 1 | 18 | 디자인 토큰 회귀 방지 |
 | `test/utils/` | 12 | 149 | 날짜, 지도 수학, asset loader, 선택/통독 로직 |
-| `test/widgets/` | 37 | 297 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
+| `test/widgets/` | 37 | 299 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
 | `tools/**/test_*.py` | 18 | 128 | seed, lint, asset, docs, Supabase 도구·정기 푸시 SQL 문구 |
 
 Dart 쪽 정적 카운트는 `test/**/*.dart`의 `test()`/`testWidgets()` 호출 기준
-690개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
+692개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
 공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.
 
 ## 1. 기본 실행 명령

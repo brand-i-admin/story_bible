@@ -604,7 +604,7 @@ void main() {
           '      _loadHtmlIfNeeded(force: true);\n'
           '      return;\n'
           '    }\n'
-          '    _controller = WebViewController()',
+          '    _controller = _createNativeWebViewController(',
         ),
       );
       expect(terrainSource, contains('return Stack('));
@@ -769,26 +769,71 @@ void main() {
       expect(source, isNot(contains('setTimeout(markReady, 900)')));
     });
 
-    test('initial map failure retries are bounded and user-recoverable', () {
+    test(
+      'initial map failure waits five seconds then allows one manual retry',
+      () {
+        final source = File(
+          'lib/widgets/map/story_terrain_3d_map.dart',
+        ).readAsStringSync();
+
+        expect(
+          source,
+          contains('_initialLoadTimeoutDuration = Duration(seconds: 5)'),
+        );
+        expect(source, contains('void _handleInitialLoadFailure('));
+        expect(source, isNot(contains('_maxAutomaticReloadAttempts')));
+        expect(source, isNot(contains('_scheduleAutomaticReload')));
+        expect(source, contains('bool _hasRetriedManually = false;'));
+        expect(source, contains('void _retryMapLoad()'));
+        expect(source, contains('void _replacePlatformViewForRecovery()'));
+        final retryStart = source.indexOf('void _retryMapLoad()');
+        final viewportRefreshStart = source.indexOf(
+          'void _scheduleViewportRefresh()',
+          retryStart,
+        );
+        final retrySource = source.substring(retryStart, viewportRefreshStart);
+        expect(retrySource, contains('_hasRetriedManually = true;'));
+        expect(retrySource, contains('_replacePlatformViewForRecovery();'));
+        expect(source, contains('void _reportInitialLoadFailureOnce()'));
+        expect(
+          source,
+          contains("reason: '3D map startup failed after manual retry'"),
+        );
+        expect(source, contains("label: const Text('다시 시도')"));
+        expect(source, contains("'앱을 완전히 종료한 뒤 다시 실행해 주세요.'"));
+        expect(
+          source,
+          contains('onRetry: _hasRetriedManually ? null : _retryMapLoad'),
+        );
+      },
+    );
+
+    test(
+      'map loading state stays visible with an animated progress indicator',
+      () {
+        final source = File(
+          'lib/widgets/map/story_terrain_3d_map.dart',
+        ).readAsStringSync();
+
+        expect(source, contains('if (!_mapReady && !_hasError)'));
+        expect(source, contains('_Map3dLoadingOverlay()'));
+        expect(source, contains('CircularProgressIndicator('));
+        expect(source, contains("'3D 지도를 불러오는 중이에요'"));
+        expect(source, contains("'잠시만 기다려 주세요.'"));
+      },
+    );
+
+    test('stale WebView messages cannot complete a newer map reload', () {
       final source = File(
         'lib/widgets/map/story_terrain_3d_map.dart',
       ).readAsStringSync();
 
-      expect(source, contains('_maxAutomaticReloadAttempts = 2'));
-      expect(source, contains('void _handleInitialLoadFailure('));
-      expect(source, contains('void _scheduleAutomaticReload('));
-      expect(source, contains('_automaticReloadAttempts >='));
+      expect(source, contains('message.loadSequence = config.loadSequence;'));
       expect(
         source,
-        contains('_loadHtmlIfNeeded(force: true, resetReloadAttempts: false)'),
+        contains("final messageLoadSequence = decoded['loadSequence'];"),
       );
-      expect(source, contains('void _retryMapLoad()'));
-      expect(source, contains('void _reportInitialLoadFailureOnce()'));
-      expect(
-        source,
-        contains("reason: '3D map startup failed after bounded retries'"),
-      );
-      expect(source, contains("label: const Text('다시 시도')"));
+      expect(source, contains('messageLoadSequence != _htmlLoadSequence'));
     });
 
     test('subresource errors do not show the 3D map failure overlay', () {
