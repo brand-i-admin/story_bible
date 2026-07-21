@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/theme/app_color_palette.dart';
+import 'package:story_bible/theme/tokens.dart';
 import 'package:story_bible/widgets/v2/map_hint_overlay.dart';
 
 void main() {
@@ -167,7 +168,7 @@ void main() {
             message:
                 '• 출애굽 시대 - 출애굽기, 민수기, 신명기, 여호수아\n'
                 '• 선택된 시대를 보는 방법을 선택하세요\n'
-                "(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)",
+                '다른 시대를 선택하려면',
           ),
         ),
       ),
@@ -208,12 +209,33 @@ void main() {
       find.byKey(const ValueKey('map-hint-era-navigation-aside')),
       findsOneWidget,
     );
-    final navigationAside = tester.widget<RichText>(
-      find.byKey(const ValueKey('map-hint-era-navigation-aside')),
+    final navigationTitle = tester.widget<Text>(
+      find.byKey(const ValueKey('map-hint-era-navigation-title')),
     );
-    expect(navigationAside.text.toPlainText(), contains('시대 다시 선택'));
-    expect(navigationAside.text.toPlainText(), contains('시대/방법'));
-    expect(navigationAside.text.toPlainText(), contains("시대 다시 선택' 버튼\n혹은 '"));
+    final eraSummary = tester.widget<Text>(
+      find.text('출애굽 시대 - 출애굽기, 민수기, 신명기, 여호수아'),
+    );
+    final methodPrompt = tester.widget<Text>(find.text('선택된 시대를 보는 방법을 선택하세요'));
+    expect(navigationTitle.data, '다른 시대를 선택하려면');
+    expect(navigationTitle.textAlign, TextAlign.center);
+    expect(navigationTitle.style?.fontSize, AppFontSizes.xs);
+    expect(navigationTitle.style?.fontWeight, FontWeight.w600);
+    expect(
+      navigationTitle.style?.fontSize,
+      lessThan(eraSummary.style?.fontSize ?? 0),
+    );
+    expect(
+      navigationTitle.style?.fontSize,
+      lessThan(methodPrompt.style?.fontSize ?? 0),
+    );
+    final navigationActions = tester.widget<Wrap>(
+      find.byKey(const ValueKey('map-hint-era-navigation-actions')),
+    );
+    expect(navigationActions.alignment, WrapAlignment.center);
+    expect(find.text('시대 다시 선택'), findsOneWidget);
+    expect(find.text('또는'), findsOneWidget);
+    expect(find.text('시대/방법'), findsOneWidget);
+    expect(find.textContaining('('), findsNothing);
     final containerRect = tester.getRect(
       find.byKey(const ValueKey('map-hint-container')),
     );
@@ -222,6 +244,48 @@ void main() {
     );
     expect(bubbleRect.left, closeTo(containerRect.left + 16, 0.1));
     expect(bubbleRect.right, closeTo(containerRect.right - 16, 0.1));
+  });
+
+  testWidgets('시대 선택 가이드는 모든 글자 크기에서 중앙 안내가 자연스럽게 맞는다', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    for (final scale in [1.0, 1.2, 1.4]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(textScaler: TextScaler.linear(scale)),
+            child: const Scaffold(
+              body: SizedBox(
+                width: 390,
+                height: 320,
+                child: MapHintOverlay(
+                  showAvatar: false,
+                  message:
+                      '• 출애굽 시대 - 출애굽기, 민수기, 신명기, 여호수아\n'
+                      '• 선택된 시대를 보는 방법을 선택하세요\n'
+                      '다른 시대를 선택하려면',
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final titleRect = tester.getRect(
+        find.byKey(const ValueKey('map-hint-era-navigation-title')),
+      );
+      final actionsRect = tester.getRect(
+        find.byKey(const ValueKey('map-hint-era-navigation-actions')),
+      );
+      final bubbleRect = tester.getRect(
+        find.byKey(const ValueKey('map-hint-speech-bubble')),
+      );
+      expect(titleRect.center.dx, closeTo(bubbleRect.center.dx, 0.5));
+      expect(actionsRect.center.dx, closeTo(bubbleRect.center.dx, 0.5));
+      expect(tester.takeException(), isNull);
+    }
   });
 
   testWidgets('오늘 환영 가이드는 세 가지 동행 항목과 두 참고 문구를 간결하게 표시한다', (tester) async {
@@ -443,7 +507,8 @@ void main() {
     expect(source, contains('canonicalBibleBookNames('));
     expect(source, contains('• \$eraName - \$bookList'));
     expect(source, contains('• 선택된 시대를 보는 방법을 선택하세요'));
-    expect(source, contains("(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)"));
+    expect(source, contains('다른 시대를 선택하려면'));
+    expect(source, isNot(contains('(다른 시대 선택은')));
     expect(source, isNot(contains('이야기들이 등장합니다.')));
     expect(source, isNot(contains('창조부터 바벨까지')));
     expect(source, contains('노란 지역을 눌러'));

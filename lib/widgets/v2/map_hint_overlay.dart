@@ -210,9 +210,8 @@ bool _isGuideAsideLine(String line) {
 
 bool _isEraNavigationAsideLine(String line) {
   final trimmed = line.trim();
-  return _isGuideAsideLine(trimmed) &&
-      trimmed.contains('시대 다시 선택') &&
-      trimmed.contains('시대/방법');
+  return trimmed == '다른 시대를 선택하려면' ||
+      (trimmed.contains('시대 다시 선택') && trimmed.contains('시대/방법'));
 }
 
 class _GuideSpeechBubble extends StatelessWidget {
@@ -359,38 +358,105 @@ class _GuideEraNavigationAside extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconColor = textStyle.color ?? Colors.white;
-    return RichText(
+    return Container(
       key: const ValueKey('map-hint-era-navigation-aside'),
-      textScaler: MediaQuery.textScalerOf(context),
-      maxLines: 2,
-      overflow: TextOverflow.visible,
-      textAlign: TextAlign.left,
-      text: TextSpan(
-        style: textStyle,
+      width: double.infinity,
+      padding: const EdgeInsets.only(top: AppSpacing.x3),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: iconColor.withValues(alpha: 0.22)),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const TextSpan(text: "(다른 시대 선택은 '"),
-          WidgetSpan(
-            alignment: PlaceholderAlignment.middle,
-            child: _GuideEraNavigationIcon(
-              ringKey: const ValueKey('map-hint-era-back-icon-ring'),
-              iconKey: const ValueKey('map-hint-era-back-icon'),
-              icon: Icons.arrow_back_rounded,
-              color: iconColor,
-              semanticLabel: '시대 다시 선택',
+          Text(
+            '다른 시대를 선택하려면',
+            key: const ValueKey('map-hint-era-navigation-title'),
+            textAlign: TextAlign.center,
+            style: textStyle.copyWith(
+              fontSize: AppFontSizes.xs,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          const TextSpan(text: " 시대 다시 선택' 버튼\n혹은 '"),
-          WidgetSpan(
-            alignment: PlaceholderAlignment.middle,
-            child: _GuideEraNavigationIcon(
-              ringKey: const ValueKey('map-hint-era-home-icon-ring'),
-              iconKey: const ValueKey('map-hint-era-home-icon'),
-              icon: Icons.home_rounded,
-              color: iconColor,
-              semanticLabel: '시대/방법',
-            ),
+          const SizedBox(height: AppSpacing.x2),
+          Wrap(
+            key: const ValueKey('map-hint-era-navigation-actions'),
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.x2,
+            runSpacing: AppSpacing.x1,
+            children: [
+              _GuideEraNavigationAction(
+                textStyle: textStyle,
+                label: '시대 다시 선택',
+                ringKey: const ValueKey('map-hint-era-back-icon-ring'),
+                iconKey: const ValueKey('map-hint-era-back-icon'),
+                icon: Icons.arrow_back_rounded,
+              ),
+              Text(
+                '또는',
+                textAlign: TextAlign.center,
+                style: textStyle.copyWith(
+                  fontSize: AppFontSizes.xs,
+                  color: iconColor.withValues(alpha: 0.82),
+                ),
+              ),
+              _GuideEraNavigationAction(
+                textStyle: textStyle,
+                label: '시대/방법',
+                ringKey: const ValueKey('map-hint-era-home-icon-ring'),
+                iconKey: const ValueKey('map-hint-era-home-icon'),
+                icon: Icons.home_rounded,
+              ),
+            ],
           ),
-          const TextSpan(text: " 시대/방법' 버튼 클릭)"),
+        ],
+      ),
+    );
+  }
+}
+
+class _GuideEraNavigationAction extends StatelessWidget {
+  const _GuideEraNavigationAction({
+    required this.textStyle,
+    required this.label,
+    required this.ringKey,
+    required this.iconKey,
+    required this.icon,
+  });
+
+  final TextStyle textStyle;
+  final String label;
+  final Key ringKey;
+  final Key iconKey;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = textStyle.color ?? Colors.white;
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.x2,
+        vertical: AppSpacing.x1,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        border: Border.all(color: color.withValues(alpha: 0.22)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _GuideEraNavigationIcon(
+            ringKey: ringKey,
+            iconKey: iconKey,
+            icon: icon,
+            color: color,
+            semanticLabel: label,
+          ),
+          const SizedBox(width: AppSpacing.x1),
+          Text(label, style: textStyle),
         ],
       ),
     );

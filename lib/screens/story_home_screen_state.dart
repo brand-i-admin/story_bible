@@ -784,7 +784,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final bookList = bookNames.isEmpty ? '성경' : bookNames.join(', ');
     return '• $eraName - $bookList\n'
         '• 선택된 시대를 보는 방법을 선택하세요\n'
-        "(다른 시대 선택은 '시대 다시 선택' 버튼 혹은 '시대/방법' 버튼 클릭)";
+        '다른 시대를 선택하려면';
   }
 
   /// 안내가 떠 있는 상태에서 화면을 탭하거나 지도를 만지면 hint dismiss.
