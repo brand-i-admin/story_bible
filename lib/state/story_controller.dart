@@ -668,6 +668,7 @@ class StoryController extends Notifier<StoryState> {
     required String eventId,
     required bool isRead,
   }) async {
+    final wasRead = state.bibleReadEventIds.contains(eventId);
     final next = {...state.bibleReadEventIds};
     if (isRead) {
       next.add(eventId);
@@ -691,6 +692,11 @@ class StoryController extends Notifier<StoryState> {
         );
         rethrow;
       }
+    }
+    if (user != null && isRead && !wasRead) {
+      await AppMonitoringService.instance.logAnalyticsEvent(
+        AppAnalyticsEvent.storyBibleReadCompleted(eventId: eventId),
+      );
     }
     await _syncOverallCompletion(eventId);
   }

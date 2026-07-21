@@ -10,6 +10,8 @@ import '../models/character.dart';
 import '../models/event_emotion_mark.dart';
 import '../models/quiz_attempt_summary.dart';
 import '../models/story_event.dart';
+import '../services/app_analytics_event.dart';
+import '../services/app_monitoring_service.dart';
 import '../state/auth_providers.dart';
 import '../state/proposal_providers.dart';
 import '../state/story_controller.dart';
@@ -523,10 +525,15 @@ class _EventDetailPageState extends ConsumerState<EventDetailPage> {
 
     final state = ref.read(storyControllerProvider);
     final existingMark = state.eventEmotionMarks[event.id];
+    unawaited(
+      AppMonitoringService.instance.logAnalyticsEvent(
+        AppAnalyticsEvent.emotionEngravingStarted(eventId: event.id),
+      ),
+    );
     final saved = await showDialog<EventEmotionOption>(
       context: context,
       builder: (_) {
-        return _EmotionEngravingDialog(
+        return EmotionEngravingDialog(
           eventTitle: event.title,
           initialMark: existingMark,
           onSave: (option, note) async {
@@ -1412,8 +1419,9 @@ class _ActionButtonTone {
   }
 }
 
-class _EmotionEngravingDialog extends StatefulWidget {
-  const _EmotionEngravingDialog({
+class EmotionEngravingDialog extends StatefulWidget {
+  const EmotionEngravingDialog({
+    super.key,
     required this.eventTitle,
     required this.initialMark,
     required this.onSave,
@@ -1424,14 +1432,12 @@ class _EmotionEngravingDialog extends StatefulWidget {
   final Future<void> Function(EventEmotionOption option, String note) onSave;
 
   @override
-  State<_EmotionEngravingDialog> createState() =>
-      _EmotionEngravingDialogState();
+  State<EmotionEngravingDialog> createState() => _EmotionEngravingDialogState();
 }
 
-class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
+class _EmotionEngravingDialogState extends State<EmotionEngravingDialog> {
   EventEmotionOption? _selected;
   late final TextEditingController _noteController;
-  late int _step;
   bool _saving = false;
 
   @override
@@ -1441,7 +1447,6 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
     _noteController = TextEditingController(
       text: widget.initialMark?.note ?? '',
     );
-    _step = widget.initialMark == null ? 0 : 1;
   }
 
   @override
@@ -1452,60 +1457,138 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final selected = _selected;
+    final availableHeight =
+        MediaQuery.sizeOf(context).height -
+        MediaQuery.viewInsetsOf(context).bottom;
+    final maxBodyHeight = (availableHeight * 0.56)
+        .clamp(180.0, 440.0)
+        .toDouble();
     return ParchmentDialog(
       title: '지도 위에 새기기',
       subtitle: widget.eventTitle,
       showCloseButton: true,
       actions: [
-        if (_step == 1)
-          ParchmentDialogActionButton(
-            label: '이전',
-            style: ParchmentDialogActionStyle.secondary,
-            onTap: _saving ? null : () => setState(() => _step = 0),
-          ),
         ParchmentDialogActionButton(
-          label: _step == 0 ? '다음' : (_saving ? '저장 중' : '새기기'),
-          onTap: _primaryActionEnabled ? _handlePrimaryAction : null,
+          label: _saving ? '저장 중' : '새기기',
+          onTap: _primaryActionEnabled ? _handleSave : null,
         ),
       ],
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 180),
-        child: _step == 0
-            ? _buildEmotionStep(context)
-            : _buildNoteStep(context, selected),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxBodyHeight),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildRequirementHeader(
+                context,
+                title: '감정 선택',
+                requirement: '필수',
+                isRequired: true,
+              ),
+              const SizedBox(height: AppSpacing.x3),
+              _buildEmotionGrid(context),
+              const SizedBox(height: AppSpacing.x7),
+              _buildRequirementHeader(
+                context,
+                title: '코멘트',
+                requirement: '선택사항',
+                isRequired: false,
+              ),
+              const SizedBox(height: AppSpacing.x3),
+              ParchmentDialogTextField(
+                key: const ValueKey('emotion-note-input'),
+                controller: _noteController,
+                hintText: '왜 이 감정이 남았는지 적어 보세요. (선택)',
+                maxLength: 100,
+                minLines: 1,
+                maxLines: 5,
+                autofocus: false,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   bool get _primaryActionEnabled {
-    if (_saving) return false;
-    if (_step == 0) return _selected != null;
-    return _selected != null && _noteController.text.trim().isNotEmpty;
+    return !_saving && _selected != null;
   }
 
-  Widget _buildEmotionStep(BuildContext context) {
+  Widget _buildRequirementHeader(
+    BuildContext context, {
+    required String title,
+    required String requirement,
+    required bool isRequired,
+  }) {
+    final palette = AppPaletteTheme.of(context);
+    final badgeBackground = isRequired
+        ? Color.alphaBlend(
+            palette.primary.withValues(alpha: 0.16),
+            palette.cardSurface,
+          )
+        : palette.softSurface;
+    final badgeForeground = isRequired
+        ? palette.primaryDeep
+        : palette.mutedText;
+    return Row(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: palette.text,
+            fontSize: AppFontSizes.body,
+            fontWeight: FontWeight.w900,
+            height: AppLineHeights.normal,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.x2),
+        Container(
+          key: ValueKey('emotion-requirement-$requirement'),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.x4,
+            vertical: AppSpacing.x1,
+          ),
+          decoration: BoxDecoration(
+            color: badgeBackground,
+            borderRadius: BorderRadius.circular(AppRadii.pill),
+            border: Border.all(color: palette.subtleBorder),
+          ),
+          child: Text(
+            requirement,
+            style: TextStyle(
+              color: badgeForeground,
+              fontSize: AppFontSizes.xs,
+              fontWeight: FontWeight.w900,
+              height: AppLineHeights.normal,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmotionGrid(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     return Column(
-      key: const ValueKey('emotion-step'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
           '이 이야기에서 마음에 남은 감정을 하나 골라 주세요.',
           style: TextStyle(
             color: palette.primaryDeep,
-            fontSize: 13,
+            fontSize: AppFontSizes.body,
             fontWeight: FontWeight.w800,
-            height: 1.35,
+            height: AppLineHeights.normal,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.x5),
         GridView.count(
           crossAxisCount: 3,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
+          mainAxisSpacing: AppSpacing.x3,
+          crossAxisSpacing: AppSpacing.x3,
           childAspectRatio: 2.05,
           children: [
             for (final option in EventEmotionOption.options)
@@ -1520,62 +1603,7 @@ class _EmotionEngravingDialogState extends State<_EmotionEngravingDialog> {
     );
   }
 
-  Widget _buildNoteStep(BuildContext context, EventEmotionOption? selected) {
-    final palette = AppPaletteTheme.of(context);
-    final option = selected ?? EventEmotionOption.options.last;
-    return Column(
-      key: const ValueKey('note-step'),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        RichText(
-          text: TextSpan(
-            style: TextStyle(
-              color: palette.text,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              height: 1.45,
-            ),
-            children: [
-              const TextSpan(text: '나는 이 이야기에서 '),
-              WidgetSpan(
-                alignment: PlaceholderAlignment.middle,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 5),
-                  child: EmotionBadgeIcon(
-                    emotionKey: option.key,
-                    size: 18,
-                    elevation: false,
-                  ),
-                ),
-              ),
-              TextSpan(
-                text: option.label,
-                style: TextStyle(color: palette.primaryDeep),
-              ),
-              const TextSpan(text: '이 남았다.'),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        ParchmentDialogTextField(
-          key: const ValueKey('emotion-note-input'),
-          controller: _noteController,
-          hintText: '왜 이 감정이 남았는지 적어 보세요.',
-          maxLength: 100,
-          minLines: 1,
-          maxLines: 5,
-          autofocus: true,
-          onChanged: (_) => setState(() {}),
-        ),
-      ],
-    );
-  }
-
-  void _handlePrimaryAction() {
-    if (_step == 0) {
-      setState(() => _step = 1);
-      return;
-    }
+  void _handleSave() {
     final selected = _selected;
     if (selected == null) return;
     _save(selected);

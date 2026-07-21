@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:story_bible/data/story_repository.dart';
 import 'package:story_bible/models/bible_ref.dart';
 import 'package:story_bible/models/character.dart';
+import 'package:story_bible/models/event_emotion_mark.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
@@ -46,14 +45,61 @@ void main() {
     );
   });
 
-  test('감정 새기기 메모 입력칸은 한 줄부터 최대 다섯 줄까지 자동 확장한다', () {
-    final source = File(
-      'lib/widgets/event_detail_page.dart',
-    ).readAsStringSync();
+  testWidgets('감정 새기기는 한 팝업에서 필수 감정과 선택 코멘트를 받는다', (tester) async {
+    EventEmotionOption? savedOption;
+    String? savedNote;
 
-    expect(source, contains("key: const ValueKey('emotion-note-input')"));
-    expect(source, contains('minLines: 1'));
-    expect(source, contains('maxLines: 5'));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: FilledButton(
+                onPressed: () => showDialog<EventEmotionOption>(
+                  context: context,
+                  builder: (_) => EmotionEngravingDialog(
+                    eventTitle: '홍해를 건너다',
+                    initialMark: null,
+                    onSave: (option, note) async {
+                      savedOption = option;
+                      savedNote = note;
+                    },
+                  ),
+                ),
+                child: const Text('열기'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('열기'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Dialog), findsOneWidget);
+    expect(find.text('감정 선택'), findsOneWidget);
+    expect(find.text('필수'), findsOneWidget);
+    expect(find.text('코멘트'), findsOneWidget);
+    expect(find.text('선택사항'), findsOneWidget);
+    _expectLabelImmediatelyAfterTitle(tester, title: '감정 선택', label: '필수');
+    _expectLabelImmediatelyAfterTitle(tester, title: '코멘트', label: '선택사항');
+    expect(find.text('다음'), findsNothing);
+    expect(find.text('이전'), findsNothing);
+    expect(find.byKey(const ValueKey('emotion-note-input')), findsOneWidget);
+
+    await tester.tap(find.text('새기기'));
+    await tester.pump();
+    expect(savedOption, isNull);
+
+    await tester.tap(find.text('기쁨'));
+    await tester.pump();
+    await tester.tap(find.text('새기기'));
+    await tester.pumpAndSettle();
+
+    expect(savedOption?.key, 'joy');
+    expect(savedNote, '');
+    expect(find.byType(Dialog), findsNothing);
   });
 
   testWidgets('배경 지식 제목 옆에 등장인물 아바타와 인라인 요약을 표시한다', (tester) async {
@@ -234,6 +280,20 @@ void main() {
 
     await tester.pumpWidget(const SizedBox.shrink());
   });
+}
+
+void _expectLabelImmediatelyAfterTitle(
+  WidgetTester tester, {
+  required String title,
+  required String label,
+}) {
+  final titleRect = tester.getRect(find.text(title));
+  final labelRect = tester.getRect(
+    find.byKey(ValueKey('emotion-requirement-$label')),
+  );
+
+  expect(labelRect.left - titleRect.right, inInclusiveRange(0, 8));
+  expect(labelRect.center.dy, closeTo(titleRect.center.dy, 2));
 }
 
 List<String> _avatarNames(WidgetTester tester) {

@@ -4,10 +4,12 @@ import 'package:story_bible/services/app_analytics_event.dart';
 
 void main() {
   group('AppAnalyticsEvent', () {
-    test('기능 분석 이벤트 이름 7개를 고정한다', () {
+    test('기능 분석 이벤트 이름 9개를 고정한다', () {
       expect(AppAnalyticsEvent.names, {
         'story_opened',
+        'story_bible_read_completed',
         'quiz_completed',
+        'emotion_engraving_started',
         'emotion_mark_saved',
         'story_completed',
         'diary_entry_saved',
@@ -44,6 +46,24 @@ void main() {
       });
     });
 
+    test('이야기 본문 읽기 완료는 콘텐츠 ID만 기록한다', () {
+      final event = AppAnalyticsEvent.storyBibleReadCompleted(
+        eventId: ' story-1 ',
+      );
+
+      expect(event.name, 'story_bible_read_completed');
+      expect(event.parameters, {'event_id': 'story-1'});
+    });
+
+    test('감정 새기기 진입은 버튼을 누른 이야기 ID만 기록한다', () {
+      final event = AppAnalyticsEvent.emotionEngravingStarted(
+        eventId: 'story-1',
+      );
+
+      expect(event.name, 'emotion_engraving_started');
+      expect(event.parameters, {'event_id': 'story-1'});
+    });
+
     test('다이어리는 작성 내용이나 날짜 없이 생성·수정 여부만 기록한다', () {
       final created = AppAnalyticsEvent.diaryEntrySaved(isUpdate: false);
       final updated = AppAnalyticsEvent.diaryEntrySaved(isUpdate: true);
@@ -54,6 +74,8 @@ void main() {
 
     test('감정·완료·통독·계정 이벤트에 민감한 작성 내용을 넣지 않는다', () {
       final events = [
+        AppAnalyticsEvent.storyBibleReadCompleted(eventId: 'story-1'),
+        AppAnalyticsEvent.emotionEngravingStarted(eventId: 'story-1'),
         AppAnalyticsEvent.emotionMarkSaved(eventId: 'story-1'),
         AppAnalyticsEvent.storyCompleted(eventId: 'story-1'),
         AppAnalyticsEvent.bibleChapterCompleted(),

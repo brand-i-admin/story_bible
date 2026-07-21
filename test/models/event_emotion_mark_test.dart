@@ -35,6 +35,16 @@ void main() {
       );
     });
 
+    test('fromMap은 코멘트가 null이면 빈 문자열로 변환한다', () {
+      final mark = EventEmotionMark.fromMap({
+        'event_id': 'event-1',
+        'emotion_key': 'joy',
+        'note': null,
+      });
+
+      expect(mark.note, '');
+    });
+
     test('toMap은 updated_at을 UTC ISO 문자열로 만든다', () {
       final mark = EventEmotionMark(
         eventId: 'event-1',

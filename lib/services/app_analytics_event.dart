@@ -9,7 +9,9 @@ class AppAnalyticsEvent {
 
   static const names = <String>{
     'story_opened',
+    'story_bible_read_completed',
     'quiz_completed',
+    'emotion_engraving_started',
     'emotion_mark_saved',
     'story_completed',
     'diary_entry_saved',
@@ -43,6 +45,12 @@ class AppAnalyticsEvent {
     });
   }
 
+  factory AppAnalyticsEvent.storyBibleReadCompleted({required String eventId}) {
+    return AppAnalyticsEvent._('story_bible_read_completed', {
+      'event_id': _contentId(eventId),
+    });
+  }
+
   factory AppAnalyticsEvent.quizCompleted({
     required String eventId,
     int? correctCount,
@@ -58,6 +66,12 @@ class AppAnalyticsEvent {
       'event_id': _contentId(eventId),
       if (normalizedCorrect != null) 'correct_count': normalizedCorrect,
       if (normalizedTotal != null) 'total_count': normalizedTotal,
+    });
+  }
+
+  factory AppAnalyticsEvent.emotionEngravingStarted({required String eventId}) {
+    return AppAnalyticsEvent._('emotion_engraving_started', {
+      'event_id': _contentId(eventId),
     });
   }
 

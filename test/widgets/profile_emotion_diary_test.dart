@@ -1176,6 +1176,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(find.text('홍해를 건너다'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
     await tester.tap(find.text('홍해를 건너다'));
     await tester.pump();
 
