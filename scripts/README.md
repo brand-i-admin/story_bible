@@ -95,7 +95,9 @@ scripts/build_ios_dev.sh --export-method=ad-hoc
 - `run_*` 스크립트는 `flutter run --no-pub --dart-define=ENV=... --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...`를 호출합니다.
 - `build_ios_*` 스크립트는 `flutter build ipa --release --no-pub`에 같은 dart-define 값과 `pubspec.yaml`의 `--build-name`, `--build-number`를 붙여 호출합니다. 빌드 전 `ios/Flutter/Generated.xcconfig`와 `ios/Flutter/flutter_export_environment.sh`를 `pubspec.yaml` 버전으로 동기화하고 `pod install`로 `ios/Pods/Manifest.lock`을 맞춥니다.
 - iOS 플러그인은 CocoaPods 정적 링크를 사용합니다. Firebase의 SwiftPM 동적 XCFramework에는 공급자 dSYM이 없어 App Store Connect가 `Upload Symbols Failed` 경고를 표시하므로 `pubspec.yaml`에서 Swift Package Manager를 프로젝트 단위로 비활성화합니다.
-- iOS Crashlytics 심볼 업로드는 아카이브(`ACTION=install`)에서만 실행합니다. CocoaPods의 업로더를 우선하고, SwiftPM checkout은 기존 Xcode 빌드와의 호환을 위한 fallback으로만 사용합니다.
+- CocoaPods 전이 의존성의 deployment target은 앱과 같은 iOS 13으로 맞추고, Pods 내부의 deprecated API 진단만 숨깁니다. Runner와 앱 소스의 경고는 그대로 표시합니다.
+- macOS가 CocoaPods 생성 스크립트를 오탐지해 `Killed: 9`로 종료하지 않도록, Xcode가 `Pods/Target Support Files`의 `.sh`를 시스템 `/bin/sh`에 전달하여 실행하도록 생성 빌드 단계를 보정합니다. 다운로드된 프레임워크와 보안 메타데이터는 변경하지 않습니다.
+- iOS Crashlytics 심볼 업로드는 아카이브(`ACTION=install`)의 마지막 단계에서만 실행합니다. CocoaPods의 업로더를 우선하고, SwiftPM checkout은 기존 Xcode 빌드와의 호환을 위한 fallback으로만 사용합니다. 원격 전송 없는 아카이브 검증에는 `FLUTTER_XCODE_SKIP_CRASHLYTICS_SYMBOL_UPLOAD=YES`를 사용할 수 있습니다.
 - `build_android_*` 스크립트는 `flutter build appbundle --release --no-pub`에 같은 dart-define 값을 붙여 호출합니다.
 - Android App Bundle은 Google Play의 2026년 앱 업데이트 요건에 맞춰 Android 16(API 36)을 대상으로 빌드합니다. Play 업로드 전 `pubspec.yaml`의 build number가 직전 배포보다 큰지 확인하고, 운영 배포본은 `scripts/build_android_real.sh`로 생성합니다.
 - `.env`에 `FCM_VAPID_KEY`가 있으면 `--dart-define=FCM_VAPID_KEY=...`도 자동 주입합니다 (Flutter Web 푸시용). 비어 있거나 없으면 주입 생략.

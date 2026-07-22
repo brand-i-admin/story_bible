@@ -3,6 +3,11 @@ set -euo pipefail
 
 # Xcode archive uses ACTION=install. Local builds do not need to export dSYMs
 # and must not contact Firebase as a side effect of compiling the app.
+if [[ "${SKIP_CRASHLYTICS_SYMBOL_UPLOAD:-NO}" == "YES" ]]; then
+  echo "Skipping Crashlytics symbol upload by build setting."
+  exit 0
+fi
+
 if [[ "${ACTION:-}" != "install" ]]; then
   echo "Skipping Crashlytics symbol upload for Xcode action: ${ACTION:-unset}"
   exit 0
