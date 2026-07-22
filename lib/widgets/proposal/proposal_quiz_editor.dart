@@ -96,6 +96,10 @@ class _ProposalQuizEditorState extends State<ProposalQuizEditor> {
               canRemove: _rows.length > widget.minCount,
               onRemove: () => _removeQuiz(i),
               onChanged: _emit,
+              onAnswerChanged: (answerIndex) {
+                setState(() => _rows[i].answerIndex = answerIndex);
+                _emit();
+              },
             ),
           ),
         if (_rows.length < widget.maxCount)
@@ -119,6 +123,7 @@ class _QuizCard extends StatelessWidget {
     required this.canRemove,
     required this.onRemove,
     required this.onChanged,
+    required this.onAnswerChanged,
   });
 
   final int index;
@@ -126,6 +131,7 @@ class _QuizCard extends StatelessWidget {
   final bool canRemove;
   final VoidCallback onRemove;
   final VoidCallback onChanged;
+  final ValueChanged<int> onAnswerChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -168,34 +174,37 @@ class _QuizCard extends StatelessWidget {
             onChanged: (_) => onChanged(),
           ),
           const SizedBox(height: 8),
-          for (var i = 0; i < QuizDraft.authoredChoiceCount; i++)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Row(
-                children: [
-                  Radio<int>(
-                    value: i,
-                    groupValue: controllers.answerIndex,
-                    onChanged: (v) {
-                      if (v != null) {
-                        controllers.answerIndex = v;
-                        onChanged();
-                      }
-                    },
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: controllers.choices[i],
-                      decoration: InputDecoration(
-                        labelText:
-                            '선택지 ${i + 1}${controllers.answerIndex == i ? ' (정답)' : ''}',
-                      ),
-                      onChanged: (_) => onChanged(),
+          RadioGroup<int>(
+            groupValue: controllers.answerIndex,
+            onChanged: (value) {
+              if (value != null) {
+                onAnswerChanged(value);
+              }
+            },
+            child: Column(
+              children: [
+                for (var i = 0; i < QuizDraft.authoredChoiceCount; i++)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Row(
+                      children: [
+                        Radio<int>(value: i),
+                        Expanded(
+                          child: TextField(
+                            controller: controllers.choices[i],
+                            decoration: InputDecoration(
+                              labelText:
+                                  '선택지 ${i + 1}${controllers.answerIndex == i ? ' (정답)' : ''}',
+                            ),
+                            onChanged: (_) => onChanged(),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+              ],
             ),
+          ),
           const SizedBox(height: 10),
           TextField(
             controller: controllers.explanation,

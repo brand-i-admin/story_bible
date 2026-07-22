@@ -30,7 +30,7 @@ extension ProfileHelpersExt on ProfileTabPageState {
             ? Image.network(
                 photoUrl!.trim(),
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) {
+                errorBuilder: (_, _, _) {
                   return Center(
                     child: Text(
                       initials,

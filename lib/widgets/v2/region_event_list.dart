@@ -429,7 +429,7 @@ class StoryEventThumbCard extends StatelessWidget {
           padding: EdgeInsets.zero,
           physics: const ClampingScrollPhysics(),
           itemCount: ordered.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 3),
+          separatorBuilder: (_, _) => const SizedBox(width: 3),
           itemBuilder: (_, i) {
             final code = ordered[i];
             final character = charactersByCode[code];
@@ -819,10 +819,7 @@ class _ThumbMetaRow extends StatelessWidget {
     final palette = AppPaletteTheme.of(context);
     final hasPlace = placeName != null && placeName!.isNotEmpty;
     if (!hasPlace && yearLabel == null) return const SizedBox.shrink();
-    final label = [
-      if (hasPlace) placeName!,
-      if (yearLabel != null) yearLabel!,
-    ].join(' · ');
+    final label = [if (hasPlace) placeName!, ?yearLabel].join(' · ');
     if (presentation == StoryEventCardPresentation.todayAdjacent) {
       return SizedBox(
         width: double.infinity,
@@ -1167,13 +1164,13 @@ class _CardThumbnail extends StatelessWidget {
           return Image.network(
             path,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => placeholder,
+            errorBuilder: (_, _, _) => placeholder,
           );
         }
         return Image.asset(
           path,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => placeholder,
+          errorBuilder: (_, _, _) => placeholder,
         );
       },
     );

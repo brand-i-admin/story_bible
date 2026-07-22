@@ -274,7 +274,7 @@ class _ImageThumbStrip extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: images.length + (onAdd != null ? 1 : 0),
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, idx) {
           if (idx == images.length) {
             return _AddImageTile(onTap: onAdd);

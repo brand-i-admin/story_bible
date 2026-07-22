@@ -73,7 +73,7 @@ class AppPublicationsScreen extends ConsumerWidget {
               return ListView.separated(
                 padding: EdgeInsets.zero,
                 itemCount: items.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 6),
+                separatorBuilder: (_, _) => const SizedBox(height: 6),
                 itemBuilder: (context, index) {
                   final publication = items[index];
                   return AppPublicationPreviewCard(

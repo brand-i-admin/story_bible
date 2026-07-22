@@ -19,12 +19,18 @@
 | `test/services/` | 4 | 18 | Firebase 이벤트 계약, 개인정보 필터, 환경·빌드 모드 정책, 인증 스트림 오류 격리 |
 | `test/theme/` | 1 | 18 | 디자인 토큰 회귀 방지 |
 | `test/utils/` | 12 | 149 | 날짜, 지도 수학, asset loader, 선택/통독 로직 |
-| `test/widgets/` | 37 | 300 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
+| `test/widgets/` | 37 | 301 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
 | `tools/**/test_*.py` | 18 | 128 | seed, lint, asset, docs, Supabase 도구·정기 푸시 SQL 문구 |
 
 Dart 쪽 정적 카운트는 `test/**/*.dart`의 `test()`/`testWidgets()` 호출 기준
-693개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
+694개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
 공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.
+
+`integration_test/divided_kingdom_flow_test.dart`에는 별도로 3개 실환경 시나리오가
+있다. Android 기기와 dev Supabase를 연결해 새 설치의 `오늘` 탭·`보통` 글자·`네이비`
+테마 기본값, 분열왕국 지역 사건 흐름, 인물 첫 등장 순서를 검증한다. 콘텐츠 전체
+목록을 고정하지 않고 현재 로드한 데이터에서 기대 순서를 계산하므로 사건이 추가돼도
+대표 사건·인물 계약이 유지되는 한 불필요하게 깨지지 않는다.
 
 ## 1. 기본 실행 명령
 
@@ -38,6 +44,10 @@ python3 tools/seed/verify_polygons_contain_events.py
 python3 tools/lint/check_forbidden_patterns.py
 python3 tools/lint/check_code_metrics.py
 ```
+
+Flutter/CI 기준은 Flutter 3.44.7 stable과 Dart 3.12 이상이다. 실환경 통합 테스트
+실행 명령과 환경 변수 주입 방법은 [../TESTING.md](../TESTING.md)의 `2.4 통합 테스트`를
+따른다.
 
 커밋/푸시 전에는 로컬 hook도 같은 책임을 나눠 가진다.
 
@@ -154,7 +164,8 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 ## 8. 남은 테스트 공백
 
 - Supabase RPC와 RLS는 로컬 unit test보다 SQL 리뷰/patch 검증 의존도가 높다.
-- Edge Function은 README와 수동 smoke 중심이며, 자동 통합 테스트는 아직 얕다.
+- Edge Function은 README와 수동 smoke 중심이며, 앱 통합 테스트도 dev Supabase를
+  사용하는 지도 핵심 흐름에 한정되어 있다.
 - 제안 승인/수정/삭제 workflow의 end-to-end 테스트는 분산되어 있다.
 - 시각 회귀용 golden test는 기본 파이프라인에 강제되어 있지 않다.
 - 실기기 푸시 수신은 Firebase/APNs/브라우저 권한이 얽혀 있어 수동 smoke가 필요하다.

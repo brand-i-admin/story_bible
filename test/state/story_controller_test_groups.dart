@@ -1,6 +1,6 @@
 part of 'story_controller_test.dart';
 
-void main() {
+void defineStoryControllerTests() {
   late _MockStoryRepository mockRepo;
   late _MockUserRepository mockUserRepo;
   late _MockSupabaseClient mockClient;

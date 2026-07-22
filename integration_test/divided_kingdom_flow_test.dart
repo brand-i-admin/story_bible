@@ -7,66 +7,143 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:story_bible/app.dart';
+import 'package:story_bible/data/color_palette_repository.dart';
+import 'package:story_bible/data/font_scale_repository.dart';
 import 'package:story_bible/screens/story_home_screen.dart';
+import 'package:story_bible/state/color_palette_providers.dart';
 import 'package:story_bible/state/font_scale_providers.dart';
 import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/state/story_state.dart';
+import 'package:story_bible/theme/app_color_palette.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  testWidgets('새 설치는 오늘 탭, 보통 글자, 네이비 테마로 시작한다', (tester) async {
+    await _startTestApp();
+    await _pumpUntil(
+      tester,
+      () =>
+          find.byType(StoryHomeScreen).evaluate().isNotEmpty &&
+          find
+              .byKey(const ValueKey('root-navigation-today-selected'))
+              .evaluate()
+              .isNotEmpty &&
+          _maybeStoryState(tester)?.loading == false &&
+          _storyState(tester).eras.isNotEmpty &&
+          _storyState(tester).landmarks.isNotEmpty,
+      description: '오늘 탭 기본 화면',
+    );
+
+    final context = tester.element(find.byType(StoryHomeScreen));
+    final container = _container(tester);
+
+    expect(container.read(fontScaleProvider), FontScale.large);
+    expect(FontScale.large.label, '보통');
+    expect(MediaQuery.textScalerOf(context).scale(10), closeTo(12, 0.001));
+    expect(container.read(colorPaletteProvider), AppColorPalette.atlasNavy);
+    expect(
+      Theme.of(context).extension<AppPaletteTheme>()?.palette,
+      AppColorPalette.atlasNavy,
+    );
+  });
+
   testWidgets('분열왕국 시대의 남유다/북이스라엘 장소 흐름이 연결되어 있다', (tester) async {
     await _startTestApp();
-    await tester.pump(const Duration(seconds: 1));
+    await _openMapTab(tester);
 
     await _selectDividedKingdomEra(tester);
 
+    await _tapText(tester, '장소로 시작');
+    await _pumpUntil(
+      tester,
+      () => _storyState(tester).selectionMode == SelectionMode.region,
+      description: '분열왕국 장소 모드 진입',
+    );
     await _tapFinder(
       tester,
-      find.byKey(const ValueKey('home-mode-region')),
-      description: '장소에서 시작하기 카드',
+      find.byIcon(Icons.keyboard_arrow_up),
+      description: '장소 선택 패널 펼치기',
+    );
+    await _pumpUntil(
+      tester,
+      () =>
+          find.text('남유다').hitTestable().evaluate().isNotEmpty &&
+          find.text('북이스라엘').evaluate().isNotEmpty,
+      description: '분열왕국 지역 선택 카드 표시',
+    );
+
+    final southJudahTitles = _expectedRegionTitles(tester, '남유다');
+    await _tapText(tester, '남유다');
+    await _pumpUntil(tester, () {
+      final state = _storyState(tester);
+      return state.landmarkById(state.selectedLandmarkId)?.name == '남유다' &&
+          state.displayedEventIds.length == southJudahTitles.length;
+    }, description: '남유다 사건 표시');
+    _expectDisplayedTitles(tester, southJudahTitles);
+    expect(
+      southJudahTitles,
+      containsAll(<String>['르호보암의 남유다: 우상과 약탈', '예루살렘 포위: 왕의 몰락']),
+    );
+
+    await _tapFinder(
+      tester,
+      find.byTooltip('장소 선택 단계로 돌아가기'),
+      description: '장소 선택 단계 스테퍼',
     );
     await _pumpUntil(
       tester,
       () =>
           _storyState(tester).selectionMode == SelectionMode.region &&
-          find.text('남유다').evaluate().isNotEmpty &&
-          find.text('북이스라엘').evaluate().isNotEmpty,
-      description: '분열왕국 지역 선택 카드 표시',
-    );
-
-    await _tapText(tester, '남유다');
-    await _pumpUntil(tester, () {
-      final state = _storyState(tester);
-      return state.landmarkById(state.selectedLandmarkId)?.name == '남유다' &&
-          state.displayedEventIds.length == _southJudahTitles.length;
-    }, description: '남유다 사건 표시');
-    _expectDisplayedTitles(tester, _southJudahTitles);
-
-    await _tapText(tester, '장소 다시 선택');
-    await _pumpUntil(
-      tester,
-      () =>
-          _storyState(tester).selectedLandmarkId == null &&
-          find.text('북이스라엘').evaluate().isNotEmpty,
+          _storyState(tester).selectedLandmarkId == null,
       description: '지역 선택으로 복귀',
     );
+    await _tapFinder(
+      tester,
+      find.byIcon(Icons.keyboard_arrow_up),
+      description: '지역 선택 패널 다시 펼치기',
+    );
+    await _pumpUntil(
+      tester,
+      () => find.text('북이스라엘').hitTestable().evaluate().isNotEmpty,
+      description: '북이스라엘 지역 카드 표시',
+    );
 
+    final northIsraelTitles = _expectedRegionTitles(tester, '북이스라엘');
     await _tapText(tester, '북이스라엘');
     await _pumpUntil(tester, () {
       final state = _storyState(tester);
       return state.landmarkById(state.selectedLandmarkId)?.name == '북이스라엘' &&
-          state.displayedEventIds.length == _northIsraelTitles.length;
+          state.displayedEventIds.length == northIsraelTitles.length;
     }, description: '북이스라엘 사건 표시');
-    _expectDisplayedTitles(tester, _northIsraelTitles);
+    _expectDisplayedTitles(tester, northIsraelTitles);
+    expect(
+      northIsraelTitles,
+      containsAll(<String>['아합과 엘리야: 가뭄의 시작', '호세아의 몰락: 사마리아가 함락되다']),
+    );
   });
 
   testWidgets('분열왕국 시대의 인물과 걷기 순서가 첫 등장 이야기 순서다', (tester) async {
     await _startTestApp();
-    await tester.pump(const Duration(seconds: 1));
+    await _openMapTab(tester);
 
     await _selectDividedKingdomEra(tester);
-    _expectCharacterOrder(tester, _dividedKingdomCharacterCodes);
+    final expectedCharacterCodes = _firstAppearanceCharacterCodes(tester);
+    expect(expectedCharacterCodes.length, greaterThan(20));
+    expect(
+      expectedCharacterCodes,
+      containsAll(<String>[
+        'solomon',
+        'jeroboam',
+        'rehoboam',
+        'elijah',
+        'isaiah',
+        'jeremiah',
+        'daniel',
+        'ezekiel',
+      ]),
+    );
+    _expectCharacterOrder(tester, expectedCharacterCodes);
 
     await tester.pump(const Duration(seconds: 1));
     await _tapText(tester, '인물과 걷기');
@@ -80,7 +157,7 @@ void main() {
           _storyState(tester).characters.any((c) => c.code == 'jeremiah'),
       description: '분열왕국 인물 선택 표시',
     );
-    _expectCharacterOrder(tester, _dividedKingdomCharacterCodes);
+    _expectCharacterOrder(tester, expectedCharacterCodes);
     expect(find.text('솔로몬').evaluate(), isNotEmpty);
     expect(find.text('여로보암').evaluate(), isNotEmpty);
     expect(find.text('르호보암').evaluate(), isNotEmpty);
@@ -119,12 +196,33 @@ Future<void> _startTestApp() async {
     _supabaseInitialized = true;
   }
   final prefs = await SharedPreferences.getInstance();
+  await prefs.remove(FontScaleRepository.key);
+  await prefs.remove(ColorPaletteRepository.key);
 
   runApp(
     ProviderScope(
       overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       child: const StoryBibleApp(),
     ),
+  );
+}
+
+Future<void> _openMapTab(WidgetTester tester) async {
+  await _pumpUntil(
+    tester,
+    () => find.byType(StoryHomeScreen).evaluate().isNotEmpty,
+    description: '앱 홈 화면',
+  );
+  await _tapText(tester, '지도');
+  await _pumpUntil(
+    tester,
+    () =>
+        find
+            .byKey(const ValueKey('root-navigation-map-selected'))
+            .evaluate()
+            .isNotEmpty &&
+        _maybeStoryState(tester) != null,
+    description: '지도 탭',
   );
 }
 
@@ -145,57 +243,51 @@ Future<void> _selectDividedKingdomEra(WidgetTester tester) async {
     final state = _storyState(tester);
     return !state.loading &&
         state.selectedEraId == dividedEra.id &&
-        state.events.length == 23 &&
+        state.events.length >= 52 &&
+        state.events.any((event) => event.title == '왕국의 균열: 찢어진 옷') &&
+        state.events.any((event) => event.title == '예루살렘 포위: 왕의 몰락') &&
         state.characters.any((c) => c.code == 'elijah') &&
         state.characters.any((c) => c.code == 'jeremiah');
   }, description: '분열왕국 사건과 인물 로드');
 }
 
-final _southJudahTitles = <String>[
-  '르호보암의 남유다: 우상과 약탈',
-  '이사야의 소명: 거룩한 보좌의 환상',
-  '아하스와 임마누엘: 믿음의 징조',
-  '히스기야와 산헤립: 두려움의 편지',
-  '히스기야의 병과 바벨론 사신',
-  '요시야의 개혁: 율법책을 찾다',
-  '예레미야의 경고: 칠십 년의 포로',
-  '새 언약의 약속: 마음에 새기다',
-  '불태워진 두루마리: 말씀을 거부하다',
-  '토굴의 예레미야: 왕에게 전하다',
-  '예루살렘 포위: 왕의 몰락',
-];
+List<String> _expectedRegionTitles(WidgetTester tester, String regionName) {
+  final state = _storyState(tester);
+  final region = state.landmarks.firstWhere(
+    (landmark) => landmark.isRegion && landmark.name == regionName,
+  );
+  final landmarkIds = <String>{
+    region.id,
+    for (final landmark in state.landmarks)
+      if (landmark.parentLandmarkId == region.id) landmark.id,
+  };
+  final events =
+      state.events
+          .where((event) => landmarkIds.contains(event.landmarkId))
+          .toList()
+        ..sort((a, b) => a.storyIndex.compareTo(b.storyIndex));
+  return events.map((event) => event.title).toList(growable: false);
+}
 
-final _northIsraelTitles = <String>[
-  '왕국의 균열: 찢어진 옷',
-  '왕국 분열: 무거운 멍에와 금송아지',
-  '여로보암의 집: 아히야의 경고',
-  '아합과 엘리야: 가뭄의 시작',
-  '엘리야와 갈멜: 불의 응답',
-  '엘리야 승천: 겉옷의 계승',
-  '엘리사의 첫 표징: 물과 경고',
-  '엘리사의 기적들: 기름과 생명과 양식',
-  '나아만: 요단의 일곱 번',
-  '도단의 불 말과 불 전차: 눈이 열리다',
-  '호세아의 몰락: 사마리아가 함락되다',
-];
+List<String> _firstAppearanceCharacterCodes(WidgetTester tester) {
+  final state = _storyState(tester);
+  final loadedCodes = state.characters
+      .map((character) => character.code)
+      .toSet();
+  final events = [...state.events]
+    ..sort((a, b) => a.storyIndex.compareTo(b.storyIndex));
+  final codes = <String>[];
+  final seen = <String>{};
 
-final _dividedKingdomCharacterCodes = <String>[
-  'solomon',
-  'jeroboam',
-  'rehoboam',
-  'ahab',
-  'elijah',
-  'elisha',
-  'naaman',
-  'isaiah',
-  'ahaz',
-  'hoshea_king',
-  'hezekiah',
-  'josiah',
-  'jeremiah',
-  'jehoiakim',
-  'zedekiah',
-];
+  for (final event in events) {
+    for (final code in event.characterCodes) {
+      if (loadedCodes.contains(code) && seen.add(code)) {
+        codes.add(code);
+      }
+    }
+  }
+  return codes;
+}
 
 Future<void> _pumpUntil(
   WidgetTester tester,

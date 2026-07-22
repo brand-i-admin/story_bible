@@ -1402,7 +1402,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
           ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: _timePrecision,
+          initialValue: _timePrecision,
           items: const [
             DropdownMenuItem(value: 'approx', child: Text('대략 (approx)')),
             DropdownMenuItem(value: 'exact', child: Text('정확 (exact)')),
@@ -1481,7 +1481,7 @@ class _ProposalSubmitScreenState extends ConsumerState<ProposalSubmitScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DropdownButtonFormField<String>(
-          value: selected?.code,
+          initialValue: selected?.code,
           isExpanded: true,
           decoration: const InputDecoration(
             labelText: '시간순 구간',

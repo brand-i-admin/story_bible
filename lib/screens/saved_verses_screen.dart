@@ -190,7 +190,7 @@ class _SavedVersesScreenState extends ConsumerState<SavedVersesScreen> {
 
     return ListView.separated(
       itemCount: _verses.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 6),
+      separatorBuilder: (_, _) => const SizedBox(height: 6),
       itemBuilder: (context, index) {
         final verse = _verses[index];
         return SavedVerseRow(

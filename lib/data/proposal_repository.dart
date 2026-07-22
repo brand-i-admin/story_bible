@@ -199,8 +199,8 @@ class ProposalRepository {
         'characterCodes': characterCodes,
         'draftId': draftId,
         'sceneIndex': sceneIndex,
-        if (eventTitle != null) 'eventTitle': eventTitle,
-        if (placeName != null) 'placeName': placeName,
+        'eventTitle': ?eventTitle,
+        'placeName': ?placeName,
       },
     );
     if (response.status < 200 || response.status >= 300) {

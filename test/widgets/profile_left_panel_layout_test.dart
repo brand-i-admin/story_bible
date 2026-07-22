@@ -410,10 +410,7 @@ void main() {
     expect(source, contains('_StoryExplorationSummaryCard'));
     expect(source, contains("text: '/\$totalLabel'"));
     expect(source, contains("text: '개'"));
-    expect(
-      source,
-      contains('if (trailing != null) trailing,\n            countUnitSpan(),'),
-    );
+    expect(source, contains('?trailing,\n            countUnitSpan(),'));
     expect(source, contains('fontSize: 11.4'));
     expect(source, contains('fontSize: 12.2'));
     expect(source, contains('fontSize: largeText ? 14.8 : 16.2'));

@@ -2,6 +2,13 @@
 
 `scripts/`에는 실행 대상 Supabase 환경을 고정해서 `flutter run`과 배포 빌드를 호출하는 스크립트가 들어 있습니다. 모든 스크립트는 실행 직전에 `flutter clean`과 `flutter pub get`을 먼저 실행해 stale asset/build cache가 앱 크기에 섞이지 않게 합니다.
 
+로컬 Flutter 기준 버전은 3.44.7 stable(Dart 3.12 이상)이며 CI도 같은 버전을
+사용합니다. `flutter --version`이 다르면 빌드 전에 stable 3.44.7로 맞춥니다.
+Android 프로젝트는 현재 Flutter 템플릿과 같이 AndroidX를 직접 사용하며 Jetifier는
+활성화하지 않습니다. Flutter 3.44 통합 테스트와 플러그인 빌드는 NDK
+28.2.13676358을 기준으로 합니다. Android 빌드 도구는 AGP 8.11.1, Gradle
+8.14.4, Kotlin 2.2.20으로 고정합니다.
+
 ## Environments
 
 - `dev`: Supabase project ref `cvnutbizsgeycdjcbled`
@@ -86,6 +93,7 @@ scripts/build_ios_dev.sh --export-method=ad-hoc
 - `run_*` 스크립트는 `flutter run --no-pub --dart-define=ENV=... --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...`를 호출합니다.
 - `build_ios_*` 스크립트는 `flutter build ipa --release --no-pub`에 같은 dart-define 값과 `pubspec.yaml`의 `--build-name`, `--build-number`를 붙여 호출합니다. 빌드 전 `ios/Flutter/Generated.xcconfig`와 `ios/Flutter/flutter_export_environment.sh`를 `pubspec.yaml` 버전으로 동기화하고 `pod install`로 `ios/Pods/Manifest.lock`을 맞춥니다.
 - `build_android_*` 스크립트는 `flutter build appbundle --release --no-pub`에 같은 dart-define 값을 붙여 호출합니다.
+- Android App Bundle은 Google Play의 2026년 앱 업데이트 요건에 맞춰 Android 16(API 36)을 대상으로 빌드합니다. Play 업로드 전 `pubspec.yaml`의 build number가 직전 배포보다 큰지 확인하고, 운영 배포본은 `scripts/build_android_real.sh`로 생성합니다.
 - `.env`에 `FCM_VAPID_KEY`가 있으면 `--dart-define=FCM_VAPID_KEY=...`도 자동 주입합니다 (Flutter Web 푸시용). 비어 있거나 없으면 주입 생략.
 - `.env`에는 앱 실행용 공개값만 둡니다. `SUPABASE_SERVICE_ROLE_KEY_*`, `SUPABASE_DB_URL_*` 같은 운영 비밀은 `.env.ops`에 둡니다.
-- 로컬에 `flutter`와 `python3`가 설치되어 있어야 합니다.
+- 로컬에 Flutter 3.44.7 stable(Dart 3.12 이상)과 `python3`가 설치되어 있어야 합니다.

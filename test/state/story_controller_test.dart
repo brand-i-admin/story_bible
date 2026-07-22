@@ -21,6 +21,8 @@ import 'package:story_bible/theme/tokens.dart';
 
 part 'story_controller_test_groups.dart';
 
+void main() => defineStoryControllerTests();
+
 class _MockStoryRepository extends Mock implements StoryRepository {}
 
 class _MockUserRepository extends Mock implements UserRepository {}

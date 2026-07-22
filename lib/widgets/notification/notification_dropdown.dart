@@ -78,7 +78,7 @@ class NotificationDropdown extends ConsumerWidget {
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   itemCount: items.length,
-                  separatorBuilder: (_, __) => Divider(
+                  separatorBuilder: (_, _) => Divider(
                     height: 1,
                     thickness: 1,
                     indent: 14,

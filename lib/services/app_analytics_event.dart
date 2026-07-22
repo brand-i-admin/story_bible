@@ -64,8 +64,8 @@ class AppAnalyticsEvent {
         : correctCount.clamp(0, normalizedTotal).toInt();
     return AppAnalyticsEvent._('quiz_completed', {
       'event_id': _contentId(eventId),
-      if (normalizedCorrect != null) 'correct_count': normalizedCorrect,
-      if (normalizedTotal != null) 'total_count': normalizedTotal,
+      'correct_count': ?normalizedCorrect,
+      'total_count': ?normalizedTotal,
     });
   }
 

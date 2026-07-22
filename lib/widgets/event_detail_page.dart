@@ -958,14 +958,13 @@ class _NavRow extends StatelessWidget {
                 return Image.network(
                   path,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                      const Center(child: placeholder),
+                  errorBuilder: (_, _, _) => const Center(child: placeholder),
                 );
               }
               return Image.asset(
                 path,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Center(child: placeholder),
+                errorBuilder: (_, _, _) => const Center(child: placeholder),
               );
             },
           ),

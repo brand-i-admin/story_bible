@@ -78,7 +78,7 @@ class UserRepository {
         .update({
           'nickname': nickname.trim(),
           'prayer_request': _cleanNullableText(prayerRequest),
-          if (photoUrl != null) 'photo_url': photoUrl,
+          'photo_url': ?photoUrl,
           'updated_at': DateTime.now().toIso8601String(),
         })
         .eq('user_id', userId)

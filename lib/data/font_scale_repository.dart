@@ -8,10 +8,10 @@ class FontScaleRepository {
 
   final SharedPreferences _prefs;
 
-  static const String _key = 'font_scale';
+  static const String key = 'font_scale';
 
-  FontScale read() => FontScale.fromStorage(_prefs.getString(_key));
+  FontScale read() => FontScale.fromStorage(_prefs.getString(key));
 
   Future<void> write(FontScale scale) =>
-      _prefs.setString(_key, scale.storageKey);
+      _prefs.setString(key, scale.storageKey);
 }

@@ -1088,7 +1088,7 @@ class _BibleVersesArea extends StatelessWidget {
           controller: scrollController,
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           children: [
-            if (header != null) header!,
+            ?header,
             if (verses.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24),

@@ -87,7 +87,7 @@ class _CompanionDiaryEntriesScreenState
                 : ListView.separated(
                     padding: EdgeInsets.zero,
                     itemCount: visibleEntries.length,
-                    separatorBuilder: (_, __) =>
+                    separatorBuilder: (_, _) =>
                         const SizedBox(height: AppSpacing.x6),
                     itemBuilder: (context, index) {
                       final entry = visibleEntries[index];

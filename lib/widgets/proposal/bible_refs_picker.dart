@@ -185,7 +185,7 @@ class _BibleRefsPickerState extends State<BibleRefsPicker> {
                           width: 96,
                           child: DropdownButtonFormField<String>(
                             key: ValueKey('bible_ref_book_$i'),
-                            value: _refs[i]['book'],
+                            initialValue: _refs[i]['book'],
                             isDense: true,
                             isExpanded: true,
                             decoration: const InputDecoration(

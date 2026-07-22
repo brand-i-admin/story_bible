@@ -780,7 +780,7 @@ Widget storySection({
               ),
             ),
           ],
-          if (footer != null) footer,
+          ?footer,
         ],
       ),
     ),
@@ -919,7 +919,7 @@ class _StorySceneRowState extends State<StorySceneRow> {
             scrollDirection: Axis.horizontal,
             physics: const ClampingScrollPhysics(),
             itemCount: displayedAssets.length,
-            separatorBuilder: (_, __) => const SizedBox(width: tileGap),
+            separatorBuilder: (_, _) => const SizedBox(width: tileGap),
             itemBuilder: (context, index) {
               final path = displayedAssets[index];
               final caption = index < widget.sceneCaptions.length

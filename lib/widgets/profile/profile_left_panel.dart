@@ -606,7 +606,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
                   itemCount:
                       _intercessoryPrayerItems.length +
                       (_intercessoryPrayerLoadingMore ? 1 : 0),
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  separatorBuilder: (_, _) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     if (index >= _intercessoryPrayerItems.length) {
                       return const Padding(
@@ -887,7 +887,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.fromLTRB(2, 8, 20, 8),
         itemCount: events.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final event = events[index];
           return SizedBox(
@@ -997,7 +997,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
             : Image(
                 image: imageProvider,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) {
+                errorBuilder: (_, _, _) {
                   return Center(
                     child: Text(
                       initials,
@@ -1220,7 +1220,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
         TextSpan(
           children: [
             TextSpan(text: '$count'),
-            if (trailing != null) trailing,
+            ?trailing,
             countUnitSpan(),
           ],
         ),
@@ -3328,7 +3328,7 @@ class _StoryJourneyNextGlowState extends State<_StoryJourneyNextGlow>
             child: Stack(
               fit: StackFit.expand,
               children: [
-                if (child != null) child,
+                ?child,
                 IgnorePointer(
                   child: DecoratedBox(
                     decoration: BoxDecoration(

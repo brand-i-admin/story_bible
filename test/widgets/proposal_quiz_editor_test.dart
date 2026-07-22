@@ -111,5 +111,23 @@ void main() {
       expect(events.isNotEmpty, isTrue);
       expect(events.last.length, 2);
     });
+
+    testWidgets('정답 라디오를 바꾸면 선택 상태와 최신 answerIndex를 함께 갱신한다', (tester) async {
+      final events = <List<QuizDraft>>[];
+      await _pump(
+        tester,
+        ProposalQuizEditor(
+          initial: const [QuizDraft.empty],
+          onChanged: events.add,
+        ),
+      );
+
+      await tester.tap(find.byType(Radio<int>).at(2));
+      await tester.pump();
+
+      expect(events.last.single.answerIndex, 2);
+      expect(find.text('선택지 3 (정답)'), findsOneWidget);
+      expect(tester.widget<Radio<int>>(find.byType(Radio<int>).at(2)).value, 2);
+    });
   });
 }

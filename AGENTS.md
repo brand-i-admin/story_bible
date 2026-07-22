@@ -21,6 +21,16 @@ flutter test
 Python 도구는 Python 3.10+와 로컬 가상환경을 기준으로 사용한다.
 `scripts/run_*.sh`와 `scripts/build_*.sh`는 실행 전에 `flutter clean`과
 `flutter pub get`을 자동으로 수행한다.
+Flutter 앱과 CI의 기준 런타임은 Flutter 3.44.7 stable / Dart 3.12 이상이다.
+Android 의존성은 모두 AndroidX를 사용하므로 Jetifier는 활성화하지 않는다.
+
+Google Play 배포용 Android 빌드는 Android 16(API 36)을 명시적으로 대상으로 한다.
+`android/app/build.gradle.kts`의 `compileSdk`/`targetSdk`는 36으로 유지하고,
+Flutter 3.44의 지원 경고 기준을 충족하고 API 36을 지원하는 Android Gradle Plugin
+8.11.1과 Gradle 8.14.4, Kotlin 2.2.20을 함께 사용한다. NDK는
+28.2.13676358이다. Play에 새 App Bundle을 올리기 전에는
+`pubspec.yaml`의 build number를 직전 배포보다 높이고 `scripts/build_android_real.sh`로
+서명된 운영 번들을 생성한다.
 
 ```bash
 python3 -m venv .venv
@@ -104,7 +114,7 @@ PDCA는 기존 TDD를 대체하지 않는다. TDD는 Do 단계 안에서 동작�
 
 ## 코딩 규칙
 
-- Dart 3.8+, Flutter, Riverpod 2.6, Supabase Flutter.
+- Flutter 3.44.7 stable, Dart 3.12+, Riverpod 2.6, Supabase Flutter.
 - `tools/`의 Python은 Python 3.10+ 기준이며 `black`으로 포맷한다.
 - 사용자에게 보이는 UI 문구는 한국어로 쓴다.
 - 모델은 불변 데이터 클래스로 유지한다. Supabase row 기반 모델은 `fromMap()`을 쓴다.

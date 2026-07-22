@@ -427,13 +427,21 @@ _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
 
 ## 6. 의존 패키지
 
+Flutter 런타임은 3.44.7 stable, Dart는 3.12 이상을 기준으로 하며 CI도 같은
+Flutter 패치 버전을 고정한다.
+
+iOS는 Flutter 3.44의 기본 Swift Package Manager 통합과 UIScene 생명주기를
+사용한다. SwiftPM을 아직 지원하지 않는 플러그인은 Flutter가 CocoaPods로 자동
+폴백하므로 `Podfile`과 `pod install` 경로도 유지한다. Android는 API 36과 NDK
+28.2.13676358, AGP 8.11.1, Gradle 8.14.4, Kotlin 2.2.20을 기준으로 한다.
+
 | 패키지 | 버전 | 용도 |
 |--------|------|------|
 | flutter_riverpod | ^2.6.1 | 상태 관리 |
 | supabase_flutter | ^2.9.1 | Supabase SDK |
 | flutter_map | ^8.2.1 | 제안 위치 선택기 등 보조 2D 지도와 `LatLngBounds` 유틸 |
 | latlong2 | ^0.9.1 | 좌표 계산 |
-| shared_preferences | ^2.5.5 | 로컬 키-값 저장 (색 조합, 글자 크기 등 사용자 선호 설정) |
+| shared_preferences | ^2.5.3 | 로컬 키-값 저장 (색 조합, 글자 크기 등 사용자 선호 설정) |
 | sign_in_with_apple | ^6.1.4 | Apple 네이티브 로그인 (iOS/macOS 앱 전용) |
 | image_picker | ^1.1.2 | 프로필 이미지 |
 | crypto | ^3.0.6 | SHA256 (Apple 로그인 nonce) |
@@ -447,7 +455,7 @@ _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
 ## 7. 코딩 컨벤션
 
 - **포맷**: `dart format` (Dart 공식 스타일)
-- **린트**: `flutter_lints` 5.0 (`analysis_options.yaml`)
+- **린트**: `flutter_lints` 6.0 (`analysis_options.yaml`)
 - **네이밍**: Dart 공식 — `camelCase` 변수, `PascalCase` 클래스
 - **UI 텍스트**: 한국어로 작성
 - **위젯**: `ConsumerWidget` 또는 `ConsumerStatefulWidget` (Riverpod)

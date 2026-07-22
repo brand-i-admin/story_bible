@@ -518,7 +518,7 @@ class _GeneralImageGrid extends ConsumerWidget {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: paths.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (_, idx) {
             final path = paths[idx];
             final url = path.isEmpty
@@ -590,7 +590,7 @@ class _DetailSection extends StatelessWidget {
                   ),
                 ),
               ),
-              if (action != null) action!,
+              ?action,
             ],
           ),
           const SizedBox(height: 8),
