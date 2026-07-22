@@ -151,7 +151,6 @@ block = """    try {
 updated = text.replace(block, "")
 if updated != text:
     path.write_text(updated, encoding="utf-8")
-    print(f"Removed dev-only integration_test registrant from {path}")
 PY
 }
 
@@ -256,13 +255,6 @@ print(f"Synced iOS Flutter version: {build_name} ({build_number})")
 PY
 }
 
-install_ios_pods() {
-  require_command pod
-
-  echo "Installing iOS pods..."
-  (cd "$ROOT_DIR/ios" && pod install)
-}
-
 prepare_flutter_workspace() {
   require_command flutter
   require_command python3
@@ -336,7 +328,6 @@ build_ios() {
   print_target "$runtime_env"
   prepare_flutter_workspace
   sync_ios_flutter_version_settings
-  install_ios_pods
 
   fcm_vapid_key="$(read_env_value FCM_VAPID_KEY)"
   supabase_env_suffix="$(env_suffix_for_runtime "$runtime_env")"

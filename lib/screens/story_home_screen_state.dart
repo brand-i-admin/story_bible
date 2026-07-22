@@ -2707,7 +2707,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final state = ref.watch(storyControllerProvider);
     final user = ref.watch(signedInUserProvider);
     final catalogAsync = ref.watch(dailyExplorationCatalogProvider);
-    final events = catalogAsync.valueOrNull ?? const <StoryEvent>[];
+    final events = catalogAsync.value ?? const <StoryEvent>[];
     final recommendedEventId = pickExplorationResumeEvent(
       events: events,
       eras: state.eras,
@@ -2907,7 +2907,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final state = ref.watch(storyControllerProvider);
     final controller = ref.read(storyControllerProvider.notifier);
     final dailyMissionEventAsync = ref.watch(dailyMissionEventProvider);
-    final dailyMissionStatusKnown = dailyMissionEventAsync.valueOrNull != null;
+    final dailyMissionStatusKnown = dailyMissionEventAsync.value != null;
     final dailyMissionCompleted = dailyMissionEventAsync.maybeWhen(
       data: (event) =>
           event != null &&

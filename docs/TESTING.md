@@ -281,21 +281,27 @@ python3 tools/lint/check_code_metrics.py --ci    # 차단 모드 (FAIL 시 exit 
 
 **목적**: 위젯 렌더링 결과를 "골든 이미지(정답 스크린샷)"와 픽셀 단위로 비교하여 UI regression 자동 감지.
 
-**세팅 완료 사항**:
-- `golden_toolkit` dev_dependency 설치
-- `test/flutter_test_config.dart` — 폰트 로딩 설정
+현재 골든 테스트 파일은 없다. 중단된 `golden_toolkit` 대신 Flutter SDK가 제공하는
+`matchesGoldenFile`을 사용한다. `test/flutter_test_config.dart`는 asset bundle이
+필요한 순수 테스트를 위해 Flutter 테스트 바인딩만 초기화한다. 새 골든 테스트를
+추가할 때는 필요한 폰트를 해당 테스트에서 명시적으로 로드하고 기준 이미지를 함께
+커밋한다.
 
 **사용법**:
 ```dart
 // test/golden/my_widget_golden_test.dart
-import 'package:golden_toolkit/golden_toolkit.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-testGoldens('MyWidget 스냅샷', (tester) async {
-  await tester.pumpWidgetBuilder(
-    const MyWidget(),
-    surfaceSize: const Size(200, 200),
+testWidgets('MyWidget 스냅샷', (tester) async {
+  await tester.binding.setSurfaceSize(const Size(200, 200));
+  addTearDown(() => tester.binding.setSurfaceSize(null));
+  await tester.pumpWidget(
+    const MaterialApp(home: Scaffold(body: MyWidget())),
   );
-  await screenMatchesGolden(tester, 'my_widget_snapshot');
+  await expectLater(
+    find.byType(MyWidget),
+    matchesGoldenFile('golden/my_widget_snapshot.png'),
+  );
 });
 ```
 
@@ -318,12 +324,12 @@ flutter test test/golden/
 |------|---------|----------|---------|
 | 모델 fromMap/로직 | 15 | 87 | Supabase row와 불변 모델 계약 |
 | 상태 (Controller + State) | 3 | 67 | Riverpod 상태 전환과 사용자 기록 동기화 |
-| 리포지토리 | 7 | 45 | Supabase 쿼리, row 변환, fallback |
+| 리포지토리 | 7 | 47 | Supabase 쿼리, row 변환, 로그인 오류 분류, fallback |
 | 서비스 | 4 | 18 | Firebase 이벤트·개인정보·수집 정책, 인증 스트림 오류 격리 |
 | 유틸 | 12 | 149 | 날짜, 지도, 에셋, 선택·통독 순수 로직 |
 | 화면·위젯·테마 | 41 | 324 | 화면 입력과 주요 UI·디자인 토큰 |
 | 기본 | 2 | 4 | 앱 smoke와 scaffold |
-| **합계 (정적 호출 기준)** | **84** | **694** | — |
+| **합계 (정적 호출 기준)** | **84** | **696** | — |
 
 > 정확한 수치는 `flutter test` 실행 시 마지막 줄 `All tests passed!` 앞의 카운트로 확인.
 > `integration_test/`의 실환경 시나리오 3개는 이 정적 단위/위젯 테스트 합계와 별도다.

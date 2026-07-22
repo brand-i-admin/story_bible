@@ -90,8 +90,10 @@ scripts/build_ios_dev.sh --export-method=ad-hoc
 ## Notes
 
 - 모든 스크립트는 Flutter 호출 전에 `flutter clean`과 `flutter pub get`을 실행한 뒤, 본 호출은 `--no-pub`으로 진행합니다.
+- `flutter pub get`의 최신 버전 안내 24개는 현재 안전하게 resolvable한 버전까지 적용한 상태다. Firebase 계열은 iOS 13 지원을 유지하는 최신 호환 버전, `latlong2`는 `flutter_map_marker_cluster`가 요구하는 0.9 계열, `path_provider_foundation`은 Xcode 네이티브 에셋 경고가 없는 호환 버전으로 고정했다. 나머지는 Flutter SDK 테스트/분석 도구가 고정한 전이 의존성이므로 `dependency_overrides`로 강제하지 않는다.
+- 최신 `firebase_messaging` Android 구현이 사용하는 호환용 deprecated API 진단은 해당 외부 플러그인의 Java 컴파일에서만 `--info` 로그로 낮춘다. 앱 Kotlin/Java 경고는 계속 일반 빌드에서 표시한다.
 - `run_*` 스크립트는 `flutter run --no-pub --dart-define=ENV=... --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...`를 호출합니다.
-- `build_ios_*` 스크립트는 `flutter build ipa --release --no-pub`에 같은 dart-define 값과 `pubspec.yaml`의 `--build-name`, `--build-number`를 붙여 호출합니다. 빌드 전 `ios/Flutter/Generated.xcconfig`와 `ios/Flutter/flutter_export_environment.sh`를 `pubspec.yaml` 버전으로 동기화하고 `pod install`로 `ios/Pods/Manifest.lock`을 맞춥니다.
+- `build_ios_*` 스크립트는 `flutter build ipa --release --no-pub`에 같은 dart-define 값과 `pubspec.yaml`의 `--build-name`, `--build-number`를 붙여 호출합니다. 빌드 전 `ios/Flutter/Generated.xcconfig`와 `ios/Flutter/flutter_export_environment.sh`를 `pubspec.yaml` 버전으로 동기화하며, 플러그인 연결은 Flutter Swift Package Manager가 담당합니다.
 - `build_android_*` 스크립트는 `flutter build appbundle --release --no-pub`에 같은 dart-define 값을 붙여 호출합니다.
 - Android App Bundle은 Google Play의 2026년 앱 업데이트 요건에 맞춰 Android 16(API 36)을 대상으로 빌드합니다. Play 업로드 전 `pubspec.yaml`의 build number가 직전 배포보다 큰지 확인하고, 운영 배포본은 `scripts/build_android_real.sh`로 생성합니다.
 - `.env`에 `FCM_VAPID_KEY`가 있으면 `--dart-define=FCM_VAPID_KEY=...`도 자동 주입합니다 (Flutter Web 푸시용). 비어 있거나 없으면 주입 생략.

@@ -85,6 +85,7 @@ class MainActivity : FlutterActivity() {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
+    @Suppress("DEPRECATION")
     private class RenderGuardWebViewClient(
         private val delegate: WebViewClient,
     ) : WebViewClient() {

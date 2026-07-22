@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:story_bible/data/auth_repository.dart';
@@ -10,6 +11,44 @@ void main() {
       expect(googleAccountChooserQueryParams(), const {
         'prompt': 'select_account',
       });
+    });
+  });
+
+  group('Google Sign-In 7 오류 분류', () {
+    test('사용자 취소와 중단은 로그인 취소로 처리한다', () {
+      expect(
+        isGoogleSignInCancellation(
+          const GoogleSignInException(code: GoogleSignInExceptionCode.canceled),
+        ),
+        isTrue,
+      );
+      expect(
+        isGoogleSignInCancellation(
+          const GoogleSignInException(
+            code: GoogleSignInExceptionCode.interrupted,
+          ),
+        ),
+        isTrue,
+      );
+    });
+
+    test('클라이언트와 공급자 설정 오류를 개발자 설정 문제로 분류한다', () {
+      expect(
+        isGoogleSignInConfigurationError(
+          const GoogleSignInException(
+            code: GoogleSignInExceptionCode.clientConfigurationError,
+          ),
+        ),
+        isTrue,
+      );
+      expect(
+        isGoogleSignInConfigurationError(
+          const GoogleSignInException(
+            code: GoogleSignInExceptionCode.providerConfigurationError,
+          ),
+        ),
+        isTrue,
+      );
     });
   });
 

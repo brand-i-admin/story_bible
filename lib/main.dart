@@ -37,7 +37,7 @@ Future<void> main() async {
   final supabaseConfig = _resolveSupabaseConfig();
   await Supabase.initialize(
     url: supabaseConfig.url,
-    anonKey: supabaseConfig.anonKey,
+    publishableKey: supabaseConfig.anonKey,
   );
 
   if (firebaseReady) {

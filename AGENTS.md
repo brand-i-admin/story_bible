@@ -114,7 +114,7 @@ PDCA는 기존 TDD를 대체하지 않는다. TDD는 Do 단계 안에서 동작�
 
 ## 코딩 규칙
 
-- Flutter 3.44.7 stable, Dart 3.12+, Riverpod 2.6, Supabase Flutter.
+- Flutter 3.44.7 stable, Dart 3.12+, Riverpod 3.3, Supabase Flutter 2.16.
 - `tools/`의 Python은 Python 3.10+ 기준이며 `black`으로 포맷한다.
 - 사용자에게 보이는 UI 문구는 한국어로 쓴다.
 - 모델은 불변 데이터 클래스로 유지한다. Supabase row 기반 모델은 `fromMap()`을 쓴다.

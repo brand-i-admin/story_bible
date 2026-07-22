@@ -430,27 +430,29 @@ _profileTabKey.currentState?.refreshProgressAfterQuizCompletion();
 Flutter 런타임은 3.44.7 stable, Dart는 3.12 이상을 기준으로 하며 CI도 같은
 Flutter 패치 버전을 고정한다.
 
-iOS는 Flutter 3.44의 기본 Swift Package Manager 통합과 UIScene 생명주기를
-사용한다. SwiftPM을 아직 지원하지 않는 플러그인은 Flutter가 CocoaPods로 자동
-폴백하므로 `Podfile`과 `pod install` 경로도 유지한다. Android는 API 36과 NDK
-28.2.13676358, AGP 8.11.1, Gradle 8.14.4, Kotlin 2.2.20을 기준으로 한다.
+iOS는 Flutter 3.44의 Swift Package Manager 통합과 UIScene 생명주기를 사용한다.
+현재 플러그인은 모두 SwiftPM을 지원하므로 CocoaPods 통합과 `Podfile`은 제거했다.
+Android는 API 36과 NDK 28.2.13676358, AGP 8.11.1, Gradle 8.14.4, Kotlin
+2.2.20을 기준으로 한다.
 
 | 패키지 | 버전 | 용도 |
 |--------|------|------|
-| flutter_riverpod | ^2.6.1 | 상태 관리 |
-| supabase_flutter | ^2.9.1 | Supabase SDK |
-| flutter_map | ^8.2.1 | 제안 위치 선택기 등 보조 2D 지도와 `LatLngBounds` 유틸 |
+| flutter_riverpod | ^3.3.2 | 상태 관리 (`StateProvider` 등 legacy API는 명시적 legacy import) |
+| supabase_flutter | ^2.16.0 | Supabase SDK |
+| flutter_map | ^8.3.1 | 제안 위치 선택기 등 보조 2D 지도와 `LatLngBounds` 유틸 |
 | latlong2 | ^0.9.1 | 좌표 계산 |
-| shared_preferences | ^2.5.3 | 로컬 키-값 저장 (색 조합, 글자 크기 등 사용자 선호 설정) |
-| sign_in_with_apple | ^6.1.4 | Apple 네이티브 로그인 (iOS/macOS 앱 전용) |
-| image_picker | ^1.1.2 | 프로필 이미지 |
+| path_provider_foundation | 2.4.2 | iOS/macOS 경로 플러그인; 2.6.0 native-asset 아키텍처 경고 회피 |
+| shared_preferences | ^2.5.5 | 로컬 키-값 저장 (색 조합, 글자 크기 등 사용자 선호 설정) |
+| google_sign_in | ^7.2.0 | Android 네이티브 Google 로그인 |
+| sign_in_with_apple | ^8.1.0 | Apple 네이티브 로그인 (iOS/macOS 앱 전용) |
+| image_picker | ^1.2.3 | 프로필 이미지 |
 | crypto | ^3.0.6 | SHA256 (Apple 로그인 nonce) |
 | cupertino_icons | ^1.0.8 | iOS 스타일 아이콘 |
-| firebase_core | ^3.8.0 | Firebase 초기화 (FCM) |
-| firebase_messaging | ^15.1.5 | FCM 토큰/메시지 — 푸시 알림 |
-| firebase_analytics | ^11.6.0 | 앱 실행·이용 현황과 재방문 분석 |
-| firebase_crashlytics | ^4.3.10 | Android/iOS 충돌 및 비치명 오류 보고 |
-| flutter_local_notifications | ^18.0.1 | 포그라운드 로컬 알림 (iOS/Android) |
+| firebase_core | ^3.15.2 | Firebase 초기화 (FCM), iOS 13 지원 유지 |
+| firebase_messaging | ^15.2.10 | FCM 토큰/메시지 — 푸시 알림, iOS 13 지원 유지 |
+| firebase_analytics | ^11.6.0 | 앱 실행·이용 현황과 재방문 분석, iOS 13 지원 유지 |
+| firebase_crashlytics | ^4.3.10 | Android/iOS 충돌 및 비치명 오류 보고, iOS 13 지원 유지 |
+| flutter_local_notifications | ^22.1.0 | 포그라운드 로컬 알림 (iOS/Android) |
 
 ## 7. 코딩 컨벤션
 

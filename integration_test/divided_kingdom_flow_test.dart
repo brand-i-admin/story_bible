@@ -192,7 +192,7 @@ Future<void> _startTestApp() async {
   }
 
   if (!_supabaseInitialized) {
-    await Supabase.initialize(url: url, anonKey: anonKey);
+    await Supabase.initialize(url: url, publishableKey: anonKey);
     _supabaseInitialized = true;
   }
   final prefs = await SharedPreferences.getInstance();

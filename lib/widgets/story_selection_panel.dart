@@ -28,8 +28,13 @@ const double kStorySelectionCharacterGridSpacing = 8;
 
 double storySelectionCharacterCardExtentFor(BuildContext context) {
   final textScale = MediaQuery.textScalerOf(context).scale(1);
-  final extra = ((textScale - 1) * 50).clamp(0.0, 22.0).toDouble();
-  return kStorySelectionCharacterCardExtent + extra;
+  final scaledTextExtra = ((textScale - 1) * 50).clamp(0.0, 22.0).toDouble();
+  final veryLargeTextExtra = ((textScale - 1.2) * 80)
+      .clamp(0.0, 16.0)
+      .toDouble();
+  return kStorySelectionCharacterCardExtent +
+      scaledTextExtra +
+      veryLargeTextExtra;
 }
 
 class StorySelectionPanel extends StatefulWidget {

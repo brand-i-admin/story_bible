@@ -56,6 +56,7 @@ migrate_working_dir/
 
 # Android — Flutter-generated artifacts only
 **/android/.gradle/
+**/android/.kotlin/
 **/android/build/
 **/android/captures/
 **/android/gradlew

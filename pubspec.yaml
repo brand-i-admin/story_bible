@@ -32,16 +32,19 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  flutter_riverpod: ^2.6.1
-  supabase_flutter: ^2.9.1
-  flutter_map: ^8.2.1
+  flutter_riverpod: ^3.3.2
+  supabase_flutter: ^2.16.0
+  flutter_map: ^8.3.1
   flutter_map_marker_cluster: ^8.2.2
   latlong2: ^0.9.1
-  sign_in_with_apple: ^6.1.4
-  google_sign_in: ^6.3.0
-  image_picker: ^1.1.2
+  # 2.6.0 native-asset hook은 Xcode simulator 아키텍처별 framework 이름을
+  # 다르게 생성한다. SwiftPM을 지원하는 마지막 안정 구현을 고정한다.
+  path_provider_foundation: 2.4.2
+  sign_in_with_apple: ^8.1.0
+  google_sign_in: ^7.2.0
+  image_picker: ^1.2.3
   crypto: ^3.0.6
-  shared_preferences: ^2.5.3
+  shared_preferences: ^2.5.5
   url_launcher: ^6.3.2
 
   # Firebase Cloud Messaging — 푸시 알림.
@@ -49,18 +52,20 @@ dependencies:
   # 활성화 절차: docs/PUSH_SETUP.md 참조 (사용자가 Firebase Console 에서
   # 프로젝트 생성 + flutterfire configure 실행 후 lib/main.dart 에서
   # PushService.initialize() 호출).
-  firebase_core: ^3.8.0
-  firebase_messaging: ^15.1.5
+  # FlutterFire 4/16 세대는 iOS 15+가 필요하다. 기존 iOS 13 지원을 보존하는
+  # 마지막 호환 메이저에서 최신 패치를 사용한다.
+  firebase_core: ^3.15.2
+  firebase_messaging: ^15.2.10
 
   # 포그라운드 알림을 로컬 시스템 알림으로 띄우는 데 사용 (모바일).
   # iOS/Android 포그라운드 상태에서는 FCM 이 시스템 알림을 자동 발행하지 않음.
-  flutter_local_notifications: ^18.0.1
+  flutter_local_notifications: ^22.1.0
 
   # Flutter Web 에서 브라우저 `Notification` API 호출용 (conditional import).
   # 모바일 빌드에서는 사용되지 않으므로 크기 영향 없음.
   web: ^1.1.0
-  webview_flutter: ^4.13.1
-  webview_flutter_android: ^4.10.1
+  webview_flutter: ^4.14.1
+  webview_flutter_android: ^4.13.0
   firebase_crashlytics: ^4.3.10
   firebase_analytics: ^11.6.0
 
@@ -82,9 +87,6 @@ dev_dependencies:
 
   # Import sorter — pre-commit hook이 dart import 순서를 자동 검증
   import_sorter: ^4.6.0
-
-  # Golden test — 위젯 렌더링 결과를 골든 이미지와 비교하여 UI regression 감지
-  golden_toolkit: ^0.15.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

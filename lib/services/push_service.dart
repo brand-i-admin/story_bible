@@ -70,7 +70,10 @@ class PushService {
       const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
       const iosInit = DarwinInitializationSettings();
       await _localNotifications.initialize(
-        const InitializationSettings(android: androidInit, iOS: iosInit),
+        settings: const InitializationSettings(
+          android: androidInit,
+          iOS: iosInit,
+        ),
       );
       // Android 채널.
       if (Platform.isAndroid) {
@@ -122,10 +125,10 @@ class PushService {
         return;
       }
       await _localNotifications.show(
-        message.hashCode,
-        notification.title ?? '알림',
-        notification.body,
-        const NotificationDetails(
+        id: message.hashCode,
+        title: notification.title ?? '알림',
+        body: notification.body,
+        notificationDetails: const NotificationDetails(
           android: AndroidNotificationDetails(
             'default_channel',
             '일반 알림',

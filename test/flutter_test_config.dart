@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:golden_toolkit/golden_toolkit.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
-  await loadAppFonts();
-  return testMain();
+  TestWidgetsFlutterBinding.ensureInitialized();
+  await testMain();
 }

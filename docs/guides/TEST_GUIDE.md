@@ -13,7 +13,7 @@
 |------|---------|----------------|-----------|
 | `test/` 루트 | 2 | 4 | 앱 smoke, 기본 widget scaffold |
 | `test/models/` | 15 | 87 | 불변 모델, `fromMap()`, enum/값 객체 변환 |
-| `test/data/` | 7 | 45 | Repository, Supabase row 변환, fallback |
+| `test/data/` | 7 | 47 | Repository, Supabase row 변환, 로그인 오류 분류, fallback |
 | `test/screens/` | 3 | 5 | 독립 화면 입력·필터·저장 흐름 |
 | `test/state/` | 3 | 67 | Riverpod provider/controller 상태 전환 |
 | `test/services/` | 4 | 18 | Firebase 이벤트 계약, 개인정보 필터, 환경·빌드 모드 정책, 인증 스트림 오류 격리 |
@@ -23,7 +23,7 @@
 | `tools/**/test_*.py` | 18 | 128 | seed, lint, asset, docs, Supabase 도구·정기 푸시 SQL 문구 |
 
 Dart 쪽 정적 카운트는 `test/**/*.dart`의 `test()`/`testWidgets()` 호출 기준
-694개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
+696개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
 공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.
 
 `integration_test/divided_kingdom_flow_test.dart`에는 별도로 3개 실환경 시나리오가
@@ -82,7 +82,7 @@ enum 문자열, JSON list/map 변환은 정상값과 빈값을 같이 넣는다.
 |------|------|--------------|
 | Repository | `test/data/story_repository_test.dart` | story, era, landmark, event query와 row mapping |
 | Repository | `test/data/user_repository_test.dart` | 유저 프로필, 알림, 진행도, 일지 |
-| Repository | `test/data/auth_repository_test.dart` | 계정 삭제 확인 아이디 선택/비교 helper |
+| Repository | `test/data/auth_repository_test.dart` | Google Sign-In 7 오류 분류와 계정 삭제 확인 아이디 helper |
 | Repository | `test/data/font_scale_repository_test.dart` | 접근성 글자 크기 저장/복원 |
 | Repository | `test/data/color_palette_repository_test.dart` | 전역 색 조합 저장/복원 |
 | Repository | `test/data/character_name_fallbacks_test.dart` | 인물 이름 fallback |

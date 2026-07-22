@@ -13,6 +13,8 @@ import '../models/app_user_profile.dart';
 class AuthRepository {
   const AuthRepository(this._client);
 
+  static Future<void>? _googleSignInInitialization;
+
   /// 모바일 앱의 deep link URL.
   /// iOS Info.plist / Android intent-filter 에 등록되어 있어야 Supabase 가
   /// OAuth 완료 후 앱으로 돌려보낸다.
@@ -89,16 +91,16 @@ class AuthRepository {
   }
 
   Future<void> _signInWithNativeGoogleOnAndroid() async {
-    final googleSignIn = GoogleSignIn(scopes: const ['email', 'profile']);
+    final googleSignIn = GoogleSignIn.instance;
 
     try {
+      await (_googleSignInInitialization ??= googleSignIn.initialize());
       await googleSignIn.signOut();
-      final account = await googleSignIn.signIn();
-      if (account == null) {
-        return;
-      }
+      final account = await googleSignIn.authenticate(
+        scopeHint: const ['email', 'profile'],
+      );
 
-      final authentication = await account.authentication;
+      final authentication = account.authentication;
       final idToken = authentication.idToken;
       if (idToken == null || idToken.isEmpty) {
         throw const AuthException('구글 로그인 토큰을 가져오지 못했습니다.');
@@ -107,13 +109,24 @@ class AuthRepository {
       await _client.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
-        accessToken: authentication.accessToken,
       );
-    } on PlatformException catch (error) {
-      if (error.code == GoogleSignIn.kSignInCanceledError) {
+    } on GoogleSignInException catch (error) {
+      if (isGoogleSignInCancellation(error)) {
         return;
       }
-      if (_isGoogleDeveloperError(error)) {
+      if (isGoogleSignInConfigurationError(error)) {
+        throw const AuthException(
+          '구글 로그인 설정을 확인해야 합니다. Firebase/Google Cloud의 Android OAuth '
+          'client에 com.storybible.app 패키지와 현재 서명 인증서 SHA-1/SHA-256을 '
+          '등록한 뒤 google-services.json을 다시 내려받아 주세요.',
+        );
+      }
+      throw AuthException(error.description ?? '구글 로그인에 실패했습니다.');
+    } on PlatformException catch (error) {
+      if (isGoogleSignInCancellation(error)) {
+        return;
+      }
+      if (isGoogleSignInConfigurationError(error)) {
         throw const AuthException(
           '구글 로그인 설정을 확인해야 합니다. Firebase/Google Cloud의 Android OAuth '
           'client에 com.storybible.app 패키지와 현재 서명 인증서 SHA-1/SHA-256을 '
@@ -180,8 +193,26 @@ Map<String, String> googleAccountChooserQueryParams() {
   return const {'prompt': 'select_account'};
 }
 
-bool _isGoogleDeveloperError(PlatformException error) {
-  final detailText = [
+@visibleForTesting
+bool isGoogleSignInCancellation(Object error) {
+  if (error is GoogleSignInException) {
+    return error.code == GoogleSignInExceptionCode.canceled ||
+        error.code == GoogleSignInExceptionCode.interrupted ||
+        error.code == GoogleSignInExceptionCode.uiUnavailable;
+  }
+  return error is PlatformException && error.code == 'sign_in_canceled';
+}
+
+@visibleForTesting
+bool isGoogleSignInConfigurationError(Object error) {
+  if (error is GoogleSignInException) {
+    return error.code == GoogleSignInExceptionCode.clientConfigurationError ||
+        error.code == GoogleSignInExceptionCode.providerConfigurationError;
+  }
+  if (error is! PlatformException) {
+    return false;
+  }
+  final detailText = <Object?>[
     error.code,
     error.message,
     error.details,

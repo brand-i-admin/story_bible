@@ -25,7 +25,6 @@ fun stripIntegrationTestPluginRegistrant() {
     val updated = text.replace(integrationTestBlock, "\n")
     if (updated != text) {
         registrant.writeText(updated)
-        logger.lifecycle("Removed dev-only integration_test registrant from ${registrant.path}")
     }
 }
 
