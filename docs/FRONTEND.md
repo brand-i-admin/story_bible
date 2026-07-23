@@ -305,9 +305,9 @@ static const _palette = <Color>[
 
 | 위젯/파일 | 파일 | 역할 |
 |----------|------|------|
-| NotificationBellButton | `widgets/notification/notification_bell_button.dart` | 프로필 헤더 종 아이콘 + 배지, Overlay 드롭다운 관리 |
+| NotificationBellButton | `widgets/notification/notification_bell_button.dart` | 프로필 헤더 종 아이콘 + 배지, Overlay 드롭다운 관리. 팝오버는 최대 340px이며 좁은 화면에서는 좌우 8px 여백 안의 가용 폭으로 줄인다. |
 | NotificationBadge | `widgets/notification/notification_badge.dart` | 빨간색 ! 배지 (미독 1개 이상 시 표시) |
-| NotificationDropdown | `widgets/notification/notification_dropdown.dart` | bell 탭 시 열리는 팝오버 — 미독 5개 + "모두 읽음" / "전체 보기" |
+| NotificationDropdown | `widgets/notification/notification_dropdown.dart` | bell 탭 시 열리는 반응형 팝오버 — 미독 5개 + "모두 읽음" / "전체 보기" |
 | NotificationListTile | `widgets/notification/notification_list_tile.dart` | 드롭다운/히스토리 공용 row (타입별 아이콘, 상대시간, 미독 점) |
 | NotificationDeepLink | `widgets/notification/notification_deep_link.dart` | deep_link 파싱 + 모바일/태블릿 "컴퓨터로 확인" 다이얼로그 |
 | PushService | `services/push_service.dart` | FCM 토큰 발급/등록, 포그라운드 메시지 handler |

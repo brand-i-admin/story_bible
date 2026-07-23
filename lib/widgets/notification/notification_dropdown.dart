@@ -16,11 +16,13 @@ import 'notification_list_tile.dart';
 class NotificationDropdown extends ConsumerWidget {
   const NotificationDropdown({
     super.key,
+    this.width = 340,
     required this.onClose,
     required this.onTapItem,
     required this.onOpenHistory,
   });
 
+  final double width;
   final VoidCallback onClose;
   final void Function(AppNotification notification) onTapItem;
   final VoidCallback onOpenHistory;
@@ -30,7 +32,7 @@ class NotificationDropdown extends ConsumerWidget {
     final palette = AppPaletteTheme.of(context);
     final unreadAsync = ref.watch(unreadNotificationsProvider);
     return Container(
-      width: 340,
+      width: width,
       constraints: const BoxConstraints(maxHeight: 460),
       decoration: floatingPanelDecoration(
         color: palette.panelSurface,

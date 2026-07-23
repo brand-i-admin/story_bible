@@ -10,6 +10,7 @@ import 'package:story_bible/models/app_notification.dart';
 import 'package:story_bible/state/auth_providers.dart';
 import 'package:story_bible/state/notification_providers.dart';
 import 'package:story_bible/widgets/notification/notification_bell_button.dart';
+import 'package:story_bible/widgets/notification/notification_dropdown.dart';
 
 class _MockNotificationRepository extends Mock
     implements NotificationRepository {}
@@ -83,5 +84,58 @@ void main() {
     expect(find.text('!'), findsNothing);
     expect(find.text('새로운 알림이 없어요'), findsOneWidget);
     verify(() => repository.markAllRead()).called(1);
+  });
+
+  testWidgets('좁은 화면에서도 알림 드롭다운을 화면 안에 연다', (tester) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final repository = _MockNotificationRepository();
+    const user = User(
+      id: 'user-1',
+      appMetadata: {},
+      userMetadata: {},
+      aud: 'authenticated',
+      createdAt: '2026-05-26T00:00:00Z',
+    );
+
+    when(
+      () => repository.watchUnreadCount(),
+    ).thenAnswer((_) => Stream<int>.value(0));
+    when(
+      () => repository.fetchNotifications(limit: 5, onlyUnread: true),
+    ).thenAnswer((_) async => const <AppNotification>[]);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          signedInUserProvider.overrideWithValue(user),
+          notificationRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp(
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.topRight,
+              child: NotificationBellButton(
+                onNavigate: (_) {},
+                onOpenHistory: () {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(NotificationBellButton));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.getSize(find.byType(NotificationDropdown)).width,
+      lessThanOrEqualTo(304),
+    );
   });
 }

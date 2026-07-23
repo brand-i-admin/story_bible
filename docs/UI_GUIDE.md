@@ -403,6 +403,7 @@ GeoJSON fill/border layer 에서 직접 그린다. 이전 Flutter `CustomPainter
 3. 모바일/태블릿에서 제안 관련 알림 탭 → "컴퓨터에서 확인하세요" 다이얼로그
 4. "모두 읽음" → count/list/history provider 를 함께 invalidate 해 빨간 `!` 배지와 "새로운 알림이 없어요" 빈 상태를 즉시 반영
 5. "전체 보기" → `NotificationHistoryScreen` (최근 30일, 읽은 것 포함)
+6. 드롭다운은 최대 340px 폭을 사용하고, 더 좁은 화면에서는 좌우 8px 여백 안에 맞춰 폭과 위치를 함께 줄인다.
 
 ### 5.6 공지사항과 사용법
 

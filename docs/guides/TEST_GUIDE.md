@@ -19,11 +19,11 @@
 | `test/services/` | 4 | 18 | Firebase 이벤트 계약, 개인정보 필터, 환경·빌드 모드 정책, 인증 스트림 오류 격리 |
 | `test/theme/` | 1 | 18 | 디자인 토큰 회귀 방지 |
 | `test/utils/` | 12 | 149 | 날짜, 지도 수학, asset loader, 선택/통독 로직 |
-| `test/widgets/` | 37 | 301 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
+| `test/widgets/` | 37 | 303 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
 | `tools/**/test_*.py` | 18 | 128 | seed, lint, asset, docs, Supabase 도구·정기 푸시 SQL 문구 |
 
 Dart 쪽 정적 카운트는 `test/**/*.dart`의 `test()`/`testWidgets()` 호출 기준
-696개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
+701개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
 공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.
 
 `integration_test/divided_kingdom_flow_test.dart`에는 별도로 3개 실환경 시나리오가
@@ -127,7 +127,7 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 | 프로필 | `profile_*_test.dart`, `saved_verse_row_test.dart` |
 | 로그인 | `inline_login_prompt_card_test.dart` |
 | 접근성/공통 UI | `font_scale_bottom_sheet_test.dart`, `home_journey_overlay_test.dart`, `story_root_navigation_bar_test.dart`, `pulse_highlight_test.dart`, `story_home_styles_test.dart` |
-| 알림 | `notification_deep_link_test.dart` |
+| 알림 | `notification_bell_button_test.dart`, `notification_deep_link_test.dart` |
 
 새 위젯은 raw 색/spacing보다 `lib/theme/` 토큰을 먼저 쓰고, 테스트에서는 깨지기
 쉬운 픽셀값보다 실제 동작과 노출 상태를 검증한다.
