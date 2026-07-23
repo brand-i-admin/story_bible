@@ -2,7 +2,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="story_bible"
+        android:label="이야기성경"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <meta-data
