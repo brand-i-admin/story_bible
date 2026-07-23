@@ -70,6 +70,23 @@ void main() {
     expect(bibleDisposed, isFalse);
   });
 
+  test('통독 이어읽기는 같은 목표를 다시 열어도 성경 리더를 새로 시작한다', () {
+    final source = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+    final continueReadingSource = source.substring(
+      source.indexOf('void _continueBibleReading('),
+      source.indexOf('Future<void> _openTodayStory('),
+    );
+
+    expect(source, contains('int _bibleTabNavigationRevision = 0;'));
+    expect(source, contains(r'$_bibleTabNavigationRevision'));
+    expect(
+      continueReadingSource,
+      contains('_bibleTabNavigationRevision += 1;'),
+    );
+  });
+
   testWidgets('오늘 성경 지도 내정보 순서로 네비게이션 항목을 표시한다', (tester) async {
     StoryRootTab? selected;
     await tester.pumpWidget(

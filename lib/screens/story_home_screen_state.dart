@@ -85,6 +85,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   bool _hasBuiltProfileTab = false;
   BibleReadingTarget? _bibleTabTarget;
   int? _bibleTabVerseNo;
+  int _bibleTabNavigationRevision = 0;
   List<UserCompanionDiaryEntry> _homeDiaryEntries = const [];
   String _todayNickname = '사용자';
   bool _homeDiaryLoading = false;
@@ -2772,7 +2773,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final target = _bibleTabTarget;
     return BibleReaderPage(
       key: ValueKey(
-        'root-bible-${target?.bookNo ?? 1}-${target?.chapterNo ?? 1}-${_bibleTabVerseNo ?? 0}',
+        'root-bible-${target?.bookNo ?? 1}-${target?.chapterNo ?? 1}-${_bibleTabVerseNo ?? 0}-$_bibleTabNavigationRevision',
       ),
       embedded: true,
       initialBookNo: target?.bookNo,
@@ -2808,6 +2809,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
                 chapterNo: initialChapterNo ?? 1,
               );
               _bibleTabVerseNo = initialVerseNo;
+              _bibleTabNavigationRevision += 1;
               _rootTab = StoryRootTab.bible;
             });
           },
@@ -2888,6 +2890,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       _markRootTabBuilt(StoryRootTab.bible);
       _bibleTabTarget = target;
       _bibleTabVerseNo = null;
+      _bibleTabNavigationRevision += 1;
       _rootTab = StoryRootTab.bible;
     });
   }
