@@ -11,6 +11,7 @@ test/
 ├── models/                    # 모델 단위 테스트
 ├── state/                     # Controller/Provider 테스트
 ├── data/                      # Repository 테스트 (mock)
+├── platform/                  # Android/iOS 네이티브 설정 계약 테스트
 ├── theme/                     # 디자인 토큰 테스트
 ├── utils/                     # 순수 로직/asset loader 테스트
 └── widgets/                   # 위젯 테스트
@@ -322,14 +323,15 @@ flutter test test/golden/
 
 | 영역 | 파일 수 | 테스트 수 | 커버리지 |
 |------|---------|----------|---------|
-| 모델 fromMap/로직 | 15 | 87 | Supabase row와 불변 모델 계약 |
+| 모델 fromMap/로직 | 15 | 88 | Supabase row와 불변 모델 계약 |
 | 상태 (Controller + State) | 3 | 67 | Riverpod 상태 전환과 사용자 기록 동기화 |
 | 리포지토리 | 7 | 47 | Supabase 쿼리, row 변환, 로그인 오류 분류, fallback |
-| 서비스 | 4 | 18 | Firebase 이벤트·개인정보·수집 정책, 인증 스트림 오류 격리 |
+| 서비스 | 4 | 20 | Firebase 이벤트·개인정보·수집 정책, 인증 스트림 오류 격리 |
 | 유틸 | 12 | 149 | 날짜, 지도, 에셋, 선택·통독 순수 로직 |
-| 화면·위젯·테마 | 41 | 325 | 화면 입력과 주요 UI·디자인 토큰 |
+| 화면·위젯·테마 | 41 | 326 | 화면 입력과 주요 UI·디자인 토큰 |
+| 플랫폼 설정 | 1 | 2 | OAuth callback의 `app_links` 단일 처리 계약 |
 | 기본 | 2 | 4 | 앱 smoke와 scaffold |
-| **합계 (정적 호출 기준)** | **84** | **697** | — |
+| **합계 (정적 호출 기준)** | **85** | **703** | — |
 
 > 정확한 수치는 `flutter test` 실행 시 마지막 줄 `All tests passed!` 앞의 카운트로 확인.
 > `integration_test/`의 실환경 시나리오 3개는 이 정적 단위/위젯 테스트 합계와 별도다.

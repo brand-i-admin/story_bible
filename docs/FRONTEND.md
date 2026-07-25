@@ -438,7 +438,7 @@ Android는 API 36과 NDK 28.2.13676358, AGP 8.11.1, Gradle 8.14.4, Kotlin
 | 패키지 | 버전 | 용도 |
 |--------|------|------|
 | flutter_riverpod | ^3.3.2 | 상태 관리 (`StateProvider` 등 legacy API는 명시적 legacy import) |
-| supabase_flutter | ^2.16.0 | Supabase SDK |
+| supabase_flutter | ^2.16.0 | Supabase SDK. 모바일 OAuth callback은 내부 `app_links`가 처리하므로 Android `flutter_deeplinking_enabled`와 iOS `FlutterDeepLinkingEnabled`를 `false`로 유지해 Flutter Navigator의 중복 named-route 처리를 막는다 |
 | flutter_map | ^8.3.1 | 제안 위치 선택기 등 보조 2D 지도와 `LatLngBounds` 유틸 |
 | latlong2 | ^0.9.1 | 좌표 계산 |
 | path_provider_foundation | 2.4.2 | iOS/macOS 경로 플러그인; 2.6.0 native-asset 아키텍처 경고 회피 |

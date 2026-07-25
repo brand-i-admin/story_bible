@@ -246,6 +246,28 @@ http://localhost:*/**
 - `http://localhost:*/**`: Flutter Web 개발 서버 포트가 바뀌어도 로그인 callback 을
   허용하기 위한 개발용 wildcard.
 
+모바일 callback은 `supabase_flutter` 내부의 `app_links`가 세션으로 변환한다.
+Flutter Navigator의 기본 딥링크 처리까지 동시에 켜면 callback URL을 named route로
+해석해 `_WidgetsAppState._onUnknownRoute` 오류가 발생한다. 따라서 URL scheme과
+intent filter는 유지하되 기본 Flutter 딥링크 처리는 다음처럼 끈다.
+
+```xml
+<!-- android/app/src/main/AndroidManifest.xml, MainActivity 안 -->
+<meta-data
+    android:name="flutter_deeplinking_enabled"
+    android:value="false" />
+```
+
+```xml
+<!-- ios/Runner/Info.plist -->
+<key>FlutterDeepLinkingEnabled</key>
+<false/>
+```
+
+이 설정은 OS callback 등록을 끄는 것이 아니라 Flutter Navigator의 중복 처리를
+끄는 설정이다. 실제 OAuth callback은 계속 `app_links`를 통해 Supabase Auth로
+전달된다.
+
 `Site URL`은 redirect URL 이 명시되지 않았거나 이메일 템플릿에서 기본 URL 이 필요할
 때 쓰는 fallback 에 가깝다. dev 와 real 의 localhost 포트가 달라도 Redirect URLs 에
 `http://localhost:*/**`가 있으면 개발 로그인은 정상 동작한다.

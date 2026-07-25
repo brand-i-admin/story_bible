@@ -12,18 +12,19 @@
 | 영역 | 파일 수 | 정적 테스트 수 | 주요 책임 |
 |------|---------|----------------|-----------|
 | `test/` 루트 | 2 | 4 | 앱 smoke, 기본 widget scaffold |
-| `test/models/` | 15 | 87 | 불변 모델, `fromMap()`, enum/값 객체 변환 |
+| `test/models/` | 15 | 88 | 불변 모델, `fromMap()`, enum/값 객체 변환 |
 | `test/data/` | 7 | 47 | Repository, Supabase row 변환, 로그인 오류 분류, fallback |
 | `test/screens/` | 3 | 5 | 독립 화면 입력·필터·저장 흐름 |
 | `test/state/` | 3 | 67 | Riverpod provider/controller 상태 전환 |
-| `test/services/` | 4 | 18 | Firebase 이벤트 계약, 개인정보 필터, 환경·빌드 모드 정책, 인증 스트림 오류 격리 |
+| `test/services/` | 4 | 20 | Firebase 이벤트 계약, 개인정보 필터, 환경·빌드 모드 정책, 인증 스트림 오류 격리 |
+| `test/platform/` | 1 | 2 | Android/iOS OAuth callback의 `app_links` 단일 처리 설정 |
 | `test/theme/` | 1 | 18 | 디자인 토큰 회귀 방지 |
 | `test/utils/` | 12 | 149 | 날짜, 지도 수학, asset loader, 선택/통독 로직 |
 | `test/widgets/` | 37 | 303 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
 | `tools/**/test_*.py` | 18 | 128 | seed, lint, asset, docs, Supabase 도구·정기 푸시 SQL 문구 |
 
 Dart 쪽 정적 카운트는 `test/**/*.dart`의 `test()`/`testWidgets()` 호출 기준
-701개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
+703개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
 공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.
 
 `integration_test/divided_kingdom_flow_test.dart`에는 별도로 3개 실환경 시나리오가
@@ -156,6 +157,7 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 | Dart 모델/Repository | 관련 `test/models`, `test/data` + `flutter test` |
 | Riverpod 상태 | 관련 `test/state` + 영향을 받는 widget test |
 | UI/위젯 | 해당 `test/widgets` + `flutter analyze` |
+| Android/iOS 네이티브 설정 | `test/platform` + 해당 plist/manifest 구문 검사 |
 | 콘텐츠 JSON/seed | `make seed-*`, `python3 tools/seed/verify_polygons_contain_events.py`, 관련 Python tests |
 | 이미지/asset | `make thumbnails`, `make update-pubspec-assets`, `python3 tools/app/verify_asset_paths.py` |
 | Supabase schema/RLS/RPC | patch SQL 검토, 관련 Repository/RPC 테스트, `docs/BACKEND.md` 동기화 |

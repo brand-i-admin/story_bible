@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 683 Dart tests</div>
+      <div class="subtle">310 events · 703 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -27,7 +27,7 @@
           <div class="eyebrow">Developer documentation</div>
           <h1>테스트 가이드 — Story Bible</h1>
           <p>테스트: 현재 테스트 파일과 검증 책임 카탈로그</p>
-          <div class="card"><strong>Dart 테스트 분포</strong><div class="bar-row"><span>test/app_test.dart</span><div class="bar"><i style="width:1%"></i></div><b>3</b></div><div class="bar-row"><span>test/data</span><div class="bar"><i style="width:15%"></i></div><b>45</b></div><div class="bar-row"><span>test/models</span><div class="bar"><i style="width:29%"></i></div><b>87</b></div><div class="bar-row"><span>test/screens</span><div class="bar"><i style="width:1%"></i></div><b>5</b></div><div class="bar-row"><span>test/services</span><div class="bar"><i style="width:6%"></i></div><b>18</b></div><div class="bar-row"><span>test/state</span><div class="bar"><i style="width:9%"></i></div><b>27</b></div><div class="bar-row"><span>test/theme</span><div class="bar"><i style="width:6%"></i></div><b>18</b></div><div class="bar-row"><span>test/utils</span><div class="bar"><i style="width:51%"></i></div><b>149</b></div><div class="bar-row"><span>test/widget_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>1</b></div><div class="bar-row"><span>test/widgets</span><div class="bar"><i style="width:100%"></i></div><b>291</b></div></div>
+          <div class="card"><strong>Dart 테스트 분포</strong><div class="bar-row"><span>test/app_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>3</b></div><div class="bar-row"><span>test/data</span><div class="bar"><i style="width:15%"></i></div><b>47</b></div><div class="bar-row"><span>test/models</span><div class="bar"><i style="width:29%"></i></div><b>88</b></div><div class="bar-row"><span>test/platform</span><div class="bar"><i style="width:0%"></i></div><b>2</b></div><div class="bar-row"><span>test/screens</span><div class="bar"><i style="width:1%"></i></div><b>5</b></div><div class="bar-row"><span>test/services</span><div class="bar"><i style="width:6%"></i></div><b>20</b></div><div class="bar-row"><span>test/state</span><div class="bar"><i style="width:9%"></i></div><b>28</b></div><div class="bar-row"><span>test/theme</span><div class="bar"><i style="width:5%"></i></div><b>18</b></div><div class="bar-row"><span>test/utils</span><div class="bar"><i style="width:49%"></i></div><b>149</b></div><div class="bar-row"><span>test/widget_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>1</b></div><div class="bar-row"><span>test/widgets</span><div class="bar"><i style="width:100%"></i></div><b>303</b></div></div>
           <div class="toc"><strong>On this page</strong><a class="level-1" href="#테스트-가이드-—-story-bible">테스트 가이드 — Story Bible</a><a class="level-2" href="#0-한-장-요약">0. 한 장 요약</a><a class="level-2" href="#1-기본-실행-명령">1. 기본 실행 명령</a><a class="level-2" href="#2-모델-테스트">2. 모델 테스트</a><a class="level-2" href="#3-repository-state-테스트">3. Repository / State 테스트</a><a class="level-2" href="#4-utils-테스트">4. Utils 테스트</a><a class="level-2" href="#5-widget-테스트">5. Widget 테스트</a><a class="level-2" href="#6-python-도구-테스트">6. Python 도구 테스트</a><a class="level-2" href="#7-변경-유형별-최소-검증">7. 변경 유형별 최소 검증</a><a class="level-2" href="#8-남은-테스트-공백">8. 남은 테스트 공백</a></div>
         </section>
         <article class="doc-body">
@@ -53,14 +53,14 @@
 <tr>
 <td><code>test/models/</code></td>
 <td>15</td>
-<td>87</td>
+<td>88</td>
 <td>불변 모델, <code>fromMap()</code>, enum/값 객체 변환</td>
 </tr>
 <tr>
 <td><code>test/data/</code></td>
 <td>7</td>
-<td>45</td>
-<td>Repository, Supabase row 변환, fallback</td>
+<td>47</td>
+<td>Repository, Supabase row 변환, 로그인 오류 분류, fallback</td>
 </tr>
 <tr>
 <td><code>test/screens/</code></td>
@@ -71,14 +71,20 @@
 <tr>
 <td><code>test/state/</code></td>
 <td>3</td>
-<td>66</td>
+<td>67</td>
 <td>Riverpod provider/controller 상태 전환</td>
 </tr>
 <tr>
 <td><code>test/services/</code></td>
 <td>4</td>
-<td>18</td>
+<td>20</td>
 <td>Firebase 이벤트 계약, 개인정보 필터, 환경·빌드 모드 정책, 인증 스트림 오류 격리</td>
+</tr>
+<tr>
+<td><code>test/platform/</code></td>
+<td>1</td>
+<td>2</td>
+<td>Android/iOS OAuth callback의 <code>app_links</code> 단일 처리 설정</td>
 </tr>
 <tr>
 <td><code>test/theme/</code></td>
@@ -94,8 +100,8 @@
 </tr>
 <tr>
 <td><code>test/widgets/</code></td>
-<td>36</td>
-<td>291</td>
+<td>37</td>
+<td>303</td>
 <td>주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI</td>
 </tr>
 <tr>
@@ -105,7 +111,8 @@
 <td>seed, lint, asset, docs, Supabase 도구·정기 푸시 SQL 문구</td>
 </tr>
 </tbody></table></div>
-<p>Dart 쪽 정적 카운트는 <code>test/**/*.dart</code>의 <code>test()</code>/<code>testWidgets()</code> 호출 기준 683개다. <code>test/state/story_controller_test_groups.dart</code>처럼 helper 파일 안의 공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.</p>
+<p>Dart 쪽 정적 카운트는 <code>test/**/*.dart</code>의 <code>test()</code>/<code>testWidgets()</code> 호출 기준 703개다. <code>test/state/story_controller_test_groups.dart</code>처럼 helper 파일 안의 공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.</p>
+<p><code>integration_test/divided_kingdom_flow_test.dart</code>에는 별도로 3개 실환경 시나리오가 있다. Android 기기와 dev Supabase를 연결해 새 설치의 <code>오늘</code> 탭·<code>보통</code> 글자·<code>네이비</code> 테마 기본값, 분열왕국 지역 사건 흐름, 인물 첫 등장 순서를 검증한다. 콘텐츠 전체 목록을 고정하지 않고 현재 로드한 데이터에서 기대 순서를 계산하므로 사건이 추가돼도 대표 사건·인물 계약이 유지되는 한 불필요하게 깨지지 않는다.</p>
 <h2 id="1-기본-실행-명령">1. 기본 실행 명령</h2>
 <pre><code class="language-bash">dart format --output=none --set-exit-if-changed .
 flutter analyze
@@ -115,6 +122,7 @@ python3 tools/app/verify_asset_paths.py
 python3 tools/seed/verify_polygons_contain_events.py
 python3 tools/lint/check_forbidden_patterns.py
 python3 tools/lint/check_code_metrics.py</code></pre>
+<p>Flutter/CI 기준은 Flutter 3.44.7 stable과 Dart 3.12 이상이다. 실환경 통합 테스트 실행 명령과 환경 변수 주입 방법은 <a href="../../TESTING.md">../TESTING.md</a>의 <code>2.4 통합 테스트</code>를 따른다.</p>
 <p>커밋/푸시 전에는 로컬 hook도 같은 책임을 나눠 가진다.</p>
 <div class="table-wrap"><table>
 <thead><tr>
@@ -199,7 +207,7 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 <tr>
 <td>Repository</td>
 <td><code>test/data/auth_repository_test.dart</code></td>
-<td>계정 삭제 확인 아이디 선택/비교 helper</td>
+<td>Google Sign-In 7 오류 분류와 계정 삭제 확인 아이디 helper</td>
 </tr>
 <tr>
 <td>Repository</td>
@@ -320,7 +328,7 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 </tr>
 <tr>
 <td>알림</td>
-<td><code>notification_deep_link_test.dart</code></td>
+<td><code>notification_bell_button_test.dart</code>, <code>notification_deep_link_test.dart</code></td>
 </tr>
 </tbody></table></div>
 <p>새 위젯은 raw 색/spacing보다 <code>lib/theme/</code> 토큰을 먼저 쓰고, 테스트에서는 깨지기 쉬운 픽셀값보다 실제 동작과 노출 상태를 검증한다.</p>
@@ -395,6 +403,10 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 <td>해당 <code>test/widgets</code> + <code>flutter analyze</code></td>
 </tr>
 <tr>
+<td>Android/iOS 네이티브 설정</td>
+<td><code>test/platform</code> + 해당 plist/manifest 구문 검사</td>
+</tr>
+<tr>
 <td>콘텐츠 JSON/seed</td>
 <td><code>make seed-*</code>, <code>python3 tools/seed/verify_polygons_contain_events.py</code>, 관련 Python tests</td>
 </tr>
@@ -412,7 +424,9 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 </tr>
 </tbody></table></div>
 <h2 id="8-남은-테스트-공백">8. 남은 테스트 공백</h2>
-<ul><li>Supabase RPC와 RLS는 로컬 unit test보다 SQL 리뷰/patch 검증 의존도가 높다.</li><li>Edge Function은 README와 수동 smoke 중심이며, 자동 통합 테스트는 아직 얕다.</li><li>제안 승인/수정/삭제 workflow의 end-to-end 테스트는 분산되어 있다.</li><li>시각 회귀용 golden test는 기본 파이프라인에 강제되어 있지 않다.</li><li>실기기 푸시 수신은 Firebase/APNs/브라우저 권한이 얽혀 있어 수동 smoke가 필요하다.</li></ul>
+<ul><li>Supabase RPC와 RLS는 로컬 unit test보다 SQL 리뷰/patch 검증 의존도가 높다.</li><li>Edge Function은 README와 수동 smoke 중심이며, 앱 통합 테스트도 dev Supabase를</li></ul>
+<p>사용하는 지도 핵심 흐름에 한정되어 있다.</p>
+<ul><li>제안 승인/수정/삭제 workflow의 end-to-end 테스트는 분산되어 있다.</li><li>시각 회귀용 golden test는 기본 파이프라인에 강제되어 있지 않다.</li><li>실기기 푸시 수신은 Firebase/APNs/브라우저 권한이 얽혀 있어 수동 smoke가 필요하다.</li></ul>
 <p>이 공백은 위험도가 큰 변경부터 작은 통합 테스트나 smoke checklist로 보강한다.</p>
           <a class="top-link" href="#top">맨 위로</a>
         </article>

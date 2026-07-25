@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 683 Dart tests</div>
+      <div class="subtle">310 events · 703 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -346,7 +346,7 @@ Edge Function (Deno TypeScript):
 <ol><li>Supabase Dashboard → Authentication → URL Configuration → Redirect URLs 에 <code>com.storybible.app://login-callback</code> 추가</li></ol>
 <h4 id="동작">동작</h4>
 <p>Android Google 로그인은 <code>google_sign_in</code> 네이티브 계정 선택 UI 를 사용하고, 받은 Google <code>idToken</code>을 Supabase <code>signInWithIdToken(provider: google, ...)</code>에 전달한다. Google 은 WebView/일부 인앱 브라우저 기반 OAuth 를 <code>403 disallowed_useragent</code>로 막을 수 있으므로 Android Google 로그인에서는 Supabase OAuth 인앱 브라우저 경로를 쓰지 않는다.</p>
-<p>iOS/Web 의 Google 로그인과 Kakao 로그인은 Supabase OAuth Authorization Code Flow 를 사용한다. 모바일에서는 <code>LaunchMode.inAppBrowserView</code> 로 앱 바깥 기본 브라우저가 아니라 Safari View Controller/플랫폼 인앱 브라우저 계열 화면을 연다.</p>
+<p>iOS/Web 의 Google 로그인과 Kakao 로그인은 Supabase OAuth Authorization Code Flow 를 사용한다. 모바일에서는 <code>LaunchMode.inAppBrowserView</code> 로 앱 바깥 기본 브라우저가 아니라 Safari View Controller/플랫폼 인앱 브라우저 계열 화면을 연다. 모바일 callback은 <code>supabase_flutter</code> 내부 <code>app_links</code>가 처리한다. Flutter Navigator가 같은 URL을 named route로 중복 처리하지 않도록 Android <code>flutter_deeplinking_enabled=false</code>와 iOS <code>FlutterDeepLinkingEnabled=false</code>를 유지한다. URL scheme/intent filter는 그대로 두며, 자세한 네이티브 설정은 <code>DB_SETUP.md</code>의 Auth URL Configuration을 따른다.</p>
 <pre><code class="language-">사용자 &quot;Google로 로그인&quot; 클릭 (iOS/Web OAuth 경로)
   ↓
 supabase.auth.signInWithOAuth(OAuthProvider.google, redirectTo: &lt;앱 URL&gt;)

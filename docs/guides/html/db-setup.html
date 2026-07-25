@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 683 Dart tests</div>
+      <div class="subtle">310 events · 703 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -235,6 +235,15 @@ http://localhost:*/**</code></pre>
 <p>deep link.</p>
 <ul><li><code>http://localhost:*/**</code>: Flutter Web 개발 서버 포트가 바뀌어도 로그인 callback 을</li></ul>
 <p>허용하기 위한 개발용 wildcard.</p>
+<p>모바일 callback은 <code>supabase_flutter</code> 내부의 <code>app_links</code>가 세션으로 변환한다. Flutter Navigator의 기본 딥링크 처리까지 동시에 켜면 callback URL을 named route로 해석해 <code>_WidgetsAppState._onUnknownRoute</code> 오류가 발생한다. 따라서 URL scheme과 intent filter는 유지하되 기본 Flutter 딥링크 처리는 다음처럼 끈다.</p>
+<pre><code class="language-xml">&lt;!-- android/app/src/main/AndroidManifest.xml, MainActivity 안 --&gt;
+&lt;meta-data
+    android:name=&quot;flutter_deeplinking_enabled&quot;
+    android:value=&quot;false&quot; /&gt;</code></pre>
+<pre><code class="language-xml">&lt;!-- ios/Runner/Info.plist --&gt;
+&lt;key&gt;FlutterDeepLinkingEnabled&lt;/key&gt;
+&lt;false/&gt;</code></pre>
+<p>이 설정은 OS callback 등록을 끄는 것이 아니라 Flutter Navigator의 중복 처리를 끄는 설정이다. 실제 OAuth callback은 계속 <code>app_links</code>를 통해 Supabase Auth로 전달된다.</p>
 <p><code>Site URL</code>은 redirect URL 이 명시되지 않았거나 이메일 템플릿에서 기본 URL 이 필요할 때 쓰는 fallback 에 가깝다. dev 와 real 의 localhost 포트가 달라도 Redirect URLs 에 <code>http://localhost:*/**</code>가 있으면 개발 로그인은 정상 동작한다.</p>
 <p>배포 전 real 에서는 <code>Site URL</code>을 실제 웹 도메인으로 바꾼다.</p>
 <pre><code class="language-text">https://&lt;real-domain&gt;</code></pre>

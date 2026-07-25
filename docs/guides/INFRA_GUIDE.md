@@ -367,6 +367,11 @@ OAuth 인앱 브라우저 경로를 쓰지 않는다.
 iOS/Web 의 Google 로그인과 Kakao 로그인은 Supabase OAuth Authorization Code Flow 를
 사용한다. 모바일에서는 `LaunchMode.inAppBrowserView` 로 앱 바깥 기본 브라우저가 아니라
 Safari View Controller/플랫폼 인앱 브라우저 계열 화면을 연다.
+모바일 callback은 `supabase_flutter` 내부 `app_links`가 처리한다. Flutter Navigator가
+같은 URL을 named route로 중복 처리하지 않도록 Android
+`flutter_deeplinking_enabled=false`와 iOS `FlutterDeepLinkingEnabled=false`를
+유지한다. URL scheme/intent filter는 그대로 두며, 자세한 네이티브 설정은
+`DB_SETUP.md`의 Auth URL Configuration을 따른다.
 
 ```
 사용자 "Google로 로그인" 클릭 (iOS/Web OAuth 경로)
