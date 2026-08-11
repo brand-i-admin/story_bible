@@ -11,7 +11,6 @@ import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/daily_exploration_selection.dart';
 import '../../utils/scene_asset_loader.dart';
-import '../fading_horizontal_text_scroll.dart';
 import '../login_required_dialog.dart';
 import '../profile/companion_diary_entry_card.dart';
 import '../profile/profile_event_review_grid.dart';
@@ -21,6 +20,13 @@ import '../v2/region_event_list.dart'
     show StoryEventCardPresentation, StoryEventThumbCard;
 
 const _homeJourneyMissingBoundaryLabel = '이야기\n없음';
+const _homeJourneyViewportFraction = 0.30;
+const _homeJourneyCurrentWidthScale = 1.75;
+const _homeJourneyAdjacentHeightFraction = 0.62;
+const _homeJourneyBaseDeckHeight = 194.0;
+const _homeQuickActionTouchHeight = 48.0;
+const _homeQuickActionVisualHeight = 44.0;
+const _homeQuickActionMaxWidth = 156.0;
 
 class HomeJourneyOverlay extends StatelessWidget {
   const HomeJourneyOverlay({
@@ -156,7 +162,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     _currentPage = _initialPage();
     _pageController = PageController(
       initialPage: _currentPage,
-      viewportFraction: 0.32,
+      viewportFraction: _homeJourneyViewportFraction,
     );
   }
 
@@ -201,7 +207,8 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     final palette = AppPaletteTheme.of(context);
     final ordered = _orderedEvents();
     final textScale = MediaQuery.textScalerOf(context).scale(1);
-    final deckHeight = 186.0 + ((textScale - 1) * 80).clamp(0.0, 40.0);
+    final deckHeight =
+        _homeJourneyBaseDeckHeight + ((textScale - 1) * 80).clamp(0.0, 40.0);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -352,7 +359,8 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final baseWidth = constraints.maxWidth;
-        final expandedWidth = ((baseWidth - 10) * 1.5) + 10;
+        final expandedWidth =
+            ((baseWidth - 10) * _homeJourneyCurrentWidthScale) + 10;
         final horizontalShift = isCurrent
             ? 0.0
             : ((expandedWidth - baseWidth) / 2 - 10.5) *
@@ -437,7 +445,8 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
         final currentCardHeight =
             frameConstraints.maxHeight - currentCardTopInset;
         final adjacentTopInset =
-            frameConstraints.maxHeight - currentCardHeight * 0.7;
+            frameConstraints.maxHeight -
+            currentCardHeight * _homeJourneyAdjacentHeightFraction;
         return Stack(
           key: ValueKey('home-journey-card-${event.id}-$page'),
           clipBehavior: Clip.none,
@@ -534,7 +543,8 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final baseWidth = constraints.maxWidth;
-        final expandedWidth = ((baseWidth - 10) * 1.5) + 10;
+        final expandedWidth =
+            ((baseWidth - 10) * _homeJourneyCurrentWidthScale) + 10;
         final horizontalShift = isCurrent
             ? 0.0
             : ((expandedWidth - baseWidth) / 2 - 10.5) *
@@ -742,66 +752,60 @@ class _HomeQuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: _HomeQuickActionCard(
-              key: const ValueKey('home-diary-quick-action'),
-              effectId: 'diary',
-              icon: Icons.edit_note_rounded,
-              title: '다이어리',
-              previewTitle: diaryError == null ? _diaryTitle(todayDiary) : null,
-              subtitle: diaryError ?? _diaryBody(todayDiary),
-              subtitleMaxLines: 3,
-              previewTitleScrollKey: const ValueKey(
-                'home-diary-entry-title-scroll',
+    return SizedBox(
+      height: _homeQuickActionTouchHeight,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final buttonWidth = ((constraints.maxWidth - AppSpacing.x4) / 2)
+              .clamp(0.0, _homeQuickActionMaxWidth)
+              .toDouble();
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: buttonWidth,
+                child: _HomeQuickActionButton(
+                  key: const ValueKey('home-diary-quick-action'),
+                  effectId: 'diary',
+                  symbol: Icons.add_rounded,
+                  label: '다이어리 기록',
+                  semanticHint: _diarySemanticHint(),
+                  active: !diaryLoading && todayDiary == null,
+                  accent: palette.successBottom,
+                  onTap: diaryLoading ? null : () => _handleDiaryTap(context),
+                ),
               ),
-              previewTitleTextKey: const ValueKey('home-diary-entry-title'),
-              subtitleKey: const ValueKey('home-diary-entry-body'),
-              actionLabel: !diaryLoading && todayDiary == null
-                  ? '+ 기록하기'
-                  : null,
-              actionEffectActive: !diaryLoading && todayDiary == null,
-              accent: palette.successBottom,
-              onTap: diaryLoading ? null : () => _handleDiaryTap(context),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: _HomeQuickActionCard(
-              key: const ValueKey('home-bible-quick-action'),
-              effectId: 'bible',
-              icon: Icons.menu_book_rounded,
-              title: '통독',
-              subtitle: bibleTargetLabel,
-              subtitleMaxLines: 2,
-              actionLabel: '→ 이어읽기',
-              actionEffectActive: !bibleReadingCompleted,
-              accent: palette.primary,
-              onTap: () => _handleBibleTap(context),
-            ),
-          ),
-        ],
+              const SizedBox(width: AppSpacing.x4),
+              SizedBox(
+                width: buttonWidth,
+                child: _HomeQuickActionButton(
+                  key: const ValueKey('home-bible-quick-action'),
+                  effectId: 'bible',
+                  symbol: Icons.arrow_forward_rounded,
+                  label: '통독 이어읽기',
+                  semanticHint: '$bibleTargetLabel부터 계속 읽기',
+                  active: !bibleReadingCompleted,
+                  accent: palette.primary,
+                  onTap: () => _handleBibleTap(context),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  String? _diaryTitle(UserCompanionDiaryEntry? entry) {
-    final title = entry?.title.trim() ?? '';
-    return title.isEmpty ? null : title;
-  }
-
-  String _diaryBody(UserCompanionDiaryEntry? entry) {
+  String _diarySemanticHint() {
     if (diaryLoading) {
       return '오늘 기록을 불러오는 중이에요.';
     }
-    if (entry == null) {
-      return '오늘을 기록';
+    final error = diaryError?.trim() ?? '';
+    if (error.isNotEmpty) {
+      return error;
     }
-    final body = entry.body.trim();
-    return body.isEmpty ? '작성한 내용이 없습니다.' : body;
+    return todayDiary == null ? '새 다이어리 작성' : '오늘 다이어리 열기';
   }
 
   Future<void> _handleDiaryTap(BuildContext context) async {
@@ -933,37 +937,25 @@ class _HomeQuickActions extends StatelessWidget {
   }
 }
 
-class _HomeQuickActionCard extends StatelessWidget {
-  const _HomeQuickActionCard({
+class _HomeQuickActionButton extends StatelessWidget {
+  const _HomeQuickActionButton({
     super.key,
     required this.effectId,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
+    required this.symbol,
+    required this.label,
+    required this.semanticHint,
     required this.accent,
     required this.onTap,
-    this.actionLabel,
-    this.actionEffectActive = false,
-    this.subtitleMaxLines = 1,
-    this.previewTitle,
-    this.previewTitleScrollKey,
-    this.previewTitleTextKey,
-    this.subtitleKey,
+    required this.active,
   });
 
   final String effectId;
-  final IconData icon;
-  final String title;
-  final String subtitle;
+  final IconData symbol;
+  final String label;
+  final String semanticHint;
   final Color accent;
   final VoidCallback? onTap;
-  final String? actionLabel;
-  final bool actionEffectActive;
-  final int subtitleMaxLines;
-  final String? previewTitle;
-  final Key? previewTitleScrollKey;
-  final Key? previewTitleTextKey;
-  final Key? subtitleKey;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
@@ -973,149 +965,49 @@ class _HomeQuickActionCard extends StatelessWidget {
       accent.withValues(alpha: darkSurface ? 0.18 : 0.10),
       palette.cardSurface,
     );
-    return Material(
-      color: surface,
-      borderRadius: BorderRadius.circular(19),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(19),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 82),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(19),
-            border: Border.all(color: accent.withValues(alpha: 0.20)),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: accent.withValues(alpha: 0.18),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(icon, color: accent, size: 23),
-                  ),
-                  const SizedBox(width: 9),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          softWrap: false,
-                          style: TextStyle(
-                            color: palette.text,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w900,
-                            height: 1.1,
-                          ),
-                        ),
-                        if (previewTitle != null) ...[
-                          const SizedBox(height: 4),
-                          FadingHorizontalTextScroll(
-                            text: previewTitle!,
-                            scrollKey: previewTitleScrollKey,
-                            textKey: previewTitleTextKey,
-                            textScaler: MediaQuery.textScalerOf(context),
-                            style: TextStyle(
-                              color: palette.text,
-                              fontSize: 12.2,
-                              fontWeight: FontWeight.w900,
-                              height: 1.15,
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle,
-                          key: subtitleKey,
-                          maxLines: subtitleMaxLines,
-                          overflow: TextOverflow.ellipsis,
-                          softWrap: true,
-                          style: TextStyle(
-                            color: palette.mutedText,
-                            fontSize: 11.4,
-                            fontWeight: FontWeight.w800,
-                            height: 1.1,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              if (actionLabel != null) ...[
-                const SizedBox(height: 6),
-                _HomeQuickActionCta(
-                  effectId: effectId,
-                  label: actionLabel!,
-                  accent: accent,
-                  active: actionEffectActive,
-                ),
-              ],
-            ],
-          ),
+    return Semantics(
+      button: true,
+      enabled: onTap != null,
+      label: label,
+      hint: semanticHint,
+      excludeSemantics: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical:
+              (_homeQuickActionTouchHeight - _homeQuickActionVisualHeight) / 2,
         ),
-      ),
-    );
-  }
-}
-
-class _HomeQuickActionCta extends StatelessWidget {
-  const _HomeQuickActionCta({
-    required this.effectId,
-    required this.label,
-    required this.accent,
-    required this.active,
-  });
-
-  final String effectId;
-  final String label;
-  final Color accent;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    final textScale = MediaQuery.textScalerOf(context).scale(1);
-    final horizontalPadding = textScale > 1.2 ? 7.0 : 10.0;
-    return Align(
-      alignment: Alignment.center,
-      child: PulseHighlight(
-        key: ValueKey('home-$effectId-quick-action-cta-glow'),
-        active: active,
-        pulseCount: null,
-        duration: const Duration(milliseconds: 1900),
-        borderRadius: BorderRadius.circular(AppRadii.pill),
-        color: accent,
-        child: Container(
-          key: ValueKey('home-$effectId-quick-action-cta'),
-          padding: EdgeInsets.symmetric(
-            horizontal: horizontalPadding,
-            vertical: 6,
-          ),
-          decoration: BoxDecoration(
-            color: Color.alphaBlend(
-              accent.withValues(alpha: 0.13),
-              palette.cardSurface,
+        child: PulseHighlight(
+          key: ValueKey('home-$effectId-quick-action-cta-glow'),
+          active: active,
+          pulseCount: null,
+          duration: const Duration(milliseconds: 1900),
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+          color: accent,
+          child: Material(
+            color: surface,
+            borderRadius: BorderRadius.circular(AppRadii.xl),
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(AppRadii.xl),
+              child: Container(
+                key: ValueKey('home-$effectId-quick-action-cta'),
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.x5,
+                  vertical: AppSpacing.x2,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppRadii.xl),
+                  border: Border.all(color: accent.withValues(alpha: 0.32)),
+                ),
+                child: _HomeQuickActionLabel(
+                  effectId: effectId,
+                  symbol: symbol,
+                  label: label,
+                  accent: accent,
+                ),
+              ),
             ),
-            borderRadius: BorderRadius.circular(AppRadii.pill),
-            border: Border.all(color: accent.withValues(alpha: 0.42)),
-          ),
-          child: _HomeQuickActionLabel(
-            effectId: effectId,
-            label: label,
-            accent: accent,
           ),
         ),
       ),
@@ -1126,60 +1018,50 @@ class _HomeQuickActionCta extends StatelessWidget {
 class _HomeQuickActionLabel extends StatelessWidget {
   const _HomeQuickActionLabel({
     required this.effectId,
+    required this.symbol,
     required this.label,
     required this.accent,
   });
 
   final String effectId;
+  final IconData symbol;
   final String label;
   final Color accent;
 
   @override
   Widget build(BuildContext context) {
-    final isDiary = label.startsWith('+');
-    final actionText = label.replaceFirst(isDiary ? '+' : '→', '').trimLeft();
-    return Semantics(
-      label: label,
-      excludeSemantics: true,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        alignment: Alignment.center,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              key: ValueKey('home-$effectId-quick-action-symbol-ring'),
-              width: 18,
-              height: 18,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: accent.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-                border: Border.all(color: accent.withValues(alpha: 0.58)),
-              ),
-              child: Icon(
-                isDiary ? Icons.add_rounded : Icons.arrow_forward_rounded,
-                size: 14,
-                color: accent,
-              ),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.center,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            key: ValueKey('home-$effectId-quick-action-symbol-ring'),
+            width: 22,
+            height: 22,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+              border: Border.all(color: accent.withValues(alpha: 0.58)),
             ),
-            const SizedBox(width: 3),
-            Text(
-              actionText,
-              key: ValueKey(
-                'home-quick-action-label-${label.replaceAll(' ', '-')}',
-              ),
-              maxLines: 1,
-              softWrap: false,
-              style: TextStyle(
-                color: accent,
-                fontSize: 11.6,
-                fontWeight: FontWeight.w900,
-                height: 1.1,
-              ),
+            child: Icon(symbol, size: 16, color: accent),
+          ),
+          const SizedBox(width: AppSpacing.x3),
+          Text(
+            label,
+            key: ValueKey('home-quick-action-label-$effectId'),
+            maxLines: 1,
+            softWrap: false,
+            style: TextStyle(
+              color: accent,
+              fontSize: AppFontSizes.btn,
+              fontWeight: FontWeight.w900,
+              height: AppLineHeights.tight,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
