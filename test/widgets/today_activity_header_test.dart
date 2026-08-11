@@ -9,7 +9,7 @@ import 'package:story_bible/widgets/home/story_root_navigation_bar.dart';
 import 'package:story_bible/widgets/home/today_activity_header.dart';
 
 void main() {
-  testWidgets('오늘 인사와 KST 일일 활동 라벨을 표시한다', (tester) async {
+  testWidgets('오늘 인사와 KST 일일 활동 라벨을 분리해 표시한다', (tester) async {
     final dialogVisibilityChanges = <bool>[];
     await tester.binding.setSurfaceSize(const Size(390, 780));
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -19,8 +19,8 @@ void main() {
         home: Scaffold(
           body: Column(
             children: [
-              TodayActivityHeader(
-                nickname: '기도친구',
+              const TodayActivityHeader(nickname: '기도친구'),
+              TodayActivityLabelRail(
                 summary: const TodayActivitySummary(
                   streakDays: 5,
                   explorationCount: 3,
@@ -103,20 +103,20 @@ void main() {
       findsOneWidget,
     );
 
-    final headerRect = tester.getRect(
-      find.byKey(const ValueKey('today-activity-header')),
+    final railRect = tester.getRect(
+      find.byKey(const ValueKey('today-activity-label-rail')),
     );
     for (final label in ['연속: 5일', '이야기: 3개', '다이어리: o', '통독: 4장']) {
       final labelRect = tester.getRect(find.text(label));
-      expect(labelRect.left, greaterThanOrEqualTo(headerRect.left));
-      expect(labelRect.right, lessThanOrEqualTo(headerRect.right));
+      expect(labelRect.left, greaterThanOrEqualTo(railRect.left));
+      expect(labelRect.right, lessThanOrEqualTo(railRect.right));
     }
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('today-activity-header')),
         matching: find.byKey(const ValueKey('today-activity-label-rail')),
       ),
-      findsOneWidget,
+      findsNothing,
     );
 
     final greeting = tester.widget<Text>(
@@ -170,8 +170,7 @@ void main() {
         MaterialApp(
           theme: ThemeData(extensions: [AppPaletteTheme(palette)]),
           home: const Scaffold(
-            body: TodayActivityHeader(
-              nickname: '기도친구',
+            body: TodayActivityLabelRail(
               summary: TodayActivitySummary(
                 streakDays: 5,
                 explorationCount: 1,
@@ -204,10 +203,8 @@ void main() {
         home: Scaffold(
           body: Column(
             children: [
-              TodayActivityHeader(
-                nickname: '',
-                summary: TodayActivitySummary.empty,
-              ),
+              TodayActivityHeader(nickname: ''),
+              TodayActivityLabelRail(summary: TodayActivitySummary.empty),
             ],
           ),
         ),

@@ -2784,9 +2784,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   }
 
   Widget _buildProfileRootTab() {
+    final state = ref.watch(storyControllerProvider);
+    final user = ref.watch(signedInUserProvider);
+    final now = DateTime.now();
+    final activitySummary = user == null
+        ? TodayActivitySummary.empty
+        : summarizeTodayActivity(
+            now: now,
+            emotionMarks: state.eventEmotionMarks,
+            diaryEntries: _homeDiaryEntries,
+            bibleChapterReadAts: state.completedBibleChapterReadAts,
+          );
     return ProfileTabPage(
       key: _profileTabKey,
       embedded: true,
+      activitySummary: activitySummary,
       onStartQuiz: _startQuiz,
       onOpenEventDetail: (event, {source}) {
         unawaited(

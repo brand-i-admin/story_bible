@@ -16,20 +16,12 @@ abstract final class TodayActivityIcons {
 }
 
 class TodayActivityHeader extends StatelessWidget {
-  const TodayActivityHeader({
-    super.key,
-    required this.nickname,
-    required this.summary,
-    this.actions,
-    this.onStreakDialogVisibilityChanged,
-  });
+  const TodayActivityHeader({super.key, required this.nickname, this.actions});
 
-  static const double mapObscuredExtent = 88;
+  static const double mapObscuredExtent = 60;
 
   final String nickname;
-  final TodayActivitySummary summary;
   final Widget? actions;
-  final ValueChanged<bool>? onStreakDialogVisibilityChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -112,12 +104,6 @@ class TodayActivityHeader extends StatelessWidget {
                     actions!,
                   ],
                 ],
-              ),
-              const SizedBox(height: 6),
-              TodayActivityLabelRail(
-                summary: summary,
-                onStreakDialogVisibilityChanged:
-                    onStreakDialogVisibilityChanged,
               ),
             ],
           ),

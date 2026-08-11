@@ -35,7 +35,9 @@ import '../theme/typography.dart';
 import '../utils/bible_book_meta.dart';
 import '../utils/kst_date.dart';
 import '../utils/scene_asset_loader.dart';
+import '../utils/today_activity_summary.dart';
 import 'home/story_root_navigation_bar.dart';
+import 'home/today_activity_header.dart';
 import 'inline_login_prompt_card.dart';
 import 'map/map_attribution_dialog.dart';
 import 'notification/notification_bell_button.dart';
@@ -105,6 +107,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
     this.onExploreStoriesFromHome,
     this.onBackToHome,
     this.embedded = false,
+    this.activitySummary = TodayActivitySummary.empty,
   });
 
   final void Function(String eventId) onStartQuiz;
@@ -121,6 +124,7 @@ class ProfileTabPage extends ConsumerStatefulWidget {
   final VoidCallback? onExploreStoriesFromHome;
   final VoidCallback? onBackToHome;
   final bool embedded;
+  final TodayActivitySummary activitySummary;
 
   @override
   ConsumerState<ProfileTabPage> createState() => ProfileTabPageState();
@@ -877,6 +881,15 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildProfileHeader(profile),
+                  const SizedBox(height: 6),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.x2,
+                    ),
+                    child: TodayActivityLabelRail(
+                      summary: widget.activitySummary,
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   _buildProfileProgressSection(scrollBody: false),
                   if (showPrayerActivitySection) ...[
@@ -907,6 +920,11 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildProfileHeader(profile),
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x2),
+                child: TodayActivityLabelRail(summary: widget.activitySummary),
+              ),
               const SizedBox(height: 12),
               Expanded(
                 child: showPrayerActivitySection
@@ -1169,7 +1187,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
       showBackButton: !widget.embedded,
       compactTopPadding: 0,
       topSurfaceColor: storyRootNavigationSurfaceColor(palette),
-      topSurfaceExtent: 48,
+      topSurfaceExtent: 80,
       onBack: widget.onBackToHome,
       child: Stack(
         children: [

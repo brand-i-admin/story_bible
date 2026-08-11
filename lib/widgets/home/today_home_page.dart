@@ -316,7 +316,6 @@ class TodayHomePage extends StatefulWidget {
 }
 
 class _TodayHomePageState extends State<TodayHomePage> {
-  static const Duration _modalMapInputLockDuration = Duration(hours: 1);
   final SceneAssetLoader _sceneAssetLoader = SceneAssetLoader();
   final GlobalKey _stackKey = GlobalKey(debugLabel: 'today-stack');
   final GlobalKey _headerAnchorKey = GlobalKey(
@@ -423,17 +422,6 @@ class _TodayHomePageState extends State<TodayHomePage> {
         _renderedEraLabelTop = eraLabelTop;
       });
     });
-  }
-
-  void _setStreakDialogMapInputBlocked(bool blocked) {
-    if (blocked) {
-      widget.mapController.suppressMapTaps(_modalMapInputLockDuration);
-      widget.mapController.suspendMapGestures(_modalMapInputLockDuration);
-      return;
-    }
-    widget.mapController.clearMapTapSuppression();
-    widget.mapController.suppressMapTaps(const Duration(milliseconds: 1200));
-    widget.mapController.clearMapGestureSuspension();
   }
 
   Future<void> _loadCurrentThumbnail(String? eventId) async {
@@ -584,9 +572,6 @@ class _TodayHomePageState extends State<TodayHomePage> {
                   child: TodayActivityHeader(
                     key: _headerAnchorKey,
                     nickname: widget.nickname,
-                    summary: widget.activitySummary,
-                    onStreakDialogVisibilityChanged:
-                        _setStreakDialogMapInputBlocked,
                     actions: _TodayHeaderActions(
                       onOpenFontSettings: widget.onOpenFontSettings,
                       onOpenThemeSettings: widget.onOpenThemeSettings,

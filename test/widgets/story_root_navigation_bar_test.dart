@@ -294,8 +294,8 @@ void main() {
       todaySource,
       contains("key: const ValueKey('today-header-map-input-blocker')"),
     );
-    expect(todaySource, contains('onStreakDialogVisibilityChanged:'));
-    expect(todaySource, contains('Duration(hours: 1)'));
+    expect(todaySource, isNot(contains('onStreakDialogVisibilityChanged:')));
+    expect(todaySource, isNot(contains('Duration(hours: 1)')));
     expect(
       homeSource,
       contains(
@@ -353,6 +353,7 @@ void main() {
     ).readAsStringSync();
 
     expect(source, contains('TodayActivityHeader('));
+    expect(source, isNot(contains('TodayActivityLabelRail(')));
     expect(source, contains('const TodayTodoGuide()'));
     expect(source, isNot(contains('MapHintOverlay(')));
     expect(source, contains('_todayGuideDismissed'));
@@ -384,6 +385,19 @@ void main() {
     expect(source, isNot(contains('constraints.maxHeight * 0.43')));
     expect(source, contains('HomeJourneyOverlay('));
     expect(source, contains('bottom: 8'));
+  });
+
+  test('내정보 화면은 헤더 아래에 오늘 활동 라벨을 제공한다', () {
+    final homeSource = File(
+      'lib/screens/story_home_screen_state.dart',
+    ).readAsStringSync();
+    final profileSource = File(
+      'lib/widgets/profile_tab_page.dart',
+    ).readAsStringSync();
+
+    expect(homeSource, contains('activitySummary: activitySummary'));
+    expect(profileSource, contains('TodayActivityLabelRail('));
+    expect(profileSource, contains('summary: widget.activitySummary'));
   });
 
   test('오늘 지도는 역할 핀 경로와 촘촘한 세 사건 전용 확대 상한을 사용한다', () {

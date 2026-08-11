@@ -27,6 +27,7 @@ import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/state/story_state.dart';
 import 'package:story_bible/theme/app_color_palette.dart';
 import 'package:story_bible/theme/app_theme.dart';
+import 'package:story_bible/utils/today_activity_summary.dart';
 import 'package:story_bible/widgets/home/story_root_navigation_bar.dart';
 import 'package:story_bible/widgets/inline_login_prompt_card.dart';
 import 'package:story_bible/widgets/parchment_page_scaffold.dart';
@@ -345,6 +346,41 @@ void main() {
     final surface = tester.widget<ColoredBox>(surfaceFinder);
     final palette = AppPaletteTheme.of(tester.element(surfaceFinder));
     expect(surface.color, storyRootNavigationSurfaceColor(palette));
+  });
+
+  testWidgets('내정보 헤더 아래에 KST 일일 활동 라벨을 표시한다', (tester) async {
+    await _pumpProfileTab(
+      tester,
+      user: user,
+      storyRepository: storyRepository,
+      userRepository: userRepository,
+      supabaseClient: supabaseClient,
+      activitySummary: const TodayActivitySummary(
+        streakDays: 5,
+        explorationCount: 3,
+        hasDiary: true,
+        bibleChapterCount: 4,
+      ),
+    );
+
+    final header = find.byKey(const ValueKey('profile-header-identity'));
+    final rail = find.byKey(const ValueKey('today-activity-label-rail'));
+    final bodyShell = find.byKey(const ValueKey('profile-body-shell')).first;
+
+    expect(find.text('연속: 5일'), findsOneWidget);
+    expect(find.text('이야기: 3개'), findsOneWidget);
+    expect(find.text('다이어리: o'), findsOneWidget);
+    expect(find.text('통독: 4장'), findsOneWidget);
+    expect(rail, findsOneWidget);
+    expect(
+      tester.getBottomLeft(header).dy,
+      lessThan(tester.getTopLeft(rail).dy),
+    );
+    expect(
+      tester.getBottomLeft(rail).dy,
+      lessThan(tester.getTopLeft(bodyShell).dy),
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('내정보 본문 쉘은 헤더와 겹치지 않게 아래에 배치한다', (tester) async {
@@ -2151,6 +2187,7 @@ Future<void> _pumpProfileTab(
   StateProvider<User?>? authUserStateProvider,
   VoidCallback? onExploreStoriesFromHome,
   ProfileEventDetailCallback? onOpenEventDetail,
+  TodayActivitySummary activitySummary = TodayActivitySummary.empty,
 }) async {
   final notificationRepository = _MockNotificationRepository();
   when(
@@ -2183,6 +2220,7 @@ Future<void> _pumpProfileTab(
           child: TickerMode(
             enabled: tickerEnabled,
             child: ProfileTabPage(
+              activitySummary: activitySummary,
               onStartQuiz: (_) {},
               onOpenEventDetail: onOpenEventDetail ?? (_, {source}) {},
               onOpenBibleReader:
