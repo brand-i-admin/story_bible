@@ -2909,6 +2909,10 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
       final markerThumbnailUrl = widget.markerPresentation.thumbnailUrlFor(
         event.id,
       );
+      final orderNumber = widget.markerPresentation.orderNumberFor(
+        event.id,
+        fallback: i + 1,
+      );
       final hasEmotion =
           emotionMark != null && emotionMark.emotionKey.isNotEmpty;
       features.add({
@@ -2920,7 +2924,7 @@ class _StoryTerrain3dMapState extends State<StoryTerrain3dMap>
         'properties': {
           'id': event.id,
           'title': event.title,
-          'label': '${i + 1}',
+          'label': '$orderNumber',
           'journeyRole': markerRole,
           'journeyMode': widget.markerPresentation.isDailyJourney,
           'thumbnailUrl': markerThumbnailUrl,

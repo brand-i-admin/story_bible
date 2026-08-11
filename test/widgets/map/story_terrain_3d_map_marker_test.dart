@@ -42,6 +42,11 @@ void main() {
         todaySource,
         contains('StoryEventMarkerPresentation.dailyJourney('),
       );
+      expect(todaySource, contains('orderNumberByEventId:'));
+      expect(
+        terrainSource,
+        contains('widget.markerPresentation.orderNumberFor('),
+      );
     });
 
     test('MapLibre marker root is separate from the circular pin button', () {

@@ -18,6 +18,7 @@ class ParchmentDialog extends StatelessWidget {
     this.padding = const EdgeInsets.fromLTRB(20, 18, 20, 16),
     this.showCloseButton = false,
     this.onClose,
+    this.flexibleContent = false,
   });
 
   final String title;
@@ -28,6 +29,7 @@ class ParchmentDialog extends StatelessWidget {
   final EdgeInsets padding;
   final bool showCloseButton;
   final VoidCallback? onClose;
+  final bool flexibleContent;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +99,10 @@ class ParchmentDialog extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 14),
-              child,
+              if (flexibleContent)
+                Flexible(fit: FlexFit.loose, child: child)
+              else
+                child,
               if (actions.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 Wrap(

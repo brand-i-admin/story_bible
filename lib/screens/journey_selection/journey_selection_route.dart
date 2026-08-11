@@ -1,0 +1,1 @@
+const journeySelectionRouteName = '/journey-selection';

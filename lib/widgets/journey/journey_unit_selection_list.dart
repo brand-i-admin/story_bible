@@ -1,0 +1,421 @@
+import 'package:flutter/material.dart';
+
+import '../../theme/app_color_palette.dart';
+import '../../theme/tokens.dart';
+import '../../utils/journey_filtering.dart';
+import '../fading_horizontal_text_scroll.dart';
+
+class JourneyUnitSelectionList extends StatefulWidget {
+  const JourneyUnitSelectionList({
+    super.key,
+    required this.groups,
+    required this.selectedUnitKeys,
+    required this.onSelectionChanged,
+    this.targetBadgeLabel,
+    this.expandPartiallySelectedEras = true,
+    this.showEraLabel = false,
+  });
+
+  final List<JourneyEraGroup> groups;
+  final Set<String> selectedUnitKeys;
+  final ValueChanged<Set<String>> onSelectionChanged;
+  final String? targetBadgeLabel;
+  final bool expandPartiallySelectedEras;
+  final bool showEraLabel;
+
+  @override
+  State<JourneyUnitSelectionList> createState() =>
+      _JourneyUnitSelectionListState();
+}
+
+class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
+  final Set<String> _expandedEraIds = <String>{};
+  final Set<String> _initializedEraIds = <String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeGroupExpansion(widget.groups);
+  }
+
+  @override
+  void didUpdateWidget(covariant JourneyUnitSelectionList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _initializeGroupExpansion(widget.groups);
+  }
+
+  void _initializeGroupExpansion(Iterable<JourneyEraGroup> groups) {
+    for (final group in groups) {
+      if (!_initializedEraIds.add(group.era.id)) continue;
+      final selectedCount = group.units
+          .where((unit) => widget.selectedUnitKeys.contains(unit.key))
+          .length;
+      if (widget.expandPartiallySelectedEras &&
+          selectedCount > 0 &&
+          selectedCount < group.units.length) {
+        _expandedEraIds.add(group.era.id);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.groups.isEmpty) {
+      final palette = AppPaletteTheme.of(context);
+      return Container(
+        padding: const EdgeInsets.all(AppSpacing.x6),
+        decoration: BoxDecoration(
+          color: palette.mutedSurface,
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+          border: Border.all(color: palette.subtleBorder),
+        ),
+        child: Text(
+          '선택할 수 있는 시대 구간이 없습니다.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: palette.mutedText,
+            fontSize: AppFontSizes.base,
+          ),
+        ),
+      );
+    }
+    return Column(
+      children: [
+        for (var index = 0; index < widget.groups.length; index++) ...[
+          _buildEraCard(context, widget.groups[index]),
+          if (index + 1 < widget.groups.length)
+            const SizedBox(height: AppSpacing.x3),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildEraCard(BuildContext context, JourneyEraGroup group) {
+    final palette = AppPaletteTheme.of(context);
+    final keys = group.units.map((unit) => unit.key).toSet();
+    final selectedCount = keys.intersection(widget.selectedUnitKeys).length;
+    final allSelected = selectedCount == keys.length && keys.isNotEmpty;
+    final partiallySelected = selectedCount > 0 && !allSelected;
+    final expanded = _expandedEraIds.contains(group.era.id);
+    final bibleBooks = group.bibleBookNames.isEmpty
+        ? '연결된 성경 권 없음'
+        : group.bibleBookNames.join(' · ');
+    return Container(
+      key: ValueKey('journey-era-${group.era.code}'),
+      decoration: BoxDecoration(
+        color: palette.cardSurface,
+        borderRadius: BorderRadius.circular(AppRadii.xl),
+        border: Border.all(
+          color: selectedCount > 0
+              ? palette.selectedBorder
+              : palette.subtleBorder,
+        ),
+        boxShadow: AppShadows.sm,
+      ),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              setState(() {
+                if (expanded) {
+                  _expandedEraIds.remove(group.era.id);
+                } else {
+                  _expandedEraIds.add(group.era.id);
+                }
+              });
+            },
+            borderRadius: BorderRadius.circular(AppRadii.xl),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.x4),
+              child: Row(
+                children: [
+                  Checkbox(
+                    value: partiallySelected ? null : allSelected,
+                    tristate: true,
+                    onChanged: (_) => _toggleEra(group, !allSelected),
+                  ),
+                  const SizedBox(width: AppSpacing.x2),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (widget.showEraLabel)
+                          _FadingEraTitleRow(
+                            eraCode: group.era.code,
+                            friendlyTitle: group.friendlyTitle,
+                            eraName: group.era.name,
+                          )
+                        else
+                          Text(
+                            group.friendlyTitle,
+                            style: TextStyle(
+                              color: palette.text,
+                              fontSize: AppFontSizes.chip,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        const SizedBox(height: AppSpacing.x1),
+                        FadingHorizontalTextScroll(
+                          text: bibleBooks,
+                          scrollKey: ValueKey(
+                            'journey-era-books-scroll-${group.era.code}',
+                          ),
+                          textScaler: MediaQuery.textScalerOf(context),
+                          style: TextStyle(
+                            color: palette.characterAccent,
+                            fontSize: AppFontSizes.sm,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    expanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    color: palette.mutedText,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (expanded) ...[
+            Divider(height: 1, color: palette.subtleBorder),
+            for (final unit in group.units) _buildUnitRow(context, unit),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUnitRow(BuildContext context, JourneyUnitGroup unit) {
+    final palette = AppPaletteTheme.of(context);
+    final selected = widget.selectedUnitKeys.contains(unit.key);
+    final targetLabel = widget.targetBadgeLabel;
+    return Material(
+      key: ValueKey('journey-unit-${unit.key}'),
+      color: selected
+          ? Color.alphaBlend(palette.selectedSurface, palette.cardSurface)
+          : Colors.transparent,
+      child: InkWell(
+        onTap: () => _toggleUnit(unit.key, !selected),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.x6,
+            AppSpacing.x3,
+            AppSpacing.x4,
+            AppSpacing.x3,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Checkbox(
+                value: selected,
+                onChanged: (value) => _toggleUnit(unit.key, value ?? false),
+              ),
+              const SizedBox(width: AppSpacing.x2),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FadingHorizontalTextScroll(
+                      text: unit.title,
+                      scrollKey: ValueKey(
+                        'journey-unit-title-scroll-${unit.key}',
+                      ),
+                      textScaler: MediaQuery.textScalerOf(context),
+                      style: TextStyle(
+                        color: palette.text,
+                        fontSize: AppFontSizes.base,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (targetLabel != null && unit.containsTarget) ...[
+                      const SizedBox(height: AppSpacing.x1),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.x2,
+                            vertical: AppSpacing.x1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: palette.selectionFill,
+                            borderRadius: BorderRadius.circular(AppRadii.pill),
+                            border: Border.all(color: palette.selectedBorder),
+                          ),
+                          child: Text(
+                            '$targetLabel ${unit.targetEventCount}개',
+                            style: TextStyle(
+                              color: palette.primaryDeep,
+                              fontSize: AppFontSizes.xs,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _toggleEra(JourneyEraGroup group, bool selected) {
+    final next = {...widget.selectedUnitKeys};
+    for (final unit in group.units) {
+      if (selected) {
+        next.add(unit.key);
+      } else {
+        next.remove(unit.key);
+      }
+    }
+    if (selected) {
+      setState(() => _expandedEraIds.remove(group.era.id));
+    }
+    widget.onSelectionChanged(next);
+  }
+
+  void _toggleUnit(String key, bool selected) {
+    final next = {...widget.selectedUnitKeys};
+    if (selected) {
+      next.add(key);
+    } else {
+      next.remove(key);
+    }
+    widget.onSelectionChanged(next);
+  }
+}
+
+class _FadingEraTitleRow extends StatefulWidget {
+  const _FadingEraTitleRow({
+    required this.eraCode,
+    required this.friendlyTitle,
+    required this.eraName,
+  });
+
+  final String eraCode;
+  final String friendlyTitle;
+  final String eraName;
+
+  @override
+  State<_FadingEraTitleRow> createState() => _FadingEraTitleRowState();
+}
+
+class _FadingEraTitleRowState extends State<_FadingEraTitleRow> {
+  final ScrollController _controller = ScrollController();
+  bool _hasOverflow = false;
+  bool _atEnd = true;
+  bool _checkScheduled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_syncScrollState);
+  }
+
+  @override
+  void dispose() {
+    _controller
+      ..removeListener(_syncScrollState)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _scheduleOverflowCheck() {
+    if (_checkScheduled) return;
+    _checkScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkScheduled = false;
+      if (mounted) _syncScrollState();
+    });
+  }
+
+  void _syncScrollState() {
+    if (!_controller.hasClients) return;
+    final position = _controller.position;
+    final hasOverflow = position.maxScrollExtent > 0;
+    final atEnd =
+        !hasOverflow || position.pixels >= position.maxScrollExtent - 1;
+    if (_hasOverflow == hasOverflow && _atEnd == atEnd) return;
+    setState(() {
+      _hasOverflow = hasOverflow;
+      _atEnd = atEnd;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _scheduleOverflowCheck();
+    final palette = AppPaletteTheme.of(context);
+    final showFade = _hasOverflow && !_atEnd;
+    return Semantics(
+      label: '${widget.friendlyTitle}, ${widget.eraName}',
+      child: ExcludeSemantics(
+        child: ShaderMask(
+          shaderCallback: (bounds) => LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            stops: const [0, 0.72, 0.9, 1],
+            colors: [
+              Colors.white,
+              Colors.white,
+              showFade ? const Color(0x88FFFFFF) : Colors.white,
+              showFade ? const Color(0x00FFFFFF) : Colors.white,
+            ],
+          ).createShader(bounds),
+          blendMode: BlendMode.dstIn,
+          child: SingleChildScrollView(
+            key: ValueKey('journey-era-title-scroll-${widget.eraCode}'),
+            controller: _controller,
+            scrollDirection: Axis.horizontal,
+            physics: const ClampingScrollPhysics(),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.friendlyTitle,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    color: palette.text,
+                    fontSize: AppFontSizes.chip,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.x2),
+                Container(
+                  key: ValueKey('journey-era-label-${widget.eraCode}'),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.x2,
+                    vertical: AppSpacing.x1,
+                  ),
+                  decoration: BoxDecoration(
+                    color: palette.selectionFill,
+                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                    border: Border.all(color: palette.selectedBorder),
+                  ),
+                  child: Text(
+                    widget.eraName,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: TextStyle(
+                      color: palette.primaryDeep,
+                      fontSize: AppFontSizes.xs,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -397,7 +397,7 @@ void main() {
     expect(pickedMode, SelectionMode.region);
   });
 
-  testWidgets('시대 선택 칩은 짧은 라벨을 쓰고 검수 전 시대를 숨긴다', (tester) async {
+  testWidgets('시대 선택 칩은 짧은 라벨을 쓰고 운영 11시대를 모두 보여준다', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -424,6 +424,7 @@ void main() {
       '포로 및 포로 후기',
       '사도',
       '후기 사도',
+      '역사의 종결',
     ]) {
       expect(find.text(label), findsOneWidget);
     }
@@ -437,7 +438,6 @@ void main() {
       '포로 및 포로 후기 시대',
       '사도의 시대',
       '후기 사도의 시대',
-      '역사의 종결',
     ]) {
       expect(find.text(label), findsNothing);
     }

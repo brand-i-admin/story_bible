@@ -39,6 +39,7 @@ class Era {
   }
 }
 
-const hiddenEraCodes = <String>{'era_nt_consummation'};
+/// 운영 DB에서 published 상태인 11개 시대를 모두 앱에 노출한다.
+const hiddenEraCodes = <String>{};
 
 bool isHiddenEraCode(String code) => hiddenEraCodes.contains(code);

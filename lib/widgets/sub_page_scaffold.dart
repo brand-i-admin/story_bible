@@ -16,6 +16,7 @@ class SubPageScaffold extends StatefulWidget {
     required this.title,
     required this.child,
     this.compactBackOnly = false,
+    this.plainHeader = false,
     this.showBackButton = true,
     this.compactTopPadding = 4,
     this.topSurfaceColor,
@@ -26,6 +27,7 @@ class SubPageScaffold extends StatefulWidget {
   final String title;
   final Widget child;
   final bool compactBackOnly;
+  final bool plainHeader;
   final bool showBackButton;
   final double compactTopPadding;
   final Color? topSurfaceColor;
@@ -132,6 +134,52 @@ class _SubPageScaffoldState extends State<SubPageScaffold> {
                 ? Padding(
                     padding: EdgeInsets.only(top: widget.compactTopPadding),
                     child: widget.child,
+                  )
+                : widget.plainHeader
+                ? Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 4, 16, 4),
+                        child: Row(
+                          key: const ValueKey('sub-page-plain-header'),
+                          children: [
+                            if (widget.showBackButton) ...[
+                              IconButton(
+                                key: const ValueKey('sub-page-plain-back'),
+                                tooltip: '이전',
+                                onPressed: _handleBack,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(
+                                  minWidth: 40,
+                                  minHeight: 40,
+                                ),
+                                icon: Icon(
+                                  Icons.chevron_left_rounded,
+                                  size: 28,
+                                  color: palette.primaryDeep,
+                                ),
+                              ),
+                              const SizedBox(width: 2),
+                            ],
+                            Expanded(
+                              child: Text(
+                                widget.title,
+                                maxLines: largeText ? 2 : 1,
+                                overflow: largeText
+                                    ? TextOverflow.visible
+                                    : TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: palette.text,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(child: widget.child),
+                    ],
                   )
                 : Column(
                     children: [

@@ -8,8 +8,6 @@
 > 자동 생성 소스: `assets/events/*.json`, `assets/landmarks/landmarks.json`, `tools/seed/character_meta.json`.
 > 데이터 변경 후 `make build-guides`를 실행해 이 문서와 HTML 가이드를 함께 갱신한다.
 
-> 참고: `era_nt_consummation` 9개 사건은 현재 앱에서 숨김 era로 취급된다.
-
 ## 목차
 
 - [원역사 (8개)](#era-primeval) — 구약, B.C. 4000 ~ B.C. 2000경
@@ -22,7 +20,7 @@
 - [예수님의 공생애 (51개)](#era-nt-public-ministry) — 신약, A.D. 27 ~ A.D. 33경
 - [사도 (44개)](#era-nt-apostolic) — 신약, A.D. 33 ~ A.D. 70경
 - [후기 사도 (29개)](#era-nt-post-apostolic) — 신약, A.D. 45 ~ A.D. 100경
-- [역사의 종결 (9개)](#era-nt-consummation) — 신약, — · 앱 숨김
+- [역사의 종결 (9개)](#era-nt-consummation) — 신약, —
 
 ---
 
@@ -5743,7 +5741,6 @@
 - **언약**: 신약
 - **추정 연대**: —
 - **사건 수**: 9
-- **앱 노출**: `hiddenEraCodes`로 숨김
 
 | # | 제목 | 구간 | 인물 | 장소 | 연대 | 성경 |
 |---|------|------|------|------|------|------|

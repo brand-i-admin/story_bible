@@ -1466,6 +1466,7 @@ class _EmotionEngravingDialogState extends State<EmotionEngravingDialog> {
       title: '지도 위에 새기기',
       subtitle: widget.eventTitle,
       showCloseButton: true,
+      flexibleContent: true,
       actions: [
         ParchmentDialogActionButton(
           label: _saving ? '저장 중' : '새기기',
@@ -1605,6 +1606,7 @@ class _EmotionEngravingDialogState extends State<EmotionEngravingDialog> {
   void _handleSave() {
     final selected = _selected;
     if (selected == null) return;
+    FocusScope.of(context).unfocus();
     _save(selected);
   }
 

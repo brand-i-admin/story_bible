@@ -463,7 +463,9 @@ make generate-all STORIES_DIR=assets/events
   `assets/events/*.json`, `assets/landmarks/landmarks.json`,
   `tools/seed/character_meta.json` 기준의 `docs/guides/story_guide.md` 를
   재생성하고, `docs/guides/*.md` 전체를 `docs/guides/html/` HTML 문서로 변환한다.
-  콘텐츠 JSON이나 가이드 문서가 바뀌면 함께 실행한다.
+  콘텐츠 JSON이나 가이드 문서가 바뀌면 함께 실행한다. 시대 목차의 앱 노출 여부는
+  Flutter의 `hiddenEraCodes` 정책과 맞춰 관리하며, 현재 published 11시대는 모두
+  노출한다.
 
 ## 5. 에셋 디렉토리 구조
 

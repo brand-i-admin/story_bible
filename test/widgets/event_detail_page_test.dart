@@ -102,6 +102,63 @@ void main() {
     expect(find.byType(Dialog), findsNothing);
   });
 
+  testWidgets('키보드가 열린 상태에서도 코멘트와 함께 새기기를 저장한다', (tester) async {
+    tester.view.physicalSize = const Size(390, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetViewInsets);
+
+    EventEmotionOption? savedOption;
+    String? savedNote;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: FilledButton(
+                onPressed: () => showDialog<EventEmotionOption>(
+                  context: context,
+                  builder: (_) => EmotionEngravingDialog(
+                    eventTitle: '요나단의 신호: 다윗을 떠나보내다',
+                    initialMark: null,
+                    onSave: (option, note) async {
+                      savedOption = option;
+                      savedNote = note;
+                    },
+                  ),
+                ),
+                child: const Text('열기'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('열기'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('두려움'));
+    await tester.enterText(
+      find.byKey(const ValueKey('emotion-note-input')),
+      '친구를 보내는 마음이 남았다',
+    );
+    tester.view.viewInsets = const FakeViewPadding(bottom: 360);
+    await tester.pumpAndSettle();
+
+    final dialogRect = tester.getRect(find.byType(Dialog));
+    final saveButtonRect = tester.getRect(find.text('새기기'));
+    expect(saveButtonRect.bottom, lessThanOrEqualTo(dialogRect.bottom));
+
+    await tester.tap(find.text('새기기'));
+    await tester.pumpAndSettle();
+
+    expect(savedOption?.key, 'fear');
+    expect(savedNote, '친구를 보내는 마음이 남았다');
+    expect(find.byType(Dialog), findsNothing);
+  });
+
   testWidgets('배경 지식 제목 옆에 등장인물 아바타와 인라인 요약을 표시한다', (tester) async {
     await tester.pumpWidget(
       ProviderScope(

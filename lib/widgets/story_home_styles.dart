@@ -212,6 +212,7 @@ Widget filledActionButton({
   double? horizontalPadding,
   double? radius,
   double? fontSize,
+  FontWeight? fontWeight,
   List<Color>? gradientColors,
   Color? borderColor,
   Color? shadowColor,
@@ -285,7 +286,7 @@ Widget filledActionButton({
               style: TextStyle(
                 color: AppColors.parchmentCream,
                 fontSize: resolvedFontSize,
-                fontWeight: FontWeight.w900,
+                fontWeight: fontWeight ?? FontWeight.w900,
                 height: largeText ? 1.12 : 1.0,
               ),
             ),

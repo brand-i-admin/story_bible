@@ -340,10 +340,15 @@ class StoryEventThumbCard extends StatelessWidget {
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final compactLargeText = textScale >= 1.3;
     final deckCompact = expandSurface && !showSummary;
+    final todayDeck =
+        presentation == StoryEventCardPresentation.todayCurrent ||
+        presentation == StoryEventCardPresentation.todayAdjacent;
     final manualSingleLine =
         presentation == StoryEventCardPresentation.reviewGrid ||
         presentation == StoryEventCardPresentation.missionTimeline;
-    final thumbnailSize = deckCompact
+    final thumbnailSize = deckCompact && todayDeck
+        ? (compactLargeText ? 30.4 : 38.4)
+        : deckCompact
         ? (compactLargeText ? 38.0 : 48.0)
         : (compactLargeText ? 44.0 : 64.0);
     final characterPillsHeight = deckCompact
@@ -361,33 +366,41 @@ class StoryEventThumbCard extends StatelessWidget {
     final gapAfterTitle = deckCompact ? 2.0 : (compactLargeText ? 2.0 : 4.0);
     final gapBeforeSummary = compactLargeText ? 3.0 : 6.0;
     final gapBeforePills = deckCompact ? 4.0 : (compactLargeText ? 4.0 : 6.0);
+    final thumbnail = _CardThumbnailFrame(
+      event: event,
+      loader: loader,
+      size: thumbnailSize,
+      presentation: presentation,
+      publicUrlForStoragePath: publicUrlForStoragePath,
+    );
+    final title = _ThumbTitle(
+      textKey: ValueKey('story-card-title-${presentation.name}-${event.id}'),
+      event: event,
+      theme: theme,
+      presentation: presentation,
+      maxLines: titleMaxLines,
+      fontSize: deckCompact
+          ? presentation == StoryEventCardPresentation.todayCurrent
+                ? 13.2
+                : 10.2
+          : 12,
+    );
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _CardThumbnailFrame(
-          event: event,
-          loader: loader,
-          size: thumbnailSize,
-          presentation: presentation,
-          publicUrlForStoragePath: publicUrlForStoragePath,
-        ),
-        SizedBox(height: gapAfterThumbnail),
-        _ThumbTitle(
-          textKey: ValueKey(
-            'story-card-title-${presentation.name}-${event.id}',
-          ),
-          event: event,
-          theme: theme,
-          presentation: presentation,
-          maxLines: titleMaxLines,
-          fontSize: deckCompact
-              ? presentation == StoryEventCardPresentation.todayCurrent
-                    ? 12.2
-                    : 9.6
-              : 12,
-        ),
-        SizedBox(height: gapAfterTitle),
+        if (todayDeck) ...[
+          SizedBox(height: compactLargeText ? 18 : 20),
+          title,
+          SizedBox(height: gapAfterTitle + 1),
+          thumbnail,
+          SizedBox(height: gapAfterThumbnail),
+        ] else ...[
+          thumbnail,
+          SizedBox(height: gapAfterThumbnail),
+          title,
+          SizedBox(height: gapAfterTitle),
+        ],
         _ThumbMetaRow(
           eventId: event.id,
           presentation: presentation,
@@ -506,7 +519,8 @@ class _CardThumbnailFrame extends StatelessWidget {
         presentation == StoryEventCardPresentation.todayAdjacent;
     final isTodayCurrent =
         presentation == StoryEventCardPresentation.todayCurrent;
-    final aspectRatio = isTodayCard ? 8 / 5 : 1.0;
+    // 오늘 덱은 기존 8:5보다 세로 높이를 80%로 줄여 제목과 흐름을 먼저 읽게 한다.
+    final aspectRatio = isTodayCard ? 2.0 : 1.0;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: isTodayCurrent ? 3 : 0),
       child: ClipRRect(

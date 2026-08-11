@@ -150,7 +150,7 @@ void main() {
       expect(current?.id, 'a');
     });
 
-    test('가장 최근 감정 새기기 다음 이야기를 추천한다', () {
+    test('기록 시각과 무관하게 아직 감정을 새기지 않은 첫 이야기를 추천한다', () {
       final current = pickExplorationResumeEvent(
         events: events,
         eras: const [_defaultEra],
@@ -160,14 +160,17 @@ void main() {
         },
       );
 
-      expect(current?.id, 'd');
+      expect(current?.id, 'b');
     });
 
-    test('마지막 이야기가 가장 최근 기록이면 마지막 이야기를 유지한다', () {
+    test('모든 이야기에 감정을 새기면 마지막 이야기를 유지한다', () {
       final current = pickExplorationResumeEvent(
         events: events,
         eras: const [_defaultEra],
         emotionUpdatedAtByEventId: {
+          'a': DateTime.parse('2026-07-11T09:00:00Z'),
+          'b': DateTime.parse('2026-07-12T09:00:00Z'),
+          'c': DateTime.parse('2026-07-13T09:00:00Z'),
           'd': DateTime.parse('2026-07-14T09:00:00Z'),
         },
       );
@@ -254,6 +257,16 @@ void main() {
       });
       expect(selection.fitEventIds, ['b', 'c', 'd']);
     });
+
+    test('지도 핀 번호는 시대 안 번호가 아니라 선택된 전체 여정 순번을 유지한다', () {
+      final selection = explorationMapSelectionFor(
+        events: events,
+        eras: const [_primevalEra, _patriarchEra],
+        currentEventId: 'c',
+      );
+
+      expect(selection.orderNumberByEventId, {'a': 1, 'b': 2, 'c': 3, 'd': 4});
+    });
   });
 
   group('orderedExplorationEventsByEra', () {
@@ -290,7 +303,7 @@ void main() {
       ]);
     });
 
-    test('구약 7시대 다음에 신약 3시대를 고정 순서로 이어 붙인다', () {
+    test('구약 7시대 다음에 신약 4시대를 고정 순서로 이어 붙인다', () {
       const eraCodes = <String>[
         'era_primeval',
         'era_patriarch',
@@ -302,6 +315,7 @@ void main() {
         'era_nt_public_ministry',
         'era_nt_apostolic',
         'era_nt_post_apostolic',
+        'era_nt_consummation',
       ];
       final eras = <Era>[
         for (var index = 0; index < eraCodes.length; index += 1)
@@ -359,11 +373,14 @@ void main() {
       expect(position?.previous?.eraId, 'exile');
     });
 
-    test('최근 감정 다음 추천도 같은 고정 순서를 사용한다', () {
+    test('첫 미완료 추천도 같은 고정 순서를 사용한다', () {
       final current = pickExplorationResumeEvent(
         events: events,
         eras: _canonicalEras,
         emotionUpdatedAtByEventId: {
+          'primeval-first': DateTime.parse('2026-07-11T09:00:00Z'),
+          'primeval-second': DateTime.parse('2026-07-12T09:00:00Z'),
+          'exile-last': DateTime.parse('2026-07-13T09:00:00Z'),
           'jesus-first': DateTime.parse('2026-07-14T09:00:00Z'),
         },
       );

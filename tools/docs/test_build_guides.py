@@ -34,11 +34,13 @@ class BuildGuidesTest(unittest.TestCase):
         self.assertEqual(len(stories["era_divided_kingdom"]), 52)
         self.assertEqual(len(stories["era_nt_consummation"]), 9)
 
-    def test_story_guide_mentions_current_totals_and_hidden_era(self) -> None:
+    def test_story_guide_mentions_current_totals_and_exposes_all_eras(self) -> None:
         text = build_guides.build_story_guide_text()
         self.assertIn(f"**총 사건 수**: {current_story_count()}개", text)
         self.assertIn("**시대 수**: 11개", text)
-        self.assertIn("`era_nt_consummation` 9개 사건", text)
+        self.assertIn("역사의 종결 (9개)", text)
+        self.assertNotIn("앱 숨김", text)
+        self.assertNotIn("`hiddenEraCodes`로 숨김", text)
 
     def test_markdown_renderer_rewrites_guide_links_to_html(self) -> None:
         source = (ROOT / "docs" / "guides" / "README.md").resolve()

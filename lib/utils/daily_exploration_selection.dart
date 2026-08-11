@@ -58,13 +58,14 @@ const _canonicalExplorationEraOrder = <String, int>{
   'era_nt_public_ministry': 7,
   'era_nt_apostolic': 8,
   'era_nt_post_apostolic': 9,
+  'era_nt_consummation': 10,
 };
 
-/// 오늘 탐험 덱을 `구약 7시대 → 신약 3시대 → 시대 내 사건 순서`로 정렬한다.
+/// 오늘 탐험 덱을 `구약 7시대 → 신약 4시대 → 시대 내 사건 순서`로 정렬한다.
 ///
 /// DB의 `display_order`는 구약과 신약에서 각각 1부터 시작하고, 과거
 /// `global_rank` 값도 시대 경계를 안정적으로 표현하지 못한다. 따라서 공개된
-/// 10개 시대는 앱의 정해진 절대 순서를 사용하고, 각 시대 안에서는
+/// 운영 중인 11개 시대는 앱의 정해진 절대 순서를 사용하고, 각 시대 안에서는
 /// [StoryEvent.rankInEra]를 우선한다.
 List<StoryEvent> orderedExplorationEventsByEra({
   required List<StoryEvent> events,
@@ -100,11 +101,10 @@ int _explorationEraOrder(Era? era) {
   return testamentOffset + era.displayOrder;
 }
 
-/// 오늘 탐험이 이어질 사건을 최근 감정 새기기 기준으로 고른다.
+/// 선택한 여정에서 아직 감정을 새기지 않은 첫 사건을 오늘 이야기로 고른다.
 ///
-/// 기록이 없으면 성경 전체 시간순 첫 사건을 반환한다. 기록이 있으면 가장 최근에
-/// 감정을 새긴 사건의 바로 다음 사건을 반환해, 최근 사건이 카드 덱의 `이전 이야기`로
-/// 보이게 한다. 마지막 사건에 기록했다면 더 진행할 사건이 없으므로 마지막을 유지한다.
+/// 감정을 새긴 시각과 무관하게 카드 순서는 항상 성경 시간순으로 고정된다. 선택한
+/// 범위를 모두 완료했다면 마지막 사건을 유지해 여정의 끝을 보여준다.
 StoryEvent? pickExplorationResumeEvent({
   required List<StoryEvent> events,
   required List<Era> eras,
@@ -112,27 +112,10 @@ StoryEvent? pickExplorationResumeEvent({
 }) {
   final ordered = orderedExplorationEventsByEra(events: events, eras: eras);
   if (ordered.isEmpty) return null;
-
-  var latestIndex = -1;
-  DateTime? latestUpdatedAt;
-  for (var index = 0; index < ordered.length; index += 1) {
-    final event = ordered[index];
-    if (!emotionUpdatedAtByEventId.containsKey(event.id)) continue;
-    final updatedAt = emotionUpdatedAtByEventId[event.id];
-    final isLater =
-        updatedAt != null &&
-        (latestUpdatedAt == null || updatedAt.isAfter(latestUpdatedAt));
-    final isDeterministicTie =
-        updatedAt == latestUpdatedAt &&
-        (latestIndex < 0 || index > latestIndex);
-    if (latestIndex < 0 || isLater || isDeterministicTie) {
-      latestIndex = index;
-      latestUpdatedAt = updatedAt;
-    }
-  }
-
-  if (latestIndex < 0) return ordered.first;
-  return ordered[(latestIndex + 1).clamp(0, ordered.length - 1)];
+  return ordered
+          .where((event) => !emotionUpdatedAtByEventId.containsKey(event.id))
+          .firstOrNull ??
+      ordered.last;
 }
 
 /// 전체 시간순 카드 덱에서 현재 이야기와 실제 이전·다음 위치를 표현한다.
@@ -173,12 +156,14 @@ class ExplorationMapSelection {
     required this.events,
     required this.markerRoles,
     required this.fitEventIds,
+    required this.orderNumberByEventId,
     required this.position,
   });
 
   final List<StoryEvent> events;
   final Map<String, String> markerRoles;
   final List<String> fitEventIds;
+  final Map<String, int> orderNumberByEventId;
   final ExplorationPosition? position;
 }
 
@@ -200,10 +185,15 @@ ExplorationMapSelection explorationMapSelectionFor({
       events: [],
       markerRoles: {},
       fitEventIds: [],
+      orderNumberByEventId: {},
       position: null,
     );
   }
 
+  final orderNumberByEventId = <String, int>{};
+  for (var index = 0; index < ordered.length; index += 1) {
+    orderNumberByEventId[ordered[index].id] = index + 1;
+  }
   final eraEvents = ordered
       .where((event) => event.eraId == current.eraId)
       .toList(growable: false);
@@ -223,6 +213,7 @@ ExplorationMapSelection explorationMapSelectionFor({
     events: eraEvents,
     markerRoles: Map.unmodifiable(markerRoles),
     fitEventIds: List.unmodifiable(fitEventIds),
+    orderNumberByEventId: Map.unmodifiable(orderNumberByEventId),
     position: position,
   );
 }

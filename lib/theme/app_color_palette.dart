@@ -250,6 +250,17 @@ enum AppColorPalette {
     AppColorPalette.blackMap => const Color(0xFF111A2E),
     _ => _tint(AppColors.parchmentCream, mutedText, 0.045),
   };
+  Color get disabledSurface => switch (this) {
+    AppColorPalette.classic => const Color(0xFFE1DED6),
+    AppColorPalette.colorfulMap => const Color(0xFFE7E7EA),
+    AppColorPalette.blackMap => const Color(0xFF171B24),
+    _ => _tint(AppColors.parchmentMid, mutedText, 0.09),
+  };
+  Color get disabledText => switch (this) {
+    AppColorPalette.blackMap => const Color(0xFF7D8795),
+    _ => const Color(0xFF80838A),
+  };
+  Color get disabledBorder => disabledText.withValues(alpha: 0.42);
   Color get panelBorder => selectedBorder.withValues(alpha: 0.68);
   Color get subtleBorder => selectedBorder.withValues(alpha: 0.42);
   Color get activeTextOnAccent => AppColors.fgOnDark;

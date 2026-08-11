@@ -9,16 +9,19 @@ class StoryEventMarkerPresentation {
   const StoryEventMarkerPresentation.mapTimeline()
     : mode = StoryEventMarkerPresentationMode.mapTimeline,
       roles = const {},
-      thumbnailUrls = const {};
+      thumbnailUrls = const {},
+      orderNumberByEventId = const {};
 
   const StoryEventMarkerPresentation.dailyJourney({
     required this.roles,
     this.thumbnailUrls = const {},
+    this.orderNumberByEventId = const {},
   }) : mode = StoryEventMarkerPresentationMode.dailyJourney;
 
   final StoryEventMarkerPresentationMode mode;
   final Map<String, String> roles;
   final Map<String, String> thumbnailUrls;
+  final Map<String, int> orderNumberByEventId;
 
   bool get isDailyJourney =>
       mode == StoryEventMarkerPresentationMode.dailyJourney;
@@ -26,4 +29,7 @@ class StoryEventMarkerPresentation {
   String roleFor(String eventId) => roles[eventId] ?? '';
 
   String thumbnailUrlFor(String eventId) => thumbnailUrls[eventId] ?? '';
+
+  int orderNumberFor(String eventId, {required int fallback}) =>
+      orderNumberByEventId[eventId] ?? fallback;
 }

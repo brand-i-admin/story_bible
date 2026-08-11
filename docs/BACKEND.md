@@ -32,7 +32,7 @@ id uuid PK, code text UNIQUE, name text, testament text,
 display_order int, start_year int, end_year int,
 map_center_lat float8, map_center_lng float8, map_zoom numeric(4,2)
 ```
-- 구약 7시대 + 신약 4시대 = 총 11시대. `era_monarchy`는 통일왕국, `era_divided_kingdom`은 왕상 11장 이후 남북 분열부터 예루살렘 포위 전후까지의 분열왕국 이야기를 담는다. 앱은 검수 전인 `era_nt_consummation`을 `hiddenEraCodes`로 숨긴다.
+- 구약 7시대 + 신약 4시대 = 총 11시대. `era_monarchy`는 통일왕국, `era_divided_kingdom`은 왕상 11장 이후 남북 분열부터 예루살렘 포위 전후까지의 분열왕국 이야기를 담는다. 운영 DB의 published 11시대를 모두 앱에 노출하며 `hiddenEraCodes`는 비어 있다.
 - `testament`: 'old' 또는 'new' (era 코드로도 판별: `era_nt_` 접두사)
 
 #### `persons` — 성경 인물 (table)
@@ -523,14 +523,14 @@ PL/pgSQL 함수로 RLS 안에서 사용.
 
 | 메서드 | 쿼리 | 반환 |
 |--------|------|------|
-| `fetchEras()` | `eras` ORDER BY display_order → `hiddenEraCodes` 제외 | `List<Era>` |
+| `fetchEras()` | `eras` ORDER BY display_order → `hiddenEraCodes`가 있을 때만 제외(현재 없음) | `List<Era>` |
 | `fetchCharactersByEra(eraId)` | `character_eras` view JOIN `persons` WHERE era_id ORDER BY display_order | `List<Character>` |
 | `fetchAllActiveCharacters()` | `characters` WHERE is_active ORDER BY code. 프로필 전체 현황에서 시대별 RPC 반복을 피한다. | `List<Character>` |
-| `fetchEventsByEra(eraId)` | `events_ordered` view WHERE era_id ORDER BY rank_in_era → 숨김 era 제외 | `List<StoryEvent>` |
-| `fetchAllEvents()` | `events_ordered` view ORDER BY global_rank → 숨김 era 제외. 오늘/프로필 카탈로그가 공유한다. | `List<StoryEvent>` |
-| `fetchEventsForCharacter(personCode)` | `events_ordered` WHERE character_codes @> ARRAY[code] ORDER BY global_rank → 숨김 era 제외 | `List<StoryEvent>` |
-| `fetchEventsByIds(eventIds)` | `events_ordered` WHERE id IN (...) ORDER BY global_rank → 숨김 era 제외 | `List<StoryEvent>` |
-| `searchEventsByText(query)` | 전체 `events_ordered` + persons name lookup → 숨김 era 제외 → 클라이언트 가중치 검색 | `List<StoryEvent>` (상위 20) |
+| `fetchEventsByEra(eraId)` | `events_ordered` view WHERE era_id ORDER BY rank_in_era → `hiddenEraCodes`가 있을 때만 제외 | `List<StoryEvent>` |
+| `fetchAllEvents()` | `events_ordered` view ORDER BY global_rank → `hiddenEraCodes`가 있을 때만 제외. 오늘/프로필 카탈로그가 공유한다. | `List<StoryEvent>` |
+| `fetchEventsForCharacter(personCode)` | `events_ordered` WHERE character_codes @> ARRAY[code] ORDER BY global_rank → `hiddenEraCodes`가 있을 때만 제외 | `List<StoryEvent>` |
+| `fetchEventsByIds(eventIds)` | `events_ordered` WHERE id IN (...) ORDER BY global_rank → `hiddenEraCodes`가 있을 때만 제외 | `List<StoryEvent>` |
+| `searchEventsByText(query)` | 전체 `events_ordered` + persons name lookup → `hiddenEraCodes`가 있을 때만 제외 → 클라이언트 가중치 검색 | `List<StoryEvent>` (상위 20) |
 | `fetchQuizQuestions(eventId)` | `quiz_questions` WHERE event_id | `List<QuizQuestion>` |
 | `fetchBibleVersesByChapter(...)` | `bible_verses` WHERE book_no, chapter_no | `List<BibleVerse>` |
 | `fetchCompletedBibleChapterReadAts(userId)` | `user_bible_chapter_progress`의 `read_at`/`updated_at` 조회 | `Map<book:chapter, DateTime?>` |

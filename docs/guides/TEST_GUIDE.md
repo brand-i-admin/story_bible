@@ -101,7 +101,8 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 |------|------|
 | `bible_book_meta_test.dart` | 성경 책 메타와 정렬 |
 | `daily_exploration_prompt_test.dart` | 오늘의 묵상 prompt 조합 |
-| `daily_exploration_selection_test.dart` | 날짜별 미션 선택, 최근 감정 기준 오늘 탐험 재개, 구약 7시대→신약 3시대/시대 내 사건 순서, 전체 처음·끝 위치 안정성 |
+| `daily_exploration_selection_test.dart` | 날짜별 미션 선택, 선택 범위의 최초 미완료 탐험 재개, 구약 7시대→신약 4시대/시대 내 사건 순서, 전체 처음·끝 위치 안정성 |
+| `journey_filtering_test.dart` | 전체·소분류·성경책·인물 여정 필터, 진행률, 실제 시대/소분류 그룹 계산 |
 | `bible_reading_progress_test.dart` | 마지막 통독 완료 위치 다음 장 계산과 표시 문구 |
 | `home_back_navigation_test.dart` | 홈 back navigation 정책 |
 | `kst_date_test.dart` | KST 기준 날짜 계산 |
@@ -109,6 +110,22 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 | `scene_asset_loader_test.dart` | 장면 썸네일 로컬 우선, Storage fallback, 오늘 지도 핀 data URL/인덱스 복구 |
 | `system_insets_test.dart` | 안전영역 inset 계산 |
 | `weekly_selection_test.dart` | 주간 선택 로직 |
+
+여정 조건 직렬화와 기기 재실행 후 복원은
+`test/models/journey_selection_test.dart`와
+`test/data/journey_selection_repository_test.dart`에서 검증한다. 여정 선택의 단순
+헤더, 아이콘·번호 제목 한 줄 배치, 큰 글자 말줄임 방지, 흰색/검은색 카드,
+확인 팝업, 카드와 구분된 선택 정보 및 실제 소분류 표시, 일부 구간 접힘 복원과
+구약·신약 교차 선택 유지, 시대명 label·긴 제목 가로 스크롤/fade, 체크박스와
+소분류 제목의 한 줄 정렬, 시대별 성경 권 목록, 고정 CTA, 고대비 선택 상태와
+중립 회색 권 비활성화, 인물 정렬 dropdown·5열, 정보와 체크박스 선택을 분리한 범위 화면은
+`test/widgets/journey_selection_screen_test.dart`에서 검증한다.
+오늘 홈에서는 선택된 전체 여정 순번이 카드와 지도 핀에 동일하게 전달되는지,
+여정 선택 화살표가 오른쪽 끝 원형 버튼으로 표시되는지와 시작 경계 카드가 인접
+이야기 카드와 같은 높이·하단선을 사용하는지를
+`test/widgets/home_journey_overlay_test.dart`,
+`test/utils/daily_exploration_selection_test.dart`,
+`test/widgets/today_home_page_test.dart`에서 검증한다.
 
 콘텐츠/지도/날짜 로직은 UI보다 utils에서 먼저 고정한다. pure function으로 뺄 수
 있으면 widget test보다 빠르고 회귀 지점도 더 선명하다.

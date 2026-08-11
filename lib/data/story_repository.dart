@@ -52,7 +52,8 @@ class StoryRepository {
     final rows = await _client
         .from('characters')
         .select(
-          'id, code, name, tagline, description, avatar_url, avatar_storage_path',
+          'id, code, name, tagline, description, avatar_url, '
+          'avatar_storage_path, era_codes',
         )
         .eq('is_active', true)
         .order('code', ascending: true);
@@ -78,6 +79,11 @@ class StoryRepository {
             description: map['description'] as String?,
             avatarUrl: map['avatar_url'] as String?,
             avatarStoragePath: map['avatar_storage_path'] as String?,
+            eraCodes: switch (map['era_codes']) {
+              final List<dynamic> values =>
+                values.map((value) => value.toString()).toList(growable: false),
+              _ => const <String>[],
+            },
             displayOrder: displayOrder is num
                 ? displayOrder.toInt()
                 : index + 1,

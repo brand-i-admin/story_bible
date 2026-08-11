@@ -23,6 +23,7 @@ class Character {
     required this.description,
     required this.avatarUrl,
     required this.displayOrder,
+    this.eraCodes = const <String>[],
     // Nullable + optional on purpose: existing call sites don't need to
     // pass it yet (Supabase Storage fallback is a hybrid layer added in
     // 2026-04 and is absent for locally-bundled canonical cast).
@@ -44,6 +45,11 @@ class Character {
   final String? avatarStoragePath;
 
   final int displayOrder;
+
+  /// 이 인물을 여정/시대 선택에서 노출할 시대 코드 정책.
+  ///
+  /// 비어 있으면 character_codes에 연결된 모든 시대를 허용한다.
+  final List<String> eraCodes;
 
   /// 로컬 번들 런타임 썸네일 경로. `avatars` → `avatars_thumbs` 로 매핑해
   /// 저해상도 버전을 우선 사용 (앱 런타임에는 썸네일이면 충분).

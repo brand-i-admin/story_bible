@@ -65,7 +65,7 @@ ERA_ORDER: tuple[EraMeta, ...] = (
     EraMeta("era_nt_public_ministry", "예수님의 공생애", "신약", 8, 27, 33),
     EraMeta("era_nt_apostolic", "사도", "신약", 9, 33, 70),
     EraMeta("era_nt_post_apostolic", "후기 사도", "신약", 10, 45, 100),
-    EraMeta("era_nt_consummation", "역사의 종결", "신약", 11, None, None, True),
+    EraMeta("era_nt_consummation", "역사의 종결", "신약", 11, None, None),
 )
 
 GUIDE_GROUPS: tuple[GuideGroup, ...] = (
@@ -267,8 +267,6 @@ def build_story_guide_text() -> str:
     landmark_region_codes = load_landmark_region_codes()
     total_events = sum(len(stories_by_era.get(era.code, [])) for era in ERA_ORDER)
     total_eras = sum(1 for era in ERA_ORDER if stories_by_era.get(era.code))
-    hidden_count = len(stories_by_era.get("era_nt_consummation", []))
-
     lines: list[str] = [
         "# 이야기 가이드 (Story Guide)",
         "",
@@ -281,14 +279,6 @@ def build_story_guide_text() -> str:
         "> 데이터 변경 후 `make build-guides`를 실행해 이 문서와 HTML 가이드를 함께 갱신한다.",
         "",
     ]
-    if hidden_count:
-        lines.extend(
-            [
-                f"> 참고: `era_nt_consummation` {hidden_count}개 사건은 현재 앱에서 숨김 era로 취급된다.",
-                "",
-            ]
-        )
-
     lines.extend(["## 목차", ""])
     for era in ERA_ORDER:
         events = stories_by_era.get(era.code, [])

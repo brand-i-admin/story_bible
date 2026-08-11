@@ -2707,8 +2707,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
   Widget _buildTodayTab() {
     final state = ref.watch(storyControllerProvider);
     final user = ref.watch(signedInUserProvider);
-    final catalogAsync = ref.watch(dailyExplorationCatalogProvider);
-    final events = catalogAsync.value ?? const <StoryEvent>[];
+    final catalogAsync = ref.watch(journeyCatalogProvider);
+    final catalog = catalogAsync.value;
+    final selection = ref.watch(journeySelectionProvider);
+    final charactersByCode = {
+      for (final character in catalog?.characters ?? const <Character>[])
+        character.code: character,
+    };
+    final events = catalog == null
+        ? const <StoryEvent>[]
+        : filterJourneyEvents(
+            events: catalog.events,
+            eras: catalog.eras,
+            selection: selection,
+            charactersByCode: charactersByCode,
+          );
     final recommendedEventId = pickExplorationResumeEvent(
       events: events,
       eras: state.eras,
@@ -2741,9 +2754,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       recommendedEventId: recommendedEventId,
       currentEventOverrideId: _todayCelebrationEventId,
       eras: state.eras,
-      charactersByCode: {
-        for (final character in state.characters) character.code: character,
-      },
+      charactersByCode: charactersByCode,
+      journeySelectionLabel: selection.displayLabel,
+      journeyBoundaryLabel: selection.boundaryLabel,
       eventEmotionMarks: state.eventEmotionMarks,
       quizAttemptSummaries: state.quizAttemptSummaries,
       isAuthenticated: user != null,
@@ -2761,11 +2774,21 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       onDeleteDiary: user == null ? null : _deleteHomeDiaryEntry,
       onContinueBibleReading: () => _continueBibleReading(bibleTarget),
       onOpenProfile: () => _selectRootTab(StoryRootTab.profile),
+      onOpenJourneySelection: () => unawaited(_openJourneySelection()),
       onOpenFontSettings: () =>
           unawaited(_openFontScaleSheet(section: DisplaySettingsSection.font)),
       onOpenThemeSettings: () =>
           unawaited(_openFontScaleSheet(section: DisplaySettingsSection.theme)),
       onOpenSearch: () => unawaited(_openBibleVerseSearch()),
+    );
+  }
+
+  Future<void> _openJourneySelection() {
+    return Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        settings: const RouteSettings(name: JourneySelectionScreen.routeName),
+        builder: (_) => const JourneySelectionScreen(),
+      ),
     );
   }
 

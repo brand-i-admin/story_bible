@@ -1,15 +1,68 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:story_bible/theme/app_color_palette.dart';
 import 'package:story_bible/theme/tokens.dart';
-import 'package:story_bible/widgets/home/today_activity_header.dart';
 import 'package:story_bible/widgets/home/today_home_page.dart';
 import 'package:story_bible/widgets/v2/map_hint_overlay.dart';
 
 void main() {
-  testWidgets('오늘 할 일 가이드는 팔레트 패널과 지도 닫기 배지에 헤더 역할색을 표시한다', (tester) async {
+  test('여정 선택은 헤더 아래에 있고 안내 오버레이는 비로그인 상태에만 연다', () {
+    final source = File(
+      'lib/widgets/home/today_home_page.dart',
+    ).readAsStringSync();
+
+    expect(
+      source,
+      contains("key: const ValueKey('today-open-journey-selection')"),
+    );
+    expect(
+      source,
+      contains('if (!widget.isAuthenticated && !_todayGuideDismissed)'),
+    );
+  });
+
+  testWidgets('여정 선택 화살표는 오른쪽 끝의 원형 버튼으로 표시한다', (tester) async {
+    var tapped = false;
+    await tester.binding.setSurfaceSize(const Size(390, 180));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              width: 350,
+              child: TodayJourneySelectionBar(
+                currentLabel: '신명기 · 시대 구간',
+                onTap: () => tapped = true,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final bar = find.byKey(const ValueKey('today-open-journey-selection'));
+    final arrow = find.byKey(const ValueKey('today-journey-selection-arrow'));
+    final barRect = tester.getRect(bar);
+    final arrowRect = tester.getRect(arrow);
+    expect(arrowRect.width, closeTo(28, 0.1));
+    expect(arrowRect.height, closeTo(28, 0.1));
+    expect(barRect.right - arrowRect.right, lessThanOrEqualTo(9));
+
+    final arrowDecoration =
+        tester.widget<Container>(arrow).decoration! as BoxDecoration;
+    expect(arrowDecoration.shape, BoxShape.circle);
+
+    await tester.tap(arrow);
+    expect(tapped, isTrue);
+  });
+
+  testWidgets('비로그인 여정 가이드는 카드 스크롤 안내와 닫기 배지를 표시한다', (tester) async {
     await tester.binding.setSurfaceSize(const Size(320, 640));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -36,38 +89,28 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('화면 아무데나 누르면 사라집니다'), findsOneWidget);
-      expect(find.text('매일 할 일:'), findsOneWidget);
-      expect(find.text('이야기'), findsOneWidget);
-      expect(find.text('다이어리'), findsOneWidget);
-      expect(find.text('통독'), findsOneWidget);
-      final reorderNote = find.text('(아래 이야기 카드는 감정을 새길 때마다 재정렬 됩니다)');
-      expect(reorderNote, findsOneWidget);
-      expect(tester.widget<Text>(reorderNote).textAlign, TextAlign.center);
+      final journeyGuide = find.text(
+        '아래 이야기 카드를 스크롤 해보세요.\n'
+        '나열되는 이야기 카드들은 위 여정 선택을 기준으로 표시됩니다.',
+      );
+      expect(journeyGuide, findsOneWidget);
+      expect(tester.widget<Text>(journeyGuide).textAlign, TextAlign.center);
+      expect(find.text('매일 할 일:'), findsNothing);
+      expect(find.text('(아래 이야기 카드는 감정을 새길 때마다 재정렬 됩니다)'), findsNothing);
       expect(find.byIcon(Icons.hourglass_top_rounded), findsOneWidget);
-      expect(find.byIcon(TodayActivityIcons.streak), findsOneWidget);
-      expect(find.byIcon(TodayActivityIcons.story), findsOneWidget);
-      expect(find.byIcon(TodayActivityIcons.diary), findsOneWidget);
-      expect(find.byIcon(TodayActivityIcons.bible), findsOneWidget);
 
       for (final entry in <IconData, Color>{
         Icons.hourglass_top_rounded: Colors.white,
-        TodayActivityIcons.streak: palette.currentAccentDeep,
-        TodayActivityIcons.story: palette.regionAccent,
-        TodayActivityIcons.diary: palette.successBottom,
-        TodayActivityIcons.bible: palette.primary,
       }.entries) {
         expect(tester.widget<Icon>(find.byIcon(entry.key)).color, entry.value);
       }
 
       for (final entry in <String, Color>{
         '화면 아무데나 누르면 사라집니다': Colors.white,
-        '매일 할 일:': isDark ? palette.text : AppColors.ink900,
-        '이야기': palette.regionAccent,
-        '다이어리': palette.successBottom,
-        '통독': palette.primary,
-        '(아래 이야기 카드는 감정을 새길 때마다 재정렬 됩니다)': isDark
-            ? palette.mutedText
-            : AppColors.ink500,
+        '아래 이야기 카드를 스크롤 해보세요.\n'
+            '나열되는 이야기 카드들은 위 여정 선택을 기준으로 표시됩니다.': isDark
+            ? palette.text
+            : AppColors.ink900,
       }.entries) {
         expect(
           tester.widget<Text>(find.text(entry.key)).style?.color,

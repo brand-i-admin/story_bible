@@ -13,6 +13,7 @@ import 'package:story_bible/theme/app_theme.dart';
 import 'package:story_bible/theme/tokens.dart';
 import 'package:story_bible/widgets/home/home_journey_overlay.dart';
 import 'package:story_bible/widgets/pulse_highlight.dart';
+import 'package:story_bible/widgets/v2/region_event_list.dart';
 
 void main() {
   final events = [
@@ -34,6 +35,55 @@ void main() {
     expect(todaySource, contains('StoryEventCardPresentation.todayCurrent'));
     expect(todaySource, contains('StoryEventCardPresentation.todayAdjacent'));
     expect(timelineSource, contains('StoryEventCardPresentation.mapTimeline'));
+  });
+
+  testWidgets('홈 카드 번호는 DB 시대 내 번호 대신 선택된 여정 순번을 사용한다', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(800, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final selectedJourneyEvents = [
+      _event(id: 'selected-a', title: '선택 첫 이야기', rank: 10),
+      _event(id: 'selected-b', title: '선택 둘째 이야기', rank: 11),
+      _event(id: 'selected-c', title: '선택 셋째 이야기', rank: 15),
+    ];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: HomeJourneyOverlay(
+            events: selectedJourneyEvents,
+            recommendedEventId: 'selected-b',
+            currentEventId: 'selected-b',
+            eras: const [_era],
+            charactersByCode: const {},
+            eventEmotionMarks: const {},
+            quizAttemptSummaries: const {},
+            isAuthenticated: true,
+            todayDiary: null,
+            diaryLoading: false,
+            diaryError: null,
+            bibleTargetLabel: '창세기 14장',
+            onOpenStory: (_) {},
+            onCurrentStoryChanged: (_) {},
+            onSaveDiary: _discardDiarySave,
+            onDeleteDiary: _discardDiaryDelete,
+            onContinueBibleReading: () {},
+            onOpenProfile: () {},
+          ),
+        ),
+      ),
+    );
+
+    final orderNumberByEventId = <String, int?>{
+      for (final card in tester.widgetList<StoryEventThumbCard>(
+        find.byType(StoryEventThumbCard),
+      ))
+        card.event.id: card.orderNumber,
+    };
+    expect(orderNumberByEventId, {
+      'selected-a': 1,
+      'selected-b': 2,
+      'selected-c': 3,
+    });
   });
 
   testWidgets('별도 패널 없이 추천 전후 이야기 3개와 낮은 퀵 액션을 렌더한다', (tester) async {
@@ -318,6 +368,16 @@ void main() {
       currentTitle.style!.fontSize,
       greaterThan(nextTitle.style!.fontSize!),
     );
+    expect(
+      tester
+          .getRect(
+            find.byKey(
+              const ValueKey('story-card-title-todayCurrent-recommended'),
+            ),
+          )
+          .bottom,
+      lessThan(currentThumbnailRect.top),
+    );
     expect(previousTitle.maxLines, 1);
     expect(previousTitle.overflow, TextOverflow.ellipsis);
     expect(previousTitle.softWrap, isFalse);
@@ -372,15 +432,15 @@ void main() {
     }
     expect(
       previousThumbnailRect.width / previousThumbnailRect.height,
-      closeTo(8 / 5, 0.06),
+      closeTo(2.0, 0.06),
     );
     expect(
       nextThumbnailRect.width / nextThumbnailRect.height,
-      closeTo(8 / 5, 0.06),
+      closeTo(2.0, 0.06),
     );
     expect(
       currentThumbnailRect.width / currentThumbnailRect.height,
-      closeTo(8 / 5, 0.06),
+      closeTo(2.0, 0.06),
     );
     expect(currentRect.width - currentThumbnailRect.width, greaterThan(20));
     expect(find.text('이전 이야기 요약'), findsNothing);
@@ -682,8 +742,8 @@ void main() {
           .active,
       isFalse,
     );
-    expect(find.text('오늘의 이야기'), findsNothing);
-    expect(find.text('현재 이야기'), findsOneWidget);
+    expect(find.text('오늘의 이야기'), findsOneWidget);
+    expect(find.text('현재 이야기'), findsNothing);
     expect(
       tester
           .widget<PulseHighlight>(
@@ -817,7 +877,7 @@ void main() {
     expect(find.text('현재 이야기'), findsOneWidget);
   });
 
-  testWidgets('전체 첫 이야기 앞에는 없음 라벨과 탐험 정렬 안내 카드가 있다', (tester) async {
+  testWidgets('전체 첫 이야기 앞에는 여정 시작 라벨과 첫 이야기 안내 카드가 있다', (tester) async {
     await tester.binding.setSurfaceSize(const Size(800, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -848,8 +908,16 @@ void main() {
       ),
     );
 
-    expect(find.text('이야기\n없음'), findsOneWidget);
-    expect(find.text('사건에 감정을 새기면\n그 사건 기준으로\n이야기 정렬이 바뀌어요'), findsWidgets);
+    expect(find.text('여정\n처음'), findsOneWidget);
+    expect(find.text('선택된 여정의\n첫 이야기입니다.'), findsWidgets);
+    final startCard = tester.getRect(
+      find.byKey(const ValueKey('home-journey-start-card')),
+    );
+    final nextCard = tester.getRect(
+      find.byKey(const ValueKey('home-journey-card-surface-frame-recommended')),
+    );
+    expect(startCard.height, closeTo(nextCard.height, 0.1));
+    expect(startCard.bottom, closeTo(nextCard.bottom, 0.1));
   });
 
   testWidgets('마지막 이야기를 완료하면 마지막 카드가 현재로 남고 안내 카드와 하단이 맞는다', (tester) async {
@@ -884,9 +952,9 @@ void main() {
       ),
     );
 
-    expect(find.text('오늘의 이야기'), findsNothing);
-    expect(find.text('현재 이야기'), findsOneWidget);
-    expect(find.text('이야기\n없음'), findsOneWidget);
+    expect(find.text('오늘의 이야기'), findsOneWidget);
+    expect(find.text('현재 이야기'), findsNothing);
+    expect(find.text('여정\n끝'), findsOneWidget);
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('home-journey-right-boundary-overlay')),
@@ -900,7 +968,7 @@ void main() {
       find.byKey(const ValueKey('home-journey-card-surface-frame-next')),
     );
     final adjacentHintCard = tester.getRect(
-      find.byKey(const ValueKey('home-exploration-sort-hint-card')),
+      find.byKey(const ValueKey('home-journey-end-card')),
     );
     expect(adjacentHintCard.bottom, closeTo(currentCard.bottom, 0.1));
 
@@ -911,20 +979,20 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
 
     final currentHintCard = tester.getRect(
-      find.byKey(const ValueKey('home-exploration-sort-hint-card')),
+      find.byKey(const ValueKey('home-journey-end-card')),
     );
     final adjacentLastCard = tester.getRect(
       find.byKey(const ValueKey('home-journey-card-surface-frame-next')),
     );
     expect(
-      find.byKey(const ValueKey('home-exploration-sort-hint-current')),
+      find.byKey(const ValueKey('home-journey-boundary-current')),
       findsOneWidget,
     );
     expect(currentHintCard.width, greaterThan(adjacentHintCard.width * 1.4));
     expect(currentHintCard.width, greaterThan(adjacentLastCard.width * 1.4));
   });
 
-  testWidgets('좁은 실제 기기 폭에서 보통과 아주큰 탐험 정렬 안내가 넘치지 않는다', (tester) async {
+  testWidgets('좁은 실제 기기 폭에서 보통과 아주큰 여정 경계 안내가 넘치지 않는다', (tester) async {
     const screenSize = Size(390, 900);
     await tester.binding.setSurfaceSize(screenSize);
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -967,16 +1035,12 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 120));
 
-      final hintCard = find.byKey(
-        const ValueKey('home-exploration-sort-hint-card'),
-      );
-      final hintBody = find.byKey(
-        const ValueKey('home-exploration-sort-hint-body'),
-      );
+      final hintCard = find.byKey(const ValueKey('home-journey-start-card'));
+      final hintBody = find.byKey(const ValueKey('home-journey-boundary-body'));
       expect(hintCard, findsOneWidget);
       expect(hintBody, findsOneWidget);
       expect(
-        find.byKey(const ValueKey('home-exploration-sort-hint-fit')),
+        find.byKey(const ValueKey('home-journey-boundary-fit')),
         findsOneWidget,
       );
       expect(
@@ -1035,7 +1099,7 @@ void main() {
     );
 
     expect(find.text('원역사\n이동'), findsOneWidget);
-    expect(find.text('이야기\n없음'), findsOneWidget);
+    expect(find.text('여정\n끝'), findsOneWidget);
     final boundaryBadge = tester.widget<Container>(
       find.byKey(const ValueKey('home-journey-era-boundary-badge')),
     );
@@ -1057,7 +1121,7 @@ void main() {
       AppColorPalette.blackMap.utilitySelectedBackground.withValues(alpha: 1),
     );
     expect(
-      tester.widget<Text>(find.text('이야기\n없음')).style?.color,
+      tester.widget<Text>(find.text('여정\n끝')).style?.color,
       AppColors.fgOnDark,
     );
   });

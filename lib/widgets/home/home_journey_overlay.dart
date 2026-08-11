@@ -19,14 +19,19 @@ import '../pulse_highlight.dart';
 import '../v2/region_event_list.dart'
     show StoryEventCardPresentation, StoryEventThumbCard;
 
-const _homeJourneyMissingBoundaryLabel = '이야기\n없음';
 const _homeJourneyViewportFraction = 0.30;
 const _homeJourneyCurrentWidthScale = 1.75;
 const _homeJourneyAdjacentHeightFraction = 0.62;
-const _homeJourneyBaseDeckHeight = 194.0;
+const _homeJourneyBaseDeckHeight = 212.0;
+const _homeJourneyCurrentCardTopInset = 20.0;
 const _homeQuickActionTouchHeight = 48.0;
 const _homeQuickActionVisualHeight = 44.0;
 const _homeQuickActionMaxWidth = 156.0;
+
+double _homeJourneyAdjacentTopInset(double height) =>
+    height -
+    (height - _homeJourneyCurrentCardTopInset) *
+        _homeJourneyAdjacentHeightFraction;
 
 class HomeJourneyOverlay extends StatelessWidget {
   const HomeJourneyOverlay({
@@ -37,6 +42,7 @@ class HomeJourneyOverlay extends StatelessWidget {
     this.currentEraDividerAnchorKey,
     required this.eras,
     required this.charactersByCode,
+    this.journeyBoundaryLabel = '선택된 여정',
     required this.eventEmotionMarks,
     required this.quizAttemptSummaries,
     required this.isAuthenticated,
@@ -60,6 +66,7 @@ class HomeJourneyOverlay extends StatelessWidget {
   final Key? currentEraDividerAnchorKey;
   final List<Era> eras;
   final Map<String, Character> charactersByCode;
+  final String journeyBoundaryLabel;
   final Map<String, EventEmotionMark> eventEmotionMarks;
   final Map<String, QuizAttemptSummary> quizAttemptSummaries;
   final bool isAuthenticated;
@@ -93,6 +100,7 @@ class HomeJourneyOverlay extends StatelessWidget {
           currentEraDividerAnchorKey: currentEraDividerAnchorKey,
           eras: eras,
           charactersByCode: charactersByCode,
+          journeyBoundaryLabel: journeyBoundaryLabel,
           eventEmotionMarks: eventEmotionMarks,
           quizAttemptSummaries: quizAttemptSummaries,
           todayStoryCompleted: todayStoryCompleted,
@@ -129,6 +137,7 @@ class _HomeStoryJourneyDeck extends StatefulWidget {
     this.currentEraDividerAnchorKey,
     required this.eras,
     required this.charactersByCode,
+    required this.journeyBoundaryLabel,
     required this.eventEmotionMarks,
     required this.quizAttemptSummaries,
     required this.todayStoryCompleted,
@@ -142,6 +151,7 @@ class _HomeStoryJourneyDeck extends StatefulWidget {
   final Key? currentEraDividerAnchorKey;
   final List<Era> eras;
   final Map<String, Character> charactersByCode;
+  final String journeyBoundaryLabel;
   final Map<String, EventEmotionMark> eventEmotionMarks;
   final Map<String, QuizAttemptSummary> quizAttemptSummaries;
   final bool todayStoryCompleted;
@@ -222,7 +232,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
               border: Border.all(color: palette.subtleBorder),
             ),
             child: Text(
-              '추천 이야기를 불러오는 중이에요.',
+              '선택한 여정에 연결된 이야기가 없어요.',
               style: TextStyle(
                 color: palette.mutedText,
                 fontSize: 13,
@@ -248,7 +258,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
                         : null,
                     current: currentEvent,
                     eraById: eraById,
-                    missingLabel: _homeJourneyMissingBoundaryLabel,
+                    missingLabel: '여정\n처음',
                   );
                   rightBoundaryLabel = _boundaryLabel(
                     adjacent: currentEventIndex + 1 < ordered.length
@@ -256,7 +266,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
                         : null,
                     current: currentEvent,
                     eraById: eraById,
-                    missingLabel: _homeJourneyMissingBoundaryLabel,
+                    missingLabel: '여정\n끝',
                   );
                 }
                 final boundaryInset = (constraints.maxWidth * 0.26 - 26.5)
@@ -292,7 +302,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
                         },
                         itemBuilder: (context, page) {
                           if (page == 0 || page == ordered.length + 1) {
-                            return _buildSortHintPage(page: page);
+                            return _buildBoundaryPage(page: page);
                           }
                           final eventIndex = page - 1;
                           return _buildCard(
@@ -354,7 +364,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     return index + 1;
   }
 
-  Widget _buildSortHintPage({required int page}) {
+  Widget _buildBoundaryPage({required int page}) {
     final isCurrent = page == _currentPage;
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -377,7 +387,11 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
             child: SizedBox(
               width: frameWidth,
               height: constraints.maxHeight,
-              child: _HomeExplorationSortHintCard(isCurrent: isCurrent),
+              child: _HomeJourneyBoundaryCard(
+                isCurrent: isCurrent,
+                journeyLabel: widget.journeyBoundaryLabel,
+                isStart: page == 0,
+              ),
             ),
           ),
         );
@@ -394,8 +408,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     final event = events[eventIndex];
     final isCurrent = page == _currentPage;
     final isRecommended = event.id == widget.recommendedEventId;
-    final isTodayStory = isRecommended && !widget.todayStoryCompleted;
-    const currentCardTopInset = 20.0;
+    final isTodayStory = isRecommended;
     final label = isCurrent
         ? (isTodayStory ? '오늘의 이야기' : '현재 이야기')
         : page < _currentPage
@@ -411,7 +424,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
       completed: widget.eventEmotionMarks.containsKey(event.id),
       emotionKey: widget.eventEmotionMarks[event.id]?.emotionKey,
       attemptSummary: widget.quizAttemptSummaries[event.id],
-      orderNumber: event.storyIndex,
+      orderNumber: eventIndex + 1,
       presentation: isCurrent
           ? StoryEventCardPresentation.todayCurrent
           : StoryEventCardPresentation.todayAdjacent,
@@ -442,11 +455,9 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     );
     final cardFrame = LayoutBuilder(
       builder: (context, frameConstraints) {
-        final currentCardHeight =
-            frameConstraints.maxHeight - currentCardTopInset;
-        final adjacentTopInset =
-            frameConstraints.maxHeight -
-            currentCardHeight * _homeJourneyAdjacentHeightFraction;
+        final adjacentTopInset = _homeJourneyAdjacentTopInset(
+          frameConstraints.maxHeight,
+        );
         return Stack(
           key: ValueKey('home-journey-card-${event.id}-$page'),
           clipBehavior: Clip.none,
@@ -455,7 +466,9 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                   isCurrent ? 5 : 10,
-                  isCurrent ? currentCardTopInset : adjacentTopInset,
+                  isCurrent
+                      ? _homeJourneyCurrentCardTopInset
+                      : adjacentTopInset,
                   isCurrent ? 5 : 10,
                   0,
                 ),
@@ -526,7 +539,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
               Positioned(
                 left: 12,
                 right: 12,
-                top: currentCardTopInset - 30,
+                top: _homeJourneyCurrentCardTopInset - 30,
                 child: SizedBox(
                   key: widget.currentEraDividerAnchorKey,
                   child: ProfileEventEraDivider(
@@ -593,9 +606,8 @@ class _HomeJourneyBoundaryBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final isMissingBoundary = label == _homeJourneyMissingBoundaryLabel;
     return Container(
-      key: isMissingBoundary
+      key: label.startsWith('여정')
           ? const ValueKey('home-journey-missing-boundary-badge')
           : const ValueKey('home-journey-era-boundary-badge'),
       width: 64,
@@ -631,90 +643,98 @@ class _HomeJourneyBoundaryBadge extends StatelessWidget {
   }
 }
 
-class _HomeExplorationSortHintCard extends StatelessWidget {
-  const _HomeExplorationSortHintCard({required this.isCurrent});
+class _HomeJourneyBoundaryCard extends StatelessWidget {
+  const _HomeJourneyBoundaryCard({
+    required this.isCurrent,
+    required this.journeyLabel,
+    required this.isStart,
+  });
 
   final bool isCurrent;
+  final String journeyLabel;
+  final bool isStart;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.3;
-    return Padding(
-      key: isCurrent
-          ? const ValueKey('home-exploration-sort-hint-current')
-          : null,
-      padding: EdgeInsets.fromLTRB(
-        isCurrent ? 5 : 10,
-        isCurrent ? 0 : 38,
-        isCurrent ? 5 : 10,
-        0,
-      ),
-      child: Container(
-        key: const ValueKey('home-exploration-sort-hint-card'),
-        padding: EdgeInsets.symmetric(
-          horizontal: largeText ? 8 : 14,
-          vertical: largeText ? 8 : 12,
+    return LayoutBuilder(
+      builder: (context, constraints) => Padding(
+        key: isCurrent ? const ValueKey('home-journey-boundary-current') : null,
+        padding: EdgeInsets.fromLTRB(
+          isCurrent ? 5 : 10,
+          isCurrent ? 0 : _homeJourneyAdjacentTopInset(constraints.maxHeight),
+          isCurrent ? 5 : 10,
+          0,
         ),
-        decoration: BoxDecoration(
-          color: Color.alphaBlend(
-            palette.regionAccent.withValues(alpha: 0.10),
-            palette.cardSurface,
+        child: Container(
+          key: ValueKey(
+            isStart ? 'home-journey-start-card' : 'home-journey-end-card',
           ),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(
-            color: palette.regionAccent.withValues(alpha: 0.28),
+          padding: EdgeInsets.symmetric(
+            horizontal: largeText ? 8 : 14,
+            vertical: largeText ? 8 : 12,
           ),
-          boxShadow: isCurrent
-              ? [
-                  BoxShadow(
-                    color: palette.currentAccent.withValues(alpha: 0.25),
-                    blurRadius: 18,
-                    spreadRadius: 2,
-                  ),
-                ]
-              : null,
-        ),
-        child: LayoutBuilder(
-          builder: (context, constraints) => FittedBox(
-            key: const ValueKey('home-exploration-sort-hint-fit'),
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.center,
-            child: SizedBox(
-              width: constraints.maxWidth,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.add_location_alt_rounded,
-                    color: palette.regionAccent,
-                    size: largeText ? 20 : 24,
-                  ),
-                  SizedBox(height: largeText ? 4 : 8),
-                  Text(
-                    '탐험 정렬 안내',
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: palette.text,
-                      fontSize: largeText ? 11 : 12.5,
-                      fontWeight: FontWeight.w900,
-                      height: 1.15,
+          decoration: BoxDecoration(
+            color: Color.alphaBlend(
+              palette.currentAccent.withValues(alpha: 0.08),
+              palette.cardSurface,
+            ),
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(
+              color: palette.currentAccent.withValues(alpha: 0.32),
+            ),
+            boxShadow: isCurrent
+                ? [
+                    BoxShadow(
+                      color: palette.currentAccent.withValues(alpha: 0.25),
+                      blurRadius: 18,
+                      spreadRadius: 2,
                     ),
-                  ),
-                  SizedBox(height: largeText ? 3 : 6),
-                  Text(
-                    '사건에 감정을 새기면\n그 사건 기준으로\n이야기 정렬이 바뀌어요',
-                    key: const ValueKey('home-exploration-sort-hint-body'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: palette.mutedText,
-                      fontSize: largeText ? 9.4 : 10.5,
-                      fontWeight: FontWeight.w800,
-                      height: largeText ? 1.28 : 1.35,
+                  ]
+                : null,
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) => FittedBox(
+              key: const ValueKey('home-journey-boundary-fit'),
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: constraints.maxWidth,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isStart ? Icons.first_page_rounded : Icons.flag_rounded,
+                      color: palette.currentAccentDeep,
+                      size: largeText ? 20 : 24,
                     ),
-                  ),
-                ],
+                    SizedBox(height: largeText ? 4 : 8),
+                    Text(
+                      isStart ? '여정의 시작' : '여정의 끝',
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: palette.text,
+                        fontSize: largeText ? 11 : 12.5,
+                        fontWeight: FontWeight.w900,
+                        height: 1.15,
+                      ),
+                    ),
+                    SizedBox(height: largeText ? 3 : 6),
+                    Text(
+                      '$journeyLabel의\n${isStart ? '첫' : '마지막'} 이야기입니다.',
+                      key: const ValueKey('home-journey-boundary-body'),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: palette.mutedText,
+                        fontSize: largeText ? 9.4 : 10.5,
+                        fontWeight: FontWeight.w800,
+                        height: largeText ? 1.28 : 1.35,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

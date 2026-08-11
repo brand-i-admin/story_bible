@@ -61,7 +61,6 @@ class TodayTodoGuide extends StatelessWidget {
             AppColors.parchmentLight,
           ).withValues(alpha: 0.84);
     final primaryTextColor = isDark ? palette.text : AppColors.ink900;
-    final secondaryTextColor = isDark ? palette.mutedText : AppColors.ink500;
     return LayoutBuilder(
       builder: (context, constraints) {
         final contentWidth = constraints.maxWidth.isFinite
@@ -115,73 +114,16 @@ class TodayTodoGuide extends StatelessWidget {
                             ),
                           ),
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    TodayActivityIcons.streak,
-                                    size: 15,
-                                    color: palette.currentAccentDeep,
-                                  ),
-                                  const SizedBox(width: AppSpacing.x2),
-                                  Text(
-                                    '매일 할 일:',
-                                    maxLines: 1,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: primaryTextColor,
-                                      fontSize: 13.2,
-                                      fontWeight: FontWeight.w900,
-                                      height: 1.2,
-                                    ),
-                                  ),
-                                  const SizedBox(width: AppSpacing.x4),
-                                  _TodayTodoItem(
-                                    icon: TodayActivityIcons.story,
-                                    label: '이야기',
-                                    color: palette.regionAccent,
-                                  ),
-                                  _TodayTodoSeparator(
-                                    color: secondaryTextColor,
-                                  ),
-                                  _TodayTodoItem(
-                                    icon: TodayActivityIcons.diary,
-                                    label: '다이어리',
-                                    color: palette.successBottom,
-                                  ),
-                                  _TodayTodoSeparator(
-                                    color: secondaryTextColor,
-                                  ),
-                                  _TodayTodoItem(
-                                    icon: TodayActivityIcons.bible,
-                                    label: '통독',
-                                    color: palette.primary,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: AppSpacing.x3),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                '(아래 이야기 카드는 감정을 새길 때마다 재정렬 됩니다)',
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: secondaryTextColor,
-                                  fontSize: 11.2,
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.2,
-                                ),
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          '아래 이야기 카드를 스크롤 해보세요.\n'
+                          '나열되는 이야기 카드들은 위 여정 선택을 기준으로 표시됩니다.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: primaryTextColor,
+                            fontSize: 12.2,
+                            fontWeight: FontWeight.w800,
+                            height: 1.45,
+                          ),
                         ),
                       ),
                     ),
@@ -202,57 +144,6 @@ class TodayTodoGuide extends StatelessWidget {
   }
 }
 
-class _TodayTodoItem extends StatelessWidget {
-  const _TodayTodoItem({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 15, color: color),
-        const SizedBox(width: AppSpacing.x1),
-        Text(
-          label,
-          maxLines: 1,
-          style: TextStyle(
-            color: color,
-            fontSize: 12.8,
-            fontWeight: FontWeight.w900,
-            height: 1.2,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _TodayTodoSeparator extends StatelessWidget {
-  const _TodayTodoSeparator({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      ', ',
-      style: TextStyle(
-        color: color,
-        fontSize: 12.8,
-        fontWeight: FontWeight.w800,
-      ),
-    );
-  }
-}
-
 class TodayHomePage extends StatefulWidget {
   const TodayHomePage({
     super.key,
@@ -264,6 +155,8 @@ class TodayHomePage extends StatefulWidget {
     this.currentEventOverrideId,
     required this.eras,
     required this.charactersByCode,
+    required this.journeySelectionLabel,
+    required this.journeyBoundaryLabel,
     required this.eventEmotionMarks,
     required this.quizAttemptSummaries,
     required this.isAuthenticated,
@@ -279,6 +172,7 @@ class TodayHomePage extends StatefulWidget {
     required this.onDeleteDiary,
     required this.onContinueBibleReading,
     required this.onOpenProfile,
+    required this.onOpenJourneySelection,
     required this.onOpenFontSettings,
     required this.onOpenThemeSettings,
     required this.onOpenSearch,
@@ -292,6 +186,8 @@ class TodayHomePage extends StatefulWidget {
   final String? currentEventOverrideId;
   final List<Era> eras;
   final Map<String, Character> charactersByCode;
+  final String journeySelectionLabel;
+  final String journeyBoundaryLabel;
   final Map<String, EventEmotionMark> eventEmotionMarks;
   final Map<String, QuizAttemptSummary> quizAttemptSummaries;
   final bool isAuthenticated;
@@ -307,6 +203,7 @@ class TodayHomePage extends StatefulWidget {
   final CompanionDiaryDeleteCallback? onDeleteDiary;
   final VoidCallback onContinueBibleReading;
   final VoidCallback onOpenProfile;
+  final VoidCallback onOpenJourneySelection;
   final VoidCallback onOpenFontSettings;
   final VoidCallback onOpenThemeSettings;
   final VoidCallback onOpenSearch;
@@ -323,6 +220,9 @@ class _TodayHomePageState extends State<TodayHomePage> {
   );
   final GlobalKey _journeyAnchorKey = GlobalKey(
     debugLabel: 'today-journey-anchor',
+  );
+  final GlobalKey _journeySelectionAnchorKey = GlobalKey(
+    debugLabel: 'today-journey-selection-anchor',
   );
   final GlobalKey _eraDividerAnchorKey = GlobalKey(
     debugLabel: 'today-era-divider-anchor',
@@ -347,6 +247,9 @@ class _TodayHomePageState extends State<TodayHomePage> {
   @override
   void didUpdateWidget(covariant TodayHomePage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.isAuthenticated && !widget.isAuthenticated) {
+      _todayGuideDismissed = false;
+    }
     if (!oldWidget.mapGesturesEnabled && widget.mapGesturesEnabled) {
       _todayGuideDismissed = false;
     }
@@ -383,7 +286,8 @@ class _TodayHomePageState extends State<TodayHomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || _todayGuideDismissed) return;
       final stackBox = _stackKey.currentContext?.findRenderObject();
-      final headerBox = _headerAnchorKey.currentContext?.findRenderObject();
+      final headerBox = _journeySelectionAnchorKey.currentContext
+          ?.findRenderObject();
       final eraDividerBox = _eraDividerAnchorKey.currentContext
           ?.findRenderObject();
       final journeyBox = _journeyAnchorKey.currentContext?.findRenderObject();
@@ -472,11 +376,11 @@ class _TodayHomePageState extends State<TodayHomePage> {
         final floatingOverlayExtent =
             304.0 + ((textScale - 1) * 185).clamp(0.0, 76.0);
         final topObscured =
-            media.padding.top + TodayActivityHeader.mapObscuredExtent + 8;
+            media.padding.top + TodayActivityHeader.mapObscuredExtent + 54;
         final bottomObscuredFraction = constraints.maxHeight <= 0
             ? 0.48
             : (floatingOverlayExtent / constraints.maxHeight).clamp(0.0, 0.68);
-        if (!_todayGuideDismissed) {
+        if (!widget.isAuthenticated && !_todayGuideDismissed) {
           _scheduleGuideAnchorMeasurement();
         }
         final fallbackEraLabelTop =
@@ -513,6 +417,7 @@ class _TodayHomePageState extends State<TodayHomePage> {
                 markerPresentation: StoryEventMarkerPresentation.dailyJourney(
                   roles: mapSelection.markerRoles,
                   thumbnailUrls: thumbnailUrls,
+                  orderNumberByEventId: mapSelection.orderNumberByEventId,
                 ),
                 mapGesturesEnabled: widget.mapGesturesEnabled,
                 decorate: false,
@@ -582,6 +487,19 @@ class _TodayHomePageState extends State<TodayHomePage> {
               ),
             ),
             Positioned(
+              top:
+                  media.padding.top + TodayActivityHeader.mapObscuredExtent + 6,
+              left: AppSpacing.x5,
+              right: AppSpacing.x5,
+              child: WebPointerInterceptor(
+                child: TodayJourneySelectionBar(
+                  key: _journeySelectionAnchorKey,
+                  currentLabel: widget.journeySelectionLabel,
+                  onTap: widget.onOpenJourneySelection,
+                ),
+              ),
+            ),
+            Positioned(
               left: 0,
               right: 0,
               bottom: 8,
@@ -619,6 +537,7 @@ class _TodayHomePageState extends State<TodayHomePage> {
                     currentEventId: currentEventId,
                     eras: widget.eras,
                     charactersByCode: widget.charactersByCode,
+                    journeyBoundaryLabel: widget.journeyBoundaryLabel,
                     eventEmotionMarks: widget.eventEmotionMarks,
                     quizAttemptSummaries: widget.quizAttemptSummaries,
                     isAuthenticated: widget.isAuthenticated,
@@ -642,7 +561,7 @@ class _TodayHomePageState extends State<TodayHomePage> {
                 ),
               ),
             ),
-            if (!_todayGuideDismissed)
+            if (!widget.isAuthenticated && !_todayGuideDismissed)
               Positioned.fill(
                 child: WebPointerInterceptor(
                   child: Listener(
@@ -659,6 +578,103 @@ class _TodayHomePageState extends State<TodayHomePage> {
           ],
         );
       },
+    );
+  }
+}
+
+class TodayJourneySelectionBar extends StatelessWidget {
+  const TodayJourneySelectionBar({
+    super.key,
+    required this.currentLabel,
+    required this.onTap,
+  });
+
+  final String currentLabel;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Material(
+      color: Color.alphaBlend(
+        palette.currentAccent.withValues(alpha: 0.08),
+        palette.cardSurface,
+      ),
+      borderRadius: BorderRadius.circular(AppRadii.pill),
+      elevation: 2,
+      shadowColor: palette.primaryDeep.withValues(alpha: 0.16),
+      child: InkWell(
+        key: const ValueKey('today-open-journey-selection'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 40),
+          padding: const EdgeInsets.symmetric(
+            vertical: AppSpacing.x2,
+          ).copyWith(left: AppSpacing.x5, right: AppSpacing.x2),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadii.pill),
+            border: Border.all(
+              color: palette.currentAccent.withValues(alpha: 0.62),
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.route_rounded,
+                size: 18,
+                color: palette.currentAccentDeep,
+              ),
+              const SizedBox(width: AppSpacing.x3),
+              Text(
+                '여정 선택',
+                style: TextStyle(
+                  color: palette.text,
+                  fontSize: AppFontSizes.base,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const Spacer(),
+              Flexible(
+                child: Text(
+                  currentLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: palette.currentAccentDeep,
+                    fontSize: AppFontSizes.sm,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.x2),
+              Semantics(
+                button: true,
+                label: '여정 선택 화면 열기',
+                child: Container(
+                  key: const ValueKey('today-journey-selection-arrow'),
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: palette.currentAccent.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: palette.currentAccent.withValues(alpha: 0.42),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    size: 20,
+                    color: palette.currentAccentDeep,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

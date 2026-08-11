@@ -10,7 +10,7 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="brand">Story Bible Guides</div>
-      <div class="subtle">310 events · 703 Dart tests</div>
+      <div class="subtle">310 events · 728 Dart tests</div>
       <nav class="nav">
         <a class="" href="index.html">가이드 인덱스</a>
         <div class="nav-group"><div class="nav-heading">문서 지도</div><a class="nav-main" href="readme.html"><span>Story Bible 개발 가이드 허브</span></a></div>
@@ -27,7 +27,7 @@
           <div class="eyebrow">Developer documentation</div>
           <h1>테스트 가이드 — Story Bible</h1>
           <p>테스트: 현재 테스트 파일과 검증 책임 카탈로그</p>
-          <div class="card"><strong>Dart 테스트 분포</strong><div class="bar-row"><span>test/app_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>3</b></div><div class="bar-row"><span>test/data</span><div class="bar"><i style="width:15%"></i></div><b>47</b></div><div class="bar-row"><span>test/models</span><div class="bar"><i style="width:29%"></i></div><b>88</b></div><div class="bar-row"><span>test/platform</span><div class="bar"><i style="width:0%"></i></div><b>2</b></div><div class="bar-row"><span>test/screens</span><div class="bar"><i style="width:1%"></i></div><b>5</b></div><div class="bar-row"><span>test/services</span><div class="bar"><i style="width:6%"></i></div><b>20</b></div><div class="bar-row"><span>test/state</span><div class="bar"><i style="width:9%"></i></div><b>28</b></div><div class="bar-row"><span>test/theme</span><div class="bar"><i style="width:5%"></i></div><b>18</b></div><div class="bar-row"><span>test/utils</span><div class="bar"><i style="width:49%"></i></div><b>149</b></div><div class="bar-row"><span>test/widget_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>1</b></div><div class="bar-row"><span>test/widgets</span><div class="bar"><i style="width:100%"></i></div><b>303</b></div></div>
+          <div class="card"><strong>Dart 테스트 분포</strong><div class="bar-row"><span>test/app_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>3</b></div><div class="bar-row"><span>test/data</span><div class="bar"><i style="width:15%"></i></div><b>49</b></div><div class="bar-row"><span>test/models</span><div class="bar"><i style="width:28%"></i></div><b>91</b></div><div class="bar-row"><span>test/platform</span><div class="bar"><i style="width:0%"></i></div><b>2</b></div><div class="bar-row"><span>test/screens</span><div class="bar"><i style="width:1%"></i></div><b>5</b></div><div class="bar-row"><span>test/services</span><div class="bar"><i style="width:6%"></i></div><b>20</b></div><div class="bar-row"><span>test/state</span><div class="bar"><i style="width:8%"></i></div><b>28</b></div><div class="bar-row"><span>test/theme</span><div class="bar"><i style="width:5%"></i></div><b>18</b></div><div class="bar-row"><span>test/utils</span><div class="bar"><i style="width:48%"></i></div><b>154</b></div><div class="bar-row"><span>test/widget_test.dart</span><div class="bar"><i style="width:0%"></i></div><b>1</b></div><div class="bar-row"><span>test/widgets</span><div class="bar"><i style="width:100%"></i></div><b>318</b></div></div>
           <div class="toc"><strong>On this page</strong><a class="level-1" href="#테스트-가이드-—-story-bible">테스트 가이드 — Story Bible</a><a class="level-2" href="#0-한-장-요약">0. 한 장 요약</a><a class="level-2" href="#1-기본-실행-명령">1. 기본 실행 명령</a><a class="level-2" href="#2-모델-테스트">2. 모델 테스트</a><a class="level-2" href="#3-repository-state-테스트">3. Repository / State 테스트</a><a class="level-2" href="#4-utils-테스트">4. Utils 테스트</a><a class="level-2" href="#5-widget-테스트">5. Widget 테스트</a><a class="level-2" href="#6-python-도구-테스트">6. Python 도구 테스트</a><a class="level-2" href="#7-변경-유형별-최소-검증">7. 변경 유형별 최소 검증</a><a class="level-2" href="#8-남은-테스트-공백">8. 남은 테스트 공백</a></div>
         </section>
         <article class="doc-body">
@@ -262,7 +262,11 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 </tr>
 <tr>
 <td><code>daily_exploration_selection_test.dart</code></td>
-<td>날짜별 미션 선택, 최근 감정 기준 오늘 탐험 재개, 구약 7시대→신약 3시대/시대 내 사건 순서, 전체 처음·끝 위치 안정성</td>
+<td>날짜별 미션 선택, 선택 범위의 최초 미완료 탐험 재개, 구약 7시대→신약 4시대/시대 내 사건 순서, 전체 처음·끝 위치 안정성</td>
+</tr>
+<tr>
+<td><code>journey_filtering_test.dart</code></td>
+<td>전체·소분류·성경책·인물 여정 필터, 진행률, 실제 시대/소분류 그룹 계산</td>
 </tr>
 <tr>
 <td><code>bible_reading_progress_test.dart</code></td>
@@ -293,6 +297,7 @@ python3 tools/lint/check_code_metrics.py</code></pre>
 <td>주간 선택 로직</td>
 </tr>
 </tbody></table></div>
+<p>여정 조건 직렬화와 기기 재실행 후 복원은 <code>test/models/journey_selection_test.dart</code>와 <code>test/data/journey_selection_repository_test.dart</code>에서 검증한다. 여정 선택의 단순 헤더, 아이콘·번호 제목 한 줄 배치, 큰 글자 말줄임 방지, 흰색/검은색 카드, 확인 팝업, 카드와 구분된 선택 정보 및 실제 소분류 표시, 일부 구간 접힘 복원과 구약·신약 교차 선택 유지, 시대명 label·긴 제목 가로 스크롤/fade, 체크박스와 소분류 제목의 한 줄 정렬, 시대별 성경 권 목록, 고정 CTA, 고대비 선택 상태와 중립 회색 권 비활성화, 인물 정렬 dropdown·5열, 정보와 체크박스 선택을 분리한 범위 화면은 <code>test/widgets/journey_selection_screen_test.dart</code>에서 검증한다. 오늘 홈에서는 선택된 전체 여정 순번이 카드와 지도 핀에 동일하게 전달되는지, 여정 선택 화살표가 오른쪽 끝 원형 버튼으로 표시되는지와 시작 경계 카드가 인접 이야기 카드와 같은 높이·하단선을 사용하는지를 <code>test/widgets/home_journey_overlay_test.dart</code>, <code>test/utils/daily_exploration_selection_test.dart</code>, <code>test/widgets/today_home_page_test.dart</code>에서 검증한다.</p>
 <p>콘텐츠/지도/날짜 로직은 UI보다 utils에서 먼저 고정한다. pure function으로 뺄 수 있으면 widget test보다 빠르고 회귀 지점도 더 선명하다.</p>
 <h2 id="5-widget-테스트">5. Widget 테스트</h2>
 <p><code>test/widgets/</code>는 사용자에게 보이는 한국어 문구, 버튼 노출, 비어 있는 상태, 레이아웃 제약을 확인한다.</p>
