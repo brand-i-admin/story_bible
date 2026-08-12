@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.1.3+53
+version: 1.1.5+57
 environment:
   sdk: ^3.12.0
   flutter: '>=3.44.7'
@@ -52,8 +52,8 @@ dependencies:
   # 활성화 절차: docs/PUSH_SETUP.md 참조 (사용자가 Firebase Console 에서
   # 프로젝트 생성 + flutterfire configure 실행 후 lib/main.dart 에서
   # PushService.initialize() 호출).
-  # FlutterFire 4/16 세대는 iOS 15+가 필요하다. 기존 iOS 13 지원을 보존하는
-  # 마지막 호환 메이저에서 최신 패치를 사용한다.
+  # 앱의 최소 지원 버전은 iOS 15다. FlutterFire 메이저 업그레이드는 배포 대상
+  # 전환과 분리해 호환성 검증 후 진행하며, 현재 안정 버전은 그대로 유지한다.
   firebase_core: ^3.15.2
   firebase_messaging: ^15.2.10
 

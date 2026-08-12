@@ -90,12 +90,12 @@ scripts/build_ios_dev.sh --export-method=ad-hoc
 ## Notes
 
 - 모든 스크립트는 Flutter 호출 전에 `flutter clean`과 `flutter pub get`을 실행한 뒤, 본 호출은 `--no-pub`으로 진행합니다.
-- `flutter pub get`의 최신 버전 안내 24개는 현재 안전하게 resolvable한 버전까지 적용한 상태다. Firebase 계열은 iOS 13 지원을 유지하는 최신 호환 버전, `latlong2`는 `flutter_map_marker_cluster`가 요구하는 0.9 계열, `path_provider_foundation`은 Xcode 네이티브 에셋 경고가 없는 호환 버전으로 고정했다. 나머지는 Flutter SDK 테스트/분석 도구가 고정한 전이 의존성이므로 `dependency_overrides`로 강제하지 않는다.
+- `flutter pub get`의 최신 버전 안내는 현재 안전하게 resolvable한 버전까지 적용한 상태다. Firebase 계열의 메이저 업그레이드는 iOS 15 deployment target 전환과 분리해 호환성 검증 후 진행하며, `latlong2`는 `flutter_map_marker_cluster`가 요구하는 0.9 계열, `path_provider_foundation`은 Xcode 네이티브 에셋 경고가 없는 호환 버전으로 고정했다. 나머지는 Flutter SDK 테스트/분석 도구가 고정한 전이 의존성이므로 `dependency_overrides`로 강제하지 않는다.
 - 최신 `firebase_messaging` Android 구현이 사용하는 호환용 deprecated API 진단은 해당 외부 플러그인의 Java 컴파일에서만 `--info` 로그로 낮춘다. 앱 Kotlin/Java 경고는 계속 일반 빌드에서 표시한다.
 - `run_*` 스크립트는 `flutter run --no-pub --dart-define=ENV=... --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...`를 호출합니다.
 - `build_ios_*` 스크립트는 `flutter build ipa --release --no-pub`에 같은 dart-define 값과 `pubspec.yaml`의 `--build-name`, `--build-number`를 붙여 호출합니다. 빌드 전 `ios/Flutter/Generated.xcconfig`와 `ios/Flutter/flutter_export_environment.sh`를 `pubspec.yaml` 버전으로 동기화하고 `pod install`로 `ios/Pods/Manifest.lock`을 맞춥니다.
 - iOS 플러그인은 CocoaPods 정적 링크를 사용합니다. Firebase의 SwiftPM 동적 XCFramework에는 공급자 dSYM이 없어 App Store Connect가 `Upload Symbols Failed` 경고를 표시하므로 `pubspec.yaml`에서 Swift Package Manager를 프로젝트 단위로 비활성화합니다.
-- CocoaPods 전이 의존성의 deployment target은 앱과 같은 iOS 13으로 맞추고, Pods 내부의 deprecated API 진단만 숨깁니다. Runner와 앱 소스의 경고는 그대로 표시합니다.
+- CocoaPods 전이 의존성의 deployment target은 앱과 같은 iOS 15로 맞추고, Pods 내부의 deprecated API 진단만 숨깁니다. Runner와 앱 소스의 경고는 그대로 표시합니다.
 - macOS가 CocoaPods 생성 스크립트를 오탐지해 `Killed: 9`로 종료하지 않도록, Xcode가 `Pods/Target Support Files`의 `.sh`를 시스템 `/bin/sh`에 전달하여 실행하도록 생성 빌드 단계를 보정합니다. 다운로드된 프레임워크와 보안 메타데이터는 변경하지 않습니다.
 - iOS Crashlytics 심볼 업로드는 아카이브(`ACTION=install`)의 마지막 단계에서만 실행합니다. CocoaPods의 업로더를 우선하고, SwiftPM checkout은 기존 Xcode 빌드와의 호환을 위한 fallback으로만 사용합니다. 원격 전송 없는 아카이브 검증에는 `FLUTTER_XCODE_SKIP_CRASHLYTICS_SYMBOL_UPLOAD=YES`를 사용할 수 있습니다.
 - `build_android_*` 스크립트는 `flutter build appbundle --release --no-pub`에 같은 dart-define 값을 붙여 호출합니다.

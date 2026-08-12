@@ -26,6 +26,8 @@ Android 의존성은 모두 AndroidX를 사용하므로 Jetifier는 활성화하
 iOS 플러그인은 CocoaPods 정적 링크를 사용한다. Firebase SwiftPM 바이너리의 공급자
 dSYM 누락으로 App Store Connect 심볼 경고가 발생하므로 `pubspec.yaml`의 프로젝트별
 Swift Package Manager 비활성화 설정을 유지한다.
+iOS 최소 배포 버전은 15.0이며, `ios/Podfile`과 Runner의 Debug/Profile/Release
+deployment target을 모두 15.0으로 맞춘다.
 
 Google Play 배포용 Android 빌드는 Android 16(API 36)을 명시적으로 대상으로 한다.
 `android/app/build.gradle.kts`의 `compileSdk`/`targetSdk`는 36으로 유지하고,
