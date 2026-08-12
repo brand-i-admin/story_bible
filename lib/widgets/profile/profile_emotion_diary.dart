@@ -9,7 +9,6 @@ import '../../theme/typography.dart';
 import '../../utils/bible_book_meta.dart';
 import '../../utils/kst_date.dart';
 import '../emotion_badge_icon.dart';
-import '../pulse_highlight.dart';
 import 'companion_diary_entry_card.dart';
 import 'profile_activity_badge.dart';
 import 'profile_companion_diary.dart';
@@ -433,7 +432,7 @@ class ProfileDiaryFeatureCards extends StatelessWidget {
           onDelete: onDeleteCompanionDiary,
           minHeight: featureCardMinHeight,
           expandTextForNarrowLargeText: expandTextForNarrowLargeText,
-          readOnlySummary: profileSummaryMode,
+          readOnlySummary: false,
         );
         final bibleCard = _BibleProgressFeatureCard(
           summary: bibleProgress,
@@ -441,7 +440,7 @@ class ProfileDiaryFeatureCards extends StatelessWidget {
           onContinue: onContinueBibleReading,
           minHeight: featureCardMinHeight,
           expandTextForNarrowLargeText: expandTextForNarrowLargeText,
-          showContinueAction: !profileSummaryMode,
+          showContinueAction: true,
         );
         return IntrinsicHeight(
           child: Row(
@@ -525,20 +524,11 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                   bottom: 9,
                   child: Align(
                     alignment: Alignment.center,
-                    child: PulseHighlight(
-                      active: onContinue != null && !progress.completedToday,
-                      pulseCount: null,
-                      duration: const Duration(milliseconds: 2200),
-                      borderRadius: BorderRadius.circular(999),
-                      color: darkSurface
-                          ? AppColors.goldLight
-                          : AppColors.goldHi,
-                      child: _BibleContinueButton(
-                        onTap: onContinue,
-                        completedToday: progress.completedToday,
-                        readingAccent: readingAccent,
-                        darkSurface: darkSurface,
-                      ),
+                    child: _BibleContinueButton(
+                      onTap: onContinue,
+                      completedToday: progress.completedToday,
+                      readingAccent: readingAccent,
+                      darkSurface: darkSurface,
                     ),
                   ),
                 ),
@@ -642,7 +632,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (showContinueAction) const SizedBox(height: 64),
+                  if (showContinueAction) const SizedBox(height: 46),
                 ],
               ),
             ],
@@ -724,76 +714,70 @@ class _BibleContinueButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
     final enabled = onTap != null;
+    final actionAccent = completedToday ? palette.successBottom : readingAccent;
     final backgroundColor = !enabled
         ? palette.mutedSurface
-        : completedToday
-        ? palette.successBottom
         : Color.alphaBlend(
-            readingAccent.withValues(alpha: darkSurface ? 0.32 : 0.16),
+            actionAccent.withValues(alpha: darkSurface ? 0.16 : 0.07),
             palette.cardSurface,
           );
     final badgeColor = !enabled
-        ? palette.mutedSurface
-        : completedToday
-        ? AppColors.fgOnDark
-        : readingAccent;
-    final badgeForegroundColor = !enabled
-        ? palette.mutedText
-        : completedToday
-        ? palette.successBottom
-        : AppColors.fgOnDark;
-    final labelColor = !enabled
-        ? palette.mutedText
-        : completedToday || darkSurface
-        ? AppColors.fgOnDark
-        : readingAccent;
+        ? palette.mutedText.withValues(alpha: 0.08)
+        : actionAccent.withValues(alpha: 0.10);
+    final badgeForegroundColor = !enabled ? palette.mutedText : actionAccent;
+    final labelColor = !enabled ? palette.mutedText : actionAccent;
     return Material(
       key: const ValueKey('bible-progress-continue-button'),
       color: backgroundColor,
-      borderRadius: BorderRadius.circular(999),
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.fromLTRB(8, 5, 11, 5),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(999)),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                key: const ValueKey('bible-progress-continue-icon-badge'),
-                width: 28,
-                height: 28,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: badgeColor,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: enabled
-                        ? readingAccent.withValues(alpha: 0.30)
-                        : palette.subtleBorder,
+          padding: const EdgeInsets.fromLTRB(8, 4, 11, 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: enabled
+                  ? actionAccent.withValues(alpha: 0.24)
+                  : palette.subtleBorder,
+            ),
+          ),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  key: const ValueKey('bible-progress-continue-icon-badge'),
+                  width: 25,
+                  height: 25,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: badgeColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward_rounded,
+                    color: badgeForegroundColor,
+                    size: 17,
                   ),
                 ),
-                child: Icon(
-                  Icons.arrow_forward_rounded,
-                  color: badgeForegroundColor,
-                  size: 18,
+                const SizedBox(width: 7),
+                Text(
+                  '이어읽기',
+                  maxLines: 1,
+                  overflow: TextOverflow.visible,
+                  softWrap: false,
+                  style: TextStyle(
+                    color: labelColor,
+                    fontSize: 12.1,
+                    fontWeight: FontWeight.w900,
+                    height: 1,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '이어읽기',
-                maxLines: 1,
-                overflow: TextOverflow.visible,
-                softWrap: false,
-                style: TextStyle(
-                  color: labelColor,
-                  fontSize: 12.1,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -13,6 +13,9 @@ class JourneyUnitSelectionList extends StatefulWidget {
     required this.onSelectionChanged,
     this.targetBadgeLabel,
     this.expandPartiallySelectedEras = true,
+    this.expandAllEras = false,
+    this.revealInitialSelection = false,
+    this.completedEventIds = const <String>{},
     this.showEraLabel = false,
   });
 
@@ -21,6 +24,9 @@ class JourneyUnitSelectionList extends StatefulWidget {
   final ValueChanged<Set<String>> onSelectionChanged;
   final String? targetBadgeLabel;
   final bool expandPartiallySelectedEras;
+  final bool expandAllEras;
+  final bool revealInitialSelection;
+  final Set<String> completedEventIds;
   final bool showEraLabel;
 
   @override
@@ -31,6 +37,10 @@ class JourneyUnitSelectionList extends StatefulWidget {
 class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
   final Set<String> _expandedEraIds = <String>{};
   final Set<String> _initializedEraIds = <String>{};
+  final GlobalKey _initialSelectionFocusKey = GlobalKey();
+  String? _initialSelectionFocusEraId;
+  bool _initialSelectionFocusScheduled = false;
+  bool _didFocusInitialSelection = false;
 
   @override
   void initState() {
@@ -50,9 +60,16 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
       final selectedCount = group.units
           .where((unit) => widget.selectedUnitKeys.contains(unit.key))
           .length;
-      if (widget.expandPartiallySelectedEras &&
+      if (widget.revealInitialSelection &&
           selectedCount > 0 &&
-          selectedCount < group.units.length) {
+          _initialSelectionFocusEraId == null) {
+        _initialSelectionFocusEraId = group.era.id;
+      }
+      if (widget.expandAllEras ||
+          (widget.revealInitialSelection && selectedCount > 0) ||
+          (widget.expandPartiallySelectedEras &&
+              selectedCount > 0 &&
+              selectedCount < group.units.length)) {
         _expandedEraIds.add(group.era.id);
       }
     }
@@ -79,6 +96,7 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
         ),
       );
     }
+    _scheduleInitialSelectionFocus();
     return Column(
       children: [
         for (var index = 0; index < widget.groups.length; index++) ...[
@@ -88,6 +106,29 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
         ],
       ],
     );
+  }
+
+  void _scheduleInitialSelectionFocus() {
+    if (!widget.revealInitialSelection ||
+        _didFocusInitialSelection ||
+        _initialSelectionFocusScheduled ||
+        _initialSelectionFocusEraId == null) {
+      return;
+    }
+    _initialSelectionFocusScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _initialSelectionFocusScheduled = false;
+      if (!mounted || _didFocusInitialSelection) return;
+      final focusContext = _initialSelectionFocusKey.currentContext;
+      if (focusContext == null) return;
+      _didFocusInitialSelection = true;
+      await Scrollable.ensureVisible(
+        focusContext,
+        alignment: 0.12,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+      );
+    });
   }
 
   Widget _buildEraCard(BuildContext context, JourneyEraGroup group) {
@@ -100,7 +141,7 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
     final bibleBooks = group.bibleBookNames.isEmpty
         ? '연결된 성경 권 없음'
         : group.bibleBookNames.join(' · ');
-    return Container(
+    final card = Container(
       key: ValueKey('journey-era-${group.era.code}'),
       decoration: BoxDecoration(
         color: palette.cardSurface,
@@ -135,6 +176,13 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
                     onChanged: (_) => _toggleEra(group, !allSelected),
                   ),
                   const SizedBox(width: AppSpacing.x2),
+                  if (journeyEraEmoji(group.era).isNotEmpty) ...[
+                    Text(
+                      journeyEraEmoji(group.era),
+                      style: const TextStyle(fontSize: AppFontSizes.input),
+                    ),
+                    const SizedBox(width: AppSpacing.x3),
+                  ],
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,18 +229,48 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
             ),
           ),
           if (expanded) ...[
-            Divider(height: 1, color: palette.subtleBorder),
-            for (final unit in group.units) _buildUnitRow(context, unit),
+            Container(
+              key: ValueKey('journey-nested-units-${group.era.code}'),
+              margin: const EdgeInsets.fromLTRB(
+                AppSpacing.x6,
+                0,
+                AppSpacing.x3,
+                AppSpacing.x3,
+              ),
+              decoration: BoxDecoration(
+                color: palette.mutedSurface,
+                borderRadius: BorderRadius.circular(AppRadii.lg),
+                border: Border.all(color: palette.subtleBorder),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  for (var index = 0; index < group.units.length; index++) ...[
+                    _buildUnitRow(context, group.units[index]),
+                    if (index + 1 < group.units.length)
+                      Divider(height: 1, color: palette.subtleBorder),
+                  ],
+                ],
+              ),
+            ),
           ],
         ],
       ),
     );
+    if (_initialSelectionFocusEraId == group.era.id) {
+      return KeyedSubtree(key: _initialSelectionFocusKey, child: card);
+    }
+    return card;
   }
 
   Widget _buildUnitRow(BuildContext context, JourneyUnitGroup unit) {
     final palette = AppPaletteTheme.of(context);
     final selected = widget.selectedUnitKeys.contains(unit.key);
     final targetLabel = widget.targetBadgeLabel;
+    final progress = journeyProgress(
+      unit.events,
+      engravedEventIds: widget.completedEventIds,
+    );
     return Material(
       key: ValueKey('journey-unit-${unit.key}'),
       color: selected
@@ -202,9 +280,9 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
         onTap: () => _toggleUnit(unit.key, !selected),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
-            AppSpacing.x6,
             AppSpacing.x3,
-            AppSpacing.x4,
+            AppSpacing.x3,
+            AppSpacing.x3,
             AppSpacing.x3,
           ),
           child: Row(
@@ -219,38 +297,89 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FadingHorizontalTextScroll(
-                      text: unit.title,
-                      scrollKey: ValueKey(
-                        'journey-unit-title-scroll-${unit.key}',
-                      ),
-                      textScaler: MediaQuery.textScalerOf(context),
-                      style: TextStyle(
-                        color: palette.text,
-                        fontSize: AppFontSizes.base,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (targetLabel != null && unit.containsTarget) ...[
-                      const SizedBox(height: AppSpacing.x1),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FadingHorizontalTextScroll(
+                            text: unit.title,
+                            scrollKey: ValueKey(
+                              'journey-unit-title-scroll-${unit.key}',
+                            ),
+                            textScaler: MediaQuery.textScalerOf(context),
+                            style: TextStyle(
+                              color: palette.text,
+                              fontSize: AppFontSizes.base,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.x2),
+                        Container(
+                          key: ValueKey('journey-unit-progress-${unit.key}'),
                           padding: const EdgeInsets.symmetric(
                             horizontal: AppSpacing.x2,
                             vertical: AppSpacing.x1,
                           ),
                           decoration: BoxDecoration(
-                            color: palette.selectionFill,
+                            color: Color.alphaBlend(
+                              palette.successBottom.withValues(alpha: 0.12),
+                              palette.cardSurface,
+                            ),
                             borderRadius: BorderRadius.circular(AppRadii.pill),
-                            border: Border.all(color: palette.selectedBorder),
+                            border: Border.all(
+                              color: palette.successBottom.withValues(
+                                alpha: 0.58,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            '${progress.completed}/${progress.total}',
+                            textScaler: TextScaler.noScaling,
+                            style: TextStyle(
+                              color: palette.successBottom,
+                              fontSize: AppFontSizes.xs,
+                              fontWeight: FontWeight.w800,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (targetLabel != null && unit.containsTarget) ...[
+                      const SizedBox(height: AppSpacing.x2),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          key: ValueKey('journey-target-badge-${unit.key}'),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.x3,
+                            vertical: AppSpacing.x1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color.alphaBlend(
+                              palette.characterAccent.withValues(alpha: 0.18),
+                              palette.cardSurface,
+                            ),
+                            borderRadius: BorderRadius.circular(AppRadii.pill),
+                            border: Border.all(
+                              color: palette.characterAccent,
+                              width: 1.2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: palette.characterAccent.withValues(
+                                  alpha: 0.13,
+                                ),
+                                blurRadius: 5,
+                              ),
+                            ],
                           ),
                           child: Text(
                             '$targetLabel ${unit.targetEventCount}개',
                             style: TextStyle(
-                              color: palette.primaryDeep,
+                              color: palette.characterAccent,
                               fontSize: AppFontSizes.xs,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),

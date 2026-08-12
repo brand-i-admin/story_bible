@@ -145,7 +145,7 @@ Makefile                                # 파이프라인 오케스트레이션
   - `supabase/events/events_seed_part_*.sql` — SQL Editor 분할 파일
   - `supabase/events/events_report.json` — 리포트
   - `supabase/events/events_normalized.json` — 검수용 정규화 JSON
-- **출력 컬럼**: `era_id`(eras 조인), `title`, `summary`, `background_context`, `story_scenes`(jsonb), `scene_captions`(jsonb, 장면별 사용자용 이미지 설명), `scene_characters`(jsonb), `character_codes`(text[]), `bible_refs`(jsonb), `start_year`/`end_year`/`time_precision`, `story_index`, `unit_code`/`unit_title`/`unit_order`(시간 순 보기 구간), `landmark_id`(`landmark_code`로 landmarks 조인), `status='published'`
+- **출력 컬럼**: `era_id`(eras 조인), `title`, `summary`, `background_context`, `story_scenes`(jsonb), `scene_captions`(jsonb, 장면별 사용자용 이미지 설명), `scene_characters`(jsonb), `character_codes`(text[]), `bible_refs`(jsonb), `start_year`/`end_year`/`time_precision`, `story_index`, `unit_code`/`unit_title`/`unit_order`(시간 순 보기 구간), `landmark_id`(`landmark_code`로 landmarks 조인), `status`. 기본은 `published`지만 `era_nt_consummation` 또는 요한계시록(`계`) 참조 사건은 삭제하지 않고 `draft`로 생성한다.
 - **요약/배경 지식**: `summary`는 `bible_ref` 본문을 읽고 작성한 curated 문구를 원본으로 보존한다. `tools/seed/generate_story_background_contexts.py`는 summary를 `scene_captions`로 재작성하지 않고 길이/문장 수만 정규화하며, `background_context`는 시대 배경과 해당 사건이 무엇을 다루는지만 1~2문장으로 생성한다. 서신서는 발신자, 수신자, 상황, 작성 의도를 구체적으로 담는다. 결과는 JSON에 직접 남겨 사람이 검수한다.
 - **장면 캡션**: `scene_captions`는 seed 원본(`assets/initial_seed_events`)과 active snapshot(`assets/events`) 양쪽에서 같은 schema로 관리한다. `tools/seed/generate_scene_captions.py`는 기존 `story_scenes`/`summary`/`bible_ref` 맥락에서 프롬프트 지시문을 제거한 초안을 다시 만들 때만 사용한다.
 - **시간 순 구간**: `unit_code`/`unit_title`/`unit_order`는 story JSON 원본이 가진다. 구약 시대는 원역사 2개, 족장 3개, 출애굽 3개, 사사 3개, 왕정 3개, 분열왕국 5개, 포로/귀환 3개 구간으로 나눠 `TimelineUnitPickPanel`의 가로 카드 선택에 사용한다.
@@ -464,8 +464,9 @@ make generate-all STORIES_DIR=assets/events
   `tools/seed/character_meta.json` 기준의 `docs/guides/story_guide.md` 를
   재생성하고, `docs/guides/*.md` 전체를 `docs/guides/html/` HTML 문서로 변환한다.
   콘텐츠 JSON이나 가이드 문서가 바뀌면 함께 실행한다. 시대 목차의 앱 노출 여부는
-  Flutter의 `hiddenEraCodes` 정책과 맞춰 관리하며, 현재 published 11시대는 모두
-  노출한다.
+  Flutter의 `hiddenEraCodes` 정책과 맞춰 관리한다. DB에는 11시대와 관련 사건 row를
+  모두 보존하되, `era_nt_consummation`과 요한계시록 참조 사건은 `draft`라 앱 목차와
+  active release export에 포함하지 않는다.
 
 ## 5. 에셋 디렉토리 구조
 

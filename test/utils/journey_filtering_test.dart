@@ -133,6 +133,84 @@ void main() {
     expect(progress.completed, 2);
     expect(progress.total, 3);
   });
+
+  test('비공개 마지막 시대와 요한계시록 사건은 모든 여정 후보에서 제외한다', () {
+    const hiddenEra = Era(
+      id: 'hidden-era',
+      code: 'era_nt_consummation',
+      testament: 'new',
+      name: '역사의 종결',
+      displayOrder: 11,
+      startYear: null,
+      endYear: null,
+      mapCenterLat: null,
+      mapCenterLng: null,
+      mapZoom: null,
+    );
+    final catalogEvents = [
+      ...events,
+      _event(
+        id: 'revelation-in-visible-era',
+        eraId: newEra.id,
+        unitCode: 'letters',
+        unitTitle: '교회에 보낸 편지들',
+        book: '계',
+        characterCodes: const ['john'],
+        rank: 4,
+      ),
+      _event(
+        id: 'hidden-last-era',
+        eraId: hiddenEra.id,
+        unitCode: 'last-hope',
+        unitTitle: '마지막 소망과 새 창조',
+        book: '계',
+        characterCodes: const ['john'],
+        rank: 5,
+      ),
+    ];
+
+    final filtered = filterJourneyEvents(
+      events: catalogEvents,
+      eras: const [oldEra, newEra, hiddenEra],
+      selection: const JourneySelection.all(),
+    );
+    final groups = buildJourneyEraGroups(
+      events: catalogEvents,
+      eras: const [oldEra, newEra, hiddenEra],
+    );
+
+    expect(filtered.map((event) => event.id), ['creation', 'babel', 'paul']);
+    expect(
+      groups.map((group) => group.era.code),
+      isNot(contains('era_nt_consummation')),
+    );
+    expect(
+      groups.expand((group) => group.events).map((event) => event.id),
+      isNot(contains('revelation-in-visible-era')),
+    );
+  });
+
+  test('대분류 이모지는 시대 코드 규칙으로만 정한다', () {
+    expect(journeyEraEmoji(oldEra), '💡');
+    expect(journeyEraEmoji(newEra), '⛵');
+    expect(
+      journeyEraEmoji(
+        const Era(
+          id: 'letters',
+          code: 'era_nt_post_apostolic',
+          testament: 'new',
+          name: '사도 후기',
+          displayOrder: 10,
+          startYear: null,
+          endYear: null,
+          mapCenterLat: null,
+          mapCenterLng: null,
+          mapZoom: null,
+        ),
+      ),
+      '✉️',
+    );
+  });
 }
 
 StoryEvent _event({

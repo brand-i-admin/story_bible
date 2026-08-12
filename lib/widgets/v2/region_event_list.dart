@@ -359,11 +359,11 @@ class StoryEventThumbCard extends StatelessWidget {
     final titleMaxLines = manualSingleLine
         ? 1
         : (deckCompact ? 2 : (compactLargeText ? null : 2));
-    final summaryMaxLines = compactLargeText ? null : 2;
+    final summaryMaxLines = todayDeck ? 2 : (compactLargeText ? null : 2);
     final gapAfterThumbnail = deckCompact
         ? (compactLargeText ? 2.0 : 4.0)
         : (compactLargeText ? 3.0 : 6.0);
-    final gapAfterTitle = deckCompact ? 2.0 : (compactLargeText ? 2.0 : 4.0);
+    final gapAfterTitle = deckCompact ? 4.0 : (compactLargeText ? 2.0 : 4.0);
     final gapBeforeSummary = compactLargeText ? 3.0 : 6.0;
     final gapBeforePills = deckCompact ? 4.0 : (compactLargeText ? 4.0 : 6.0);
     final thumbnail = _CardThumbnailFrame(
@@ -390,9 +390,9 @@ class StoryEventThumbCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (todayDeck) ...[
-          SizedBox(height: compactLargeText ? 18 : 20),
+          SizedBox(height: compactLargeText ? 20 : 22),
           title,
-          SizedBox(height: gapAfterTitle + 1),
+          SizedBox(height: gapAfterTitle + 3),
           thumbnail,
           SizedBox(height: gapAfterThumbnail),
         ] else ...[
@@ -519,14 +519,37 @@ class _CardThumbnailFrame extends StatelessWidget {
         presentation == StoryEventCardPresentation.todayAdjacent;
     final isTodayCurrent =
         presentation == StoryEventCardPresentation.todayCurrent;
-    // 오늘 덱은 기존 8:5보다 세로 높이를 80%로 줄여 제목과 흐름을 먼저 읽게 한다.
-    final aspectRatio = isTodayCard ? 2.0 : 1.0;
+    if (isTodayCard) {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final widthFactor = isTodayCurrent ? 0.66 : 0.62;
+          final maxWidth = isTodayCurrent ? 140.0 : 54.0;
+          final thumbnailWidth = (constraints.maxWidth * widthFactor)
+              .clamp(0.0, maxWidth)
+              .toDouble();
+          final thumbnailHeight = thumbnailWidth * 0.70;
+          return Center(
+            child: ClipRRect(
+              key: ValueKey(
+                'story-thumbnail-frame-${presentation.name}-${event.id}',
+              ),
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                width: thumbnailWidth,
+                height: thumbnailHeight,
+                child: thumbnail,
+              ),
+            ),
+          );
+        },
+      );
+    }
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: isTodayCurrent ? 3 : 0),
+      padding: EdgeInsets.zero,
       child: ClipRRect(
         key: ValueKey('story-thumbnail-frame-${presentation.name}-${event.id}'),
         borderRadius: BorderRadius.circular(10),
-        child: AspectRatio(aspectRatio: aspectRatio, child: thumbnail),
+        child: AspectRatio(aspectRatio: 1, child: thumbnail),
       ),
     );
   }
@@ -738,6 +761,7 @@ class _AutoScrollingThumbTitleState extends State<_AutoScrollingThumbTitle> {
       _controller.jumpTo(0);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || request != _animationRequest) return;
       _startTimer = Timer(_initialDelay, () {
         if (!mounted ||
             request != _animationRequest ||

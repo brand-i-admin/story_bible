@@ -7,7 +7,6 @@ import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../theme/typography.dart';
 import '../fading_horizontal_text_scroll.dart';
-import '../pulse_highlight.dart';
 import 'companion_diary_entry_card.dart';
 import 'glowing_add_button.dart';
 
@@ -282,11 +281,11 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                 bottom: -4,
                 child: _DiaryNotebookMark(active: hasEntry),
               ),
-              if (!loading && !hasEntry && canWrite)
+              if (!loading && canWrite)
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 0,
+                  bottom: 5,
                   child: Align(
                     alignment: Alignment.center,
                     child: _DiaryWriteButton(onTap: () => _openEditor(context)),
@@ -387,7 +386,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                       ),
                     ),
                   const Spacer(),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 4),
                   if (loading && !hasEntry)
                     const Padding(
                       padding: EdgeInsets.only(bottom: 8),
@@ -397,8 +396,8 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                         child: CircularProgressIndicator(strokeWidth: 2.2),
                       ),
                     )
-                  else if (!hasEntry && canWrite)
-                    const SizedBox(height: 64)
+                  else if (canWrite)
+                    const SizedBox(height: 46)
                   else if (!canWrite && !readOnlySummary)
                     Text(
                       '로그인하면 기록할 수 있어요.',
@@ -485,45 +484,51 @@ class _DiaryWriteButton extends StatelessWidget {
         ThemeData.estimateBrightnessForColor(palette.cardSurface) ==
         Brightness.dark;
     final backgroundColor = Color.alphaBlend(
-      palette.successBottom.withValues(alpha: darkSurface ? 0.32 : 0.16),
+      palette.successBottom.withValues(alpha: darkSurface ? 0.16 : 0.07),
       palette.cardSurface,
     );
     final labelColor = darkSurface ? AppColors.fgOnDark : palette.successBottom;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 7, 8, 9),
-      child: PulseHighlight(
-        active: true,
-        pulseCount: null,
-        duration: const Duration(milliseconds: 2200),
-        borderRadius: BorderRadius.circular(999),
-        color: darkSurface ? AppColors.goldLight : AppColors.goldHi,
-        child: Material(
-          key: const ValueKey('companion-diary-write-button-pill'),
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(999),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(999),
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(8, 5, 11, 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(999),
+      padding: const EdgeInsets.fromLTRB(5, 3, 5, 4),
+      child: Material(
+        key: const ValueKey('companion-diary-write-button-pill'),
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(8, 4, 11, 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: palette.successBottom.withValues(alpha: 0.24),
               ),
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ProfileGlowingAddButton(
-                    key: const ValueKey('companion-diary-add-button'),
-                    tooltip: '다이어리 기록하기',
-                    onTap: onTap,
-                    size: 28,
-                    iconSize: 19,
-                    backgroundColor: palette.successBottom,
-                    foregroundColor: AppColors.fgOnDark,
-                    pulseDuration: const Duration(milliseconds: 1600),
-                    pulseCount: null,
+                  Tooltip(
+                    message: '다이어리 기록하기',
+                    child: Container(
+                      key: const ValueKey('companion-diary-add-button'),
+                      width: 25,
+                      height: 25,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: palette.successBottom.withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.add_rounded,
+                        size: 17,
+                        color: palette.successBottom,
+                      ),
+                    ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 7),
                   Text(
                     '기록하기',
                     style: TextStyle(

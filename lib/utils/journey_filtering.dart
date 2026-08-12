@@ -4,6 +4,7 @@ import '../models/journey_selection.dart';
 import '../models/story_event.dart';
 import 'bible_book_meta.dart';
 import 'daily_exploration_selection.dart';
+import 'story_visibility.dart';
 
 String journeyUnitKey({required String eraId, required String unitCode}) {
   return '$eraId::$unitCode';
@@ -63,25 +64,28 @@ List<StoryEvent> filterJourneyEvents({
   Map<String, Character> charactersByCode = const <String, Character>{},
 }) {
   final eraById = {for (final era in eras) era.id: era};
+  final visibleEvents = events.where(
+    (event) => isStoryEventVisibleInApp(event, eraById: eraById),
+  );
   final filtered = switch (selection.source) {
-    JourneySource.all => events,
-    JourneySource.segments => events.where(
+    JourneySource.all => visibleEvents,
+    JourneySource.segments => visibleEvents.where(
       (event) => selection.unitKeys.contains(journeyUnitKeyForEvent(event)),
     ),
     JourneySource.book =>
       selection.scope == JourneyScope.targetOnly
-          ? events.where(
+          ? visibleEvents.where(
               (event) =>
                   selection.bookName != null &&
                   eventHasBibleBook(event, selection.bookName!),
             )
-          : events.where(
+          : visibleEvents.where(
               (event) =>
                   selection.unitKeys.contains(journeyUnitKeyForEvent(event)),
             ),
     JourneySource.person =>
       selection.scope == JourneyScope.targetOnly
-          ? events.where(
+          ? visibleEvents.where(
               (event) =>
                   selection.personCode != null &&
                   eventMatchesJourneyCharacter(
@@ -91,7 +95,7 @@ List<StoryEvent> filterJourneyEvents({
                     eraById: eraById,
                   ),
             )
-          : events.where(
+          : visibleEvents.where(
               (event) =>
                   selection.unitKeys.contains(journeyUnitKeyForEvent(event)),
             ),
@@ -147,7 +151,10 @@ List<JourneyEraGroup> buildJourneyEraGroups({
   bool Function(StoryEvent event)? targetMatches,
   bool onlyTargetEras = false,
 }) {
-  final ordered = orderedExplorationEventsByEra(events: events, eras: eras);
+  final ordered = orderedExplorationEventsByEra(
+    events: visibleStoryEvents(events: events, eras: eras),
+    eras: eras,
+  );
   final targetEraIds = targetMatches == null
       ? const <String>{}
       : {
@@ -225,4 +232,18 @@ String friendlyJourneyEraTitle(Era era) => switch (era.code) {
   'era_nt_post_apostolic' => '교회에 보낸 편지들',
   'era_nt_consummation' => '마지막 소망과 새 창조',
   _ => era.name,
+};
+
+String journeyEraEmoji(Era era) => switch (era.code) {
+  'era_primeval' => '💡',
+  'era_patriarch' => '👨‍👩‍👧‍👦',
+  'era_exodus' => '🔺',
+  'era_judges' => '🗺️',
+  'era_monarchy' => '👑',
+  'era_divided_kingdom' => '↔️',
+  'era_exile_return' => '⛓️',
+  'era_nt_public_ministry' => '✝️',
+  'era_nt_apostolic' => '⛵',
+  'era_nt_post_apostolic' => '✉️',
+  _ => '',
 };

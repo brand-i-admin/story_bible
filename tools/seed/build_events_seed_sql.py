@@ -202,6 +202,8 @@ BROTHERS_ALL = [
 ]
 BROTHERS_WITHOUT_BENJAMIN = [code for code in BROTHERS_ALL if code != "benjamin"]
 ROSTER_EXCLUDED_CODES = {"dan", "lot_wife"}
+UNPUBLISHED_ERA_CODES = {"era_nt_consummation"}
+UNPUBLISHED_BIBLE_BOOK_ABBRS = {"계"}
 
 # Commonly used NT anchor years (kept conservative; mostly still approx).
 # AD 70 temple destruction is treated as exact.
@@ -284,6 +286,15 @@ class NormalizedEvent:
     landmark_code: str  # v2 위치 모델 — events.landmark_id 의 source
     characters: list[str]
     refs: list[BibleRef]
+
+
+def event_publication_status(event: NormalizedEvent) -> str:
+    """공개 전인 마지막 시대와 요한계시록 사건을 초안으로 보존한다."""
+    if event.era_code in UNPUBLISHED_ERA_CODES:
+        return "draft"
+    if any(ref.book_abbr in UNPUBLISHED_BIBLE_BOOK_ABBRS for ref in event.refs):
+        return "draft"
+    return "published"
 
 
 def parse_args() -> argparse.Namespace:
@@ -735,7 +746,7 @@ def render_events_sql(events: list[NormalizedEvent], chunk_size: int) -> list[st
                 f"{sql_value(event.unit_title)}, "
                 f"{sql_value(event.unit_order)}, "
                 f"{sql_value(event.landmark_code)}, "
-                f"{sql_value('published')}"
+                f"{sql_value(event_publication_status(event))}"
                 ")"
             )
         lines.append(",\n".join(values))
@@ -879,12 +890,16 @@ def build_seed_sql(
 
 def write_report(report_path: Path, events: list[NormalizedEvent]) -> None:
     by_era: dict[str, int] = {}
+    by_status: dict[str, int] = {}
     for event in events:
         by_era[event.era_code] = by_era.get(event.era_code, 0) + 1
+        status = event_publication_status(event)
+        by_status[status] = by_status.get(status, 0) + 1
     payload = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "event_count": len(events),
         "events_by_era": by_era,
+        "events_by_status": by_status,
         "notes": [
             "story_index is taken straight from JSON (admin UI / manual edit owns it)",
             "character codes expanded for disciples/apostles/brothers, then filtered by avatar prompt whitelist",
@@ -924,6 +939,7 @@ def write_normalized_json(path: Path, events: list[NormalizedEvent]) -> None:
                 "story_scenes": event.story_scenes,
                 "scene_captions": event.scene_captions,
                 "scene_characters": event.scene_characters,
+                "status": event_publication_status(event),
             }
         )
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")

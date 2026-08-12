@@ -11,6 +11,7 @@ import '../models/quiz_attempt_summary.dart';
 import '../models/quiz_question.dart';
 import '../models/story_event.dart';
 import '../utils/bible_book_meta.dart';
+import '../utils/story_visibility.dart';
 import 'character_name_fallbacks.dart';
 
 @visibleForTesting
@@ -284,19 +285,25 @@ class StoryRepository {
         .map<StoryEvent>(
           (row) => StoryEvent.fromMap(row as Map<String, dynamic>),
         )
-        .where((event) => !hiddenEraIds.contains(event.eraId))
+        .where(
+          (event) =>
+              !hiddenEraIds.contains(event.eraId) &&
+              !storyEventUsesHiddenBibleBook(event),
+        )
         .toList();
   }
 
   Future<Set<String>> _fetchVisibleEventIds() async {
     final rows = await _client
         .from('events_ordered')
-        .select('id, era_id')
+        .select('id, era_id, bible_refs')
         .order('global_rank', ascending: true);
     final hiddenEraIds = await _fetchHiddenEraIds();
     return {
       for (final row in rows)
-        if (row['id'] is String && !hiddenEraIds.contains(row['era_id']))
+        if (row['id'] is String &&
+            !hiddenEraIds.contains(row['era_id']) &&
+            !rawBibleRefsUseHiddenBook(row['bible_refs']))
           row['id'] as String,
     };
   }

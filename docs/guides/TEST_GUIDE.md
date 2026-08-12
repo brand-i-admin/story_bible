@@ -115,17 +115,25 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 `test/models/journey_selection_test.dart`와
 `test/data/journey_selection_repository_test.dart`에서 검증한다. 여정 선택의 단순
 헤더, 아이콘·번호 제목 한 줄 배치, 큰 글자 말줄임 방지, 흰색/검은색 카드,
-확인 팝업, 카드와 구분된 선택 정보 및 실제 소분류 표시, 일부 구간 접힘 복원과
+확인 팝업, 추천/현재 선택의 표면·체크 구분, 단색 route 아이콘과 구분선, 현재 여정
+패널 탭의 전체 수 팝업 및 마지막 선택 화면 복원, 실제 소분류 표시, 일부 구간 접힘 복원과
 구약·신약 교차 선택 유지, 시대명 label·긴 제목 가로 스크롤/fade, 체크박스와
 소분류 제목의 한 줄 정렬, 시대별 성경 권 목록, 고정 CTA, 고대비 선택 상태와
-중립 회색 권 비활성화, 인물 정렬 dropdown·5열, 정보와 체크박스 선택을 분리한 범위 화면은
+중립 회색 권 비활성화, 권·인물 실시간 검색, 인물 정렬 dropdown·단일 표면 5열·큰
+아바타·완료 도넛/분수, 모든 소분류 초기 펼침·완료 분수·고대비 대상 badge, 정보와
+체크박스 선택을 분리한 범위 화면은
 `test/widgets/journey_selection_screen_test.dart`에서 검증한다.
 오늘 홈에서는 선택된 전체 여정 순번이 카드와 지도 핀에 동일하게 전달되는지,
-여정 선택 화살표가 오른쪽 끝 원형 버튼으로 표시되는지와 시작 경계 카드가 인접
-이야기 카드와 같은 높이·하단선을 사용하는지를
+여정 선택 화살표가 오른쪽 끝 원형 버튼으로 표시되고 선택 범위 진행 bar 중앙에 완료
+분수를 보여 주는지, 가운데 카드의 가로형 썸네일·2줄 요약·잘리지 않는 인물 label과
+인접 카드 60% 높이, 시작 경계
+카드가 인접 이야기 카드와 같은 높이·하단선을 사용하는지를
 `test/widgets/home_journey_overlay_test.dart`,
 `test/utils/daily_exploration_selection_test.dart`,
 `test/widgets/today_home_page_test.dart`에서 검증한다.
+내정보의 `기록하기`·`이어읽기`가 채움 원과 반복 glow 없이 가벼운 선형 액션으로
+표시되고 안내/도넛과의 여백을 줄이는지는
+`test/widgets/profile_emotion_diary_test.dart`에서 검증한다.
 
 콘텐츠/지도/날짜 로직은 UI보다 utils에서 먼저 고정한다. pure function으로 뺄 수
 있으면 widget test보다 빠르고 회귀 지점도 더 선명하다.

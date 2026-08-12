@@ -39,7 +39,7 @@ class Era {
   }
 }
 
-/// 운영 DB에서 published 상태인 11개 시대를 모두 앱에 노출한다.
-const hiddenEraCodes = <String>{};
+/// 아직 공개하지 않는 마지막 시대는 DB 상태와 별개로 앱에서도 방어적으로 숨긴다.
+const hiddenEraCodes = <String>{'era_nt_consummation'};
 
 bool isHiddenEraCode(String code) => hiddenEraCodes.contains(code);

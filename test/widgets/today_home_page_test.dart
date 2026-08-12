@@ -38,6 +38,8 @@ void main() {
               width: 350,
               child: TodayJourneySelectionBar(
                 currentLabel: '신명기 · 시대 구간',
+                completedCount: 3,
+                totalCount: 12,
                 onTap: () => tapped = true,
               ),
             ),
@@ -47,16 +49,50 @@ void main() {
     );
 
     final bar = find.byKey(const ValueKey('today-open-journey-selection'));
+    final surface = find.byKey(
+      const ValueKey('today-journey-selection-surface'),
+    );
+    final leadingIcon = find.byKey(
+      const ValueKey('today-journey-selection-leading-icon'),
+    );
     final arrow = find.byKey(const ValueKey('today-journey-selection-arrow'));
     final barRect = tester.getRect(bar);
     final arrowRect = tester.getRect(arrow);
-    expect(arrowRect.width, closeTo(28, 0.1));
-    expect(arrowRect.height, closeTo(28, 0.1));
-    expect(barRect.right - arrowRect.right, lessThanOrEqualTo(9));
+    expect(arrowRect.width, closeTo(30, 0.1));
+    expect(arrowRect.height, closeTo(30, 0.1));
+    expect(barRect.right - arrowRect.right, lessThanOrEqualTo(10));
+    expect(tester.getSize(leadingIcon), const Size(34, 34));
+
+    final surfaceDecoration =
+        tester.widget<Container>(surface).decoration! as BoxDecoration;
+    expect(surfaceDecoration.borderRadius, BorderRadius.circular(20));
+    expect(surfaceDecoration.boxShadow, isNotEmpty);
+    expect(find.text('진행률'), findsOneWidget);
+    final titleRect = tester.getRect(find.text('여정 선택'));
+    final currentLabelRect = tester.getRect(find.text('신명기 · 시대 구간'));
+    expect(titleRect.bottom, lessThanOrEqualTo(currentLabelRect.top));
 
     final arrowDecoration =
         tester.widget<Container>(arrow).decoration! as BoxDecoration;
     expect(arrowDecoration.shape, BoxShape.circle);
+    final progress = tester.widget<LinearProgressIndicator>(
+      find.byKey(const ValueKey('today-journey-selection-progress')),
+    );
+    expect(progress.value, 0.25);
+    expect(find.text('3/12'), findsOneWidget);
+    final progressTrack = find.byKey(
+      const ValueKey('today-journey-selection-progress-track'),
+    );
+    final progressCount = find.byKey(
+      const ValueKey('today-journey-selection-count'),
+    );
+    final trackRect = tester.getRect(progressTrack);
+    final countRect = tester.getRect(progressCount);
+    expect(trackRect.height, closeTo(14, 0.1));
+    expect(countRect.center.dx, closeTo(trackRect.center.dx, 0.5));
+    expect(countRect.center.dy, closeTo(trackRect.center.dy, 0.5));
+    expect(trackRect.contains(countRect.topLeft), isTrue);
+    expect(trackRect.contains(countRect.bottomRight), isTrue);
 
     await tester.tap(arrow);
     expect(tapped, isTrue);

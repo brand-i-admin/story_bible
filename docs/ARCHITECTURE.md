@@ -89,8 +89,8 @@ sharedPreferencesProvider (Provider<SharedPreferences>)
 
 | 화면 | 파일 | 역할 |
 |------|------|------|
-| 메인 화면 | `screens/story_home_screen.dart` | `오늘`·`성경`·`지도`·`내정보` 4탭 루트 셸. `오늘`은 저장된 `JourneySelection`으로 운영 310개 이야기를 전체·구간·성경책·인물 범위로 필터링하고, 구약 7시대→신약 4시대와 `rankInEra` 순으로 고정한다. 선택 범위에서 감정이 없는 첫 이야기를 오늘 이야기로 삼으며, 헤더 바로 아래 여정 선택 바로 범위를 바꾼다. `오늘`과 `지도`는 공유 `GlobalKey`로 하나의 `StoryMapPanel`/WebView 상태를 재부착해 3D 지형 재로딩을 피한다. |
-| 여정 선택 | `screens/journey_selection_screen.dart`, `screens/journey_selection/` | 전체 순서, 실제 시대·소분류 복수 선택, 성경책, 인물의 두 범위(속한 시대/대상 이야기만)를 선택한다. 운영 이벤트·시대·활성 인물 카탈로그에서 선택지와 진행률을 계산하고 조건은 `SharedPreferences`에 유지한다. |
+| 메인 화면 | `screens/story_home_screen.dart` | `오늘`·`성경`·`지도`·`내정보` 4탭 루트 셸. `오늘`은 저장된 `JourneySelection`으로 현재 공개된 299개 이야기를 전체·구간·성경책·인물 범위로 필터링하고, 구약 7시대→신약 3시대와 `rankInEra` 순으로 고정한다. `era_nt_consummation`과 요한계시록 참조 사건은 DB row를 보존한 `draft` 상태이며 앱도 이중으로 거른다. 선택 범위에서 감정이 없는 첫 이야기를 오늘 이야기로 삼으며, 헤더 바로 아래 여정 선택 바로 범위를 바꾼다. `오늘`과 `지도`는 공유 `GlobalKey`로 하나의 `StoryMapPanel`/WebView 상태를 재부착해 3D 지형 재로딩을 피한다. |
+| 여정 선택 | `screens/journey_selection_screen.dart`, `screens/journey_selection/` | 전체 순서 추천 카드와 실제 시대·소분류, 성경책, 인물의 두 범위(속한 시대/대상 이야기만)를 선택한다. 권·인물 범위는 단일 라디오 방식과 중첩된 시대/소분류 체크를 분리하며, 시대 방식 진입만으로 자동 선택하지 않는다. 운영 이벤트·시대·활성 인물 카탈로그에서 선택지와 진행률을 계산하고 조건은 `SharedPreferences`에 유지한다. |
 | 로그인 | `widgets/inline_login_prompt_card.dart` | 인라인 소셜 로그인 (카카오/Google/Apple) |
 | 구절 목록 | `screens/saved_verses_screen.dart` | 북마크 구절 관리 |
 | 법률 문서 | `screens/legal_documents_screen.dart` | 이용약관, 개인정보처리방침 |

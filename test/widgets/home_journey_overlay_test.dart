@@ -86,7 +86,7 @@ void main() {
     });
   });
 
-  testWidgets('별도 패널 없이 추천 전후 이야기 3개와 낮은 퀵 액션을 렌더한다', (tester) async {
+  testWidgets('이어볼 이야기 카드와 좌우에 일부 보이는 인접 카드를 렌더한다', (tester) async {
     await tester.binding.setSurfaceSize(const Size(800, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -120,10 +120,10 @@ void main() {
       ),
     );
 
-    expect(find.text('신앙 다이어리 & 통독'), findsNothing);
     expect(find.text('이전 이야기'), findsWidgets);
     expect(find.text('오늘의 추천 이야기'), findsOneWidget);
-    expect(find.text('오늘의 이야기'), findsOneWidget);
+    expect(find.text('이어볼 이야기'), findsOneWidget);
+    expect(find.text('오늘의 이야기'), findsNothing);
     expect(find.text('현재 이야기'), findsNothing);
     expect(
       find.byKey(const ValueKey('home-current-era-divider-era-1')),
@@ -148,6 +148,9 @@ void main() {
     expect(nextRect.bottom, closeTo(currentRect.bottom, 0.1));
     expect(currentRect.left - previousRect.right, inInclusiveRange(3, 5));
     expect(nextRect.left - currentRect.right, inInclusiveRange(3, 5));
+    expect(currentRect.width / previousRect.width, greaterThan(1.85));
+    expect(previousRect.left, lessThan(0));
+    expect(nextRect.right, greaterThan(800));
     expect(find.text('다음 이야기'), findsWidgets);
     expect(
       find.byKey(const ValueKey('home-story-section-header')),
@@ -161,16 +164,10 @@ void main() {
       find.byKey(const ValueKey('home-journey-panel-toggle')),
       findsNothing,
     );
-    expect(find.text('다이어리 기록'), findsOneWidget);
-    expect(find.text('통독 이어읽기'), findsOneWidget);
-    expect(find.byIcon(Icons.add_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.arrow_forward_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.edit_note_rounded), findsNothing);
-    expect(find.byIcon(Icons.menu_book_rounded), findsNothing);
-    expect(find.text('다이어리'), findsNothing);
-    expect(find.text('오늘을 기록'), findsNothing);
-    expect(find.text('통독'), findsNothing);
-    expect(find.text('창세기 14장'), findsNothing);
+    expect(find.text('다이어리 기록'), findsNothing);
+    expect(find.text('통독 이어읽기'), findsNothing);
+    expect(find.byKey(const ValueKey('home-diary-quick-action')), findsNothing);
+    expect(find.byKey(const ValueKey('home-bible-quick-action')), findsNothing);
     expect(
       tester
           .widget<PulseHighlight>(
@@ -179,84 +176,27 @@ void main() {
           .active,
       isTrue,
     );
-    expect(
-      tester
-          .widget<PulseHighlight>(
-            find.byKey(const ValueKey('home-diary-quick-action-cta-glow')),
-          )
-          .active,
-      isTrue,
+    final labelRect = tester.getRect(find.text('이어볼 이야기'));
+    expect(labelRect.center.dx, closeTo(currentRect.center.dx, 1));
+    final titleRect = tester.getRect(
+      find.byKey(const ValueKey('story-card-title-todayCurrent-recommended')),
     );
-    expect(
-      tester
-          .widget<PulseHighlight>(
-            find.byKey(const ValueKey('home-bible-quick-action-cta-glow')),
-          )
-          .active,
-      isTrue,
-    );
-    expect(
-      find.byKey(const ValueKey('home-diary-quick-action-ripple')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey('home-bible-quick-action-ripple')),
-      findsNothing,
-    );
-    for (final effectId in ['diary', 'bible']) {
-      final button = find.byKey(ValueKey('home-$effectId-quick-action'));
-      final cta = tester.widget<Container>(
-        find.byKey(ValueKey('home-$effectId-quick-action-cta')),
-      );
-      final buttonRect = tester.getRect(button);
-      final ctaRect = tester.getRect(
-        find.byKey(ValueKey('home-$effectId-quick-action-cta')),
-      );
-      expect(buttonRect.height, closeTo(48, 0.1));
-      expect(buttonRect.width, closeTo(156, 0.1));
-      expect(ctaRect.height, closeTo(44, 0.1));
-      expect(ctaRect.width, closeTo(buttonRect.width, 0.1));
-      expect(ctaRect.center, buttonRect.center);
-      final decoration = cta.decoration! as BoxDecoration;
-      expect(decoration.borderRadius, BorderRadius.circular(AppRadii.xl));
-      expect(decoration.border, isNotNull);
-
-      final symbolRing = tester.widget<Container>(
-        find.byKey(ValueKey('home-$effectId-quick-action-symbol-ring')),
-      );
-      final symbolDecoration = symbolRing.decoration! as BoxDecoration;
-      expect(symbolDecoration.shape, BoxShape.circle);
-      expect(symbolDecoration.border, isNotNull);
-      final symbol = find.descendant(
-        of: find.byKey(ValueKey('home-$effectId-quick-action-symbol-ring')),
-        matching: find.byType(Icon),
-      );
-      expect(symbol, findsOneWidget);
-      expect(
-        tester.getCenter(symbol),
-        tester.getCenter(
-          find.byKey(ValueKey('home-$effectId-quick-action-symbol-ring')),
-        ),
-      );
-    }
-    expect(
-      find.ancestor(
-        of: find.byKey(const ValueKey('home-diary-quick-action')),
-        matching: find.byType(PulseHighlight),
+    final thumbnailRect = tester.getRect(
+      find.byKey(
+        const ValueKey('story-thumbnail-frame-todayCurrent-recommended'),
       ),
-      findsNothing,
     );
-    expect(
-      find.ancestor(
-        of: find.byKey(const ValueKey('home-bible-quick-action')),
-        matching: find.byType(PulseHighlight),
-      ),
-      findsNothing,
-    );
+    expect(titleRect.top - labelRect.bottom, greaterThanOrEqualTo(5));
+    expect(thumbnailRect.top - titleRect.bottom, greaterThanOrEqualTo(7));
+    expect(thumbnailRect.width / thumbnailRect.height, closeTo(1.43, 0.06));
+    expect(thumbnailRect.width, lessThan(currentRect.width * 0.7));
+    final summary = tester.widget<Text>(find.text('오늘의 추천 이야기 요약'));
+    expect(summary.maxLines, 2);
+    expect(summary.overflow, TextOverflow.ellipsis);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('현재 이야기는 더 크게, 이전과 다음 이야기는 약 62% 높이로 보여준다', (tester) async {
+  testWidgets('이어볼 이야기는 1.2배 넓고 이전과 다음은 절반가량만 보여준다', (tester) async {
     final detailedEvents = [
       _event(
         id: 'previous',
@@ -337,19 +277,19 @@ void main() {
       find.byKey(const ValueKey('story-thumbnail-frame-todayAdjacent-next')),
     );
 
-    expect(currentRect.width, closeTo(187, 2));
-    expect(currentRect.width / previousRect.width, greaterThan(1.85));
+    expect(currentRect.width, closeTo(227, 3));
+    expect(currentRect.width / previousRect.width, greaterThan(1.95));
     expect(nextRect.width, closeTo(previousRect.width, 0.5));
     final previousVisibleFraction =
         previousRect.intersect(pageRect).width / previousRect.width;
     final nextVisibleFraction =
         nextRect.intersect(pageRect).width / nextRect.width;
-    expect(previousVisibleFraction, greaterThan(0.7));
-    expect(nextVisibleFraction, greaterThan(0.7));
+    expect(previousVisibleFraction, inInclusiveRange(0.45, 0.72));
+    expect(nextVisibleFraction, inInclusiveRange(0.45, 0.72));
     expect(currentRect.left - previousRect.right, inInclusiveRange(0, 12));
     expect(nextRect.left - currentRect.right, inInclusiveRange(0, 12));
-    expect(previousRect.height / currentRect.height, closeTo(0.62, 0.03));
-    expect(nextRect.height / currentRect.height, closeTo(0.62, 0.03));
+    expect(previousRect.height / currentRect.height, closeTo(0.60, 0.025));
+    expect(nextRect.height / currentRect.height, closeTo(0.60, 0.025));
 
     final previousTitle = tester.widget<Text>(
       find.byKey(const ValueKey('story-card-title-todayAdjacent-previous')),
@@ -432,20 +372,42 @@ void main() {
     }
     expect(
       previousThumbnailRect.width / previousThumbnailRect.height,
-      closeTo(2.0, 0.06),
+      closeTo(1.43, 0.06),
     );
     expect(
       nextThumbnailRect.width / nextThumbnailRect.height,
-      closeTo(2.0, 0.06),
+      closeTo(1.43, 0.06),
     );
     expect(
       currentThumbnailRect.width / currentThumbnailRect.height,
-      closeTo(2.0, 0.06),
+      closeTo(1.43, 0.06),
     );
-    expect(currentRect.width - currentThumbnailRect.width, greaterThan(20));
+    expect(currentRect.width - currentThumbnailRect.width, greaterThan(60));
     expect(find.text('이전 이야기 요약'), findsNothing);
-    expect(find.text('오늘의 추천 이야기 요약'), findsNothing);
+    final summaryFinder = find.text('오늘의 추천 이야기 요약');
+    expect(summaryFinder, findsOneWidget);
+    final summary = tester.widget<Text>(summaryFinder);
+    expect(summary.maxLines, 2);
+    expect(summary.overflow, TextOverflow.ellipsis);
     expect(find.text('다음 이야기 요약'), findsNothing);
+    final currentCharacter = find.descendant(
+      of: find.byKey(const ValueKey('home-story-task-highlight-recommended')),
+      matching: find.text('노아'),
+    );
+    expect(
+      tester
+          .getRect(
+            find.byKey(
+              const ValueKey('story-card-meta-scroll-todayCurrent-recommended'),
+            ),
+          )
+          .bottom,
+      lessThan(tester.getRect(summaryFinder).top),
+    );
+    expect(
+      tester.getRect(summaryFinder).bottom,
+      lessThan(tester.getRect(currentCharacter).top),
+    );
     for (final eventId in ['previous', 'recommended', 'next']) {
       final cardFinder = find.byKey(
         ValueKey('home-story-task-highlight-$eventId'),
@@ -460,7 +422,8 @@ void main() {
         lessThanOrEqualTo(tester.getRect(cardFinder).bottom),
       );
     }
-    expect(currentRect.height, lessThan(200));
+    expect(currentRect.height, greaterThanOrEqualTo(245));
+    expect(currentRect.height, lessThan(260));
     expect(tester.takeException(), isNull);
   });
 
@@ -606,7 +569,7 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('비로그인 다이어리 탭은 내정보 이동 버튼이 있는 안내 팝업을 연다', (tester) async {
+  testWidgets('비로그인 상태에서도 오늘 화면에는 다이어리 액션을 표시하지 않는다', (tester) async {
     var profileOpened = false;
     await tester.pumpWidget(
       MaterialApp(
@@ -635,22 +598,12 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byKey(const ValueKey('home-diary-quick-action')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 350));
-
-    expect(find.text('로그인이 필요해요'), findsOneWidget);
-    expect(find.text('내정보로 이동'), findsOneWidget);
-    expect(find.text('내정보 화면에서 로그인한 뒤 다시 이용해 주세요.'), findsOneWidget);
-
-    await tester.tap(find.text('내정보로 이동'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 350));
-
-    expect(profileOpened, isTrue);
+    expect(find.byKey(const ValueKey('home-diary-quick-action')), findsNothing);
+    expect(find.text('다이어리 기록'), findsNothing);
+    expect(profileOpened, isFalse);
   });
 
-  testWidgets('비로그인 통독 탭도 같은 로그인 안내 팝업을 연다', (tester) async {
+  testWidgets('비로그인 상태에서도 오늘 화면에는 통독 액션을 표시하지 않는다', (tester) async {
     var profileOpened = false;
     await tester.pumpWidget(
       MaterialApp(
@@ -679,22 +632,12 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byKey(const ValueKey('home-bible-quick-action')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 350));
-
-    expect(find.text('로그인이 필요해요'), findsOneWidget);
-    expect(find.text('내정보로 이동'), findsOneWidget);
-    expect(find.text('내정보 화면에서 로그인한 뒤 다시 이용해 주세요.'), findsOneWidget);
-
-    await tester.tap(find.text('내정보로 이동'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 350));
-
-    expect(profileOpened, isTrue);
+    expect(find.byKey(const ValueKey('home-bible-quick-action')), findsNothing);
+    expect(find.text('통독 이어읽기'), findsNothing);
+    expect(profileOpened, isFalse);
   });
 
-  testWidgets('오늘 다이어리가 있어도 낮은 기록 버튼을 유지하고 탭하면 상세를 연다', (tester) async {
+  testWidgets('오늘 다이어리가 있어도 오늘 화면에는 기록 버튼과 내용을 표시하지 않는다', (tester) async {
     final now = DateTime(2026, 7, 14);
     final entry = UserCompanionDiaryEntry(
       id: 'diary-today',
@@ -742,40 +685,16 @@ void main() {
           .active,
       isFalse,
     );
-    expect(find.text('오늘의 이야기'), findsOneWidget);
+    expect(find.text('이어볼 이야기'), findsOneWidget);
+    expect(find.text('오늘의 이야기'), findsNothing);
     expect(find.text('현재 이야기'), findsNothing);
-    expect(
-      tester
-          .widget<PulseHighlight>(
-            find.byKey(const ValueKey('home-diary-quick-action-cta-glow')),
-          )
-          .active,
-      isFalse,
-    );
-    expect(
-      tester
-          .widget<PulseHighlight>(
-            find.byKey(const ValueKey('home-bible-quick-action-cta-glow')),
-          )
-          .active,
-      isFalse,
-    );
-    expect(find.text('다이어리 기록'), findsOneWidget);
-    expect(find.byIcon(Icons.add_rounded), findsOneWidget);
+    expect(find.text('다이어리 기록'), findsNothing);
+    expect(find.text('통독 이어읽기'), findsNothing);
     expect(find.text('오늘의 감사'), findsNothing);
     expect(find.text('함께하심을 기억합니다.'), findsNothing);
-    await tester.tap(find.byKey(const ValueKey('home-diary-quick-action')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
-
-    expect(find.text('다이어리 상세'), findsOneWidget);
-    expect(find.text('오늘의 감사'), findsOneWidget);
-    expect(find.text('함께하심을 기억합니다.'), findsOneWidget);
-    expect(find.text('수정'), findsOneWidget);
-    expect(find.text('삭제'), findsOneWidget);
   });
 
-  testWidgets('아주크게에서도 다이어리 내용을 숨기고 두 퀵 액션을 한 줄로 보여준다', (tester) async {
+  testWidgets('아주크게에서도 다이어리 내용과 퀵 액션을 숨긴다', (tester) async {
     final now = DateTime(2026, 7, 14);
     final entry = UserCompanionDiaryEntry(
       id: 'diary-today-long-title',
@@ -823,11 +742,8 @@ void main() {
 
     expect(find.text('은혜를 오래 기억하며 오늘의 걸음을 천천히 돌아보는 다이어리 제목'), findsNothing);
     expect(find.text('말씀을 묵상하며 하루의 모든 순간에 함께하신 은혜를 차분히 되새겼습니다.'), findsNothing);
-    for (final label in ['다이어리 기록', '통독 이어읽기']) {
-      final text = tester.widget<Text>(find.text(label));
-      expect(text.maxLines, 1);
-      expect(text.softWrap, isFalse);
-    }
+    expect(find.text('다이어리 기록'), findsNothing);
+    expect(find.text('통독 이어읽기'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -874,7 +790,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
 
     expect(currentEvent?.id, 'next');
-    expect(find.text('현재 이야기'), findsOneWidget);
+    expect(find.text('이어볼 이야기'), findsOneWidget);
+    expect(find.text('현재 이야기'), findsNothing);
   });
 
   testWidgets('전체 첫 이야기 앞에는 여정 시작 라벨과 첫 이야기 안내 카드가 있다', (tester) async {
@@ -952,7 +869,8 @@ void main() {
       ),
     );
 
-    expect(find.text('오늘의 이야기'), findsOneWidget);
+    expect(find.text('이어볼 이야기'), findsOneWidget);
+    expect(find.text('오늘의 이야기'), findsNothing);
     expect(find.text('현재 이야기'), findsNothing);
     expect(find.text('여정\n끝'), findsOneWidget);
     expect(
@@ -1208,46 +1126,12 @@ void main() {
 
     expect(find.byKey(const ValueKey('home-story-page-view')), findsOneWidget);
     expect(find.text('신앙 다이어리 & 통독'), findsNothing);
-    expect(
-      find.byKey(const ValueKey('home-diary-quick-action')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey('home-bible-quick-action')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('home-diary-quick-action')), findsNothing);
+    expect(find.byKey(const ValueKey('home-bible-quick-action')), findsNothing);
     expect(find.text('오늘을 기록'), findsNothing);
     expect(find.text('창세기 14장'), findsNothing);
-    for (final (effectId, label) in [
-      ('diary', '다이어리 기록'),
-      ('bible', '통독 이어읽기'),
-    ]) {
-      final card = find.byKey(ValueKey('home-$effectId-quick-action'));
-      final cta = find.byKey(ValueKey('home-$effectId-quick-action-cta'));
-      final labelFinder = find.descendant(of: cta, matching: find.text(label));
-      expect(labelFinder, findsOneWidget);
-      final cardRect = tester.getRect(card);
-      final ctaRect = tester.getRect(cta);
-      final labelRect = tester.getRect(labelFinder);
-      expect(cardRect.height, closeTo(48, 0.1));
-      expect(ctaRect.height, closeTo(44, 0.1));
-      expect(ctaRect.width, lessThanOrEqualTo(156));
-      expect(
-        ctaRect.center.dx,
-        closeTo(cardRect.center.dx, 0.5),
-        reason: '$label CTA는 카드 가로 중앙에 있어야 한다.',
-      );
-      expect(
-        labelRect.left,
-        greaterThanOrEqualTo(ctaRect.left),
-        reason: '$label 왼쪽이 CTA 밖으로 나가면 안 된다.',
-      );
-      expect(
-        labelRect.right,
-        lessThanOrEqualTo(ctaRect.right),
-        reason: '$label 오른쪽이 CTA 밖으로 나가면 안 된다.',
-      );
-    }
+    expect(find.text('다이어리 기록'), findsNothing);
+    expect(find.text('통독 이어읽기'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 }

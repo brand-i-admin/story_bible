@@ -4,17 +4,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/journey_selection.dart';
 import '../../state/journey_selection_providers.dart';
+import '../../state/story_controller.dart';
 import '../../theme/tokens.dart';
 import '../../utils/journey_filtering.dart';
+import '../../utils/story_visibility.dart';
 import '../../widgets/journey/journey_filter_controls.dart';
 import '../../widgets/journey/journey_unit_selection_list.dart';
 import '../../widgets/story_home_styles.dart';
 import '../../widgets/sub_page_scaffold.dart';
 
 class PartialJourneyScreen extends ConsumerStatefulWidget {
-  const PartialJourneyScreen({super.key, required this.catalog});
+  const PartialJourneyScreen({
+    super.key,
+    required this.catalog,
+    this.revealSelection = false,
+  });
 
   final JourneyCatalogData catalog;
+  final bool revealSelection;
 
   @override
   ConsumerState<PartialJourneyScreen> createState() =>
@@ -55,11 +62,16 @@ class _PartialJourneyScreenState extends ConsumerState<PartialJourneyScreen> {
     final groups = allGroups
         .where((group) => group.era.testament == _testament)
         .toList(growable: false);
-    final selectedEvents = widget.catalog.events
-        .where(
-          (event) => _selectedUnitKeys.contains(journeyUnitKeyForEvent(event)),
-        )
-        .toList(growable: false);
+    final selectedEvents =
+        visibleStoryEvents(
+              events: widget.catalog.events,
+              eras: widget.catalog.eras,
+            )
+            .where(
+              (event) =>
+                  _selectedUnitKeys.contains(journeyUnitKeyForEvent(event)),
+            )
+            .toList(growable: false);
     return SubPageScaffold(
       title: '일부 구간 선택',
       plainHeader: true,
@@ -103,6 +115,12 @@ class _PartialJourneyScreenState extends ConsumerState<PartialJourneyScreen> {
                 JourneyUnitSelectionList(
                   groups: groups,
                   selectedUnitKeys: _selectedUnitKeys,
+                  completedEventIds: ref.watch(
+                    storyControllerProvider.select(
+                      (state) => state.eventEmotionMarks.keys.toSet(),
+                    ),
+                  ),
+                  revealInitialSelection: widget.revealSelection,
                   showEraLabel: true,
                   onSelectionChanged: (keys) {
                     setState(() => _selectedUnitKeys = keys);

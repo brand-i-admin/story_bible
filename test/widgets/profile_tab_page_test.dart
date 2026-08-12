@@ -928,11 +928,29 @@ void main() {
     );
     expect(
       find.byKey(const ValueKey('companion-diary-write-button-pill')),
-      findsNothing,
+      findsOneWidget,
     );
     expect(
       find.byKey(const ValueKey('bible-progress-continue-button')),
-      findsNothing,
+      findsOneWidget,
+    );
+    final diaryCard = find.byKey(
+      const ValueKey('companion-diary-feature-card'),
+    );
+    final diaryAction = find.byKey(
+      const ValueKey('companion-diary-write-button-pill'),
+    );
+    final bibleCard = find.byKey(const ValueKey('bible-progress-feature-card'));
+    final bibleAction = find.byKey(
+      const ValueKey('bible-progress-continue-button'),
+    );
+    expect(
+      tester.getBottomLeft(diaryCard).dy - tester.getBottomLeft(diaryAction).dy,
+      lessThan(24),
+    );
+    expect(
+      tester.getBottomLeft(bibleCard).dy - tester.getBottomLeft(bibleAction).dy,
+      lessThan(24),
     );
     expect(
       find.ancestor(
@@ -976,7 +994,7 @@ void main() {
       lessThan(tester.getTopLeft(diaryCardTitle).dy),
     );
 
-    final faithPrompt = find.text("오늘 작성한 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요.");
+    final faithPrompt = find.text('오늘 하나님과 함께한 순간을 기록해 보세요!');
     await tester.ensureVisible(faithPrompt);
     await tester.pumpAndSettle();
 
@@ -989,7 +1007,7 @@ void main() {
       const ValueKey('companion-diary-feature-card'),
     );
     final bibleCard = find.byKey(const ValueKey('bible-progress-feature-card'));
-    expect(tester.getSize(diaryCard).height, lessThan(138));
+    expect(tester.getSize(diaryCard).height, greaterThanOrEqualTo(150));
     expect(tester.getSize(diaryCard).height, lessThan(204));
     expect(
       tester.getSize(diaryCard).height,
@@ -1017,7 +1035,7 @@ void main() {
     expect(diaryTitleWidget.maxLines, 2);
     expect(diaryTitleWidget.overflow, TextOverflow.visible);
 
-    final faithPrompt = find.text("오늘 작성한 다이어리가 없어요.\n'오늘' 탭에서 기록해 보세요.");
+    final faithPrompt = find.text('오늘 하나님과 함께한 순간을 기록해 보세요!');
     final faithPromptWidget = tester.widget<Text>(faithPrompt);
     expect(faithPromptWidget.maxLines, 4);
     expect(faithPromptWidget.overflow, TextOverflow.visible);
@@ -1029,7 +1047,7 @@ void main() {
       const ValueKey('companion-diary-feature-card'),
     );
     final bibleCard = find.byKey(const ValueKey('bible-progress-feature-card'));
-    expect(tester.getSize(diaryCard).height, greaterThanOrEqualTo(118));
+    expect(tester.getSize(diaryCard).height, greaterThanOrEqualTo(158));
     expect(
       tester.getSize(diaryCard).height,
       closeTo(tester.getSize(bibleCard).height, 0.1),
@@ -1562,7 +1580,7 @@ void main() {
     );
   });
 
-  testWidgets('내정보 통독 카드에는 이어 읽기 버튼을 표시하지 않는다', (tester) async {
+  testWidgets('내정보 통독 카드의 이어읽기 버튼은 다음 장 성경 리더를 연다', (tester) async {
     int? openedBookNo;
     int? openedChapterNo;
     int? openedVerseNo;
@@ -1624,10 +1642,18 @@ void main() {
 
     expect(
       find.byKey(const ValueKey('bible-progress-continue-button')),
-      findsNothing,
+      findsOneWidget,
     );
-    expect(openedBookNo, isNull);
-    expect(openedChapterNo, isNull);
+    final continueButton = find.byKey(
+      const ValueKey('bible-progress-continue-button'),
+    );
+    await tester.ensureVisible(continueButton);
+    await tester.pumpAndSettle();
+    await tester.tap(continueButton);
+    await tester.pumpAndSettle();
+
+    expect(openedBookNo, 1);
+    expect(openedChapterNo, 2);
     expect(openedVerseNo, isNull);
   });
 

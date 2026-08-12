@@ -17,7 +17,6 @@ import 'package:story_bible/theme/app_theme.dart';
 import 'package:story_bible/theme/tokens.dart';
 import 'package:story_bible/widgets/profile/companion_diary_entry_card.dart';
 import 'package:story_bible/widgets/profile/profile_emotion_diary.dart';
-import 'package:story_bible/widgets/pulse_highlight.dart';
 
 class _MockStoryRepository extends Mock implements StoryRepository {}
 
@@ -230,10 +229,24 @@ void _companionDiaryWidgetTests() {
           .dy,
       greaterThan(tester.getTopLeft(find.text('오늘 하나님과 함께한 순간을 기록해 보세요!')).dy),
     );
+    expect(
+      tester.getTopLeft(diaryWritePill).dy -
+          tester.getBottomLeft(find.text('오늘 하나님과 함께한 순간을 기록해 보세요!')).dy,
+      lessThan(26),
+    );
+    expect(
+      tester.getTopLeft(bibleContinuePill).dy -
+          tester
+              .getBottomLeft(
+                find.byKey(const ValueKey('bible-progress-donut-indicator')),
+              )
+              .dy,
+      lessThan(22),
+    );
     expect(find.textContaining('오늘 새긴 감정이 없습니다'), findsNothing);
   });
 
-  testWidgets('남색 테마의 기록하기 버튼과 통독 도넛은 충분한 대비를 갖는다', (tester) async {
+  testWidgets('남색 테마의 기록하기와 이어읽기는 가벼운 선형 액션으로 표시한다', (tester) async {
     final repository = _MockStoryRepository();
     when(
       () => repository.fetchEventsByIds(any()),
@@ -252,20 +265,25 @@ void _companionDiaryWidgetTests() {
     final writePill = tester.widget<Material>(
       find.byKey(const ValueKey('companion-diary-write-button-pill')),
     );
-    final writePulse = tester.widget<PulseHighlight>(
-      find.ancestor(
-        of: find.byKey(const ValueKey('companion-diary-write-button-pill')),
-        matching: find.byType(PulseHighlight),
-      ),
-    );
     final writeLabel = tester.widget<Text>(find.text('기록하기'));
+    final writeIconBadge = tester.widget<Container>(
+      find.byKey(const ValueKey('companion-diary-add-button')),
+    );
+    final continueIconBadge = tester.widget<Container>(
+      find.byKey(const ValueKey('bible-progress-continue-icon-badge')),
+    );
     final donut = tester.widget<CircularProgressIndicator>(
       find.byKey(const ValueKey('bible-progress-donut-indicator')),
     );
 
     expect(writePill.color, isNot(AppColorPalette.atlasNavy.cardSurface));
-    expect(writePulse.color, AppColors.goldHi);
     expect(writeLabel.style?.color, AppColorPalette.atlasNavy.successBottom);
+    for (final badge in [writeIconBadge, continueIconBadge]) {
+      final decoration = badge.decoration! as BoxDecoration;
+      expect(decoration.shape, BoxShape.rectangle);
+      expect(decoration.borderRadius, isNotNull);
+      expect(decoration.color?.a ?? 0, lessThan(0.18));
+    }
     expect(donut.backgroundColor, isNot(AppColorPalette.atlasNavy.cardSurface));
     expect(donut.color, isNot(AppColorPalette.atlasNavy.cardSurface));
     expect(donut.color?.a, 1);
@@ -518,7 +536,7 @@ void _companionDiaryWidgetTests() {
     expect(savedEntryDate, DateTime(2026, 6, 10));
   });
 
-  testWidgets('오늘 신앙 다이어리가 있으면 작성 버튼을 숨기고 카드에서 상세를 연다', (tester) async {
+  testWidgets('오늘 신앙 다이어리가 있으면 하단 버튼에서 수정하고 카드는 상세 목록을 연다', (tester) async {
     final repository = _MockStoryRepository();
     when(
       () => repository.fetchEventsByIds(any()),
@@ -541,7 +559,7 @@ void _companionDiaryWidgetTests() {
 
     expect(
       find.byKey(const ValueKey('companion-diary-add-button')),
-      findsNothing,
+      findsOneWidget,
     );
     expect(
       find.byKey(const ValueKey('companion-diary-detail-edit-button')),
@@ -557,6 +575,19 @@ void _companionDiaryWidgetTests() {
       find.byKey(const ValueKey('companion-diary-marker-2026-6-10')),
       findsOneWidget,
     );
+
+    await tester.tap(find.byKey(const ValueKey('companion-diary-add-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('다이어리 수정'), findsOneWidget);
+    expect(find.widgetWithText(TextField, '갈릴리의 하루'), findsOneWidget);
+    expect(
+      find.widgetWithText(TextField, '말씀을 묵상하며 차분히 걸었습니다.'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byIcon(Icons.chevron_left_rounded));
+    await tester.pumpAndSettle();
 
     await tester.tap(
       find.byKey(const ValueKey('companion-diary-feature-card')),
@@ -751,20 +782,15 @@ void main() {
     expect(source, contains('palette.successBottom'));
     expect(source, contains('chapterReferenceText'));
     expect(source, contains("'이어읽기'"));
-    expect(source, contains('color: darkSurface'));
-    expect(source, contains('? AppColors.goldLight'));
-    expect(source, contains(': AppColors.goldHi'));
-    expect(companionSource, contains("import '../pulse_highlight.dart';"));
+    expect(source, contains('darkSurface ? 0.16 : 0.07'));
+    expect(source, isNot(contains('PulseHighlight')));
     expect(
       companionSource,
-      contains('duration: const Duration(milliseconds: 2200)'),
+      isNot(contains("import '../pulse_highlight.dart';")),
     );
     expect(companionSource, contains('clipBehavior: Clip.none'));
-    expect(companionSource, contains('EdgeInsets.fromLTRB(8, 7, 8, 9)'));
-    expect(
-      companionSource,
-      contains('color: darkSurface ? AppColors.goldLight : AppColors.goldHi'),
-    );
+    expect(companionSource, contains('EdgeInsets.fromLTRB(5, 3, 5, 4)'));
+    expect(companionSource, contains('BorderRadius.circular(12)'));
     expect(companionSource, isNot(contains('final pulseColor')));
     expect(companionSource, isNot(contains('auraColor')));
     expect(companionSource, isNot(contains('ringColor')));

@@ -33,6 +33,7 @@ import '../theme/app_color_palette.dart';
 import '../theme/tokens.dart';
 import '../theme/typography.dart';
 import '../utils/bible_book_meta.dart';
+import '../utils/bible_reading_progress.dart';
 import '../utils/kst_date.dart';
 import '../utils/scene_asset_loader.dart';
 import '../utils/today_activity_summary.dart';

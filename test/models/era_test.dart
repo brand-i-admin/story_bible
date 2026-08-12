@@ -3,6 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:story_bible/models/era.dart';
 
 void main() {
+  test('역사의 종결 시대는 앱 공개 목록에서 숨긴다', () {
+    expect(hiddenEraCodes, contains('era_nt_consummation'));
+    expect(isHiddenEraCode('era_nt_consummation'), isTrue);
+    expect(isHiddenEraCode('era_nt_post_apostolic'), isFalse);
+  });
+
   group('Era.fromMap', () {
     test('유효한 map에서 모든 필드를 파싱한다', () {
       final map = <String, dynamic>{

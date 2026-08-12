@@ -374,9 +374,9 @@ class _TodayHomePageState extends State<TodayHomePage> {
       builder: (context, constraints) {
         final textScale = media.textScaler.scale(1);
         final floatingOverlayExtent =
-            304.0 + ((textScale - 1) * 185).clamp(0.0, 76.0);
+            296.0 + ((textScale - 1) * 150).clamp(0.0, 60.0);
         final topObscured =
-            media.padding.top + TodayActivityHeader.mapObscuredExtent + 54;
+            media.padding.top + TodayActivityHeader.mapObscuredExtent + 78;
         final bottomObscuredFraction = constraints.maxHeight <= 0
             ? 0.48
             : (floatingOverlayExtent / constraints.maxHeight).clamp(0.0, 0.68);
@@ -495,6 +495,13 @@ class _TodayHomePageState extends State<TodayHomePage> {
                 child: TodayJourneySelectionBar(
                   key: _journeySelectionAnchorKey,
                   currentLabel: widget.journeySelectionLabel,
+                  completedCount: widget.events
+                      .where(
+                        (event) =>
+                            widget.eventEmotionMarks.containsKey(event.id),
+                      )
+                      .length,
+                  totalCount: widget.events.length,
                   onTap: widget.onOpenJourneySelection,
                 ),
               ),
@@ -586,90 +593,199 @@ class TodayJourneySelectionBar extends StatelessWidget {
   const TodayJourneySelectionBar({
     super.key,
     required this.currentLabel,
+    required this.completedCount,
+    required this.totalCount,
     required this.onTap,
   });
 
   final String currentLabel;
+  final int completedCount;
+  final int totalCount;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final safeTotal = totalCount < 0 ? 0 : totalCount;
+    final safeCompleted = completedCount.clamp(0, safeTotal).toInt();
+    final progress = safeTotal == 0 ? 0.0 : safeCompleted / safeTotal;
     return Material(
-      color: Color.alphaBlend(
-        palette.currentAccent.withValues(alpha: 0.08),
-        palette.cardSurface,
-      ),
-      borderRadius: BorderRadius.circular(AppRadii.pill),
-      elevation: 2,
-      shadowColor: palette.primaryDeep.withValues(alpha: 0.16),
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(20),
       child: InkWell(
         key: const ValueKey('today-open-journey-selection'),
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadii.pill),
+        borderRadius: BorderRadius.circular(20),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 40),
-          padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.x2,
-          ).copyWith(left: AppSpacing.x5, right: AppSpacing.x2),
+          key: const ValueKey('today-journey-selection-surface'),
+          constraints: const BoxConstraints(minHeight: 68),
+          padding: const EdgeInsets.fromLTRB(10, 8, 9, 9),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadii.pill),
-            border: Border.all(
-              color: palette.currentAccent.withValues(alpha: 0.62),
+            color: Color.alphaBlend(
+              palette.currentAccent.withValues(alpha: 0.055),
+              palette.cardSurface,
             ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: palette.currentAccent.withValues(alpha: 0.36),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: palette.primaryDeep.withValues(alpha: 0.13),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.route_rounded,
-                size: 18,
-                color: palette.currentAccentDeep,
-              ),
-              const SizedBox(width: AppSpacing.x3),
-              Text(
-                '여정 선택',
-                style: TextStyle(
-                  color: palette.text,
-                  fontSize: AppFontSizes.base,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const Spacer(),
-              Flexible(
-                child: Text(
-                  currentLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: palette.currentAccentDeep,
-                    fontSize: AppFontSizes.sm,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.x2),
-              Semantics(
-                button: true,
-                label: '여정 선택 화면 열기',
-                child: Container(
-                  key: const ValueKey('today-journey-selection-arrow'),
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: palette.currentAccent.withValues(alpha: 0.12),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: palette.currentAccent.withValues(alpha: 0.42),
+              Row(
+                children: [
+                  Container(
+                    key: const ValueKey('today-journey-selection-leading-icon'),
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: palette.currentAccent.withValues(alpha: 0.13),
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.route_rounded,
+                      size: 18,
+                      color: palette.currentAccentDeep,
                     ),
                   ),
-                  alignment: Alignment.center,
-                  child: Icon(
-                    Icons.chevron_right_rounded,
-                    size: 20,
-                    color: palette.currentAccentDeep,
+                  const SizedBox(width: AppSpacing.x3),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '여정 선택',
+                          style: TextStyle(
+                            color: palette.text,
+                            fontSize: AppFontSizes.base,
+                            fontWeight: FontWeight.w900,
+                            height: 1.05,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          currentLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: palette.currentAccentDeep,
+                            fontSize: AppFontSizes.xs,
+                            fontWeight: FontWeight.w800,
+                            height: 1.05,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  const SizedBox(width: AppSpacing.x2),
+                  Semantics(
+                    button: true,
+                    label: '여정 선택 화면 열기',
+                    child: Container(
+                      key: const ValueKey('today-journey-selection-arrow'),
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: palette.cardSurface.withValues(alpha: 0.72),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: palette.currentAccent.withValues(alpha: 0.32),
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.chevron_right_rounded,
+                        size: 20,
+                        color: palette.currentAccentDeep,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 7),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 3),
+                    child: Text(
+                      '진행률',
+                      style: TextStyle(
+                        color: palette.mutedText,
+                        fontSize: AppFontSizes.xs,
+                        fontWeight: FontWeight.w700,
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.x3),
+                  Expanded(
+                    child: Container(
+                      key: const ValueKey(
+                        'today-journey-selection-progress-track',
+                      ),
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: Color.alphaBlend(
+                          palette.currentAccent.withValues(alpha: 0.10),
+                          palette.mutedSurface,
+                        ),
+                        borderRadius: BorderRadius.circular(AppRadii.pill),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        alignment: Alignment.center,
+                        children: [
+                          LinearProgressIndicator(
+                            key: const ValueKey(
+                              'today-journey-selection-progress',
+                            ),
+                            value: progress,
+                            minHeight: 14,
+                            backgroundColor: Colors.transparent,
+                            color: palette.currentAccentDeep,
+                          ),
+                          Center(
+                            child: Text(
+                              '$safeCompleted/$safeTotal',
+                              key: const ValueKey(
+                                'today-journey-selection-count',
+                              ),
+                              maxLines: 1,
+                              textScaler: TextScaler.noScaling,
+                              style: TextStyle(
+                                color: progress >= 0.5
+                                    ? AppColors.fgOnDark
+                                    : palette.currentAccentDeep,
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w900,
+                                height: 1,
+                                shadows: [
+                                  Shadow(
+                                    color: progress >= 0.5
+                                        ? Colors.black38
+                                        : palette.cardSurface,
+                                    blurRadius: 1.5,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -3,6 +3,109 @@ import 'package:flutter/material.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 
+class JourneySearchField extends StatelessWidget {
+  const JourneySearchField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    required this.onChanged,
+    this.controlKey,
+  });
+
+  final TextEditingController controller;
+  final String hintText;
+  final ValueChanged<String> onChanged;
+  final Key? controlKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Material(
+      color: palette.cardSurface,
+      borderRadius: BorderRadius.circular(AppRadii.xl),
+      child: TextField(
+        key: controlKey,
+        controller: controller,
+        onChanged: onChanged,
+        textInputAction: TextInputAction.search,
+        cursorColor: palette.primaryDeep,
+        style: TextStyle(
+          color: palette.text,
+          fontSize: AppFontSizes.base,
+          fontWeight: FontWeight.w600,
+        ),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(
+            color: palette.mutedText,
+            fontSize: AppFontSizes.base,
+            fontWeight: FontWeight.w500,
+          ),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: palette.primaryDeep,
+            size: 21,
+          ),
+          suffixIcon: controller.text.isEmpty
+              ? null
+              : IconButton(
+                  tooltip: '검색어 지우기',
+                  onPressed: () {
+                    controller.clear();
+                    onChanged('');
+                  },
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: palette.mutedText,
+                    size: 19,
+                  ),
+                ),
+          filled: false,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.x4,
+            vertical: AppSpacing.x3,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppRadii.xl),
+            borderSide: BorderSide(color: palette.subtleBorder),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppRadii.xl),
+            borderSide: BorderSide(color: palette.selectedBorder, width: 1.5),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class JourneySearchEmptyState extends StatelessWidget {
+  const JourneySearchEmptyState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPaletteTheme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.x7),
+      decoration: BoxDecoration(
+        color: palette.mutedSurface,
+        borderRadius: BorderRadius.circular(AppRadii.xl),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        '검색 결과가 없어요.',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: palette.mutedText,
+          fontSize: AppFontSizes.base,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
 class JourneySegmentButton extends StatelessWidget {
   const JourneySegmentButton({
     super.key,

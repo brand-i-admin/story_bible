@@ -37,6 +37,9 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
       lastCompletedChapterNo: lastCompletedChapter?.chapterNo,
       completedToday: _hasBibleReadToday(state, today),
     );
+    final nextBibleTarget = nextBibleReadingTarget(
+      state.completedBibleChapterKeys,
+    );
     return ProfileLeftPanelExt(this)._buildProfileStoryExplorationDashboard(
       featureSection: ProfileDiaryFeatureCards(
         today: today,
@@ -48,7 +51,20 @@ extension ProfileProgressSectionExt on ProfileTabPageState {
         onDeleteCompanionDiary: _deleteCompanionDiaryEntry,
         bibleProgress: bibleProgressSummary,
         onOpenBibleProgress: _openBibleProgressPage,
-        onContinueBibleReading: null,
+        onContinueBibleReading: () {
+          if (nextBibleTarget == null) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('성경 전체 통독을 완료했어요.')));
+            return;
+          }
+          unawaited(
+            widget.onOpenBibleReader(
+              initialBookNo: nextBibleTarget.bookNo,
+              initialChapterNo: nextBibleTarget.chapterNo,
+            ),
+          );
+        },
         profileSummaryMode: true,
       ),
     );

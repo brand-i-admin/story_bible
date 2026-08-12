@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-01T02:52:51.517059+00:00",
+  "generated_at_utc": "2026-08-12T07:14:15.453660+00:00",
   "event_count": 310,
   "events_by_era": {
     "era_nt_consummation": 9,
@@ -13,6 +13,10 @@
     "era_primeval": 8,
     "era_judges": 13,
     "era_nt_public_ministry": 51
+  },
+  "events_by_status": {
+    "draft": 11,
+    "published": 299
   },
   "notes": [
     "story_index is taken straight from JSON (admin UI / manual edit owns it)",

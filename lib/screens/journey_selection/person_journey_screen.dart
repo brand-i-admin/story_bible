@@ -11,6 +11,7 @@ import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/daily_exploration_selection.dart';
 import '../../utils/journey_filtering.dart';
+import '../../utils/story_visibility.dart';
 import '../../widgets/character_avatar.dart';
 import '../../widgets/journey/journey_filter_controls.dart';
 import '../../widgets/sub_page_scaffold.dart';
@@ -36,6 +37,8 @@ class PersonJourneyScreen extends ConsumerStatefulWidget {
 class _PersonJourneyScreenState extends ConsumerState<PersonJourneyScreen> {
   String _testament = 'old';
   _PersonSortMode _sortMode = _PersonSortMode.chronology;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -54,13 +57,22 @@ class _PersonJourneyScreenState extends ConsumerState<PersonJourneyScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   Map<String, Era> get _eraById => {
     for (final era in widget.catalog.eras) era.id: era,
   };
 
   List<StoryEvent> _eventsFor(Character character) {
     final eraById = _eraById;
-    return widget.catalog.events
+    return visibleStoryEvents(
+          events: widget.catalog.events,
+          eras: widget.catalog.eras,
+        )
         .where(
           (event) => eventMatchesJourneyCharacter(
             event,
@@ -84,13 +96,24 @@ class _PersonJourneyScreenState extends ConsumerState<PersonJourneyScreen> {
         orderedEvents[index].id: index,
     };
     final counts = <String, int>{};
+    final completedCounts = <String, int>{};
     final firstOrder = <String, int>{};
+    final query = _searchQuery.trim();
     final characters = widget.catalog.characters.where((character) {
-      final events = _eventsFor(
-        character,
-      ).where((event) => _eraById[event.eraId]?.testament == _testament);
+      final allEvents = _eventsFor(character);
+      final events = query.isEmpty
+          ? allEvents
+                .where(
+                  (event) => _eraById[event.eraId]?.testament == _testament,
+                )
+                .toList(growable: false)
+          : allEvents;
       if (events.isEmpty) return false;
+      if (query.isNotEmpty && !character.name.contains(query)) return false;
       counts[character.code] = events.length;
+      completedCounts[character.code] = events
+          .where((event) => widget.engravedEventIds.contains(event.id))
+          .length;
       firstOrder[character.code] = events
           .map((event) => orderByEventId[event.id] ?? 1 << 30)
           .reduce((left, right) => left < right ? left : right);
@@ -107,7 +130,7 @@ class _PersonJourneyScreenState extends ConsumerState<PersonJourneyScreen> {
       return left.name.compareTo(right.name);
     });
     return SubPageScaffold(
-      title: '인물로 찾기',
+      title: '인물에서 시작하기',
       plainHeader: true,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(
@@ -117,6 +140,13 @@ class _PersonJourneyScreenState extends ConsumerState<PersonJourneyScreen> {
           AppSpacing.x10,
         ),
         children: [
+          JourneySearchField(
+            controlKey: const ValueKey('journey-person-search'),
+            controller: _searchController,
+            hintText: '인물 이름을 검색해 보세요',
+            onChanged: (value) => setState(() => _searchQuery = value),
+          ),
+          const SizedBox(height: AppSpacing.x4),
           Row(
             children: [
               Expanded(
@@ -157,27 +187,43 @@ class _PersonJourneyScreenState extends ConsumerState<PersonJourneyScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.x3),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              crossAxisSpacing: AppSpacing.x2,
-              mainAxisSpacing: AppSpacing.x2,
-              childAspectRatio: 0.78,
+          Container(
+            key: const ValueKey('journey-person-grid-surface'),
+            padding: const EdgeInsets.all(AppSpacing.x2),
+            decoration: BoxDecoration(
+              color: AppPaletteTheme.of(context).cardSurface,
+              borderRadius: BorderRadius.circular(AppRadii.xl),
+              border: Border.all(
+                color: AppPaletteTheme.of(context).subtleBorder,
+              ),
+              boxShadow: AppShadows.sm,
             ),
-            itemCount: characters.length,
-            itemBuilder: (context, index) {
-              final character = characters[index];
-              return _PersonButton(
-                character: character,
-                eventCount: counts[character.code] ?? 0,
-                selected:
-                    current.source == JourneySource.person &&
-                    current.personCode == character.code,
-                onTap: () => _openPerson(character),
-              );
-            },
+            child: characters.isEmpty
+                ? const JourneySearchEmptyState()
+                : GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 5,
+                          crossAxisSpacing: AppSpacing.x1,
+                          mainAxisSpacing: AppSpacing.x3,
+                          childAspectRatio: 0.82,
+                        ),
+                    itemCount: characters.length,
+                    itemBuilder: (context, index) {
+                      final character = characters[index];
+                      return _PersonButton(
+                        character: character,
+                        totalCount: counts[character.code] ?? 0,
+                        completedCount: completedCounts[character.code] ?? 0,
+                        selected:
+                            current.source == JourneySource.person &&
+                            current.personCode == character.code,
+                        onTap: () => _openPerson(character),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -200,63 +246,143 @@ class _PersonJourneyScreenState extends ConsumerState<PersonJourneyScreen> {
 class _PersonButton extends StatelessWidget {
   const _PersonButton({
     required this.character,
-    required this.eventCount,
+    required this.totalCount,
+    required this.completedCount,
     required this.selected,
     required this.onTap,
   });
 
   final Character character;
-  final int eventCount;
+  final int totalCount;
+  final int completedCount;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
+    final progress = totalCount == 0 ? 0.0 : completedCount / totalCount;
     return Material(
-      color: selected ? palette.utilitySelectedBackground : palette.cardSurface,
-      borderRadius: BorderRadius.circular(AppRadii.lg),
+      key: ValueKey('journey-person-${character.code}'),
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(AppRadii.pill),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadii.lg),
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.x2),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadii.lg),
-            border: Border.all(
-              color: selected ? palette.selectedBorder : palette.subtleBorder,
-              width: selected ? 2 : 1,
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CharacterAvatar(character: character, size: 26),
-              const SizedBox(height: AppSpacing.x1),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  character.name,
-                  maxLines: 1,
-                  softWrap: false,
-                  style: TextStyle(
-                    color: selected ? palette.activeTextOnAccent : palette.text,
-                    fontSize: AppFontSizes.sm,
-                    fontWeight: FontWeight.w700,
-                  ),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final ringSize = constraints.maxWidth.clamp(48.0, 62.0).toDouble();
+            final avatarSize = (ringSize - 5).clamp(43.0, 57.0).toDouble();
+            return Center(
+              child: Container(
+                width: ringSize,
+                height: ringSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: selected
+                      ? Border.all(color: palette.selectedBorder, width: 2)
+                      : null,
+                  boxShadow: selected
+                      ? [
+                          BoxShadow(
+                            color: palette.currentAccent.withValues(
+                              alpha: 0.28,
+                            ),
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: ringSize,
+                      height: ringSize,
+                      child: CircularProgressIndicator(
+                        key: ValueKey(
+                          'journey-person-progress-${character.code}',
+                        ),
+                        value: progress,
+                        strokeWidth: 3.2,
+                        backgroundColor: palette.subtleBorder,
+                        color: palette.successBottom,
+                      ),
+                    ),
+                    CharacterAvatar(character: character, size: avatarSize),
+                    Positioned(
+                      top: -2,
+                      left: 4,
+                      right: 4,
+                      child: Center(
+                        child: Container(
+                          key: ValueKey(
+                            'journey-person-count-${character.code}',
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.x2,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: palette.cardSurface.withValues(alpha: 0.94),
+                            borderRadius: BorderRadius.circular(AppRadii.pill),
+                            border: Border.all(
+                              color: palette.successBottom.withValues(
+                                alpha: 0.72,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            '$completedCount/$totalCount',
+                            textScaler: TextScaler.noScaling,
+                            style: TextStyle(
+                              color: palette.successBottom,
+                              fontSize: 8.5,
+                              fontWeight: FontWeight.w900,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 3,
+                      right: 3,
+                      bottom: 0,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 3,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: selected
+                              ? palette.primaryDeep.withValues(alpha: 0.94)
+                              : Colors.black.withValues(alpha: 0.62),
+                          borderRadius: BorderRadius.circular(AppRadii.pill),
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            character.name,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: const TextStyle(
+                              color: AppColors.fgOnDark,
+                              fontSize: AppFontSizes.xs,
+                              fontWeight: FontWeight.w800,
+                              height: 1,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                '$eventCount개',
-                style: TextStyle(
-                  color: selected
-                      ? palette.activeTextOnAccent.withValues(alpha: 0.88)
-                      : palette.mutedText,
-                  fontSize: AppFontSizes.xs,
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

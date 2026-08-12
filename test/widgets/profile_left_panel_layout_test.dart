@@ -502,7 +502,17 @@ void main() {
       companionSource,
       isNot(contains('backgroundColor: AppColors.goldDeep')),
     );
-    expect(companionSource, contains('backgroundColor: palette.successBottom'));
+    expect(
+      companionSource,
+      contains('final backgroundColor = Color.alphaBlend'),
+    );
+    expect(
+      companionSource,
+      contains(
+        'palette.successBottom.withValues(alpha: darkSurface ? 0.16 : 0.07)',
+      ),
+    );
+    expect(companionSource, contains('palette.cardSurface'));
     expect(
       emotionSource,
       isNot(contains('Colors.white.withValues(alpha: 0.98)')),
@@ -669,10 +679,12 @@ void main() {
     expect(companionSource, contains('maxLines: expandReadableText ? 2 : 1'));
     expect(companionSource, contains('maxLines: expandReadableText ? 4 : 2'));
     expect(companionSource, contains('TextOverflow.visible'));
+    expect(companionSource, contains('color: backgroundColor'));
     expect(
       companionSource,
-      contains('color: darkSurface ? AppColors.goldLight : AppColors.goldHi'),
+      contains('color: palette.successBottom.withValues(alpha: 0.10)'),
     );
+    expect(companionSource, isNot(contains('PulseHighlight')));
     expect(companionSource, isNot(contains('final pulseColor')));
     expect(companionSource, isNot(contains('auraColor')));
     expect(companionSource, isNot(contains('ringColor')));

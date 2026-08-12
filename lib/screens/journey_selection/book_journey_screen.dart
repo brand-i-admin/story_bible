@@ -7,6 +7,7 @@ import '../../state/journey_selection_providers.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/bible_book_meta.dart';
+import '../../utils/story_visibility.dart';
 import '../../widgets/journey/journey_filter_controls.dart';
 import '../../widgets/sub_page_scaffold.dart';
 import 'target_journey_scope_screen.dart';
@@ -27,6 +28,8 @@ class BookJourneyScreen extends ConsumerStatefulWidget {
 
 class _BookJourneyScreenState extends ConsumerState<BookJourneyScreen> {
   String _testament = 'old';
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -43,6 +46,12 @@ class _BookJourneyScreenState extends ConsumerState<BookJourneyScreen> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final current = ref.watch(journeySelectionProvider);
     final counts = _bookEventCounts();
@@ -52,9 +61,15 @@ class _BookJourneyScreenState extends ConsumerState<BookJourneyScreen> {
     final lastIndex = _testament == 'old'
         ? oldTestamentLastBookNo - 1
         : newTestamentLastBookNo - 1;
-    final books = bibleBooks.sublist(firstIndex, lastIndex + 1);
+    final query = _searchQuery.trim();
+    final candidateBooks = query.isEmpty
+        ? bibleBooks.sublist(firstIndex, lastIndex + 1)
+        : bibleBooks;
+    final books = candidateBooks
+        .where((book) => query.isEmpty || book.name.contains(query))
+        .toList(growable: false);
     return SubPageScaffold(
-      title: '성경책으로 찾기',
+      title: '성경책에서 시작하기',
       plainHeader: true,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(
@@ -64,6 +79,13 @@ class _BookJourneyScreenState extends ConsumerState<BookJourneyScreen> {
           AppSpacing.x10,
         ),
         children: [
+          JourneySearchField(
+            controlKey: const ValueKey('journey-book-search'),
+            controller: _searchController,
+            hintText: '성경책 이름을 검색해 보세요',
+            onChanged: (value) => setState(() => _searchQuery = value),
+          ),
+          const SizedBox(height: AppSpacing.x4),
           Row(
             children: [
               Expanded(
@@ -86,29 +108,32 @@ class _BookJourneyScreenState extends ConsumerState<BookJourneyScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.x5),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: AppSpacing.x3,
-              mainAxisSpacing: AppSpacing.x3,
-              childAspectRatio: 1.55,
+          if (books.isEmpty)
+            const JourneySearchEmptyState()
+          else
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: AppSpacing.x3,
+                mainAxisSpacing: AppSpacing.x3,
+                childAspectRatio: 1.55,
+              ),
+              itemCount: books.length,
+              itemBuilder: (context, index) {
+                final book = books[index];
+                final count = counts[book.name] ?? 0;
+                return _BookButton(
+                  bookName: book.name,
+                  eventCount: count,
+                  selected:
+                      current.source == JourneySource.book &&
+                      current.bookName == book.name,
+                  onTap: count == 0 ? null : () => _openBook(book.name),
+                );
+              },
             ),
-            itemCount: books.length,
-            itemBuilder: (context, index) {
-              final book = books[index];
-              final count = counts[book.name] ?? 0;
-              return _BookButton(
-                bookName: book.name,
-                eventCount: count,
-                selected:
-                    current.source == JourneySource.book &&
-                    current.bookName == book.name,
-                onTap: count == 0 ? null : () => _openBook(book.name),
-              );
-            },
-          ),
         ],
       ),
     );
@@ -116,7 +141,10 @@ class _BookJourneyScreenState extends ConsumerState<BookJourneyScreen> {
 
   Map<String, int> _bookEventCounts() {
     final counts = <String, int>{};
-    for (final event in widget.catalog.events) {
+    for (final event in visibleStoryEvents(
+      events: widget.catalog.events,
+      eras: widget.catalog.eras,
+    )) {
       final names = canonicalBibleBookNames(
         event.bibleRefs.map((reference) => reference.book),
       );
@@ -204,7 +232,7 @@ class _BookButton extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.x1),
                   Text(
-                    enabled ? '$eventCount개' : '이야기 없음',
+                    '$eventCount개',
                     style: TextStyle(
                       color: selected
                           ? palette.activeTextOnAccent.withValues(alpha: 0.88)

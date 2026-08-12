@@ -9,6 +9,7 @@ import '../../state/journey_selection_providers.dart';
 import '../../theme/app_color_palette.dart';
 import '../../theme/tokens.dart';
 import '../../utils/journey_filtering.dart';
+import '../../utils/story_visibility.dart';
 import '../../widgets/journey/journey_unit_selection_list.dart';
 import '../../widgets/story_home_styles.dart';
 import '../../widgets/sub_page_scaffold.dart';
@@ -22,6 +23,8 @@ class TargetJourneyScopeScreen extends ConsumerStatefulWidget {
     required this.bookName,
     required this.catalog,
     required this.engravedEventIds,
+    this.initialSelection,
+    this.revealSelection = false,
   }) : kind = JourneyTargetKind.book,
        character = null;
 
@@ -30,6 +33,8 @@ class TargetJourneyScopeScreen extends ConsumerStatefulWidget {
     required this.character,
     required this.catalog,
     required this.engravedEventIds,
+    this.initialSelection,
+    this.revealSelection = false,
   }) : kind = JourneyTargetKind.person,
        bookName = null;
 
@@ -38,6 +43,8 @@ class TargetJourneyScopeScreen extends ConsumerStatefulWidget {
   final Character? character;
   final JourneyCatalogData catalog;
   final Set<String> engravedEventIds;
+  final JourneySelection? initialSelection;
+  final bool revealSelection;
 
   String get targetName =>
       kind == JourneyTargetKind.book ? bookName! : character!.name;
@@ -49,22 +56,28 @@ class TargetJourneyScopeScreen extends ConsumerStatefulWidget {
 
 class _TargetJourneyScopeScreenState
     extends ConsumerState<TargetJourneyScopeScreen> {
-  JourneyScope? _selectedScope;
+  JourneyScope _selectedScope = JourneyScope.targetOnly;
   Set<String> _selectedUnitKeys = <String>{};
+  bool _unitsExpanded = false;
 
   @override
   void initState() {
     super.initState();
-    final current = ref.read(journeySelectionProvider);
-    final sameTarget = widget.kind == JourneyTargetKind.book
-        ? current.source == JourneySource.book &&
-              current.bookName == widget.bookName
-        : current.source == JourneySource.person &&
-              current.personCode == widget.character?.code;
-    if (sameTarget) {
-      _selectedScope = current.scope;
-      _selectedUnitKeys = {...current.unitKeys};
-    }
+    final JourneySelection initial =
+        widget.initialSelection ?? ref.read(journeySelectionProvider);
+    final matchesTarget = switch (widget.kind) {
+      JourneyTargetKind.book =>
+        initial.source == JourneySource.book &&
+            initial.bookName == widget.bookName,
+      JourneyTargetKind.person =>
+        initial.source == JourneySource.person &&
+            initial.personCode == widget.character?.code,
+    };
+    if (!matchesTarget) return;
+    _selectedScope = initial.scope;
+    _selectedUnitKeys = {...initial.unitKeys};
+    _unitsExpanded =
+        widget.revealSelection && initial.scope == JourneyScope.units;
   }
 
   @override
@@ -90,13 +103,10 @@ class _TargetJourneyScopeScreenState
       targetMatches: targetMatches,
       onlyTargetEras: true,
     );
-    final allUnitKeys = groups
-        .expand((group) => group.units)
-        .map((unit) => unit.key)
-        .toSet();
-    final targetEvents = widget.catalog.events
-        .where(targetMatches)
-        .toList(growable: false);
+    final targetEvents = visibleStoryEvents(
+      events: widget.catalog.events,
+      eras: widget.catalog.eras,
+    ).where(targetMatches).toList(growable: false);
     final targetProgress = journeyProgress(
       targetEvents,
       engravedEventIds: widget.engravedEventIds,
@@ -173,39 +183,13 @@ class _TargetJourneyScopeScreenState
             ),
           ),
           const SizedBox(height: AppSpacing.x6),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.touch_app_outlined,
-                size: 21,
-                color: palette.currentAccentDeep,
-              ),
-              const SizedBox(width: AppSpacing.x3),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '읽을 범위를 하나 선택해주세요',
-                      style: TextStyle(
-                        color: palette.text,
-                        fontSize: AppFontSizes.chip,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.x1),
-                    Text(
-                      '아래 두 방법 중 하나를 선택하면 버튼이 활성화됩니다.',
-                      style: TextStyle(
-                        color: palette.mutedText,
-                        fontSize: AppFontSizes.sm,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          Text(
+            '읽을 범위를 하나 선택해 주세요',
+            style: TextStyle(
+              color: palette.text,
+              fontSize: AppFontSizes.chip,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: AppSpacing.x4),
           _TargetOnlyCard(
@@ -218,6 +202,7 @@ class _TargetJourneyScopeScreenState
               setState(() {
                 _selectedScope = JourneyScope.targetOnly;
                 _selectedUnitKeys = <String>{};
+                _unitsExpanded = false;
               });
             },
           ),
@@ -242,24 +227,23 @@ class _TargetJourneyScopeScreenState
             child: Column(
               children: [
                 InkWell(
-                  onTap: allUnitKeys.isEmpty
-                      ? null
-                      : () => _toggleAllUnits(allUnitKeys),
+                  onTap: groups.isEmpty ? null : _toggleUnitsPanel,
                   borderRadius: BorderRadius.circular(AppRadii.xl),
                   child: Padding(
                     padding: const EdgeInsets.all(AppSpacing.x4),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Checkbox(
-                          key: const ValueKey('journey-scope-units-checkbox'),
-                          tristate: true,
-                          value: _unitScopeCheckboxValue(allUnitKeys),
-                          onChanged: allUnitKeys.isEmpty
-                              ? null
-                              : (_) => _toggleAllUnits(allUnitKeys),
+                        Icon(
+                          _selectedScope == JourneyScope.units
+                              ? Icons.radio_button_checked_rounded
+                              : Icons.radio_button_unchecked_rounded,
+                          color: _selectedScope == JourneyScope.units
+                              ? palette.primaryDeep
+                              : palette.mutedText,
+                          size: 24,
                         ),
-                        const SizedBox(width: AppSpacing.x2),
+                        const SizedBox(width: AppSpacing.x4),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,32 +267,39 @@ class _TargetJourneyScopeScreenState
                             ],
                           ),
                         ),
+                        Icon(
+                          _unitsExpanded
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
+                          color: palette.mutedText,
+                        ),
                       ],
                     ),
                   ),
                 ),
-                Divider(height: 1, color: palette.subtleBorder),
-                Padding(
-                  padding: const EdgeInsets.all(AppSpacing.x3),
-                  child: JourneyUnitSelectionList(
-                    groups: groups,
-                    selectedUnitKeys: _selectedScope == JourneyScope.units
-                        ? _selectedUnitKeys
-                        : const <String>{},
-                    targetBadgeLabel: widget.kind == JourneyTargetKind.book
-                        ? '이 권 포함'
-                        : '이 인물 포함',
-                    expandPartiallySelectedEras: false,
-                    onSelectionChanged: (keys) {
-                      setState(() {
-                        _selectedScope = keys.isEmpty
-                            ? null
-                            : JourneyScope.units;
-                        _selectedUnitKeys = keys;
-                      });
-                    },
+                if (_unitsExpanded) ...[
+                  Divider(height: 1, color: palette.subtleBorder),
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.x3),
+                    child: JourneyUnitSelectionList(
+                      groups: groups,
+                      selectedUnitKeys: _selectedUnitKeys,
+                      completedEventIds: widget.engravedEventIds,
+                      targetBadgeLabel: widget.kind == JourneyTargetKind.book
+                          ? '이 권 포함'
+                          : '이 인물 포함',
+                      expandPartiallySelectedEras: false,
+                      expandAllEras: true,
+                      revealInitialSelection: widget.revealSelection,
+                      onSelectionChanged: (keys) {
+                        setState(() {
+                          _selectedScope = JourneyScope.units;
+                          _selectedUnitKeys = keys;
+                        });
+                      },
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
@@ -332,25 +323,10 @@ class _TargetJourneyScopeScreenState
     );
   }
 
-  bool? _unitScopeCheckboxValue(Set<String> allUnitKeys) {
-    if (_selectedScope != JourneyScope.units || _selectedUnitKeys.isEmpty) {
-      return false;
-    }
-    return _selectedUnitKeys.containsAll(allUnitKeys) ? true : null;
-  }
-
-  void _toggleAllUnits(Set<String> allUnitKeys) {
-    final allSelected =
-        _selectedScope == JourneyScope.units &&
-        _selectedUnitKeys.containsAll(allUnitKeys);
+  void _toggleUnitsPanel() {
     setState(() {
-      if (allSelected) {
-        _selectedScope = null;
-        _selectedUnitKeys = <String>{};
-      } else {
-        _selectedScope = JourneyScope.units;
-        _selectedUnitKeys = {...allUnitKeys};
-      }
+      _selectedScope = JourneyScope.units;
+      _unitsExpanded = !_unitsExpanded;
     });
   }
 
@@ -363,13 +339,13 @@ class _TargetJourneyScopeScreenState
     final selection = widget.kind == JourneyTargetKind.book
         ? JourneySelection(
             source: JourneySource.book,
-            scope: _selectedScope!,
+            scope: _selectedScope,
             bookName: widget.bookName,
             unitKeys: _selectedUnitKeys,
           )
         : JourneySelection(
             source: JourneySource.person,
-            scope: _selectedScope!,
+            scope: _selectedScope,
             personCode: widget.character!.code,
             personName: widget.character!.name,
             unitKeys: _selectedUnitKeys,
@@ -428,7 +404,13 @@ class _TargetOnlyCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Checkbox(value: selected, onChanged: (_) => onTap()),
+              Icon(
+                selected
+                    ? Icons.radio_button_checked_rounded
+                    : Icons.radio_button_unchecked_rounded,
+                color: selected ? palette.primaryDeep : palette.mutedText,
+                size: 24,
+              ),
               const SizedBox(width: AppSpacing.x4),
               Expanded(
                 child: Column(
