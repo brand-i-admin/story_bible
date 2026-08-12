@@ -73,7 +73,7 @@ class _PartialJourneyScreenState extends ConsumerState<PartialJourneyScreen> {
             )
             .toList(growable: false);
     return SubPageScaffold(
-      title: '일부 구간 선택',
+      title: '시대·구간에서 고르기',
       plainHeader: true,
       child: Stack(
         children: [
@@ -122,6 +122,7 @@ class _PartialJourneyScreenState extends ConsumerState<PartialJourneyScreen> {
                   ),
                   revealInitialSelection: widget.revealSelection,
                   showEraLabel: true,
+                  unifiedEraSurface: true,
                   onSelectionChanged: (keys) {
                     setState(() => _selectedUnitKeys = keys);
                   },

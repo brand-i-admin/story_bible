@@ -17,6 +17,7 @@ class JourneyUnitSelectionList extends StatefulWidget {
     this.revealInitialSelection = false,
     this.completedEventIds = const <String>{},
     this.showEraLabel = false,
+    this.unifiedEraSurface = false,
   });
 
   final List<JourneyEraGroup> groups;
@@ -28,6 +29,7 @@ class JourneyUnitSelectionList extends StatefulWidget {
   final bool revealInitialSelection;
   final Set<String> completedEventIds;
   final bool showEraLabel;
+  final bool unifiedEraSurface;
 
   @override
   State<JourneyUnitSelectionList> createState() =>
@@ -97,6 +99,32 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
       );
     }
     _scheduleInitialSelectionFocus();
+    if (widget.unifiedEraSurface) {
+      final palette = AppPaletteTheme.of(context);
+      return Container(
+        key: const ValueKey('journey-era-list-surface'),
+        decoration: BoxDecoration(
+          color: palette.cardSurface,
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+          border: Border.all(color: palette.subtleBorder),
+          boxShadow: AppShadows.sm,
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: [
+            for (var index = 0; index < widget.groups.length; index++) ...[
+              _buildEraCard(
+                context,
+                widget.groups[index],
+                embeddedInUnifiedSurface: true,
+              ),
+              if (index + 1 < widget.groups.length)
+                Divider(height: 1, color: palette.subtleBorder),
+            ],
+          ],
+        ),
+      );
+    }
     return Column(
       children: [
         for (var index = 0; index < widget.groups.length; index++) ...[
@@ -131,7 +159,11 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
     });
   }
 
-  Widget _buildEraCard(BuildContext context, JourneyEraGroup group) {
+  Widget _buildEraCard(
+    BuildContext context,
+    JourneyEraGroup group, {
+    bool embeddedInUnifiedSurface = false,
+  }) {
     final palette = AppPaletteTheme.of(context);
     final keys = group.units.map((unit) => unit.key).toSet();
     final selectedCount = keys.intersection(widget.selectedUnitKeys).length;
@@ -143,16 +175,18 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
         : group.bibleBookNames.join(' · ');
     final card = Container(
       key: ValueKey('journey-era-${group.era.code}'),
-      decoration: BoxDecoration(
-        color: palette.cardSurface,
-        borderRadius: BorderRadius.circular(AppRadii.xl),
-        border: Border.all(
-          color: selectedCount > 0
-              ? palette.selectedBorder
-              : palette.subtleBorder,
-        ),
-        boxShadow: AppShadows.sm,
-      ),
+      decoration: embeddedInUnifiedSurface
+          ? null
+          : BoxDecoration(
+              color: palette.cardSurface,
+              borderRadius: BorderRadius.circular(AppRadii.xl),
+              border: Border.all(
+                color: selectedCount > 0
+                    ? palette.selectedBorder
+                    : palette.subtleBorder,
+              ),
+              boxShadow: AppShadows.sm,
+            ),
       child: Column(
         children: [
           InkWell(
@@ -165,24 +199,20 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
                 }
               });
             },
-            borderRadius: BorderRadius.circular(AppRadii.xl),
+            borderRadius: embeddedInUnifiedSurface
+                ? BorderRadius.zero
+                : BorderRadius.circular(AppRadii.xl),
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.x4),
               child: Row(
                 children: [
                   Checkbox(
+                    key: ValueKey('journey-era-checkbox-${group.era.code}'),
                     value: partiallySelected ? null : allSelected,
                     tristate: true,
                     onChanged: (_) => _toggleEra(group, !allSelected),
                   ),
                   const SizedBox(width: AppSpacing.x2),
-                  if (journeyEraEmoji(group.era).isNotEmpty) ...[
-                    Text(
-                      journeyEraEmoji(group.era),
-                      style: const TextStyle(fontSize: AppFontSizes.input),
-                    ),
-                    const SizedBox(width: AppSpacing.x3),
-                  ],
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,17 +220,36 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
                         if (widget.showEraLabel)
                           _FadingEraTitleRow(
                             eraCode: group.era.code,
+                            emoji: journeyEraEmoji(group.era),
                             friendlyTitle: group.friendlyTitle,
                             eraName: group.era.name,
                           )
                         else
-                          Text(
-                            group.friendlyTitle,
-                            style: TextStyle(
-                              color: palette.text,
-                              fontSize: AppFontSizes.chip,
-                              fontWeight: FontWeight.w700,
-                            ),
+                          Row(
+                            children: [
+                              if (journeyEraEmoji(group.era).isNotEmpty) ...[
+                                Text(
+                                  journeyEraEmoji(group.era),
+                                  key: ValueKey(
+                                    'journey-era-emoji-${group.era.code}',
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: AppFontSizes.input,
+                                  ),
+                                ),
+                                const SizedBox(width: AppSpacing.x2),
+                              ],
+                              Expanded(
+                                child: Text(
+                                  group.friendlyTitle,
+                                  style: TextStyle(
+                                    color: palette.text,
+                                    fontSize: AppFontSizes.chip,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         const SizedBox(height: AppSpacing.x1),
                         FadingHorizontalTextScroll(
@@ -424,11 +473,13 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
 class _FadingEraTitleRow extends StatefulWidget {
   const _FadingEraTitleRow({
     required this.eraCode,
+    required this.emoji,
     required this.friendlyTitle,
     required this.eraName,
   });
 
   final String eraCode;
+  final String emoji;
   final String friendlyTitle;
   final String eraName;
 
@@ -507,6 +558,14 @@ class _FadingEraTitleRowState extends State<_FadingEraTitleRow> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (widget.emoji.isNotEmpty) ...[
+                  Text(
+                    widget.emoji,
+                    key: ValueKey('journey-era-emoji-${widget.eraCode}'),
+                    style: const TextStyle(fontSize: AppFontSizes.input),
+                  ),
+                  const SizedBox(width: AppSpacing.x2),
+                ],
                 Text(
                   widget.friendlyTitle,
                   maxLines: 1,

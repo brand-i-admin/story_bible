@@ -166,6 +166,8 @@ void main() {
     );
     expect(find.text('선택된 이야기 정보'), findsNothing);
     expect(find.text('현재 선택된 여정'), findsOneWidget);
+    expect(find.text('선택된 여정으로 지도 위 나열'), findsOneWidget);
+    expect(find.text('이 여정으로 홈 보기'), findsNothing);
     expect(
       find.byKey(const ValueKey('current-journey-section-divider')),
       findsOneWidget,
@@ -207,7 +209,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('journey-choice-segments')));
     await tester.pumpAndSettle();
-    _expectPlainJourneyHeader(tester, title: '일부 구간 선택');
+    _expectPlainJourneyHeader(tester, title: '시대·구간에서 고르기');
     expect(find.text('걷고 싶은 시대와 구간을 골라주세요'), findsNothing);
     expect(find.text('시대 전체를 체크하거나 펼친 뒤 소분류를 여러 개 선택할 수 있어요.'), findsNothing);
     expect(find.text('0개 구간 선택'), findsNothing);
@@ -226,8 +228,18 @@ void main() {
       findsOneWidget,
     );
 
-    await tester.tap(find.byType(Checkbox).first);
+    expect(find.byType(Checkbox), findsOneWidget);
+    await tester.tap(
+      find.byKey(const ValueKey('journey-era-checkbox-era_primeval')),
+    );
     await tester.pump();
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('journey-nested-units-era_primeval')),
+        matching: find.byType(Checkbox),
+      ),
+      findsWidgets,
+    );
     final apply = find.text('선택한 310개 이야기로 시작');
     await tester.ensureVisible(apply);
     await tester.tap(apply);
@@ -240,7 +252,7 @@ void main() {
     expect(find.text('시대·구간에서 고르기'), findsWidgets);
     expect(find.text('0/310'), findsOneWidget);
     final selectedInfo = find.byKey(const ValueKey('selected-journey-info'));
-    const expectedSelectionDetail = '원역사 | 세상의 시작과 첫 사람들 | 창조와 사람의 사명';
+    const expectedSelectionDetail = '원역사 | 세상의 시작과 첫 사람들(창조와 사람의 사명)';
     final selectionDetail = tester.widget<Text>(
       find.descendant(
         of: selectedInfo,
@@ -280,7 +292,7 @@ void main() {
 
     await tester.tap(selectedInfo);
     await tester.pumpAndSettle();
-    _expectPlainJourneyHeader(tester, title: '일부 구간 선택');
+    _expectPlainJourneyHeader(tester, title: '시대·구간에서 고르기');
     expect(find.text('창조와 사람의 사명'), findsOneWidget);
     await tester.tap(find.byTooltip('이전'));
     await tester.pumpAndSettle();
@@ -369,6 +381,19 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('journey-choice-segments')));
     await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('journey-era-list-surface')),
+      findsOneWidget,
+    );
+    final eraSurface = tester.widget<Container>(
+      find.byKey(const ValueKey('journey-era-era_primeval')),
+    );
+    expect(eraSurface.decoration, isNull);
+    expect(find.byType(Checkbox), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('journey-era-checkbox-era_primeval')),
+      findsOneWidget,
+    );
     expect(find.text('창조와 사람의 사명'), findsNothing);
     expect(find.text('에덴 밖 세상'), findsNothing);
     expect(find.text('창세기 · 출애굽기'), findsOneWidget);
@@ -387,6 +412,15 @@ void main() {
     expect(
       find.ancestor(of: eraTitleScroll, matching: find.byType(ShaderMask)),
       findsOneWidget,
+    );
+    final eraEmoji = find.byKey(
+      const ValueKey('journey-era-emoji-era_primeval'),
+    );
+    expect(eraEmoji, findsOneWidget);
+    expect(
+      (tester.getCenter(eraEmoji).dy - tester.getCenter(eraTitleScroll).dy)
+          .abs(),
+      lessThan(2),
     );
 
     await tester.tap(find.text('세상의 시작과 첫 사람들'));
@@ -434,7 +468,9 @@ void main() {
     expect(find.text('창조와 사람의 사명'), findsOneWidget);
     expect(find.text('에덴 밖 세상'), findsOneWidget);
 
-    await tester.tap(find.byType(Checkbox).first);
+    await tester.tap(
+      find.byKey(const ValueKey('journey-era-checkbox-era_primeval')),
+    );
     await tester.pump();
     expect(find.text('창조와 사람의 사명'), findsOneWidget);
     expect(find.text('에덴 밖 세상'), findsOneWidget);
@@ -994,7 +1030,7 @@ void main() {
       child: const JourneySelectionScreen(),
     );
 
-    const expectedDetail = '창세기 | 원역사 | 세상의 시작과 첫 사람들 | 창조와 사람의 사명';
+    const expectedDetail = '창세기 | 원역사 | 세상의 시작과 첫 사람들(창조와 사람의 사명)';
     final detail = tester.widget<Text>(find.text(expectedDetail));
     expect(detail.data, isNot(contains('\n')));
     expect(detail.softWrap, isTrue);

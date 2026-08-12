@@ -20,7 +20,7 @@ import '../v2/region_event_list.dart'
 const _homeJourneyViewportFraction = 0.34;
 const _homeJourneyCurrentWidthScale = 1.85;
 const _homeJourneyAdjacentHeightFraction = 0.60;
-const _homeJourneyBaseDeckHeight = 238.0;
+const _homeJourneyBaseDeckHeight = 250.0;
 const _homeJourneyCurrentCardTopInset = 20.0;
 
 double _homeJourneyAdjacentTopInset(double height) =>

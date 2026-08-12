@@ -313,9 +313,19 @@ class StoryEventThumbCard extends StatelessWidget {
               : const EdgeInsets.fromLTRB(10, 10, 10, 8),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final body = _buildCardBody(context, theme);
               final textScale = MediaQuery.textScalerOf(context).scale(1);
-              if ((!expandSurface && textScale < 1.3) ||
+              final currentTodayCardFitsWithoutScroll =
+                  presentation == StoryEventCardPresentation.todayCurrent &&
+                  textScale < 1.3;
+              final body = _buildCardBody(
+                context,
+                theme,
+                fillAvailableHeight:
+                    currentTodayCardFitsWithoutScroll &&
+                    constraints.hasBoundedHeight,
+              );
+              if (currentTodayCardFitsWithoutScroll ||
+                  (!expandSurface && textScale < 1.3) ||
                   !constraints.hasBoundedHeight) {
                 return body;
               }
@@ -335,7 +345,11 @@ class StoryEventThumbCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCardBody(BuildContext context, ThemeData theme) {
+  Widget _buildCardBody(
+    BuildContext context,
+    ThemeData theme, {
+    required bool fillAvailableHeight,
+  }) {
     final summary = (event.summary ?? '').trim();
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final compactLargeText = textScale >= 1.3;
@@ -386,7 +400,7 @@ class StoryEventThumbCard extends StatelessWidget {
           : 12,
     );
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: fillAvailableHeight ? MainAxisSize.max : MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (todayDeck) ...[
@@ -427,6 +441,7 @@ class StoryEventThumbCard extends StatelessWidget {
           _buildCharacterPills(context, height: characterPillsHeight),
         ],
         if (presentation == StoryEventCardPresentation.todayCurrent) ...[
+          if (fillAvailableHeight) const Spacer(),
           const SizedBox(height: AppSpacing.x2),
           _TodayContinueButton(eventId: event.id, onTap: onTap),
         ],

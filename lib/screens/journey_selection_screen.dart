@@ -189,7 +189,7 @@ class _JourneySelectionBody extends ConsumerWidget {
         SizedBox(
           width: double.infinity,
           child: filledActionButton(
-            label: '이 여정으로 홈 보기',
+            label: '선택된 여정으로 지도 위 나열',
             minHeight: 42,
             fontSize: AppFontSizes.base,
             fontWeight: FontWeight.w700,
@@ -210,7 +210,7 @@ class _JourneySelectionBody extends ConsumerWidget {
 
   String _selectionUnitDetail(List<JourneyEraGroup> groups) {
     if (groups.isEmpty) {
-      return '선택한 시대 | 선택한 대분류 | 선택한 소분류';
+      return '선택한 시대 | 선택한 대분류(선택한 소분류)';
     }
     return groups
         .map((group) {
@@ -218,7 +218,7 @@ class _JourneySelectionBody extends ConsumerWidget {
               .where((unit) => selection.unitKeys.contains(unit.key))
               .map((unit) => unit.title)
               .join(', ');
-          return '${group.era.name} | ${group.friendlyTitle} | $units';
+          return '${group.era.name} | ${group.friendlyTitle}($units)';
         })
         .join(' · ');
   }

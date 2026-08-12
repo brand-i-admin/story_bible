@@ -428,8 +428,73 @@ void main() {
       find.byKey(const ValueKey('story-card-title-todayCurrent-recommended')),
     );
     expect(openedStoryIds, ['recommended', 'recommended']);
-    expect(currentRect.height, greaterThanOrEqualTo(215));
-    expect(currentRect.height, lessThan(225));
+    expect(currentRect.height, greaterThanOrEqualTo(227));
+    expect(currentRect.height, lessThan(233));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('보통 글자에서 지금 이어보기 버튼을 스크롤 없이 한눈에 보여준다', (tester) async {
+    const screenSize = Size(390, 780);
+    await tester.binding.setSurfaceSize(screenSize);
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(
+            size: screenSize,
+            textScaler: TextScaler.linear(1.2),
+          ),
+          child: Scaffold(
+            body: SizedBox(
+              height: 445,
+              child: HomeJourneyOverlay(
+                events: events,
+                recommendedEventId: 'recommended',
+                currentEventId: 'recommended',
+                eras: const [_era],
+                charactersByCode: const {},
+                eventEmotionMarks: const {},
+                quizAttemptSummaries: const {},
+                isAuthenticated: true,
+                todayDiary: null,
+                diaryLoading: false,
+                diaryError: null,
+                bibleTargetLabel: '창세기 14장',
+                onOpenStory: (_) {},
+                onCurrentStoryChanged: (_) {},
+                onSaveDiary: _discardDiarySave,
+                onDeleteDiary: _discardDiaryDelete,
+                onContinueBibleReading: () {},
+                onOpenProfile: () {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 120));
+
+    final currentCard = find.byKey(
+      const ValueKey('home-journey-card-surface-frame-recommended'),
+    );
+    final continueButton = find.byKey(
+      const ValueKey('story-card-continue-todayCurrent-recommended'),
+    );
+    final cardRect = tester.getRect(currentCard);
+    final buttonRect = tester.getRect(continueButton);
+    final verticalScrollViews = tester
+        .widgetList<SingleChildScrollView>(
+          find.descendant(
+            of: currentCard,
+            matching: find.byType(SingleChildScrollView),
+          ),
+        )
+        .where((scrollView) => scrollView.scrollDirection == Axis.vertical);
+
+    expect(verticalScrollViews, isEmpty);
+    expect(buttonRect.bottom, lessThanOrEqualTo(cardRect.bottom));
+    expect(cardRect.bottom - buttonRect.bottom, inInclusiveRange(6, 14));
     expect(tester.takeException(), isNull);
   });
 
