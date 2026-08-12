@@ -126,6 +126,29 @@ void main() {
     expect(find.text('0/299'), findsOneWidget);
   });
 
+  testWidgets('여정 카탈로그 로딩 중에는 0/0 대신 불러오는 상태를 표시한다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: TodayJourneySelectionBar(
+            currentLabel: '전체 순서',
+            completedCount: 0,
+            totalCount: 0,
+            loading: true,
+            onTap: () {},
+          ),
+        ),
+      ),
+    );
+
+    final progress = tester.widget<LinearProgressIndicator>(
+      find.byKey(const ValueKey('today-journey-selection-progress')),
+    );
+    expect(progress.value, isNull);
+    expect(find.text('불러오는 중'), findsOneWidget);
+    expect(find.text('0/0'), findsNothing);
+  });
+
   testWidgets('비로그인 여정 가이드는 카드 스크롤 안내와 닫기 배지를 표시한다', (tester) async {
     await tester.binding.setSurfaceSize(const Size(320, 640));
     addTearDown(() => tester.binding.setSurfaceSize(null));

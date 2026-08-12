@@ -88,6 +88,12 @@ class StoryController extends Notifier<StoryState> {
         return;
       }
 
+      final hasOldTestament = eras.any((era) => _eraTestament(era) == 'old');
+      state = state.copyWith(
+        eras: eras,
+        selectedTestament: hasOldTestament ? 'old' : _eraTestament(eras.first),
+      );
+
       final results = await Future.wait<Object?>([
         _fetchUserScopedSnapshot(),
         _fetchLandmarksSafely(),
@@ -95,7 +101,6 @@ class StoryController extends Notifier<StoryState> {
       final userSnapshot = results[0]! as _UserScopedSnapshot;
       final landmarks = results[1]! as List<Landmark>;
 
-      final hasOldTestament = eras.any((era) => _eraTestament(era) == 'old');
       final useFetchedUserData = userScopeRevision == _userScopeRevision;
       var nextState = state.copyWith(
         loading: false,

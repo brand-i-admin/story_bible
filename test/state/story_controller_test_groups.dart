@@ -69,6 +69,30 @@ void defineStoryControllerTests() {
       expect(state.error, isNull);
     });
 
+    test('시대가 준비되면 나머지 초기 조회를 기다리지 않고 상태에 공개한다', () async {
+      final eras = [_era(id: 'era1', code: 'era_primeval')];
+      final pendingLandmarks = Completer<List<Landmark>>();
+      when(() => mockRepo.fetchEras()).thenAnswer((_) async => eras);
+      when(
+        () => mockRepo.fetchLandmarks(),
+      ).thenAnswer((_) => pendingLandmarks.future);
+
+      final container = buildContainer();
+      final initialization = container
+          .read(storyControllerProvider.notifier)
+          .initialize();
+      await untilCalled(() => mockRepo.fetchLandmarks());
+
+      final loadingState = container.read(storyControllerProvider);
+      expect(loadingState.loading, isTrue);
+      expect(loadingState.eras, eras);
+      expect(loadingState.selectedTestament, 'old');
+
+      pendingLandmarks.complete(const []);
+      await initialization;
+      expect(container.read(storyControllerProvider).loading, isFalse);
+    });
+
     test('eras가 비어있으면 에러 메시지 설정', () async {
       when(() => mockRepo.fetchEras()).thenAnswer((_) async => const []);
 

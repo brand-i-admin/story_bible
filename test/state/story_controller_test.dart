@@ -12,6 +12,7 @@ import 'package:story_bible/data/user_repository.dart';
 import 'package:story_bible/models/character.dart';
 import 'package:story_bible/models/era.dart';
 import 'package:story_bible/models/event_emotion_mark.dart';
+import 'package:story_bible/models/landmark.dart';
 import 'package:story_bible/models/quiz_attempt_summary.dart';
 import 'package:story_bible/models/story_event.dart';
 import 'package:story_bible/state/auth_providers.dart';

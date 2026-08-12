@@ -44,10 +44,15 @@ class JourneySelectionNotifier extends Notifier<JourneySelection> {
 
 final journeyCatalogProvider = FutureProvider<JourneyCatalogData>((ref) async {
   final eras = ref.watch(storyControllerProvider.select((state) => state.eras));
-  final events = await ref.watch(dailyExplorationCatalogProvider.future);
-  final characters = await ref
+  if (eras.isEmpty) {
+    return const JourneyCatalogData(eras: [], events: [], characters: []);
+  }
+  final eventsFuture = ref.watch(dailyExplorationCatalogProvider.future);
+  final charactersFuture = ref
       .read(storyRepositoryProvider)
       .fetchAllActiveCharacters();
+  final events = await eventsFuture;
+  final characters = await charactersFuture;
   return JourneyCatalogData(
     eras: List.unmodifiable(eras),
     events: List.unmodifiable(events),

@@ -32,6 +32,7 @@ class HomeJourneyOverlay extends StatelessWidget {
   const HomeJourneyOverlay({
     super.key,
     required this.events,
+    this.loading = false,
     required this.recommendedEventId,
     required this.currentEventId,
     this.currentEraDividerAnchorKey,
@@ -56,6 +57,7 @@ class HomeJourneyOverlay extends StatelessWidget {
   });
 
   final List<StoryEvent> events;
+  final bool loading;
   final String? recommendedEventId;
   final String? currentEventId;
   final Key? currentEraDividerAnchorKey;
@@ -90,6 +92,7 @@ class HomeJourneyOverlay extends StatelessWidget {
             'home-story-deck-${events.map((event) => event.id).join('-')}',
           ),
           events: events,
+          loading: loading,
           recommendedEventId: recommendedEventId,
           currentEventId: currentEventId,
           currentEraDividerAnchorKey: currentEraDividerAnchorKey,
@@ -111,6 +114,7 @@ class _HomeStoryJourneyDeck extends StatefulWidget {
   const _HomeStoryJourneyDeck({
     super.key,
     required this.events,
+    required this.loading,
     required this.recommendedEventId,
     required this.currentEventId,
     this.currentEraDividerAnchorKey,
@@ -125,6 +129,7 @@ class _HomeStoryJourneyDeck extends StatefulWidget {
   });
 
   final List<StoryEvent> events;
+  final bool loading;
   final String? recommendedEventId;
   final String? currentEventId;
   final Key? currentEraDividerAnchorKey;
@@ -197,7 +202,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     final ordered = _orderedEvents();
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final deckHeight =
-        _homeJourneyBaseDeckHeight + ((textScale - 1) * 60).clamp(0.0, 32.0);
+        _homeJourneyBaseDeckHeight + ((textScale - 1) * 90).clamp(0.0, 32.0);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -210,14 +215,37 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: palette.subtleBorder),
             ),
-            child: Text(
-              '선택한 여정에 연결된 이야기가 없어요.',
-              style: TextStyle(
-                color: palette.mutedText,
-                fontSize: 13,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            child: widget.loading
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: palette.currentAccentDeep,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.x3),
+                      Text(
+                        '이야기를 불러오고 있어요.',
+                        style: TextStyle(
+                          color: palette.mutedText,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  )
+                : Text(
+                    '선택한 여정에 연결된 이야기가 없어요.',
+                    style: TextStyle(
+                      color: palette.mutedText,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
           )
         else
           SizedBox(

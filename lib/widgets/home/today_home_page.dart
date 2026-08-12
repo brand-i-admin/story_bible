@@ -151,6 +151,7 @@ class TodayHomePage extends StatefulWidget {
     required this.mapController,
     required this.mapGesturesEnabled,
     required this.events,
+    this.journeyLoading = false,
     required this.recommendedEventId,
     this.currentEventOverrideId,
     required this.eras,
@@ -182,6 +183,7 @@ class TodayHomePage extends StatefulWidget {
   final StoryMapPanelController mapController;
   final bool mapGesturesEnabled;
   final List<StoryEvent> events;
+  final bool journeyLoading;
   final String? recommendedEventId;
   final String? currentEventOverrideId;
   final List<Era> eras;
@@ -502,6 +504,7 @@ class _TodayHomePageState extends State<TodayHomePage> {
                       )
                       .length,
                   totalCount: widget.events.length,
+                  loading: widget.journeyLoading,
                   onTap: widget.onOpenJourneySelection,
                 ),
               ),
@@ -540,6 +543,7 @@ class _TodayHomePageState extends State<TodayHomePage> {
                     key: _journeyAnchorKey,
                     currentEraDividerAnchorKey: _eraDividerAnchorKey,
                     events: widget.events,
+                    loading: widget.journeyLoading,
                     recommendedEventId: widget.recommendedEventId,
                     currentEventId: currentEventId,
                     eras: widget.eras,
@@ -595,12 +599,14 @@ class TodayJourneySelectionBar extends StatelessWidget {
     required this.currentLabel,
     required this.completedCount,
     required this.totalCount,
+    this.loading = false,
     required this.onTap,
   });
 
   final String currentLabel;
   final int completedCount;
   final int totalCount;
+  final bool loading;
   final VoidCallback onTap;
 
   @override
@@ -765,14 +771,14 @@ class TodayJourneySelectionBar extends StatelessWidget {
                             key: const ValueKey(
                               'today-journey-selection-progress',
                             ),
-                            value: progress,
+                            value: loading ? null : progress,
                             minHeight: 14,
                             backgroundColor: Colors.transparent,
                             color: palette.currentAccentDeep,
                           ),
                           Center(
                             child: Text(
-                              '$safeCompleted/$safeTotal',
+                              loading ? '불러오는 중' : '$safeCompleted/$safeTotal',
                               key: const ValueKey(
                                 'today-journey-selection-count',
                               ),

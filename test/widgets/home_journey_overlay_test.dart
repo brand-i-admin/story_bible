@@ -493,9 +493,47 @@ void main() {
         .where((scrollView) => scrollView.scrollDirection == Axis.vertical);
 
     expect(verticalScrollViews, isEmpty);
+    expect(
+      cardRect.height,
+      greaterThanOrEqualTo(247),
+      reason: '실기기 한글 폰트가 테스트 폰트보다 조금 높아도 CTA가 잘리지 않아야 한다.',
+    );
     expect(buttonRect.bottom, lessThanOrEqualTo(cardRect.bottom));
     expect(cardRect.bottom - buttonRect.bottom, inInclusiveRange(6, 14));
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('이야기 카탈로그를 불러오는 동안 빈 여정으로 표시하지 않는다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: HomeJourneyOverlay(
+            events: const [],
+            loading: true,
+            recommendedEventId: null,
+            currentEventId: null,
+            eras: const [],
+            charactersByCode: const {},
+            eventEmotionMarks: const {},
+            quizAttemptSummaries: const {},
+            isAuthenticated: true,
+            todayDiary: null,
+            diaryLoading: false,
+            diaryError: null,
+            bibleTargetLabel: '창세기 1장',
+            onOpenStory: (_) {},
+            onCurrentStoryChanged: (_) {},
+            onSaveDiary: _discardDiarySave,
+            onDeleteDiary: _discardDiaryDelete,
+            onContinueBibleReading: () {},
+            onOpenProfile: () {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('이야기를 불러오고 있어요.'), findsOneWidget);
+    expect(find.text('선택한 여정에 연결된 이야기가 없어요.'), findsNothing);
   });
 
   testWidgets('긴 제목과 지역은 세 글자 크기에서 카드 밖으로 넘치지 않는다', (tester) async {

@@ -2709,6 +2709,9 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
     final user = ref.watch(signedInUserProvider);
     final catalogAsync = ref.watch(journeyCatalogProvider);
     final catalog = catalogAsync.value;
+    final journeyLoading =
+        (catalog == null || catalog.events.isEmpty) &&
+        (state.loading || catalogAsync.isLoading);
     final selection = ref.watch(journeySelectionProvider);
     final charactersByCode = {
       for (final character in catalog?.characters ?? const <Character>[])
@@ -2751,6 +2754,7 @@ class _StoryHomeScreenState extends ConsumerState<StoryHomeScreen> {
       mapController: _mapPanelController,
       mapGesturesEnabled: _rootTab == StoryRootTab.today,
       events: events,
+      journeyLoading: journeyLoading,
       recommendedEventId: recommendedEventId,
       currentEventOverrideId: _todayCelebrationEventId,
       eras: state.eras,
