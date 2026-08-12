@@ -390,9 +390,20 @@ class StoryEventThumbCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (todayDeck) ...[
-          SizedBox(height: compactLargeText ? 20 : 22),
+          SizedBox(
+            height: presentation == StoryEventCardPresentation.todayCurrent
+                ? 2
+                : (compactLargeText ? 20 : 22),
+          ),
           title,
-          SizedBox(height: gapAfterTitle + 3),
+          SizedBox(height: gapAfterTitle),
+          _ThumbMetaRow(
+            eventId: event.id,
+            presentation: presentation,
+            placeName: event.placeName,
+            yearLabel: _yearLabel(),
+          ),
+          SizedBox(height: gapAfterThumbnail),
           thumbnail,
           SizedBox(height: gapAfterThumbnail),
         ] else ...[
@@ -400,13 +411,13 @@ class StoryEventThumbCard extends StatelessWidget {
           SizedBox(height: gapAfterThumbnail),
           title,
           SizedBox(height: gapAfterTitle),
+          _ThumbMetaRow(
+            eventId: event.id,
+            presentation: presentation,
+            placeName: event.placeName,
+            yearLabel: _yearLabel(),
+          ),
         ],
-        _ThumbMetaRow(
-          eventId: event.id,
-          presentation: presentation,
-          placeName: event.placeName,
-          yearLabel: _yearLabel(),
-        ),
         if (showSummary && summary.isNotEmpty) ...[
           SizedBox(height: gapBeforeSummary),
           _ThumbSummary(summary: summary, maxLines: summaryMaxLines),
@@ -414,6 +425,10 @@ class StoryEventThumbCard extends StatelessWidget {
         if (showCharacterPills && event.characterCodes.isNotEmpty) ...[
           SizedBox(height: gapBeforePills),
           _buildCharacterPills(context, height: characterPillsHeight),
+        ],
+        if (presentation == StoryEventCardPresentation.todayCurrent) ...[
+          const SizedBox(height: AppSpacing.x2),
+          _TodayContinueButton(eventId: event.id, onTap: onTap),
         ],
       ],
     );
@@ -457,6 +472,66 @@ class StoryEventThumbCard extends StatelessWidget {
                   : null,
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class _TodayContinueButton extends StatelessWidget {
+  const _TodayContinueButton({required this.eventId, required this.onTap});
+
+  final String eventId;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: '지금 이어보기',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: ValueKey(
+            'story-card-continue-${StoryEventCardPresentation.todayCurrent.name}-$eventId',
+          ),
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadii.md),
+          child: Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(minHeight: 32),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.goldLight, AppColors.goldDeep],
+              ),
+              borderRadius: BorderRadius.circular(AppRadii.md),
+              border: Border.all(color: AppColors.goldHi),
+              boxShadow: AppShadows.gold,
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.play_arrow_rounded,
+                  size: 18,
+                  color: AppColors.fgOnDark,
+                ),
+                SizedBox(width: AppSpacing.x1),
+                Text(
+                  '지금 이어보기',
+                  style: TextStyle(
+                    color: AppColors.fgOnDark,
+                    fontSize: AppFontSizes.base,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

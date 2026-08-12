@@ -659,9 +659,8 @@ class TodayJourneySelectionBar extends StatelessWidget {
                   ),
                   const SizedBox(width: AppSpacing.x3),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           '여정 선택',
@@ -672,16 +671,27 @@ class TodayJourneySelectionBar extends StatelessWidget {
                             height: 1.05,
                           ),
                         ),
-                        const SizedBox(height: 3),
+                        const SizedBox(width: AppSpacing.x2),
                         Text(
-                          currentLabel,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          '·',
                           style: TextStyle(
-                            color: palette.currentAccentDeep,
-                            fontSize: AppFontSizes.xs,
+                            color: palette.mutedText,
+                            fontSize: AppFontSizes.base,
                             fontWeight: FontWeight.w800,
-                            height: 1.05,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.x2),
+                        Flexible(
+                          child: Text(
+                            currentLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: palette.currentAccentDeep,
+                              fontSize: AppFontSizes.xs,
+                              fontWeight: FontWeight.w800,
+                              height: 1.05,
+                            ),
                           ),
                         ),
                       ],
@@ -735,11 +745,16 @@ class TodayJourneySelectionBar extends StatelessWidget {
                       ),
                       height: 14,
                       decoration: BoxDecoration(
-                        color: Color.alphaBlend(
-                          palette.currentAccent.withValues(alpha: 0.10),
-                          palette.mutedSurface,
-                        ),
+                        color: palette.currentFill,
                         borderRadius: BorderRadius.circular(AppRadii.pill),
+                      ),
+                      foregroundDecoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(AppRadii.pill),
+                        border: Border.all(
+                          color: palette.currentAccentDeep.withValues(
+                            alpha: 0.48,
+                          ),
+                        ),
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: Stack(

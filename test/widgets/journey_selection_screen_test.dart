@@ -101,7 +101,7 @@ class _JourneyStoryController extends StoryController {
 }
 
 void main() {
-  testWidgets('추천 여정과 세 가지 시작 방법, 현재 여정 진행률을 한 화면에 보여준다', (tester) async {
+  testWidgets('네 가지 여정 기준과 현재 여정 진행률을 한 화면에 보여준다', (tester) async {
     final catalog = _catalog(eventCount: 310);
     final container = await _pumpWithCatalog(
       tester,
@@ -110,7 +110,7 @@ void main() {
     );
 
     _expectPlainJourneyHeader(tester, title: '여정 선택');
-    expect(find.text('아래 4가지 버튼에서 여정 방식을 선택해주세요'), findsNothing);
+    expect(find.text('어떤 기준으로 이야기를 따라가 볼까요?'), findsOneWidget);
     expect(find.text('성경 전체를 순서대로'), findsWidgets);
     expect(find.text('창세기부터 차례대로 이어서 읽어요'), findsWidgets);
     expect(find.text('추천'), findsNothing);
@@ -125,14 +125,20 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('원하는 곳에서 시작하기'), findsOneWidget);
+    expect(find.text('원하는 곳에서 시작하기'), findsNothing);
     final allChoice = find.byKey(const ValueKey('journey-choice-all'));
     final allSurface = tester.widget<Container>(
       find.byKey(const ValueKey('journey-choice-all-surface')),
     );
     final allSelectedGradient =
         (allSurface.decoration! as BoxDecoration).gradient! as LinearGradient;
-    expect(tester.getSize(allChoice).height, lessThanOrEqualTo(110));
+    final choiceHeight = tester.getSize(allChoice).height;
+    for (final source in ['person', 'book', 'segments']) {
+      expect(
+        tester.getSize(find.byKey(ValueKey('journey-choice-$source'))).height,
+        closeTo(choiceHeight, 0.1),
+      );
+    }
     expect(find.text('시대·구간에서 고르기'), findsWidgets);
     expect(find.text('성경책에서 시작하기'), findsOneWidget);
     expect(find.text('인물에서 시작하기'), findsOneWidget);
@@ -430,8 +436,17 @@ void main() {
 
     await tester.tap(find.byType(Checkbox).first);
     await tester.pump();
-    expect(find.text('창조와 사람의 사명'), findsNothing);
+    expect(find.text('창조와 사람의 사명'), findsOneWidget);
+    expect(find.text('에덴 밖 세상'), findsOneWidget);
     expect(tester.widget<Checkbox>(find.byType(Checkbox).first).value, isTrue);
+    for (final checkbox in tester.widgetList<Checkbox>(
+      find.descendant(
+        of: find.byKey(const ValueKey('journey-nested-units-era_primeval')),
+        matching: find.byType(Checkbox),
+      ),
+    )) {
+      expect(checkbox.value, isTrue);
+    }
   });
 
   testWidgets('일부 구간은 구약·신약을 필터링하고 선택은 필터 전환 뒤에도 유지한다', (tester) async {

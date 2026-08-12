@@ -86,7 +86,7 @@ void main() {
     });
   });
 
-  testWidgets('이어볼 이야기 카드와 좌우에 일부 보이는 인접 카드를 렌더한다', (tester) async {
+  testWidgets('현재 이야기 카드와 좌우에 일부 보이는 인접 카드를 렌더한다', (tester) async {
     await tester.binding.setSurfaceSize(const Size(800, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -122,7 +122,7 @@ void main() {
 
     expect(find.text('이전 이야기'), findsWidgets);
     expect(find.text('오늘의 추천 이야기'), findsOneWidget);
-    expect(find.text('이어볼 이야기'), findsOneWidget);
+    expect(find.text('이어볼 이야기'), findsNothing);
     expect(find.text('오늘의 이야기'), findsNothing);
     expect(find.text('현재 이야기'), findsNothing);
     expect(
@@ -176,8 +176,6 @@ void main() {
           .active,
       isTrue,
     );
-    final labelRect = tester.getRect(find.text('이어볼 이야기'));
-    expect(labelRect.center.dx, closeTo(currentRect.center.dx, 1));
     final titleRect = tester.getRect(
       find.byKey(const ValueKey('story-card-title-todayCurrent-recommended')),
     );
@@ -186,8 +184,14 @@ void main() {
         const ValueKey('story-thumbnail-frame-todayCurrent-recommended'),
       ),
     );
-    expect(titleRect.top - labelRect.bottom, greaterThanOrEqualTo(5));
-    expect(thumbnailRect.top - titleRect.bottom, greaterThanOrEqualTo(7));
+    final metaRect = tester.getRect(
+      find.byKey(
+        const ValueKey('story-card-meta-scroll-todayCurrent-recommended'),
+      ),
+    );
+    expect(titleRect.top, lessThan(currentRect.top + 45));
+    expect(metaRect.top, greaterThan(titleRect.bottom));
+    expect(metaRect.bottom, lessThan(thumbnailRect.top));
     expect(thumbnailRect.width / thumbnailRect.height, closeTo(1.43, 0.06));
     expect(thumbnailRect.width, lessThan(currentRect.width * 0.7));
     final summary = tester.widget<Text>(find.text('오늘의 추천 이야기 요약'));
@@ -196,7 +200,8 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('이어볼 이야기는 1.2배 넓고 이전과 다음은 절반가량만 보여준다', (tester) async {
+  testWidgets('현재 이야기는 1.2배 넓고 이전과 다음은 절반가량만 보여준다', (tester) async {
+    final openedStoryIds = <String>[];
     final detailedEvents = [
       _event(
         id: 'previous',
@@ -238,7 +243,7 @@ void main() {
               diaryLoading: false,
               diaryError: null,
               bibleTargetLabel: '창세기 14장',
-              onOpenStory: (_) {},
+              onOpenStory: (event) => openedStoryIds.add(event.id),
               onCurrentStoryChanged: (_) {},
               onSaveDiary: _discardDiarySave,
               onDeleteDiary: _discardDiaryDelete,
@@ -342,8 +347,9 @@ void main() {
       find.byKey(
         const ValueKey('story-card-characters-scroll-todayCurrent-recommended'),
       ),
-      findsOneWidget,
+      findsNothing,
     );
+    expect(find.text('노아'), findsNothing);
     for (final eventId in ['previous', 'next']) {
       final meta = tester.widget<Text>(
         find.byKey(ValueKey('story-card-meta-ellipsis-todayAdjacent-$eventId')),
@@ -354,7 +360,7 @@ void main() {
         find.byKey(
           ValueKey('story-card-characters-scroll-todayAdjacent-$eventId'),
         ),
-        findsOneWidget,
+        findsNothing,
       );
     }
 
@@ -390,10 +396,6 @@ void main() {
     expect(summary.maxLines, 2);
     expect(summary.overflow, TextOverflow.ellipsis);
     expect(find.text('다음 이야기 요약'), findsNothing);
-    final currentCharacter = find.descendant(
-      of: find.byKey(const ValueKey('home-story-task-highlight-recommended')),
-      matching: find.text('노아'),
-    );
     expect(
       tester
           .getRect(
@@ -404,30 +406,34 @@ void main() {
           .bottom,
       lessThan(tester.getRect(summaryFinder).top),
     );
+    final continueButton = find.byKey(
+      const ValueKey('story-card-continue-todayCurrent-recommended'),
+    );
+    expect(continueButton, findsOneWidget);
+    expect(
+      tester.getRect(continueButton).width,
+      greaterThan(currentRect.width * 0.8),
+    );
     expect(
       tester.getRect(summaryFinder).bottom,
-      lessThan(tester.getRect(currentCharacter).top),
+      lessThan(tester.getRect(continueButton).top),
     );
-    for (final eventId in ['previous', 'recommended', 'next']) {
-      final cardFinder = find.byKey(
-        ValueKey('home-story-task-highlight-$eventId'),
-      );
-      final characterFinder = find.descendant(
-        of: cardFinder,
-        matching: find.text('노아'),
-      );
-      expect(characterFinder, findsOneWidget);
-      expect(
-        tester.getRect(characterFinder).bottom,
-        lessThanOrEqualTo(tester.getRect(cardFinder).bottom),
-      );
-    }
-    expect(currentRect.height, greaterThanOrEqualTo(245));
-    expect(currentRect.height, lessThan(260));
+    expect(
+      currentRect.bottom - tester.getRect(continueButton).bottom,
+      lessThanOrEqualTo(12),
+    );
+    await tester.tap(continueButton);
+    expect(openedStoryIds, ['recommended']);
+    await tester.tap(
+      find.byKey(const ValueKey('story-card-title-todayCurrent-recommended')),
+    );
+    expect(openedStoryIds, ['recommended', 'recommended']);
+    expect(currentRect.height, greaterThanOrEqualTo(215));
+    expect(currentRect.height, lessThan(225));
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('긴 제목과 지역과 인물은 세 글자 크기에서 카드 밖으로 넘치지 않는다', (tester) async {
+  testWidgets('긴 제목과 지역은 세 글자 크기에서 카드 밖으로 넘치지 않는다', (tester) async {
     const screenSize = Size(390, 780);
     final longEvents = [
       _event(
@@ -501,7 +507,6 @@ void main() {
       for (final key in [
         'story-card-title-scroll-todayCurrent-recommended-long',
         'story-card-meta-scroll-todayCurrent-recommended-long',
-        'story-card-characters-scroll-todayCurrent-recommended-long',
       ]) {
         final childRect = tester.getRect(find.byKey(ValueKey(key)));
         expect(
@@ -685,7 +690,7 @@ void main() {
           .active,
       isFalse,
     );
-    expect(find.text('이어볼 이야기'), findsOneWidget);
+    expect(find.text('이어볼 이야기'), findsNothing);
     expect(find.text('오늘의 이야기'), findsNothing);
     expect(find.text('현재 이야기'), findsNothing);
     expect(find.text('다이어리 기록'), findsNothing);
@@ -790,7 +795,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
 
     expect(currentEvent?.id, 'next');
-    expect(find.text('이어볼 이야기'), findsOneWidget);
+    expect(find.text('이어볼 이야기'), findsNothing);
     expect(find.text('현재 이야기'), findsNothing);
   });
 
@@ -869,7 +874,7 @@ void main() {
       ),
     );
 
-    expect(find.text('이어볼 이야기'), findsOneWidget);
+    expect(find.text('이어볼 이야기'), findsNothing);
     expect(find.text('오늘의 이야기'), findsNothing);
     expect(find.text('현재 이야기'), findsNothing);
     expect(find.text('여정\n끝'), findsOneWidget);

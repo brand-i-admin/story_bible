@@ -108,21 +108,27 @@ class _JourneySelectionBody extends ConsumerWidget {
         AppSpacing.x10,
       ),
       children: [
-        _RecommendedJourneyCard(
-          key: const ValueKey('journey-choice-all'),
-          selected: selection.source == JourneySource.all,
-          onTap: () => _confirmAllJourney(context, ref),
-        ),
-        const SizedBox(height: AppSpacing.x8),
         Text(
-          '원하는 곳에서 시작하기',
+          '어떤 기준으로 이야기를 따라가 볼까요?',
           style: TextStyle(
             color: AppPaletteTheme.of(context).text,
             fontSize: AppFontSizes.input,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
         const SizedBox(height: AppSpacing.x4),
+        _JourneyChoiceCard(
+          key: const ValueKey('journey-choice-all'),
+          surfaceKey: const ValueKey('journey-choice-all-surface'),
+          selectedIndicatorKey: const ValueKey('journey-all-selected-check'),
+          icon: Icons.route_rounded,
+          title: '성경 전체를 순서대로',
+          detail: '창세기부터 차례대로 이어서 읽어요',
+          selected: selection.source == JourneySource.all,
+          recommended: true,
+          onTap: () => _confirmAllJourney(context, ref),
+        ),
+        const SizedBox(height: AppSpacing.x3),
         _JourneyChoiceCard(
           key: const ValueKey('journey-choice-person'),
           icon: Icons.person_rounded,
@@ -381,146 +387,26 @@ class _RecommendationBadge extends StatelessWidget {
   }
 }
 
-class _RecommendedJourneyCard extends StatelessWidget {
-  const _RecommendedJourneyCard({
-    super.key,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPaletteTheme.of(context);
-    return Material(
-      color: selected ? Colors.transparent : palette.cardSurface,
-      borderRadius: BorderRadius.circular(AppRadii.xxl),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadii.xxl),
-        child: Container(
-          key: const ValueKey('journey-choice-all-surface'),
-          constraints: const BoxConstraints(minHeight: 108),
-          padding: const EdgeInsets.all(AppSpacing.x5),
-          decoration: BoxDecoration(
-            gradient: selected
-                ? LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      palette.cardSelectedTop,
-                      palette.cardSelectedBottom,
-                    ],
-                  )
-                : null,
-            color: selected ? null : palette.cardSurface,
-            borderRadius: BorderRadius.circular(AppRadii.xxl),
-            border: Border.all(
-              color: selected
-                  ? AppColors.fgOnDark.withValues(alpha: 0.88)
-                  : palette.subtleBorder,
-              width: selected ? 2 : 1,
-            ),
-            boxShadow: selected ? AppShadows.md : AppShadows.sm,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: selected
-                      ? AppColors.fgOnDark.withValues(alpha: 0.14)
-                      : palette.mutedSurface,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: selected
-                        ? AppColors.fgOnDark.withValues(alpha: 0.32)
-                        : palette.subtleBorder,
-                  ),
-                ),
-                child: Icon(
-                  Icons.route_rounded,
-                  size: 26,
-                  color: selected ? AppColors.fgOnDark : palette.primary,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.x5),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '성경 전체를 순서대로',
-                      style: TextStyle(
-                        color: selected ? AppColors.fgOnDark : palette.text,
-                        fontSize: AppFontSizes.input,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.x2),
-                    Text(
-                      '창세기부터 차례대로 이어서 읽어요',
-                      style: TextStyle(
-                        color: selected
-                            ? AppColors.fgOnDark.withValues(alpha: 0.88)
-                            : palette.mutedText,
-                        fontSize: AppFontSizes.base,
-                        fontWeight: FontWeight.w600,
-                        height: AppLineHeights.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppSpacing.x3),
-              if (selected)
-                Container(
-                  key: const ValueKey('journey-all-selected-check'),
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: palette.successBottom,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: AppColors.fgOnDark.withValues(alpha: 0.82),
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    Icons.check_rounded,
-                    size: 19,
-                    color: AppColors.fgOnDark,
-                  ),
-                )
-              else
-                const _RecommendationBadge(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _JourneyChoiceCard extends StatelessWidget {
   const _JourneyChoiceCard({
     super.key,
+    this.surfaceKey,
+    this.selectedIndicatorKey,
     required this.icon,
     required this.title,
     required this.detail,
     required this.selected,
+    this.recommended = false,
     required this.onTap,
   });
 
+  final Key? surfaceKey;
+  final Key? selectedIndicatorKey;
   final IconData icon;
   final String title;
   final String detail;
   final bool selected;
+  final bool recommended;
   final VoidCallback onTap;
 
   @override
@@ -536,6 +422,7 @@ class _JourneyChoiceCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadii.xl),
         child: Container(
+          key: surfaceKey,
           constraints: const BoxConstraints(minHeight: 78),
           padding: const EdgeInsets.all(AppSpacing.x4),
           decoration: BoxDecoration(
@@ -613,13 +500,21 @@ class _JourneyChoiceCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.x3),
-              Icon(
-                selected
-                    ? Icons.check_circle_rounded
-                    : Icons.chevron_right_rounded,
-                size: 21,
-                color: selected ? palette.successBottom : palette.mutedText,
-              ),
+              if (selected)
+                Icon(
+                  Icons.check_circle_rounded,
+                  key: selectedIndicatorKey,
+                  size: 21,
+                  color: palette.successBottom,
+                )
+              else if (recommended)
+                const _RecommendationBadge()
+              else
+                Icon(
+                  Icons.chevron_right_rounded,
+                  size: 21,
+                  color: palette.mutedText,
+                ),
             ],
           ),
         ),

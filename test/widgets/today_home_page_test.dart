@@ -70,7 +70,8 @@ void main() {
     expect(find.text('진행률'), findsOneWidget);
     final titleRect = tester.getRect(find.text('여정 선택'));
     final currentLabelRect = tester.getRect(find.text('신명기 · 시대 구간'));
-    expect(titleRect.bottom, lessThanOrEqualTo(currentLabelRect.top));
+    expect(titleRect.right, lessThan(currentLabelRect.left));
+    expect(titleRect.center.dy, closeTo(currentLabelRect.center.dy, 1));
 
     final arrowDecoration =
         tester.widget<Container>(arrow).decoration! as BoxDecoration;
@@ -96,6 +97,33 @@ void main() {
 
     await tester.tap(arrow);
     expect(tapped, isTrue);
+  });
+
+  testWidgets('네이비 테마의 0퍼센트 여정도 진행률 트랙 윤곽을 표시한다', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          extensions: const [AppPaletteTheme(AppColorPalette.atlasNavy)],
+        ),
+        home: Scaffold(
+          body: TodayJourneySelectionBar(
+            currentLabel: '전체 순서',
+            completedCount: 0,
+            totalCount: 299,
+            onTap: () {},
+          ),
+        ),
+      ),
+    );
+
+    final track = tester.widget<Container>(
+      find.byKey(const ValueKey('today-journey-selection-progress-track')),
+    );
+    final decoration = track.decoration! as BoxDecoration;
+    final foregroundDecoration = track.foregroundDecoration! as BoxDecoration;
+    expect(decoration.color, AppColorPalette.atlasNavy.currentFill);
+    expect(foregroundDecoration.border, isNotNull);
+    expect(find.text('0/299'), findsOneWidget);
   });
 
   testWidgets('비로그인 여정 가이드는 카드 스크롤 안내와 닫기 배지를 표시한다', (tester) async {

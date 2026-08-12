@@ -20,7 +20,7 @@ import '../v2/region_event_list.dart'
 const _homeJourneyViewportFraction = 0.34;
 const _homeJourneyCurrentWidthScale = 1.85;
 const _homeJourneyAdjacentHeightFraction = 0.60;
-const _homeJourneyBaseDeckHeight = 270.0;
+const _homeJourneyBaseDeckHeight = 238.0;
 const _homeJourneyCurrentCardTopInset = 20.0;
 
 double _homeJourneyAdjacentTopInset(double height) =>
@@ -387,11 +387,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     final event = events[eventIndex];
     final isCurrent = page == _currentPage;
     final isRecommended = event.id == widget.recommendedEventId;
-    final label = isCurrent
-        ? '이어볼 이야기'
-        : page < _currentPage
-        ? '이전 이야기'
-        : '다음 이야기';
+    final label = page < _currentPage ? '이전 이야기' : '다음 이야기';
     final palette = AppPaletteTheme.of(context);
     final eraById = {for (final era in widget.eras) era.id: era};
     final card = StoryEventThumbCard(
@@ -407,7 +403,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
           ? StoryEventCardPresentation.todayCurrent
           : StoryEventCardPresentation.todayAdjacent,
       showSummary: isCurrent,
-      showCharacterPills: true,
+      showCharacterPills: false,
       surfaceColorOverride: palette.cardSurface,
       loader: SceneAssetLoader(),
       onTap: () {
@@ -475,44 +471,41 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
                       fit: StackFit.expand,
                       children: [
                         highlightedCard,
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          top: 8,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 7,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isCurrent
-                                    ? palette.currentAccentDeep
-                                    : palette.cardSurface.withValues(
-                                        alpha: 0.94,
-                                      ),
-                                borderRadius: BorderRadius.circular(999),
-                                border: Border.all(
-                                  color: palette.currentAccent.withValues(
-                                    alpha: 0.35,
+                        if (!isCurrent)
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            top: 8,
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 7,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: palette.cardSurface.withValues(
+                                    alpha: 0.94,
+                                  ),
+                                  borderRadius: BorderRadius.circular(999),
+                                  border: Border.all(
+                                    color: palette.currentAccent.withValues(
+                                      alpha: 0.35,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              child: Text(
-                                label,
-                                style: TextStyle(
-                                  color: isCurrent
-                                      ? AppColors.fgOnDark
-                                      : palette.currentAccentDeep,
-                                  fontSize: 9.8,
-                                  fontWeight: FontWeight.w900,
-                                  height: 1,
+                                child: Text(
+                                  label,
+                                  style: TextStyle(
+                                    color: palette.currentAccentDeep,
+                                    fontSize: 9.8,
+                                    fontWeight: FontWeight.w900,
+                                    height: 1,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),

@@ -405,7 +405,7 @@ class _JourneyUnitSelectionListState extends State<JourneyUnitSelectionList> {
       }
     }
     if (selected) {
-      setState(() => _expandedEraIds.remove(group.era.id));
+      setState(() => _expandedEraIds.add(group.era.id));
     }
     widget.onSelectionChanged(next);
   }
