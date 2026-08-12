@@ -115,6 +115,9 @@ class MapHintDismissBadge extends StatelessWidget {
   const MapHintDismissBadge({super.key, this.badgeKey});
 
   static const double overlapTop = -22;
+  static const double messageFontSize = 11.5;
+  static const FontWeight messageFontWeight = FontWeight.w800;
+  static const double messageLineHeight = 1.2;
 
   final Key? badgeKey;
 
@@ -142,9 +145,9 @@ class MapHintDismissBadge extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
-              fontSize: 11.5,
-              fontWeight: FontWeight.w800,
-              height: 1.2,
+              fontSize: MapHintDismissBadge.messageFontSize,
+              fontWeight: MapHintDismissBadge.messageFontWeight,
+              height: MapHintDismissBadge.messageLineHeight,
             ),
           ),
         ],

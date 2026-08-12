@@ -176,12 +176,47 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('화면 아무데나 누르면 사라집니다'), findsOneWidget);
-      final journeyGuide = find.text(
-        '아래 이야기 카드를 스크롤 해보세요.\n'
-        '나열되는 이야기 카드들은 위 여정 선택을 기준으로 표시됩니다.',
+      final firstStepBadge = find.byKey(
+        const ValueKey('today-guide-step-1-badge'),
       );
-      expect(journeyGuide, findsOneWidget);
-      expect(tester.widget<Text>(journeyGuide).textAlign, TextAlign.center);
+      final secondStepBadge = find.byKey(
+        const ValueKey('today-guide-step-2-badge'),
+      );
+      final firstStepMessage = find.byKey(
+        const ValueKey('today-guide-step-1-message'),
+      );
+      final secondStepMessage = find.byKey(
+        const ValueKey('today-guide-step-2-message'),
+      );
+      expect(firstStepBadge, findsOneWidget);
+      expect(secondStepBadge, findsOneWidget);
+      expect(firstStepMessage, findsOneWidget);
+      expect(secondStepMessage, findsOneWidget);
+      expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
+      expect(
+        tester.widget<Text>(firstStepMessage).data,
+        '아래 이야기 카드를 옆으로 스크롤 하거나 눌러보세요',
+      );
+      expect(
+        tester.widget<Text>(secondStepMessage).data,
+        "화면 위 '여정 선택'에서 아래 나열될 이야기 카드를 변경해보세요",
+      );
+      final storyTitleStyle = ThemeData().textTheme.titleSmall;
+      for (final message in [firstStepMessage, secondStepMessage]) {
+        final text = tester.widget<Text>(message);
+        expect(text.style?.color, palette.primaryDeep);
+        expect(text.style?.fontSize, MapHintDismissBadge.messageFontSize);
+        expect(text.style?.fontWeight, FontWeight.w700);
+        expect(text.style?.height, MapHintDismissBadge.messageLineHeight);
+        expect(text.style?.fontFamily, storyTitleStyle?.fontFamily);
+      }
+      for (final badge in [firstStepBadge, secondStepBadge]) {
+        final decoration = tester.widget<Container>(badge).decoration!;
+        expect(decoration, isA<BoxDecoration>());
+        final boxDecoration = decoration as BoxDecoration;
+        expect(boxDecoration.shape, BoxShape.circle);
+        expect(boxDecoration.border?.top.color, palette.currentAccentDeep);
+      }
       expect(find.text('매일 할 일:'), findsNothing);
       expect(find.text('(아래 이야기 카드는 감정을 새길 때마다 재정렬 됩니다)'), findsNothing);
       expect(find.byIcon(Icons.hourglass_top_rounded), findsOneWidget);
@@ -194,10 +229,6 @@ void main() {
 
       for (final entry in <String, Color>{
         '화면 아무데나 누르면 사라집니다': Colors.white,
-        '아래 이야기 카드를 스크롤 해보세요.\n'
-            '나열되는 이야기 카드들은 위 여정 선택을 기준으로 표시됩니다.': isDark
-            ? palette.text
-            : AppColors.ink900,
       }.entries) {
         expect(
           tester.widget<Text>(find.text(entry.key)).style?.color,

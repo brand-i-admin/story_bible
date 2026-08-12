@@ -60,7 +60,8 @@ class TodayTodoGuide extends StatelessWidget {
             palette.currentAccent.withValues(alpha: 0.035),
             AppColors.parchmentLight,
           ).withValues(alpha: 0.84);
-    final primaryTextColor = isDark ? palette.text : AppColors.ink900;
+    final guideTextColor = palette.primaryDeep;
+    final stepAccentColor = palette.currentAccentDeep;
     return LayoutBuilder(
       builder: (context, constraints) {
         final contentWidth = constraints.maxWidth.isFinite
@@ -114,16 +115,23 @@ class TodayTodoGuide extends StatelessWidget {
                             ),
                           ),
                         ),
-                        child: Text(
-                          '아래 이야기 카드를 스크롤 해보세요.\n'
-                          '나열되는 이야기 카드들은 위 여정 선택을 기준으로 표시됩니다.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: primaryTextColor,
-                            fontSize: 12.2,
-                            fontWeight: FontWeight.w800,
-                            height: 1.45,
-                          ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _TodayGuideStep(
+                              number: 1,
+                              message: '아래 이야기 카드를 옆으로 스크롤 하거나 눌러보세요',
+                              accentColor: stepAccentColor,
+                              textColor: guideTextColor,
+                            ),
+                            const SizedBox(height: AppSpacing.x3),
+                            _TodayGuideStep(
+                              number: 2,
+                              message: "화면 위 '여정 선택'에서 아래 나열될 이야기 카드를 변경해보세요",
+                              accentColor: stepAccentColor,
+                              textColor: guideTextColor,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -140,6 +148,67 @@ class TodayTodoGuide extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _TodayGuideStep extends StatelessWidget {
+  const _TodayGuideStep({
+    required this.number,
+    required this.message,
+    required this.accentColor,
+    required this.textColor,
+  });
+
+  final int number;
+  final String message;
+  final Color accentColor;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(
+          label: '$number단계',
+          child: ExcludeSemantics(
+            child: Container(
+              key: ValueKey('today-guide-step-$number-badge'),
+              width: 22,
+              height: 22,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+                border: Border.all(color: accentColor, width: 1.5),
+              ),
+              child: Text(
+                '$number',
+                style: TextStyle(
+                  color: accentColor,
+                  fontSize: MapHintDismissBadge.messageFontSize,
+                  fontWeight: MapHintDismissBadge.messageFontWeight,
+                  height: 1,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.x2),
+        Expanded(
+          child: Text(
+            message,
+            key: ValueKey('today-guide-step-$number-message'),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: textColor,
+              fontSize: MapHintDismissBadge.messageFontSize,
+              fontWeight: FontWeight.w700,
+              height: MapHintDismissBadge.messageLineHeight,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
