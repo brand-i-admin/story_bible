@@ -120,14 +120,14 @@ class TodayTodoGuide extends StatelessWidget {
                           children: [
                             _TodayGuideStep(
                               number: 1,
-                              message: '아래 이야기 카드를 옆으로 스크롤 하거나 눌러보세요',
+                              message: '아래 이야기 카드를 옆으로 슬라이딩 혹은 클릭',
                               accentColor: stepAccentColor,
                               textColor: guideTextColor,
                             ),
                             const SizedBox(height: AppSpacing.x3),
                             _TodayGuideStep(
                               number: 2,
-                              message: "화면 위 '여정 선택'에서 아래 나열될 이야기 카드를 변경해보세요",
+                              message: "화면 위 '여정 선택'에서 나열될 이야기 카드 변경",
                               accentColor: stepAccentColor,
                               textColor: guideTextColor,
                             ),
@@ -168,6 +168,7 @@ class _TodayGuideStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semantics(
@@ -196,10 +197,11 @@ class _TodayGuideStep extends StatelessWidget {
           ),
         ),
         const SizedBox(width: AppSpacing.x2),
-        Expanded(
+        Flexible(
           child: Text(
             message,
             key: ValueKey('today-guide-step-$number-message'),
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: textColor,
               fontSize: MapHintDismissBadge.messageFontSize,

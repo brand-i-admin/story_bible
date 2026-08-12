@@ -195,15 +195,16 @@ void main() {
       expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
       expect(
         tester.widget<Text>(firstStepMessage).data,
-        '아래 이야기 카드를 옆으로 스크롤 하거나 눌러보세요',
+        '아래 이야기 카드를 옆으로 슬라이딩 혹은 클릭',
       );
       expect(
         tester.widget<Text>(secondStepMessage).data,
-        "화면 위 '여정 선택'에서 아래 나열될 이야기 카드를 변경해보세요",
+        "화면 위 '여정 선택'에서 나열될 이야기 카드 변경",
       );
       final storyTitleStyle = ThemeData().textTheme.titleSmall;
       for (final message in [firstStepMessage, secondStepMessage]) {
         final text = tester.widget<Text>(message);
+        expect(text.textAlign, TextAlign.center);
         expect(text.style?.color, palette.primaryDeep);
         expect(text.style?.fontSize, MapHintDismissBadge.messageFontSize);
         expect(text.style?.fontWeight, FontWeight.w700);
