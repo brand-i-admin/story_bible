@@ -308,7 +308,11 @@ class StoryEventThumbCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: borderColor, width: borderWidth),
           ),
-          padding: expandSurface
+          padding:
+              presentation == StoryEventCardPresentation.todayCurrent &&
+                  !expandSurface
+              ? const EdgeInsets.fromLTRB(8, 10, 8, AppSpacing.x2)
+              : expandSurface
               ? const EdgeInsets.fromLTRB(8, 10, 8, 7)
               : const EdgeInsets.fromLTRB(10, 10, 10, 8),
           child: LayoutBuilder(
@@ -324,7 +328,9 @@ class StoryEventThumbCard extends StatelessWidget {
                     currentTodayCardFitsWithoutScroll &&
                     constraints.hasBoundedHeight,
               );
-              if (currentTodayCardFitsWithoutScroll ||
+              if ((presentation == StoryEventCardPresentation.todayCurrent &&
+                      !expandSurface) ||
+                  currentTodayCardFitsWithoutScroll ||
                   (!expandSurface && textScale < 1.3) ||
                   !constraints.hasBoundedHeight) {
                 return body;
@@ -441,7 +447,6 @@ class StoryEventThumbCard extends StatelessWidget {
           _buildCharacterPills(context, height: characterPillsHeight),
         ],
         if (presentation == StoryEventCardPresentation.todayCurrent) ...[
-          if (fillAvailableHeight) const Spacer(),
           const SizedBox(height: AppSpacing.x2),
           _TodayContinueButton(eventId: event.id, onTap: onTap),
         ],

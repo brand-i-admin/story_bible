@@ -428,8 +428,6 @@ void main() {
       find.byKey(const ValueKey('story-card-title-todayCurrent-recommended')),
     );
     expect(openedStoryIds, ['recommended', 'recommended']);
-    expect(currentRect.height, greaterThanOrEqualTo(227));
-    expect(currentRect.height, lessThan(233));
     expect(tester.takeException(), isNull);
   });
 
@@ -493,14 +491,91 @@ void main() {
         .where((scrollView) => scrollView.scrollDirection == Axis.vertical);
 
     expect(verticalScrollViews, isEmpty);
-    expect(
-      cardRect.height,
-      greaterThanOrEqualTo(247),
-      reason: '실기기 한글 폰트가 테스트 폰트보다 조금 높아도 CTA가 잘리지 않아야 한다.',
-    );
+    expect(buttonRect.top, greaterThan(cardRect.top));
     expect(buttonRect.bottom, lessThanOrEqualTo(cardRect.bottom));
-    expect(cardRect.bottom - buttonRect.bottom, inInclusiveRange(6, 14));
+    expect(
+      cardRect.bottom - buttonRect.bottom,
+      closeTo(AppSpacing.x2 + 1, 0.1),
+    );
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('한 줄 요약은 세 글자 크기에서 CTA와 붙고 버튼 아래 작은 여백을 둔다', (tester) async {
+    const screenSize = Size(390, 780);
+    await tester.binding.setSurfaceSize(screenSize);
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    for (final textScale in [1.0, 1.2, 1.4]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(
+              size: screenSize,
+              textScaler: TextScaler.linear(textScale),
+            ),
+            child: Scaffold(
+              body: SizedBox(
+                height: 445,
+                child: HomeJourneyOverlay(
+                  key: ValueKey('home-journey-overlay-$textScale'),
+                  events: events,
+                  recommendedEventId: 'recommended',
+                  currentEventId: 'recommended',
+                  eras: const [_era],
+                  charactersByCode: const {},
+                  eventEmotionMarks: const {},
+                  quizAttemptSummaries: const {},
+                  isAuthenticated: true,
+                  todayDiary: null,
+                  diaryLoading: false,
+                  diaryError: null,
+                  bibleTargetLabel: '창세기 14장',
+                  onOpenStory: (_) {},
+                  onCurrentStoryChanged: (_) {},
+                  onSaveDiary: _discardDiarySave,
+                  onDeleteDiary: _discardDiaryDelete,
+                  onContinueBibleReading: () {},
+                  onOpenProfile: () {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 120));
+
+      final currentCard = find.byKey(
+        const ValueKey('home-journey-card-surface-frame-recommended'),
+      );
+      final summary = find.text('오늘의 추천 이야기 요약');
+      final continueButton = find.byKey(
+        const ValueKey('story-card-continue-todayCurrent-recommended'),
+      );
+      final cardRect = tester.getRect(currentCard);
+      final summaryRect = tester.getRect(summary);
+      final buttonRect = tester.getRect(continueButton);
+      final verticalScrollViews = tester
+          .widgetList<SingleChildScrollView>(
+            find.descendant(
+              of: currentCard,
+              matching: find.byType(SingleChildScrollView),
+            ),
+          )
+          .where((scrollView) => scrollView.scrollDirection == Axis.vertical);
+
+      expect(verticalScrollViews, isEmpty, reason: 'textScale=$textScale');
+      expect(
+        buttonRect.top - summaryRect.bottom,
+        closeTo(AppSpacing.x2, 0.1),
+        reason: 'textScale=$textScale',
+      );
+      expect(
+        cardRect.bottom - buttonRect.bottom,
+        closeTo(AppSpacing.x2 + 1, 0.1),
+        reason: 'textScale=$textScale',
+      );
+      expect(tester.takeException(), isNull, reason: 'textScale=$textScale');
+    }
   });
 
   testWidgets('이야기 카탈로그를 불러오는 동안 빈 여정으로 표시하지 않는다', (tester) async {

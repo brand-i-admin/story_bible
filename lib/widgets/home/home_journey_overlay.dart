@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../../models/character.dart';
 import '../../models/era.dart';
@@ -149,6 +150,9 @@ class _HomeStoryJourneyDeck extends StatefulWidget {
 class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
   late final PageController _pageController;
   late int _currentPage;
+  String? _measuredCurrentEventId;
+  double? _measuredTextScale;
+  double? _measuredCurrentCardHeight;
 
   @override
   void initState() {
@@ -201,8 +205,12 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     final palette = AppPaletteTheme.of(context);
     final ordered = _orderedEvents();
     final textScale = MediaQuery.textScalerOf(context).scale(1);
-    final deckHeight =
-        _homeJourneyBaseDeckHeight + ((textScale - 1) * 90).clamp(0.0, 32.0);
+    final measuredCurrentCardHeight = _measuredTextScale == textScale
+        ? _measuredCurrentCardHeight
+        : null;
+    final deckHeight = measuredCurrentCardHeight == null
+        ? _homeJourneyBaseDeckHeight + ((textScale - 1) * 90).clamp(0.0, 32.0)
+        : _homeJourneyCurrentCardTopInset + measuredCurrentCardHeight;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -371,6 +379,33 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
     return index + 1;
   }
 
+  void _reportCurrentCardSize({
+    required String eventId,
+    required double textScale,
+    required Size size,
+  }) {
+    if (!mounted) return;
+    final events = _orderedEvents();
+    final currentEventIndex = _currentPage - 1;
+    if (currentEventIndex < 0 ||
+        currentEventIndex >= events.length ||
+        events[currentEventIndex].id != eventId ||
+        MediaQuery.textScalerOf(context).scale(1) != textScale) {
+      return;
+    }
+    if (_measuredCurrentEventId == eventId &&
+        _measuredTextScale == textScale &&
+        _measuredCurrentCardHeight != null &&
+        (_measuredCurrentCardHeight! - size.height).abs() < 0.1) {
+      return;
+    }
+    setState(() {
+      _measuredCurrentEventId = eventId;
+      _measuredTextScale = textScale;
+      _measuredCurrentCardHeight = size.height;
+    });
+  }
+
   Widget _buildBoundaryPage({required int page}) {
     final isCurrent = page == _currentPage;
     return LayoutBuilder(
@@ -432,6 +467,7 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
           : StoryEventCardPresentation.todayAdjacent,
       showSummary: isCurrent,
       showCharacterPills: false,
+      expandSurface: !isCurrent,
       surfaceColorOverride: palette.cardSurface,
       loader: SceneAssetLoader(),
       onTap: () {
@@ -460,86 +496,95 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
         final adjacentTopInset = _homeJourneyAdjacentTopInset(
           frameConstraints.maxHeight,
         );
+        final textScale = MediaQuery.textScalerOf(context).scale(1);
+        final cardContents = isCurrent
+            ? highlightedCard
+            : Stack(
+                fit: StackFit.expand,
+                children: [
+                  highlightedCard,
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 8,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: palette.cardSurface.withValues(alpha: 0.94),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: palette.currentAccent.withValues(
+                              alpha: 0.35,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            color: palette.currentAccentDeep,
+                            fontSize: 9.8,
+                            fontWeight: FontWeight.w900,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+        final decoratedCard = DecoratedBox(
+          key: ValueKey('home-journey-card-surface-frame-${event.id}'),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: isCurrent
+                ? [
+                    BoxShadow(
+                      color: palette.currentAccent.withValues(alpha: 0.25),
+                      blurRadius: 18,
+                      spreadRadius: 2,
+                    ),
+                  ]
+                : null,
+          ),
+          child: cardContents,
+        );
         return Stack(
           key: ValueKey('home-journey-card-${event.id}-$page'),
           clipBehavior: Clip.none,
           children: [
-            Positioned.fill(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  isCurrent ? 5 : 10,
-                  isCurrent
-                      ? _homeJourneyCurrentCardTopInset
-                      : adjacentTopInset,
-                  isCurrent ? 5 : 10,
-                  0,
+            if (isCurrent)
+              Positioned(
+                left: 5,
+                right: 5,
+                bottom: 0,
+                child: _HomeJourneySizeReporter(
+                  key: ValueKey(
+                    'home-current-card-size-${event.id}-$textScale',
+                  ),
+                  onSizeChanged: (size) => _reportCurrentCardSize(
+                    eventId: event.id,
+                    textScale: textScale,
+                    size: size,
+                  ),
+                  child: decoratedCard,
                 ),
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 180),
-                  opacity: isCurrent ? 1 : 0.72,
-                  child: DecoratedBox(
-                    key: ValueKey(
-                      'home-journey-card-surface-frame-${event.id}',
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: isCurrent
-                          ? [
-                              BoxShadow(
-                                color: palette.currentAccent.withValues(
-                                  alpha: 0.25,
-                                ),
-                                blurRadius: 18,
-                                spreadRadius: 2,
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        highlightedCard,
-                        if (!isCurrent)
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            top: 8,
-                            child: Align(
-                              alignment: Alignment.topCenter,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 7,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: palette.cardSurface.withValues(
-                                    alpha: 0.94,
-                                  ),
-                                  borderRadius: BorderRadius.circular(999),
-                                  border: Border.all(
-                                    color: palette.currentAccent.withValues(
-                                      alpha: 0.35,
-                                    ),
-                                  ),
-                                ),
-                                child: Text(
-                                  label,
-                                  style: TextStyle(
-                                    color: palette.currentAccentDeep,
-                                    fontSize: 9.8,
-                                    fontWeight: FontWeight.w900,
-                                    height: 1,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+              )
+            else
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10, adjacentTopInset, 10, 0),
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 180),
+                    opacity: 0.72,
+                    child: decoratedCard,
                   ),
                 ),
               ),
-            ),
             if (isCurrent)
               Positioned(
                 left: 12,
@@ -600,6 +645,47 @@ class _HomeStoryJourneyDeckState extends State<_HomeStoryJourneyDeck> {
         ? '다른 시대'
         : eraName.replaceFirst(RegExp(r'\s*시대$'), '');
     return '$shortName\n이동';
+  }
+}
+
+class _HomeJourneySizeReporter extends SingleChildRenderObjectWidget {
+  const _HomeJourneySizeReporter({
+    super.key,
+    required this.onSizeChanged,
+    required super.child,
+  });
+
+  final ValueChanged<Size> onSizeChanged;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return _HomeJourneySizeReporterRenderObject(onSizeChanged);
+  }
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    covariant _HomeJourneySizeReporterRenderObject renderObject,
+  ) {
+    renderObject.onSizeChanged = onSizeChanged;
+  }
+}
+
+class _HomeJourneySizeReporterRenderObject extends RenderProxyBox {
+  _HomeJourneySizeReporterRenderObject(this.onSizeChanged);
+
+  ValueChanged<Size> onSizeChanged;
+  Size? _lastReportedSize;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    if (_lastReportedSize == size) return;
+    final reportedSize = size;
+    _lastReportedSize = reportedSize;
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => onSizeChanged(reportedSize),
+    );
   }
 }
 

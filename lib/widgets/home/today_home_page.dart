@@ -695,8 +695,13 @@ class TodayJourneySelectionBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Container(
           key: const ValueKey('today-journey-selection-surface'),
-          constraints: const BoxConstraints(minHeight: 68),
-          padding: const EdgeInsets.fromLTRB(10, 8, 9, 9),
+          constraints: const BoxConstraints(minHeight: 56),
+          padding: const EdgeInsets.fromLTRB(
+            10,
+            AppSpacing.x1,
+            9,
+            AppSpacing.x1,
+          ),
           decoration: BoxDecoration(
             color: Color.alphaBlend(
               palette.currentAccent.withValues(alpha: 0.055),
@@ -714,29 +719,30 @@ class TodayJourneySelectionBar extends StatelessWidget {
               ),
             ],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Container(
-                    key: const ValueKey('today-journey-selection-leading-icon'),
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      color: palette.currentAccent.withValues(alpha: 0.13),
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: Icon(
-                      Icons.route_rounded,
-                      size: 18,
-                      color: palette.currentAccentDeep,
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.x3),
-                  Expanded(
-                    child: Row(
+              Container(
+                key: const ValueKey('today-journey-selection-leading-icon'),
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: palette.currentAccent.withValues(alpha: 0.13),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.route_rounded,
+                  size: 18,
+                  color: palette.currentAccentDeep,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.x3),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
@@ -755,6 +761,7 @@ class TodayJourneySelectionBar extends StatelessWidget {
                             color: palette.mutedText,
                             fontSize: AppFontSizes.base,
                             fontWeight: FontWeight.w800,
+                            height: 1.05,
                           ),
                         ),
                         const SizedBox(width: AppSpacing.x2),
@@ -773,115 +780,161 @@ class TodayJourneySelectionBar extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.x2),
-                  Semantics(
-                    button: true,
-                    label: '여정 선택 화면 열기',
-                    child: Container(
-                      key: const ValueKey('today-journey-selection-arrow'),
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: palette.cardSurface.withValues(alpha: 0.72),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: palette.currentAccent.withValues(alpha: 0.32),
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.chevron_right_rounded,
-                        size: 20,
-                        color: palette.currentAccentDeep,
-                      ),
+                    _TodayJourneyProgressIndicator(
+                      palette: palette,
+                      progress: progress,
+                      completedCount: safeCompleted,
+                      totalCount: safeTotal,
+                      loading: loading,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 7),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 3),
-                    child: Text(
-                      '진행률',
-                      style: TextStyle(
-                        color: palette.mutedText,
-                        fontSize: AppFontSizes.xs,
-                        fontWeight: FontWeight.w700,
-                        height: 1,
-                      ),
+              const SizedBox(width: AppSpacing.x2),
+              Semantics(
+                button: true,
+                label: '여정 선택 화면 열기',
+                child: Container(
+                  key: const ValueKey('today-journey-selection-arrow'),
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: palette.cardSurface.withValues(alpha: 0.72),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: palette.currentAccent.withValues(alpha: 0.32),
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.x3),
-                  Expanded(
-                    child: Container(
-                      key: const ValueKey(
-                        'today-journey-selection-progress-track',
-                      ),
-                      height: 14,
-                      decoration: BoxDecoration(
-                        color: palette.currentFill,
-                        borderRadius: BorderRadius.circular(AppRadii.pill),
-                      ),
-                      foregroundDecoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppRadii.pill),
-                        border: Border.all(
-                          color: palette.currentAccentDeep.withValues(
-                            alpha: 0.48,
-                          ),
-                        ),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        alignment: Alignment.center,
-                        children: [
-                          LinearProgressIndicator(
-                            key: const ValueKey(
-                              'today-journey-selection-progress',
-                            ),
-                            value: loading ? null : progress,
-                            minHeight: 14,
-                            backgroundColor: Colors.transparent,
-                            color: palette.currentAccentDeep,
-                          ),
-                          Center(
-                            child: Text(
-                              loading ? '불러오는 중' : '$safeCompleted/$safeTotal',
-                              key: const ValueKey(
-                                'today-journey-selection-count',
-                              ),
-                              maxLines: 1,
-                              textScaler: TextScaler.noScaling,
-                              style: TextStyle(
-                                color: progress >= 0.5
-                                    ? AppColors.fgOnDark
-                                    : palette.currentAccentDeep,
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w900,
-                                height: 1,
-                                shadows: [
-                                  Shadow(
-                                    color: progress >= 0.5
-                                        ? Colors.black38
-                                        : palette.cardSurface,
-                                    blurRadius: 1.5,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    size: 20,
+                    color: palette.currentAccentDeep,
                   ),
-                ],
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _TodayJourneyProgressIndicator extends StatelessWidget {
+  const _TodayJourneyProgressIndicator({
+    required this.palette,
+    required this.progress,
+    required this.completedCount,
+    required this.totalCount,
+    required this.loading,
+  });
+
+  static const _height = 14.0;
+  static const _trackHeight = 14.0;
+  static const _flameExtent = 13.0;
+
+  final AppColorPalette palette;
+  final double progress;
+  final int completedCount;
+  final int totalCount;
+  final bool loading;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: _height,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final flameLeft =
+              (constraints.maxWidth - _flameExtent) * progress.clamp(0.0, 1.0);
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: _trackHeight,
+                child: Container(
+                  key: const ValueKey('today-journey-selection-progress-track'),
+                  decoration: BoxDecoration(
+                    color: palette.currentFill,
+                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                  ),
+                  foregroundDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                    border: Border.all(
+                      color: palette.currentAccentDeep.withValues(alpha: 0.48),
+                    ),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    alignment: Alignment.center,
+                    children: [
+                      LinearProgressIndicator(
+                        key: const ValueKey('today-journey-selection-progress'),
+                        value: loading ? null : progress,
+                        minHeight: _trackHeight,
+                        backgroundColor: Colors.transparent,
+                        color: palette.currentAccentDeep,
+                      ),
+                      Center(
+                        child: Text(
+                          loading ? '불러오는 중' : '$completedCount/$totalCount',
+                          key: const ValueKey('today-journey-selection-count'),
+                          maxLines: 1,
+                          textScaler: TextScaler.noScaling,
+                          style: TextStyle(
+                            color: progress >= 0.5
+                                ? AppColors.fgOnDark
+                                : palette.currentAccentDeep,
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w900,
+                            height: 1,
+                            shadows: [
+                              Shadow(
+                                color: progress >= 0.5
+                                    ? Colors.black38
+                                    : palette.cardSurface,
+                                blurRadius: 1.5,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (!loading)
+                Positioned(
+                  left: flameLeft,
+                  top: (_trackHeight - _flameExtent) / 2,
+                  width: _flameExtent,
+                  height: _flameExtent,
+                  child: Semantics(
+                    label: '현재 여정 진행 위치',
+                    excludeSemantics: true,
+                    child: const SizedBox(
+                      key: ValueKey('today-journey-selection-progress-flame'),
+                      width: _flameExtent,
+                      height: _flameExtent,
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text(
+                          '🔥',
+                          textScaler: TextScaler.noScaling,
+                          style: TextStyle(fontSize: 14, height: 1),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

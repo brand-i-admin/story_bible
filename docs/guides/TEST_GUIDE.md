@@ -20,11 +20,11 @@
 | `test/platform/` | 1 | 2 | Android/iOS OAuth callback의 `app_links` 단일 처리 설정 |
 | `test/theme/` | 1 | 18 | 디자인 토큰 회귀 방지 |
 | `test/utils/` | 12 | 149 | 날짜, 지도 수학, asset loader, 선택/통독 로직 |
-| `test/widgets/` | 37 | 303 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
+| `test/widgets/` | 37 | 305 | 주요 화면 조각, 다이얼로그, 프로필/지도/루트 네비 UI |
 | `tools/**/test_*.py` | 18 | 128 | seed, lint, asset, docs, Supabase 도구·정기 푸시 SQL 문구 |
 
 Dart 쪽 정적 카운트는 `test/**/*.dart`의 `test()`/`testWidgets()` 호출 기준
-703개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
+705개다. `test/state/story_controller_test_groups.dart`처럼 helper 파일 안의
 공유 테스트 그룹도 위 디렉터리별 집계에 포함했다.
 
 `integration_test/divided_kingdom_flow_test.dart`에는 별도로 3개 실환경 시나리오가
@@ -124,8 +124,8 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 체크박스 선택을 분리한 범위 화면은
 `test/widgets/journey_selection_screen_test.dart`에서 검증한다.
 오늘 홈에서는 선택된 전체 여정 순번이 카드와 지도 핀에 동일하게 전달되는지,
-여정 선택 화살표가 오른쪽 끝 원형 버튼으로 표시되고 선택 범위 진행 bar 중앙에 완료
-분수를 보여 주는지, 가운데 카드의 가로형 썸네일·2줄 요약·잘리지 않는 인물 label과
+여정 선택이 단색 route 아이콘·서로 붙은 가운데 2행 정보·오른쪽 원형 화살표의 낮은 3열 구조로 표시되고,
+선택 범위 진행 bar 중앙에 완료 분수와 트랙 내부에서 채움 끝을 따르는 불꽃을 보여 주는지, 가운데 카드의 가로형 썸네일·2줄 요약·요약 줄 수에 맞춘 CTA 밀착 높이·CTA 아래 작은 고정 여백·잘리지 않는 인물 label과
 인접 카드 60% 높이, 시작 경계
 카드가 인접 이야기 카드와 같은 높이·하단선을 사용하는지를
 `test/widgets/home_journey_overlay_test.dart`,

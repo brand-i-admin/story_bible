@@ -25,22 +25,25 @@ void main() {
     );
   });
 
-  testWidgets('여정 선택 화살표는 오른쪽 끝의 원형 버튼으로 표시한다', (tester) async {
+  testWidgets('여정 선택은 경로 아이콘과 붙은 2행 정보, 오른쪽 화살표로 낮게 표시한다', (tester) async {
     var tapped = false;
-    await tester.binding.setSurfaceSize(const Size(390, 180));
+    await tester.binding.setSurfaceSize(const Size(360, 180));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: SizedBox(
-              width: 350,
-              child: TodayJourneySelectionBar(
-                currentLabel: '신명기 · 시대 구간',
-                completedCount: 3,
-                totalCount: 12,
-                onTap: () => tapped = true,
+        home: MediaQuery(
+          data: const MediaQueryData(textScaler: TextScaler.linear(1.4)),
+          child: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 336,
+                child: TodayJourneySelectionBar(
+                  currentLabel: '아브라함 이야기만',
+                  completedCount: 3,
+                  totalCount: 12,
+                  onTap: () => tapped = true,
+                ),
               ),
             ),
           ),
@@ -61,15 +64,24 @@ void main() {
     expect(arrowRect.width, closeTo(30, 0.1));
     expect(arrowRect.height, closeTo(30, 0.1));
     expect(barRect.right - arrowRect.right, lessThanOrEqualTo(10));
+    expect(barRect.height, lessThan(60));
     expect(tester.getSize(leadingIcon), const Size(34, 34));
+    expect(
+      find.descendant(
+        of: leadingIcon,
+        matching: find.byIcon(Icons.route_rounded),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('🧭'), findsNothing);
 
     final surfaceDecoration =
         tester.widget<Container>(surface).decoration! as BoxDecoration;
     expect(surfaceDecoration.borderRadius, BorderRadius.circular(20));
     expect(surfaceDecoration.boxShadow, isNotEmpty);
-    expect(find.text('진행률'), findsOneWidget);
+    expect(find.text('진행률'), findsNothing);
     final titleRect = tester.getRect(find.text('여정 선택'));
-    final currentLabelRect = tester.getRect(find.text('신명기 · 시대 구간'));
+    final currentLabelRect = tester.getRect(find.text('아브라함 이야기만'));
     expect(titleRect.right, lessThan(currentLabelRect.left));
     expect(titleRect.center.dy, closeTo(currentLabelRect.center.dy, 1));
 
@@ -89,7 +101,11 @@ void main() {
     );
     final trackRect = tester.getRect(progressTrack);
     final countRect = tester.getRect(progressCount);
+    final leadingRect = tester.getRect(leadingIcon);
     expect(trackRect.height, closeTo(14, 0.1));
+    expect(trackRect.top - titleRect.bottom, closeTo(0, 0.1));
+    expect(trackRect.left, greaterThan(leadingRect.right));
+    expect(trackRect.right, lessThan(arrowRect.left));
     expect(countRect.center.dx, closeTo(trackRect.center.dx, 0.5));
     expect(countRect.center.dy, closeTo(trackRect.center.dy, 0.5));
     expect(trackRect.contains(countRect.topLeft), isTrue);
@@ -97,6 +113,54 @@ void main() {
 
     await tester.tap(arrow);
     expect(tapped, isTrue);
+  });
+
+  testWidgets('여정 진행 불꽃은 0퍼센트에서 왼쪽, 50퍼센트에서 중앙에 표시한다', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(360, 180));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    Future<void> pumpProgress(int completedCount) {
+      return tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 336,
+                child: TodayJourneySelectionBar(
+                  currentLabel: '아브라함 이야기만',
+                  completedCount: completedCount,
+                  totalCount: 10,
+                  onTap: () {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    await pumpProgress(0);
+    final track = find.byKey(
+      const ValueKey('today-journey-selection-progress-track'),
+    );
+    final flame = find.byKey(
+      const ValueKey('today-journey-selection-progress-flame'),
+    );
+    var trackRect = tester.getRect(track);
+    var flameRect = tester.getRect(flame);
+    expect(flameRect.left, closeTo(trackRect.left, 0.5));
+    expect(flameRect.center.dy, closeTo(trackRect.center.dy, 0.5));
+
+    await pumpProgress(5);
+    trackRect = tester.getRect(track);
+    flameRect = tester.getRect(flame);
+    expect(flameRect.center.dx, closeTo(trackRect.center.dx, 0.5));
+    expect(find.text('5/10'), findsOneWidget);
+
+    await pumpProgress(10);
+    trackRect = tester.getRect(track);
+    flameRect = tester.getRect(flame);
+    expect(flameRect.right, closeTo(trackRect.right, 0.5));
   });
 
   testWidgets('네이비 테마의 0퍼센트 여정도 진행률 트랙 윤곽을 표시한다', (tester) async {
@@ -147,6 +211,10 @@ void main() {
     expect(progress.value, isNull);
     expect(find.text('불러오는 중'), findsOneWidget);
     expect(find.text('0/0'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('today-journey-selection-progress-flame')),
+      findsNothing,
+    );
   });
 
   testWidgets('비로그인 여정 가이드는 카드 스크롤 안내와 닫기 배지를 표시한다', (tester) async {
