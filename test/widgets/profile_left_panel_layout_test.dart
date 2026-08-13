@@ -232,7 +232,8 @@ void main() {
     expect(source, contains("label: '저장'"));
     expect(source, contains("label: '말씀'"));
     expect(source, contains("text: '개'"));
-    expect(source, contains("math.max(storyProgress.total, 301)"));
+    expect(source, contains('final totalLabel = storyProgress.total;'));
+    expect(source, isNot(contains('math.max(storyProgress.total, 301)')));
     expect(source, contains("ValueKey('profile-story-summary-explored')"));
     expect(
       source,
@@ -305,7 +306,8 @@ void main() {
     expect(pageSource, contains('_profileStoryEraCodeOrder'));
     expect(pageSource, contains("'era_primeval': 0"));
     expect(pageSource, contains("'era_nt_post_apostolic': 9"));
-    expect(pageSource, contains('isHiddenEraCode(era.code)'));
+    expect(pageSource, contains('isStoryEventVisibleInApp('));
+    expect(pageSource, contains("import '../utils/story_visibility.dart';"));
     expect(pageSource, contains('_sortEventsByEraThenIndex('));
     expect(source, contains("const _ProfileProgressPageSectionTitle("));
     expect(source, contains("title: '완료'"));

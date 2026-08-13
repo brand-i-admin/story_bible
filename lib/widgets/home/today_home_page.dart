@@ -780,6 +780,7 @@ class TodayJourneySelectionBar extends StatelessWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: AppSpacing.x1),
                     _TodayJourneyProgressIndicator(
                       palette: palette,
                       progress: progress,
@@ -796,20 +797,30 @@ class TodayJourneySelectionBar extends StatelessWidget {
                 label: '여정 선택 화면 열기',
                 child: Container(
                   key: const ValueKey('today-journey-selection-arrow'),
-                  width: 30,
-                  height: 30,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
-                    color: palette.cardSurface.withValues(alpha: 0.72),
+                    color: Color.alphaBlend(
+                      palette.primary.withValues(alpha: 0.04),
+                      palette.cardSurface,
+                    ),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: palette.currentAccent.withValues(alpha: 0.32),
+                      color: palette.primaryDeep.withValues(alpha: 0.50),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: palette.primaryDeep.withValues(alpha: 0.12),
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
                   alignment: Alignment.center,
                   child: Icon(
                     Icons.chevron_right_rounded,
-                    size: 20,
-                    color: palette.currentAccentDeep,
+                    size: 22,
+                    color: palette.primaryDeep,
                   ),
                 ),
               ),
@@ -832,7 +843,7 @@ class _TodayJourneyProgressIndicator extends StatelessWidget {
 
   static const _height = 14.0;
   static const _trackHeight = 14.0;
-  static const _flameExtent = 13.0;
+  static const _flameExtent = 17.0;
 
   final AppColorPalette palette;
   final double progress;
@@ -846,8 +857,9 @@ class _TodayJourneyProgressIndicator extends StatelessWidget {
       height: _height,
       child: LayoutBuilder(
         builder: (context, constraints) {
+          final clampedProgress = progress.clamp(0.0, 1.0);
           final flameLeft =
-              (constraints.maxWidth - _flameExtent) * progress.clamp(0.0, 1.0);
+              constraints.maxWidth * clampedProgress - _flameExtent / 2;
           return Stack(
             clipBehavior: Clip.none,
             children: [
@@ -917,16 +929,36 @@ class _TodayJourneyProgressIndicator extends StatelessWidget {
                   child: Semantics(
                     label: '현재 여정 진행 위치',
                     excludeSemantics: true,
-                    child: const SizedBox(
-                      key: ValueKey('today-journey-selection-progress-flame'),
+                    child: Container(
+                      key: const ValueKey(
+                        'today-journey-selection-progress-flame',
+                      ),
                       width: _flameExtent,
                       height: _flameExtent,
-                      child: FittedBox(
+                      decoration: BoxDecoration(
+                        color: palette.cardSurface.withValues(alpha: 0.92),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: palette.cardSurface),
+                        boxShadow: [
+                          BoxShadow(
+                            color: palette.cardSurface.withValues(alpha: 0.88),
+                            blurRadius: 3,
+                            spreadRadius: 1,
+                          ),
+                          BoxShadow(
+                            color: palette.currentAccentDeep.withValues(
+                              alpha: 0.32,
+                            ),
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: const FittedBox(
                         fit: BoxFit.contain,
                         child: Text(
                           '🔥',
                           textScaler: TextScaler.noScaling,
-                          style: TextStyle(fontSize: 14, height: 1),
+                          style: TextStyle(fontSize: 16, height: 1),
                         ),
                       ),
                     ),

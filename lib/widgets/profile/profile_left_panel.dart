@@ -131,6 +131,13 @@ BoxDecoration _profileLinkedTabBodyDecoration(
 }
 
 extension ProfileLeftPanelExt on ProfileTabPageState {
+  List<StoryEvent> _profileVisibleEvents(StoryState state) {
+    final events = _profileAllEvents.isNotEmpty
+        ? _profileAllEvents
+        : state.events;
+    return _sortEventsByEraThenIndex(events, state.eras);
+  }
+
   Widget _buildProfileActivitySection({
     required AppUserProfile profile,
     required bool isAuthenticated,
@@ -370,9 +377,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   ({int completed, int total, double fraction}) _profileStoryProgress(
     StoryState state,
   ) {
-    final events = _profileAllEvents.isNotEmpty
-        ? _profileAllEvents
-        : state.events;
+    final events = _profileVisibleEvents(state);
     final total = events.length;
     if (total == 0) {
       return (completed: 0, total: 0, fraction: 0);
@@ -412,9 +417,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
   }) {
     final state = ref.watch(storyControllerProvider);
     final quizStats = buildProfileQuizStats(state.quizAttemptSummaries);
-    final events = _profileAllEvents.isNotEmpty
-        ? _profileAllEvents
-        : state.events;
+    final events = _profileVisibleEvents(state);
 
     return _ProfileStoryExplorationDashboard(
       storyProgress: _profileStoryProgress(state),
@@ -770,9 +773,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
   Future<void> _openStoryProgressPage() async {
     final state = ref.read(storyControllerProvider);
-    final events = _profileAllEvents.isNotEmpty
-        ? _profileAllEvents
-        : state.events;
+    final events = _profileVisibleEvents(state);
     final eraIdsWithEvents = events.map((event) => event.eraId).toSet();
     final eras = state.eras
         .where((era) => eraIdsWithEvents.contains(era.id))
@@ -800,9 +801,7 @@ extension ProfileLeftPanelExt on ProfileTabPageState {
 
   Future<void> _openExplorationLogPage() async {
     final state = ref.read(storyControllerProvider);
-    final events = _profileAllEvents.isNotEmpty
-        ? _profileAllEvents
-        : state.events;
+    final events = _profileVisibleEvents(state);
     final quizStats = buildProfileQuizStats(state.quizAttemptSummaries);
 
     await Navigator.of(context).push(
@@ -1203,7 +1202,7 @@ class _StoryExplorationSummarySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = AppPaletteTheme.of(context);
-    final totalLabel = math.max(storyProgress.total, 301);
+    final totalLabel = storyProgress.total;
     TextSpan countUnitSpan() {
       return TextSpan(
         text: '개',

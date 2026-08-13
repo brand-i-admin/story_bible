@@ -433,6 +433,7 @@ class ProfileDiaryFeatureCards extends StatelessWidget {
           minHeight: featureCardMinHeight,
           expandTextForNarrowLargeText: expandTextForNarrowLargeText,
           readOnlySummary: false,
+          compactActionBottom: profileSummaryMode,
         );
         final bibleCard = _BibleProgressFeatureCard(
           summary: bibleProgress,
@@ -441,6 +442,7 @@ class ProfileDiaryFeatureCards extends StatelessWidget {
           minHeight: featureCardMinHeight,
           expandTextForNarrowLargeText: expandTextForNarrowLargeText,
           showContinueAction: true,
+          compactActionBottom: profileSummaryMode,
         );
         return IntrinsicHeight(
           child: Row(
@@ -465,6 +467,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
     required this.minHeight,
     required this.expandTextForNarrowLargeText,
     required this.showContinueAction,
+    required this.compactActionBottom,
   });
 
   final ProfileBibleProgressSummary? summary;
@@ -473,6 +476,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
   final double minHeight;
   final bool expandTextForNarrowLargeText;
   final bool showContinueAction;
+  final bool compactActionBottom;
 
   @override
   Widget build(BuildContext context) {
@@ -521,7 +525,7 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 9,
+                  bottom: compactActionBottom ? 0 : 9,
                   child: Align(
                     alignment: Alignment.center,
                     child: _BibleContinueButton(
@@ -632,7 +636,8 @@ class _BibleProgressFeatureCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (showContinueAction) const SizedBox(height: 46),
+                  if (showContinueAction)
+                    SizedBox(height: compactActionBottom ? 37 : 46),
                 ],
               ),
             ],
@@ -729,14 +734,15 @@ class _BibleContinueButton extends StatelessWidget {
     return Material(
       key: const ValueKey('bible-progress-continue-button'),
       color: backgroundColor,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadii.pill),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
         child: Container(
+          key: const ValueKey('bible-progress-continue-button-outline'),
           padding: const EdgeInsets.fromLTRB(8, 4, 11, 4),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadii.pill),
             border: Border.all(
               color: enabled
                   ? actionAccent.withValues(alpha: 0.24)
@@ -755,7 +761,7 @@ class _BibleContinueButton extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: badgeColor,
-                    borderRadius: BorderRadius.circular(8),
+                    shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.arrow_forward_rounded,

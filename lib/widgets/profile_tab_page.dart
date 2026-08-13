@@ -36,6 +36,7 @@ import '../utils/bible_book_meta.dart';
 import '../utils/bible_reading_progress.dart';
 import '../utils/kst_date.dart';
 import '../utils/scene_asset_loader.dart';
+import '../utils/story_visibility.dart';
 import '../utils/today_activity_summary.dart';
 import 'home/story_root_navigation_bar.dart';
 import 'home/today_activity_header.dart';
@@ -744,7 +745,7 @@ class ProfileTabPageState extends ConsumerState<ProfileTabPage> {
     final eraById = <String, Era>{for (final era in eras) era.id: era};
     final sorted = events.where((event) {
       final era = eraById[event.eraId];
-      if (era == null || isHiddenEraCode(era.code)) {
+      if (era == null || !isStoryEventVisibleInApp(event, eraById: eraById)) {
         return false;
       }
       return _profileStoryEraCodeOrder.containsKey(era.code);

@@ -246,7 +246,7 @@ void _companionDiaryWidgetTests() {
     expect(find.textContaining('오늘 새긴 감정이 없습니다'), findsNothing);
   });
 
-  testWidgets('남색 테마의 기록하기와 이어읽기는 가벼운 선형 액션으로 표시한다', (tester) async {
+  testWidgets('남색 테마의 기록하기와 이어읽기는 pill과 원형 기호로 표시한다', (tester) async {
     final repository = _MockStoryRepository();
     when(
       () => repository.fetchEventsByIds(any()),
@@ -265,6 +265,15 @@ void _companionDiaryWidgetTests() {
     final writePill = tester.widget<Material>(
       find.byKey(const ValueKey('companion-diary-write-button-pill')),
     );
+    final continuePill = tester.widget<Material>(
+      find.byKey(const ValueKey('bible-progress-continue-button')),
+    );
+    final writeOutline = tester.widget<Container>(
+      find.byKey(const ValueKey('companion-diary-write-button-outline')),
+    );
+    final continueOutline = tester.widget<Container>(
+      find.byKey(const ValueKey('bible-progress-continue-button-outline')),
+    );
     final writeLabel = tester.widget<Text>(find.text('기록하기'));
     final writeIconBadge = tester.widget<Container>(
       find.byKey(const ValueKey('companion-diary-add-button')),
@@ -277,11 +286,17 @@ void _companionDiaryWidgetTests() {
     );
 
     expect(writePill.color, isNot(AppColorPalette.atlasNavy.cardSurface));
+    expect(writePill.borderRadius, BorderRadius.circular(AppRadii.pill));
+    expect(continuePill.borderRadius, BorderRadius.circular(AppRadii.pill));
+    for (final outline in [writeOutline, continueOutline]) {
+      final decoration = outline.decoration! as BoxDecoration;
+      expect(decoration.borderRadius, BorderRadius.circular(AppRadii.pill));
+    }
     expect(writeLabel.style?.color, AppColorPalette.atlasNavy.successBottom);
     for (final badge in [writeIconBadge, continueIconBadge]) {
       final decoration = badge.decoration! as BoxDecoration;
-      expect(decoration.shape, BoxShape.rectangle);
-      expect(decoration.borderRadius, isNotNull);
+      expect(decoration.shape, BoxShape.circle);
+      expect(decoration.borderRadius, isNull);
       expect(decoration.color?.a ?? 0, lessThan(0.18));
     }
     expect(donut.backgroundColor, isNot(AppColorPalette.atlasNavy.cardSurface));

@@ -124,16 +124,17 @@ Controller는 `try/catch`와 `state.copyWith(error: ...)` 패턴을 우선한다
 체크박스 선택을 분리한 범위 화면은
 `test/widgets/journey_selection_screen_test.dart`에서 검증한다.
 오늘 홈에서는 선택된 전체 여정 순번이 카드와 지도 핀에 동일하게 전달되는지,
-여정 선택이 단색 route 아이콘·서로 붙은 가운데 2행 정보·오른쪽 원형 화살표의 낮은 3열 구조로 표시되고,
-선택 범위 진행 bar 중앙에 완료 분수와 트랙 내부에서 채움 끝을 따르는 불꽃을 보여 주는지, 가운데 카드의 가로형 썸네일·2줄 요약·요약 줄 수에 맞춘 CTA 밀착 높이·CTA 아래 작은 고정 여백·잘리지 않는 인물 label과
+여정 선택이 단색 route 아이콘·4px 간격의 가운데 2행 정보·모든 테마에서 4.5:1 이상 대비를 유지하는 32px의 옅고 차분한 오른쪽 원형 화살표의 낮은 3열 구조로 표시되고,
+선택 범위 진행 bar 중앙에 완료 분수와 트랙 내부의 채워진 구간 끝점에 중심이 정확히 겹치는 17px 불꽃·표면색 헤일로·대비 그림자를 보여 주는지, 가운데 카드의 가로형 썸네일·2줄 요약·요약 줄 수에 맞춘 CTA 밀착 높이·CTA 아래 작은 고정 여백·잘리지 않는 인물 label과
 인접 카드 60% 높이, 시작 경계
 카드가 인접 이야기 카드와 같은 높이·하단선을 사용하는지를
 `test/widgets/home_journey_overlay_test.dart`,
 `test/utils/daily_exploration_selection_test.dart`,
 `test/widgets/today_home_page_test.dart`에서 검증한다.
-내정보의 `기록하기`·`이어읽기`가 채움 원과 반복 glow 없이 가벼운 선형 액션으로
-표시되고 안내/도넛과의 여백을 줄이는지는
-`test/widgets/profile_emotion_diary_test.dart`에서 검증한다.
+내정보의 `기록하기`·`이어읽기`가 채움 원과 반복 glow 없이 pill 외곽과 원형 기호 배지로
+표시되고, 안내/도넛과 버튼 사이의 기존 간격을 유지하면서 버튼 아래 여백을 두 카드 모두
+12px로 줄이는지는 `test/widgets/profile_emotion_diary_test.dart`와
+`test/widgets/profile_tab_page_test.dart`에서 검증한다.
 
 콘텐츠/지도/날짜 로직은 UI보다 utils에서 먼저 고정한다. pure function으로 뺄 수
 있으면 widget test보다 빠르고 회귀 지점도 더 선명하다.

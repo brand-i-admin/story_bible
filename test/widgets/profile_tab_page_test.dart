@@ -10,6 +10,7 @@ import 'package:story_bible/data/notification_repository.dart';
 import 'package:story_bible/data/story_repository.dart';
 import 'package:story_bible/data/user_repository.dart';
 import 'package:story_bible/models/app_user_profile.dart';
+import 'package:story_bible/models/bible_ref.dart';
 import 'package:story_bible/models/character.dart';
 import 'package:story_bible/models/era.dart';
 import 'package:story_bible/models/event_emotion_mark.dart';
@@ -27,6 +28,7 @@ import 'package:story_bible/state/story_controller.dart';
 import 'package:story_bible/state/story_state.dart';
 import 'package:story_bible/theme/app_color_palette.dart';
 import 'package:story_bible/theme/app_theme.dart';
+import 'package:story_bible/theme/tokens.dart';
 import 'package:story_bible/utils/today_activity_summary.dart';
 import 'package:story_bible/widgets/home/story_root_navigation_bar.dart';
 import 'package:story_bible/widgets/inline_login_prompt_card.dart';
@@ -70,7 +72,13 @@ class _ProfileProgressRefreshStoryController extends StoryController {
 
   @override
   Future<void> refreshCompletedEventIds() async {
-    state = state.copyWith(completedEventIds: {'event-done'});
+    state = state.copyWith(
+      completedEventIds: {
+        'event-done',
+        'hidden-patmos',
+        'hidden-seven-churches',
+      },
+    );
   }
 
   @override
@@ -93,6 +101,7 @@ StoryEvent _profileEvent({
   String? placeName,
   int? startYear,
   List<String> characterCodes = const <String>[],
+  List<BibleRef> bibleRefs = const <BibleRef>[],
   String? summary,
 }) {
   return StoryEvent(
@@ -113,7 +122,7 @@ StoryEvent _profileEvent({
     lat: null,
     lng: null,
     characterCodes: characterCodes,
-    bibleRefs: const [],
+    bibleRefs: bibleRefs,
   );
 }
 
@@ -946,11 +955,25 @@ void main() {
     );
     expect(
       tester.getBottomLeft(diaryCard).dy - tester.getBottomLeft(diaryAction).dy,
-      lessThan(24),
+      closeTo(AppSpacing.x5, 1),
     );
     expect(
       tester.getBottomLeft(bibleCard).dy - tester.getBottomLeft(bibleAction).dy,
-      lessThan(24),
+      closeTo(AppSpacing.x5, 1),
+    );
+    expect(
+      tester.getTopLeft(diaryAction).dy -
+          tester.getBottomLeft(find.text('오늘 하나님과 함께한 순간을 기록해 보세요!')).dy,
+      lessThan(34),
+    );
+    expect(
+      tester.getTopLeft(bibleAction).dy -
+          tester
+              .getBottomLeft(
+                find.byKey(const ValueKey('bible-progress-donut-indicator')),
+              )
+              .dy,
+      lessThan(22),
     );
     expect(
       find.ancestor(
@@ -1007,7 +1030,7 @@ void main() {
       const ValueKey('companion-diary-feature-card'),
     );
     final bibleCard = find.byKey(const ValueKey('bible-progress-feature-card'));
-    expect(tester.getSize(diaryCard).height, greaterThanOrEqualTo(150));
+    expect(tester.getSize(diaryCard).height, greaterThanOrEqualTo(140));
     expect(tester.getSize(diaryCard).height, lessThan(204));
     expect(
       tester.getSize(diaryCard).height,
@@ -1339,7 +1362,7 @@ void main() {
     expect(openedSource, ProfileEventOpenSource.detailOnly);
   });
 
-  testWidgets('프로필 첫 진입은 기존 컨트롤러 상태가 비어 있어도 완료 이야기 수를 새로 읽는다', (tester) async {
+  testWidgets('프로필 첫 진입은 공개 299개만 세고 요한계시록 두 이야기를 제외한다', (tester) async {
     final completedEvent = _profileEvent(
       id: 'event-done',
       title: '완료한 이야기',
@@ -1350,14 +1373,42 @@ void main() {
       title: '미완료 이야기',
       storyIndex: 2,
     );
+    final visibleEvents = <StoryEvent>[
+      completedEvent,
+      incompleteEvent,
+      ...List.generate(
+        297,
+        (index) => _profileEvent(
+          id: 'visible-event-${index + 3}',
+          title: '공개 이야기 ${index + 3}',
+          storyIndex: index + 3,
+        ),
+      ),
+    ];
+    final hiddenPatmosEvent = _profileEvent(
+      id: 'hidden-patmos',
+      title: '밧모섬에서 본 영광의 그리스도',
+      storyIndex: 300,
+      bibleRefs: const [BibleRef(book: '계', from: '1:9', to: '1:20')],
+    );
+    final hiddenSevenChurchesEvent = _profileEvent(
+      id: 'hidden-seven-churches',
+      title: '일곱 교회에 보내는 말씀',
+      storyIndex: 301,
+      bibleRefs: const [BibleRef(book: '계', from: '2:1', to: '3:22')],
+    );
     final notificationRepository = _MockNotificationRepository();
 
     when(
       () => notificationRepository.watchUnreadCount(),
     ).thenAnswer((_) => Stream<int>.value(0));
-    when(
-      () => storyRepository.fetchAllEvents(),
-    ).thenAnswer((_) async => [completedEvent, incompleteEvent]);
+    when(() => storyRepository.fetchAllEvents()).thenAnswer(
+      (_) async => [
+        ...visibleEvents,
+        hiddenPatmosEvent,
+        hiddenSevenChurchesEvent,
+      ],
+    );
 
     final container = ProviderContainer(
       overrides: [
@@ -1400,12 +1451,22 @@ void main() {
 
     expect(container.read(storyControllerProvider).completedEventIds, {
       'event-done',
+      'hidden-patmos',
+      'hidden-seven-churches',
     });
     final richTexts = tester
         .widgetList<RichText>(find.byType(RichText, skipOffstage: false))
         .map((widget) => widget.text.toPlainText())
         .toList(growable: false);
-    expect(richTexts, contains('1/301개'));
+    expect(richTexts, contains('1/299개'));
+
+    await tester.tap(
+      find.byKey(const ValueKey('profile-story-summary-explored')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('밧모섬에서 본 영광의 그리스도'), findsNothing);
+    expect(find.text('일곱 교회에 보내는 말씀'), findsNothing);
   });
 
   testWidgets('저장한 말씀 요약 카드는 저장 말씀 페이지로 이동한다', (tester) async {

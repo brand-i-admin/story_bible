@@ -129,6 +129,18 @@ void main() {
       expect(AppColorPalette.classic.currentAccent, const Color(0xFFE8A33D));
     });
 
+    test('네이비는 현재 여정과 선택 흐름에 주황색 대신 남색 계열을 사용한다', () {
+      expect(AppColorPalette.atlasNavy.currentAccent, AppColors.ink500);
+      expect(AppColorPalette.atlasNavy.currentAccentDeep, AppColors.ink800);
+      expect(AppColorPalette.atlasNavy.stepSelect, AppColors.ink500);
+      expect(AppColorPalette.atlasNavy.timelineAccent, AppColors.ink600);
+      expect(AppColorPalette.atlasNavy.currentAccent, isNot(AppColors.gold));
+      expect(
+        AppColorPalette.atlasNavy.currentAccentDeep,
+        isNot(AppColors.goldDeep),
+      );
+    });
+
     test('파스텔은 보라 primary와 청록·오렌지·핑크 역할색을 사용한다', () {
       expect(AppColorPalette.values, hasLength(4));
       expect(AppColorPalette.colorfulMap.primary, const Color(0xFFAA96F2));

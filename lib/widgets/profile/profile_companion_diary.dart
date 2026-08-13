@@ -212,6 +212,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
     this.minHeight = 158,
     this.expandTextForNarrowLargeText = false,
     this.readOnlySummary = false,
+    this.compactActionBottom = false,
   });
 
   final DateTime entryDate;
@@ -224,6 +225,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
   final double minHeight;
   final bool expandTextForNarrowLargeText;
   final bool readOnlySummary;
+  final bool compactActionBottom;
 
   @override
   Widget build(BuildContext context) {
@@ -285,7 +287,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                 Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 5,
+                  bottom: compactActionBottom ? -4 : 5,
                   child: Align(
                     alignment: Alignment.center,
                     child: _DiaryWriteButton(onTap: () => _openEditor(context)),
@@ -397,7 +399,7 @@ class CompanionDiaryFeatureCard extends StatelessWidget {
                       ),
                     )
                   else if (canWrite)
-                    const SizedBox(height: 46)
+                    SizedBox(height: compactActionBottom ? 37 : 46)
                   else if (!canWrite && !readOnlySummary)
                     Text(
                       '로그인하면 기록할 수 있어요.',
@@ -493,14 +495,15 @@ class _DiaryWriteButton extends StatelessWidget {
       child: Material(
         key: const ValueKey('companion-diary-write-button-pill'),
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppRadii.pill),
           child: Container(
+            key: const ValueKey('companion-diary-write-button-outline'),
             padding: const EdgeInsets.fromLTRB(8, 4, 11, 4),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(AppRadii.pill),
               border: Border.all(
                 color: palette.successBottom.withValues(alpha: 0.24),
               ),
@@ -519,7 +522,7 @@ class _DiaryWriteButton extends StatelessWidget {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: palette.successBottom.withValues(alpha: 0.10),
-                        borderRadius: BorderRadius.circular(8),
+                        shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.add_rounded,
