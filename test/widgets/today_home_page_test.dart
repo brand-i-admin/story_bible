@@ -195,7 +195,7 @@ void main() {
       expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
       expect(
         tester.widget<Text>(firstStepMessage).data,
-        '아래 이야기 카드를 옆으로 슬라이딩 혹은 클릭',
+        '아래 이야기 카드를 좌우 넘기기 혹은 클릭',
       );
       expect(
         tester.widget<Text>(secondStepMessage).data,

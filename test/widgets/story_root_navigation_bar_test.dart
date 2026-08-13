@@ -367,7 +367,7 @@ void main() {
       source,
       contains('if (!widget.isAuthenticated && !_todayGuideDismissed)'),
     );
-    expect(source, contains('아래 이야기 카드를 옆으로 슬라이딩 혹은 클릭'));
+    expect(source, contains('아래 이야기 카드를 좌우 넘기기 혹은 클릭'));
     expect(source, contains("화면 위 '여정 선택'에서 나열될 이야기 카드 변경"));
     expect(source, contains('today-guide-step-\$number-badge'));
     expect(source, isNot(contains('매일 할 일:')));
